@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+message GetMacReq 
+{
+
+}
+
+
+message GetMacAck
+{
+    
+    string mac = 1;
+	string ip =2;
+	uint32 port =3;
+}

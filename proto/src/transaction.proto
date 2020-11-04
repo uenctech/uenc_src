@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+message CTxprevout{
+  string hash = 1;
+  uint32 n = 2;
+}
+
+message CScriptSig{
+  bytes sign = 1;
+  bytes pub = 2;
+}
+
+message CTxin{
+  CTxprevout prevout = 1;
+  CScriptSig scriptSig = 2;
+  uint32 nSequence = 3;
+}
+
+message CTxout{
+  int64  value = 1;
+  string scriptPubKey = 2;
+}
+
+message CSignPreHash{
+  bytes sign = 1;
+  bytes pub = 2;
+}
+
+message CTransaction{
+  uint32 version = 1;
+  uint64 time = 2;
+  repeated CSignPreHash signPreHash = 3;
+  string txOwner = 4;
+  uint32 n = 5;
+  string ip = 6;
+  string hash = 7;
+  repeated CTxin vin = 8;
+  repeated CTxout vout = 9;
+
+  string extra = 10;
+  string comment = 11;
+}

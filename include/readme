@@ -1,0 +1,7 @@
+###################################
+#global header dir
+
+# put all global .h in this dir  and write to all.h
+# you used all.h yet
+
+###################################

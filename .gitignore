@@ -1,32 +1,60 @@
 # Prerequisites
-*.d
+.d
 
 # Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+.slo
+.lo
+.o
+.obj
+/objs
+/crypto/cryptopp
+/hiredis
+/rocksdb
+/protobuf
+/boost
 
 # Precompiled Headers
-*.gch
-*.pch
+.gch
+.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+.so
+.dylib
+.dll
 
 # Fortran module files
-*.mod
-*.smod
+.mod
+.smod
 
 # Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+.lai
+.la
+.a
+.lib
 
 # Executables
-*.exe
-*.out
-*.app
+.exe
+.out
+.app
+ebpc*
+/tools/protoc/.libs/lt-protoc
+/tools/protoc/protoc
+/proto/python/
+
+# Dir
+/.vscode
+/data*
+/cert
+/log
+/data.db
+
+# File
+*.json
+log.txt
+block_*.*
+net.conf
+config.json*
+core*
+trans.sh
+blockdata.txt
+proto/ca_protomsg.pb.cc.rej

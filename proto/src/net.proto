@@ -1,0 +1,92 @@
+syntax                  = "proto3";
+
+
+message PrintMsgReq {
+    string data         = 1;
+    int32  type         = 2;
+}
+
+
+
+message NodeInfo {
+  string node_id        = 1;
+  uint32 local_ip       = 2;
+  uint32 local_port     = 3;
+  uint32 public_ip       = 4;
+  uint32 public_port     = 5;  
+  bool   is_public_node = 6;
+  string mac_md5        = 7;  
+  int32    conn_kind      = 8;
+  uint64   fee            = 9;
+  uint64   package_fee    = 10;
+  string   base58addr     = 11;
+}
+
+
+message RegisterNodeReq {
+  NodeInfo mynode = 1;
+  bool     is_get_nodelist = 2;
+}
+
+
+message RegisterNodeAck {
+  repeated NodeInfo nodes = 1;
+}
+
+
+message SyncNodeReq {
+  repeated string ids = 1;
+}
+
+
+message SyncNodeAck {
+  repeated NodeInfo nodes = 1;   
+  repeated string ids = 2;        
+}
+
+
+
+message ConnectNodeReq {
+  NodeInfo mynode = 1;
+}
+
+
+message TransMsgReq {
+  NodeInfo dest = 1;
+  
+    bytes data  = 2;
+}
+
+
+message NotifyConnectReq {
+  NodeInfo server_node = 1;
+  NodeInfo client_node = 2;  
+}
+
+
+message PingReq {
+  string id        = 1;
+}
+
+message PongReq {
+  string id        = 1;
+}
+
+
+message EchoReq {
+  string id = 1;
+}
+
+message EchoAck {
+  string id = 1;
+}
+
+message UpdateFeeReq {
+  string id           = 1;
+  uint64 fee          = 2;
+}
+
+message UpdatePackageFeeReq {
+  string id           = 1;
+  uint64 package_fee  = 2;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+
+
+message CaTestInfoReq {
+    uint32 test_num = 1;
+}
+
+
+
+
+message CaTestInfoAck {
+    uint32 test_num = 1;
+    string json_data = 2;
+}

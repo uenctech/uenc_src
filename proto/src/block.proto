@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "transaction.proto";
+
+message COwnerAddr{
+  string txOwner = 1;
+  uint32 n = 2;
+}
+
+message CBlock {
+  uint32 version = 1;
+  string hash = 2;
+  string prevHash = 3;
+  int64 height = 4;
+  string merkleRoot = 5;
+  repeated CTransaction txs = 6;
+  repeated COwnerAddr addresses = 7;
+  string extra = 8;
+  string comment = 9;
+  uint64 time = 10;
+}
+
+message CBlockHeader {
+  string hash = 1;
+  string prevHash = 2;
+  int64 height = 3;
+  uint64 time = 4;
+}

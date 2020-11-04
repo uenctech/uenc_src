@@ -1,0 +1,714 @@
+syntax = "proto3";
+
+
+
+message GetAmountReq {
+    string version = 1;
+    string address = 2;
+}
+
+
+message GetAmountAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    
+    string address = 4;
+    string balance = 5;
+}
+
+
+
+
+message GetBlockInfoReq {
+    string version = 1;
+    sint32 height = 2;
+    sint32 count = 3;
+}
+
+
+message TxVinInfo {
+    string script_sig = 1;
+    string pre_vout_hash = 2;
+    uint64 pre_vout_index = 3;
+}
+
+
+message TxVoutInfo {
+    string script_pubkey = 1;
+    string amount = 2;
+}
+
+
+message TxInfo {
+    string tx_hash = 1;
+    repeated string transaction_signer = 2;
+    repeated TxVinInfo vin_list = 3;
+    repeated TxVoutInfo vout_list = 4;
+    uint64 nlock_time = 5;
+    string stx_owner = 6;
+    uint64 stx_owner_index = 7;
+    uint32 version = 8;
+}
+
+
+message BlockInfo {
+    sint32 height = 1;
+    string hash_merkle_root = 2;
+    string hash_prev_block = 3;
+    string block_hash = 4;
+    uint64 ntime = 5;
+    repeated TxInfo tx_info_list = 6;
+    string packet_fee = 7; 
+    string packet_ip = 8; 
+}
+
+message GetBlockInfoAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    
+    uint64 top = 4; 
+    repeated BlockInfo block_info_list = 5;
+    uint64 tx_count = 6; 
+}
+
+
+
+
+message GetAddrInfoReq {
+    string version = 1;
+    string address = 2;
+    uint32 index = 3;
+    uint32 count = 4;
+}
+
+message GetAddrInfoAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+    uint64 total = 4;
+    repeated BlockInfo block_info_list = 5;
+}
+
+
+message SetDevPasswordReq {
+    string version = 1;
+    string old_pass = 2;
+    string new_pass = 3;
+}
+
+message SetDevPasswordAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+}
+
+message GetDevPasswordReq {
+    string version = 1;
+    string password = 2;
+}
+
+message GetDevPasswordAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    string address = 4;
+}
+
+enum DeviceType {
+    PC = 0;
+    iOS = 1;
+    Android = 2;
+}
+
+enum DeviceLang {
+    ZH_CN = 0;
+    EN_US = 1;
+}
+
+message GetClientInfoReq {
+    string version = 1;
+    DeviceType phone_type = 2;
+    DeviceLang phone_lang = 3;
+    string phone_version = 4;
+}
+
+message GetClientInfoAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    string min_version = 4;
+    string is_update = 5;
+    string ver = 6;
+    string desc = 7;
+    string dl = 8 ;
+}
+
+message GetNodeInfoReq {
+    string version = 1;
+}
+
+message NodeInfos {
+    string enable = 1;
+    string ip = 2;
+    string name = 3;
+    string port = 4;
+    string price = 5;
+}
+
+message NodeList {
+    repeated NodeInfos node_info = 1;
+    string local = 2;
+}
+
+message GetNodeInfoAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    repeated NodeList node_list = 4;
+}
+
+
+
+
+message GetServiceInfoReq
+{
+	string version				= 1;						
+	string password				= 2;						
+	string public_net_ip		= 3;						
+    bool is_show = 4; 
+}
+
+
+message ServiceFee
+{
+	string max_fee 				= 1;						
+	string min_fee 				= 2;						
+	string service_fee 			= 3;						
+    string avg_fee = 4;
+}
+
+
+message GetServiceInfoAck
+{
+	string 		 version		= 1;						
+    sint32 code = 2;
+    string description = 3;
+	string 		 mac_hash		= 4;					
+	string 		 device_version	= 5;					
+	repeated ServiceFee service_fee_info	= 6;		
+
+	enum SyncStatus
+	{
+		TRUE 					= 0;						
+		FALSE					= 1;						
+		FAIL					= -1;						
+	}
+
+	SyncStatus   is_sync		= 7;						
+}
+
+
+message SetServiceFeeReq
+{
+	string version 				= 1;						
+	string password				= 2;						
+	string service_fee 			= 3;						
+}
+
+
+message SetServiceFeeAck
+{
+	string version 				= 1;						
+	sint32  code 				= 2;						
+	string description 			= 3;						
+}
+
+
+message GetPacketFeeReq {
+	string version				= 1;						
+	string password				= 2;						
+	string public_net_ip		= 3;						
+}
+
+message GetPacketFeeAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    string packet_fee = 4;
+}
+
+
+message SetPacketFeeReq {
+	string version				= 1;						
+	string password				= 2;						
+	string public_net_ip		= 3;						
+    string packet_fee = 4;
+}
+
+message SetPacketFeeAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+}
+
+
+
+message GetBlockTopReq {
+    string version = 1;
+
+    uint32 fd = 2;
+    uint32 port = 3;
+    uint32 ip = 4;
+}
+
+message TApiGetBlockTopAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    uint32 top = 4;
+    uint32 fd = 5;
+    uint32 port = 6;
+    uint32 ip = 7;
+}
+
+
+message GetNodeServiceFeeReq {
+    string version = 1;
+}
+
+message GetNodeServiceFeeAck {
+    string version = 1;
+    sint32 code = 2;
+    string description = 3;
+
+    repeated ServiceFee service_fee_info = 4;
+}
+
+
+
+
+
+message GetDevPrivateKeyReq 
+{
+	string version = 1;
+    string password = 2;
+    string bs58addr = 3;
+}
+
+message DevPrivateKeyInfo
+{
+	string base58addr  = 1;
+	string keystore = 2;
+	string mnemonic = 3;	
+}
+
+message GetDevPrivateKeyAck
+{
+    string   version = 1;
+	int32    code	    = 2;						
+	string	 description	= 3;						
+	repeated  DevPrivateKeyInfo  devprivatekeyinfo = 4;
+}
+
+
+
+
+
+
+message CreateTxMsgReq
+{
+	string       version        = 1;                        
+	string from					= 2;						
+	string to					= 3;						
+	string amt					= 4;						
+	string minerFees			= 5;						
+	string needVerifyPreHashCount = 6;						
+}
+
+message CreateTxMsgAck
+{
+	string       version        = 1;                        
+	int32        code			= 2;						
+	string		 message		= 3;						
+	string 		 txData			= 4;						
+	string       txEncodeHash   = 5;						
+}
+
+
+message TxMsgReq
+{
+	string       version        = 1;                        
+	string		 serTx			= 2;						
+	string		 strSignature	= 3;						
+	string		 strPub			= 4;						
+	string       txEncodeHash   = 5;						
+}
+
+message TxMsgAck
+{
+	string       version        = 1;                        
+	int32        code			= 2;						
+	string		 message		= 3;						
+	string       txHash         = 4;                        
+}
+
+
+
+message ToAddr
+{
+	string toAddr               = 1;
+	string amt                  = 2; 
+}
+
+message CreateMultiTxMsgReq
+{
+	string       version        = 1;                        
+	repeated string from		= 2;						
+	repeated ToAddr to		    = 3;						
+	string minerFees			= 5;						
+	string needVerifyPreHashCount = 6;						
+}
+
+message CreateMultiTxMsgAck
+{
+	string       version        = 1;                        
+	int32        code			= 2;						
+	string		 message		= 3;						
+	string 		 txData			= 4;						
+	string       txEncodeHash   = 5;						
+}
+
+
+message SignInfo
+{
+	string signStr              = 1;
+	string pubStr               = 2;
+}
+
+message MultiTxMsgReq
+{
+	string       version        = 1;                        
+	string		 serTx			= 2;						
+	repeated SignInfo signInfo	= 3;						
+	string       txEncodeHash   = 4;						
+}
+
+
+
+
+
+
+message VerifyDevicePasswordReq
+{
+	string       version        = 1;                        
+	string       password       = 2;                        
+}
+
+message VerifyDevicePasswordAck
+{
+	string       version        = 1;                        
+	int32        code			= 2;						
+	string		 message		= 3;						
+}
+
+
+message CreateDeviceTxMsgReq
+{
+	string       version        = 1;                        
+	string from					= 2;						
+	string to					= 3;						
+	string amt					= 4;						
+	string minerFees			= 5;						
+	string needVerifyPreHashCount = 6;						
+}
+
+
+
+
+
+
+message CreateDeviceMultiTxMsgReq
+{
+	string       version        = 1;                        
+	repeated string from		= 2;						
+	repeated ToAddr to		    = 3;						
+	string gasFees			    = 4;						
+	string needVerifyPreHashCount = 5;						
+}
+
+
+
+
+
+
+
+
+
+message CreatePledgeTxMsgReq
+{
+	string version = 1;				     		
+	string addr = 2;                            
+	string amt  = 3;                            
+	string needVerifyPreHashCount = 4;          
+	string gasFees = 5;                         
+}
+
+
+message CreatePledgeTxMsgAck
+{
+	string       version      = 1;						    
+	int32        code			= 2;						
+	string		 description		= 3;					
+	string 		 txData			= 4;						
+	string       txEncodeHash         = 5;					
+}
+
+
+message PledgeTxMsgReq
+{
+	string       version       = 1;						    
+	string		 serTx			= 2;						
+	string		 strSignature	= 3;						
+	string		 strPub			= 4;						
+	string       txEncodeHash         = 5;					
+}
+
+
+
+
+
+
+message CreateRedeemTxMsgReq
+{
+	string   version    = 1;						          
+    string   addr =  2;                                       
+	string   amt  = 3;                                        
+	string   needVerifyPreHashCount = 4;                      
+	string   gasFees = 5;                                     
+    string 	 txHash	= 6;						      
+}
+
+message CreateRedeemTxMsgAck
+{
+	string       version      = 1;						    
+	int32        code			= 2;						
+	string		 description		= 3;					
+	string 		 txData			= 4;						
+	string       txEncodeHash         = 5;					
+}
+
+
+message RedeemTxMsgReq
+{
+	string       version       = 1;						    
+	string		 serTx			= 2;						
+	string		 strSignature	= 3;						
+	string		 strPub			= 4;						
+	string       txEncodeHash         = 5;					
+}
+
+
+message CreateDevicePledgeTxMsgReq
+{
+    string version                = 1;                       
+    string addr                   = 2;                       
+    string amt                    = 3;                       
+    string needVerifyPreHashCount = 4;                       
+    string gasFees                = 5;                       
+}
+
+
+message CreateDeviceRedeemTxReq
+{
+    string version                = 1;                       
+    string addr                   = 2;                       
+    string needVerifyPreHashCount = 3;                       
+    string gasFees                = 4;                       
+    string utxo                   = 5;                       
+}
+
+
+
+
+
+
+message GetPledgeListReq 
+{
+    string version = 1; 
+    string addr = 2; 
+    uint32 index = 3; 
+    uint32 count = 4; 
+}
+
+
+message PledgeItem
+{
+    string blockhash = 1; 
+    uint32 blockheight = 2; 
+    string utxo = 3; 
+    string amount = 4; 
+    uint64 time  = 5; 
+    string fromaddr = 6; 
+    string toaddr = 7;  
+    string detail = 8;  
+}  
+
+message GetPledgeListAck
+{
+    string version = 1; 
+    int32 code = 2; 
+    string description = 3;
+    repeated PledgeItem list = 4; 
+    uint32 total = 5; 
+}
+
+
+
+
+message GetTxInfoListReq
+{
+    string version = 1; 
+    string addr = 2; 
+    uint32 index = 3; 
+    uint32 count = 4; 
+}
+
+enum TxInfoType {
+    TxInfoType_Unknown = 0; 
+    TxInfoType_Originator = 1; 
+    TxInfoType_Receiver  = 2; 
+    TxInfoType_Gas = 3; 
+    TxInfoType_Award = 4; 
+    TxInfoType_Pledge = 5; 
+    TxInfoType_Redeem = 6; 
+    TxInfoType_PledgedAndRedeemed  = 7; 
+}
+
+message TxInfoItem
+{
+    TxInfoType type = 1; 
+    string txhash = 2; 
+    uint64 time = 3; 
+    string amount = 4; 
+}
+
+
+message GetTxInfoListAck
+{
+    string version = 1; 
+    int32 code = 2; 
+    string description = 3;
+    repeated TxInfoItem list = 4; 
+    uint32 total = 5; 
+    uint32 index = 6; 
+}
+
+
+
+
+message GetTxInfoDetailReq
+{
+    string version = 1; 
+    string txhash = 2; 
+    string addr = 3; 
+}
+
+
+message GetTxInfoDetailAck
+{
+    string version = 1; 
+    int32 code = 2; 
+    string description = 3;
+
+    string blockhash = 4; 
+    uint32 blockheight = 5; 
+    string txhash = 6; 
+    uint64 time = 7; 
+    repeated string fromaddr = 8; 
+    repeated ToAddr toaddr = 9; 
+    string gas = 10; 
+    string amount = 11; 
+    string award = 12; 
+
+    
+    string awardGas = 13; 
+    string awardAmount = 14; 
+}
+
+
+
+
+message GetBlockInfoListReq
+{
+    string version = 1;
+    uint32 index = 2;
+    uint32 count = 3;
+}
+
+message BlockInfoItem
+{
+    string blockhash = 1; 
+    uint32 blockheight = 2; 
+    uint64 time = 3; 
+    string txHash = 4; 
+    repeated string fromAddr = 5;
+    repeated string toAddr = 6; 
+    string amount  = 7; 
+} 
+
+message GetBlockInfoListAck
+{
+    string version = 1; 
+    int32 code = 2; 
+    string description = 3;
+
+    uint32 top = 4; 
+    uint32 txcount = 5; 
+    repeated BlockInfoItem list = 6; 
+}
+
+
+
+
+message GetBlockInfoDetailReq
+{
+    string version = 1;
+    string blockhash = 2;
+}
+
+message BlockInfoOutAddr
+{
+    string addr = 1; 
+    string amount = 2; 
+}
+
+message GetBlockInfoDetailAck
+{
+    string version = 1; 
+    int32 code = 2; 
+    string description = 3;
+
+    string blockhash = 4; 
+    uint32 blockheight = 5; 
+    string merkleRoot = 6; 
+    string prevHash = 7; 
+    uint64 time = 8; 
+    string tatalAmount = 9; 
+
+    repeated string signer = 10; 
+    repeated BlockInfoOutAddr blockInfoOutAddr = 11; 
+}
+
+
+
+
+
