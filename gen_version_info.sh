@@ -1,3 +1,11 @@
+###
+ # @Author: your name
+ # @Date: 2020-11-04 20:24:26
+ # @LastEditTime: 2020-11-05 09:05:48
+ # @LastEditors: your name
+ # @Description: In User Settings Edit
+ # @FilePath: \undefinedc:\Users\biz\Desktop\code\uenc_src\gen_version_info.sh
+### 
 #!/bin/sh
 
 
