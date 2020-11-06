@@ -3725,14 +3725,42 @@ int FindSignNode(int verifySum, uint64_t minerFee, int nextNodeNumber, std::vect
 
 void GetOnLineTime()
 {
-	static time_t inittime;
+	static time_t startTime = time(NULL);
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
 	if(!txn) 
 	{
 		std::cout << " TransactionInit failed !" << std::endl;
 		std::cout << __LINE__ << std::endl;
+		return ;
 	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	{
+		// patch
+		double minertime = 0.0;
+		if (0 != pRocksDb->GetDeviceOnLineTime(minertime))
+		{
+			if ( 0 != pRocksDb->SetDeviceOnlineTime(0.00001157) )
+			{
+				error("(GetOnLineTime) SetDeviceOnlineTime failed!");
+				return;
+			}
+		}
+
+		if (minertime > 365.0)
+		{
+			if ( 0 != pRocksDb->SetDeviceOnlineTime(0.00001157) )
+			{
+				error("(GetOnLineTime) SetDeviceOnlineTime failed!");
+				return;
+			}
+		}
+	}
+
 	std::vector<std::string> vTxHashs;
 	std::string addr = g_AccountInfo.DefaultKeyBs58Addr;
 	int db_get_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs); 	
@@ -3740,38 +3768,55 @@ void GetOnLineTime()
 	{
 		std::cout << __LINE__ << std::endl;
 	}
+
 	std::vector<Node> vnode = net_get_public_node();
 	if(vTxHashs.size() >= 1 && vnode.size() >= 1 )
 	{
-		if(inittime == 0)
+		double onLineTime = 0.0;
+		if ( 0 != pRocksDb->GetDeviceOnLineTime(onLineTime) )
 		{
-			time_t start;
-			start = time(NULL); 
-			inittime = start;
-			double day = inittime/(1*60*60*24);    	
-			pRocksDb->SetDeviceOnlineTime(day);	
-		}	
-		else if(inittime > 0 )
-		{
-			time_t	end = time(NULL); 
-			time_t	dur = end - inittime;
-			double  minertime;
-			int db_status = pRocksDb->GetDeviceOnLineTime(minertime);
-			if(db_status != 0)
+			std::cout << "start: " << startTime << std::endl;
+			if ( 0 != pRocksDb->SetDeviceOnlineTime(0.00001157) )
 			{
-				std::cout << __LINE__ << std::endl;
-			}            
-			time_t accumatetime = dur + minertime;   
-			double day =  accumatetime/(1*60*60*24);    	
-			pRocksDb->SetDeviceOnlineTime(day);	
-			inittime = end;
+				error("(GetOnLineTime) SetDeviceOnlineTime failed!");
+				return;
+			}
+			return ;
 		}
-	}
 
+		time_t endTime = time(NULL);
+		time_t dur = difftime(endTime, startTime);
+		std::cout << "endTime: " << endTime << std::endl;
+		std::cout << "dur: " << dur << std::endl;
+		double durDay = (double)dur / (1*60*60*24);
+		
+		double minertime = 0.0;
+		if (0 != pRocksDb->GetDeviceOnLineTime(minertime))
+		{
+			error("(GetOnLineTime) GetDeviceOnLineTime failed!");
+			return ;
+		}
+
+		double accumatetime = durDay + minertime; 
+		std::cout << "当前在线时长：" << accumatetime << " 天" << std::endl;
+		if ( 0 != pRocksDb->SetDeviceOnlineTime(accumatetime) )
+		{
+			error("(GetOnLineTime) SetDeviceOnlineTime failed!");
+			return ;
+		}
+		
+		startTime = endTime;
+	}
 	else
 	{
-		inittime = 0;     
-	}	                                                     
+		startTime = time(NULL);
+	}
+	
+	if ( 0 != pRocksDb->TransactionCommit(txn) )
+	{
+		error("(GetOnLineTime) TransactionCommit failed!");
+		return ;
+	}
 }
 
 int PrintOnLineTime()

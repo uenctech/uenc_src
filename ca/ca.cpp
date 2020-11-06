@@ -450,7 +450,7 @@ bool ca_init()
 	});
     
 
-    g_deviceonline_timer.StartTimer(1000*1000*60*5,GetOnLineTime);
+    g_deviceonline_timer.StartTimer(5 * 60 * 1000,GetOnLineTime);
 
 	return true;
 }
