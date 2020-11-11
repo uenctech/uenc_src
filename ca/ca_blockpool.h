@@ -13,7 +13,7 @@
 #include "../proto/ca_protomsg.pb.h"
 #include "./proto/block.pb.h"
 
-const int PROCESS_TIME = 1;
+const int PROCESS_TIME = 10;
 const int SYNC_ADD_FAIL_TIME = 5;
 const int SYNC_ADD_FAIL_LIMIT = 100;
 const int ROLLBACK_HEIGHT = 10;
