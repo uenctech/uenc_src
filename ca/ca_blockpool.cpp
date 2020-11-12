@@ -53,30 +53,6 @@ bool BlockPoll::CheckConflict(const CBlock& block1, const CBlock& block2)
                           v2.begin(), v2.end(),
                           std::back_inserter(v_intersection));
 
-
-	/*
-	if(v_intersection.size() > 0)
-	{
-		std::cout << "======CheckConflict======" << std::endl;
-		std::cout << "v1: " << v1.size() << std::endl;
-		for(auto n : v1)
-		{
-			std::cout << n << std::endl;
-		}
-
-		std::cout << "v2: "  << v2.size() << std::endl; 
-		for(auto n : v2){
-			std::cout << n << std::endl;	
-		}
-
-		std::cout << "intersection: " << v1.size() << std::endl;
-		for(auto n : v_intersection)
-		{
-			std::cout << n << std::endl;
-		}
-		std::cout << "=========end==========" << std::endl;
-	}
-	*/
 	return v_intersection.size() > 0 ;
 }
 
@@ -143,7 +119,6 @@ void BlockPoll::Process()
 {
 	if(processing_)
 	{
-		std::cout << "BlockPoll::Process is processing_" << std::endl;
 		return;
 	}
 	processing_ = true;
@@ -203,19 +178,17 @@ void BlockPoll::Process()
 	g_synch->sync_adding = false;
 	if(sync_blocks_.size() > 0)
 	{	
-		std::cout << "frist_hash_num:" << frist_hash_num << std::endl;
+		
 	}
 	int sync_cnt = Singleton<Config>::get_instance()->GetSyncDataCount();
 	
 	if((success_num + frist_hash_num) >= sync_cnt)
 	{
 		g_synch->DataSynch(g_synch->verifying_node.id);
-		std::cout << "sync not voer, continue sync,id:" << g_synch->verifying_node.id << std::endl;
 	}
 	if(sync_blocks_.size() >= SYNC_ADD_FAIL_LIMIT && !sync_add_success)
 	{
 		sync_add_fail_times_++;
-		std::cout << "sync_add_fail_times_:" << sync_add_fail_times_ << std::endl;
 	}else if(sync_blocks_.size() > 0 && sync_add_success)
 	{
 		sync_add_fail_times_ = 0;
@@ -294,7 +267,6 @@ void BlockPoll::Process()
 		
 		if(time(NULL) - block.time_ >= PENDING_EXPIRE_TIME)
 		{
-			std::cout <<"pending_block_  have expire" << std::endl;
 			it = pending_block_.erase(it);
 			continue;
 		}
@@ -358,7 +330,6 @@ bool BlockPoll::VerifyHeight(const CBlock& block)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(ReqBlock) TransactionInit failed !" << std::endl;
 		return false;
 	}
 

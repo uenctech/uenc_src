@@ -312,6 +312,14 @@ class GetBlockInfoDetailAckDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetBlockInfoDetailAck> _instance;
 } _GetBlockInfoDetailAck_default_instance_;
+class TestConnectReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestConnectReq> _instance;
+} _TestConnectReq_default_instance_;
+class TestConnectAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestConnectAck> _instance;
+} _TestConnectAck_default_instance_;
 static void InitDefaultsscc_info_BlockInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1196,6 +1204,34 @@ static void InitDefaultsscc_info_TApiGetBlockTopAck_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TApiGetBlockTopAck_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TApiGetBlockTopAck_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_TestConnectAck_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TestConnectAck_default_instance_;
+    new (ptr) ::TestConnectAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TestConnectAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TestConnectAck_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TestConnectAck_interface_2eproto}, {}};
+
+static void InitDefaultsscc_info_TestConnectReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TestConnectReq_default_instance_;
+    new (ptr) ::TestConnectReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TestConnectReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TestConnectReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TestConnectReq_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_ToAddr_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1324,7 +1360,7 @@ static void InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_VerifyDevicePasswordReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto}, {}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[71];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[73];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_interface_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_interface_2eproto = nullptr;
 
@@ -2001,6 +2037,19 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::GetBlockInfoDetailAck, tatalamount_),
   PROTOBUF_FIELD_OFFSET(::GetBlockInfoDetailAck, signer_),
   PROTOBUF_FIELD_OFFSET(::GetBlockInfoDetailAck, blockinfooutaddr_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TestConnectReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TestConnectReq, version_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TestConnectAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TestConnectAck, version_),
+  PROTOBUF_FIELD_OFFSET(::TestConnectAck, code_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::GetAmountReq)},
@@ -2074,6 +2123,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 642, -1, sizeof(::GetBlockInfoDetailReq)},
   { 649, -1, sizeof(::BlockInfoOutAddr)},
   { 656, -1, sizeof(::GetBlockInfoDetailAck)},
+  { 672, -1, sizeof(::TestConnectReq)},
+  { 678, -1, sizeof(::TestConnectAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -2148,6 +2199,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetBlockInfoDetailReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_BlockInfoOutAddr_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetBlockInfoDetailAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestConnectReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestConnectAck_default_instance_),
 };
 
 const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -2334,19 +2387,21 @@ const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIAB
   "(\t\022\023\n\013blockheight\030\005 \001(\r\022\022\n\nmerkleRoot\030\006 "
   "\001(\t\022\020\n\010prevHash\030\007 \001(\t\022\014\n\004time\030\010 \001(\004\022\023\n\013t"
   "atalAmount\030\t \001(\t\022\016\n\006signer\030\n \003(\t\022+\n\020bloc"
-  "kInfoOutAddr\030\013 \003(\0132\021.BlockInfoOutAddr**\n"
-  "\nDeviceType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Android\020"
-  "\002*\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020\001*\323\001"
-  "\n\nTxInfoType\022\026\n\022TxInfoType_Unknown\020\000\022\031\n\025"
-  "TxInfoType_Originator\020\001\022\027\n\023TxInfoType_Re"
-  "ceiver\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxInfoTy"
-  "pe_Award\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n\021TxI"
-  "nfoType_Redeem\020\006\022!\n\035TxInfoType_PledgedAn"
-  "dRedeemed\020\007b\006proto3"
+  "kInfoOutAddr\030\013 \003(\0132\021.BlockInfoOutAddr\"!\n"
+  "\016TestConnectReq\022\017\n\007version\030\001 \001(\t\"/\n\016Test"
+  "ConnectAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001("
+  "\005**\n\nDeviceType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Andr"
+  "oid\020\002*\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020"
+  "\001*\323\001\n\nTxInfoType\022\026\n\022TxInfoType_Unknown\020\000"
+  "\022\031\n\025TxInfoType_Originator\020\001\022\027\n\023TxInfoTyp"
+  "e_Receiver\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxIn"
+  "foType_Award\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n"
+  "\021TxInfoType_Redeem\020\006\022!\n\035TxInfoType_Pledg"
+  "edAndRedeemed\020\007b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_interface_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[71] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[73] = {
   &scc_info_BlockInfo_interface_2eproto.base,
   &scc_info_BlockInfoItem_interface_2eproto.base,
   &scc_info_BlockInfoOutAddr_interface_2eproto.base,
@@ -2409,6 +2464,8 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_SetServiceFeeReq_interface_2eproto.base,
   &scc_info_SignInfo_interface_2eproto.base,
   &scc_info_TApiGetBlockTopAck_interface_2eproto.base,
+  &scc_info_TestConnectAck_interface_2eproto.base,
+  &scc_info_TestConnectReq_interface_2eproto.base,
   &scc_info_ToAddr_interface_2eproto.base,
   &scc_info_TxInfo_interface_2eproto.base,
   &scc_info_TxInfoItem_interface_2eproto.base,
@@ -2422,10 +2479,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_interface_2eproto_once;
 static bool descriptor_table_interface_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_interface_2eproto = {
-  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 7659,
-  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 71, 0,
+  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 7743,
+  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 73, 0,
   schemas, file_default_instances, TableStruct_interface_2eproto::offsets,
-  file_level_metadata_interface_2eproto, 71, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
+  file_level_metadata_interface_2eproto, 73, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -25256,6 +25313,431 @@ void GetBlockInfoDetailAck::InternalSwap(GetBlockInfoDetailAck* other) {
 }
 
 
+// ===================================================================
+
+void TestConnectReq::InitAsDefaultInstance() {
+}
+class TestConnectReq::_Internal {
+ public:
+};
+
+TestConnectReq::TestConnectReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:TestConnectReq)
+}
+TestConnectReq::TestConnectReq(const TestConnectReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  // @@protoc_insertion_point(copy_constructor:TestConnectReq)
+}
+
+void TestConnectReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TestConnectReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+TestConnectReq::~TestConnectReq() {
+  // @@protoc_insertion_point(destructor:TestConnectReq)
+  SharedDtor();
+}
+
+void TestConnectReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TestConnectReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TestConnectReq& TestConnectReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TestConnectReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TestConnectReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:TestConnectReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* TestConnectReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestConnectReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TestConnectReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TestConnectReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TestConnectReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TestConnectReq)
+  return target;
+}
+
+size_t TestConnectReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TestConnectReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TestConnectReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TestConnectReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TestConnectReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestConnectReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestConnectReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestConnectReq)
+    MergeFrom(*source);
+  }
+}
+
+void TestConnectReq::MergeFrom(const TestConnectReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TestConnectReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+}
+
+void TestConnectReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TestConnectReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TestConnectReq::CopyFrom(const TestConnectReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TestConnectReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TestConnectReq::IsInitialized() const {
+  return true;
+}
+
+void TestConnectReq::InternalSwap(TestConnectReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TestConnectReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void TestConnectAck::InitAsDefaultInstance() {
+}
+class TestConnectAck::_Internal {
+ public:
+};
+
+TestConnectAck::TestConnectAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:TestConnectAck)
+}
+TestConnectAck::TestConnectAck(const TestConnectAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  code_ = from.code_;
+  // @@protoc_insertion_point(copy_constructor:TestConnectAck)
+}
+
+void TestConnectAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TestConnectAck_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  code_ = 0;
+}
+
+TestConnectAck::~TestConnectAck() {
+  // @@protoc_insertion_point(destructor:TestConnectAck)
+  SharedDtor();
+}
+
+void TestConnectAck::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TestConnectAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TestConnectAck& TestConnectAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TestConnectAck_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TestConnectAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:TestConnectAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  code_ = 0;
+  _internal_metadata_.Clear();
+}
+
+const char* TestConnectAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestConnectAck.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          code_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TestConnectAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TestConnectAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TestConnectAck.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // int32 code = 2;
+  if (this->code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_code(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TestConnectAck)
+  return target;
+}
+
+size_t TestConnectAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TestConnectAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // int32 code = 2;
+  if (this->code() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_code());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TestConnectAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TestConnectAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TestConnectAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestConnectAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestConnectAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestConnectAck)
+    MergeFrom(*source);
+  }
+}
+
+void TestConnectAck::MergeFrom(const TestConnectAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TestConnectAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.code() != 0) {
+    _internal_set_code(from._internal_code());
+  }
+}
+
+void TestConnectAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TestConnectAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TestConnectAck::CopyFrom(const TestConnectAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TestConnectAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TestConnectAck::IsInitialized() const {
+  return true;
+}
+
+void TestConnectAck::InternalSwap(TestConnectAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(code_, other->code_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TestConnectAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::GetAmountReq* Arena::CreateMaybeMessage< ::GetAmountReq >(Arena* arena) {
@@ -25470,6 +25952,12 @@ template<> PROTOBUF_NOINLINE ::BlockInfoOutAddr* Arena::CreateMaybeMessage< ::Bl
 }
 template<> PROTOBUF_NOINLINE ::GetBlockInfoDetailAck* Arena::CreateMaybeMessage< ::GetBlockInfoDetailAck >(Arena* arena) {
   return Arena::CreateInternal< ::GetBlockInfoDetailAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TestConnectReq* Arena::CreateMaybeMessage< ::TestConnectReq >(Arena* arena) {
+  return Arena::CreateInternal< ::TestConnectReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TestConnectAck* Arena::CreateMaybeMessage< ::TestConnectAck >(Arena* arena) {
+  return Arena::CreateInternal< ::TestConnectAck >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

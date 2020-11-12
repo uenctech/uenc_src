@@ -53,7 +53,7 @@ CPP_DEPEND = $(patsubst %.cpp, $(OBJ_PATH)/%.d, $(CPP_SOURCES))
 
 default:genproto testnet init compile version
 
-main:genproto mainnet init compile version
+primary:genproto primarynet init compile version
 test:genproto testnet init compile version
 
 version:
@@ -95,7 +95,7 @@ cleand:
 
 testnet:
 	sed -i "s/g_testflag.*;/g_testflag = 1;/g" ./ca/ca_global.cpp
-mainnet:
+primarynet:
 	sed -i "s/g_testflag.*;/g_testflag = 0;/g" ./ca/ca_global.cpp
 
 cleanall:subdirs_clean
@@ -114,7 +114,7 @@ subdirs_compile:
 	# cryptopp
 	if [ -d $(CRYPTOPP_DIR) ]; \
 	then \
-		# cd $(CRYPTOPP_DIR) && make ;\
+		# cd $(CRYPTOPP_DIR) && make -j4;\
 		echo "cryptopp compile";\
 	else\
 		mkdir -p $(CRYPTO_DIR);\
@@ -122,29 +122,29 @@ subdirs_compile:
 		mv cryptopp-CRYPTOPP_8_2_0 cryptopp;\
 		mv cryptopp $(CRYPTO_DIR);\
 		# rm -rf  cryptopp-CRYPTOPP_8_2_0.zip;\
-		cd $(CRYPTOPP_DIR) && make ;\
+		cd $(CRYPTOPP_DIR) && make -j4;\
 	fi;\
 
 	# rocksdb
 	if [ -d $(ROCKSDB_DIR) ]; \
 	then \
-		# cd $(ROCKSDB_DIR) && make static_lib;\
+		# cd $(ROCKSDB_DIR) && make -j4 static_lib;\
 		echo "rocksdb compile";\
 	else\
 		unzip ./3rd/rocksdb-6.4.6.zip -d ./;\
 		mv rocksdb-6.4.6 rocksdb;\
-		cd $(ROCKSDB_DIR) && make static_lib;\
+		cd $(ROCKSDB_DIR) && make -j4 static_lib;\
 	fi;\
 
 	# protobuf
 	if [ -d $(PROTOBUF_DIR) ]; \
 	then \
-		# cd $(PROTOBUF_DIR) && make;\
+		# cd $(PROTOBUF_DIR) && make -j4;\
 		echo "protobuf compile";\
 	else\
 		unzip ./3rd/protobuf-3.11.1.zip -d ./;\
 		mv protobuf-3.11.1 protobuf;\
-		cd $(PROTOBUF_DIR) && ./autogen.sh && ./configure && make;\
+		cd $(PROTOBUF_DIR) && ./autogen.sh && ./configure && make -j4;\
 	fi;\
 
 	# boost

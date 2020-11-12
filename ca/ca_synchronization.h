@@ -45,16 +45,19 @@ public:
     ~Sync()  = default;
 
     bool SetPotentialNodes(const std::string &id, const int64_t &height, const std::string &hash);
+    void SetPledgeNodes(const std::vector<std::string> & ids);
 
     void Process();
     bool DataSynch(std::string id);
 
-    SyncNode verifying_node;                  
+    std::vector<std::string> pledgeNodes;   
+    SyncNode verifying_node;                
     std::vector<SyncNode> verifying_result;   
-    std::vector<SyncNode> potential_nodes;    
+    std::vector<SyncNode> potential_nodes;  
     bool is_sync = false;
     std::mutex mu_potential_nodes;
     std::mutex mu_verifying_result;
+    std::mutex mu_get_pledge;
     int conflict_height = -1;
     bool sync_adding = false;
 };
@@ -64,6 +67,8 @@ public:
 void SendSyncGetnodeInfoReq(std::string id);
 void SendVerifyReliableNodeReq(std::string id, int64_t height);
 void SendSyncBlockInfoReq(std::string id);
+void SendSyncGetPledgeNodeReq(std::string id);
+int SendVerifyPledgeNodeReq(std::vector<std::string> ids);
 
 void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, const MsgData& msgdata );
 void HandleSyncGetnodeInfoAck( const std::shared_ptr<SyncGetnodeInfoAck>& msg, const MsgData& msgdata );
@@ -76,6 +81,12 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 
 void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const MsgData& msgdata );
 void HandleSyncLoseBlockAck( const std::shared_ptr<SyncLoseBlockAck>& msg, const MsgData& msgdata );
+
+void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& msg, const MsgData& msgdata );
+void HandleSyncGetPledgeNodeAck( const std::shared_ptr<SyncGetPledgeNodeAck>& msg, const MsgData& msgdata );
+
+void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeReq>& msg, const MsgData& msgdata );
+void HandleSyncVerifyPledgeNodeAck( const std::shared_ptr<SyncVerifyPledgeNodeAck>& msg, const MsgData& msgdata );
 
 bool IsOverIt(int64_t height);
 std::string get_blkinfo_ser(int64_t begin, int64_t end, int64_t max_num);

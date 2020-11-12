@@ -61,7 +61,6 @@ int GetAllAccountSignNum()
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(AddBlock) TransactionInit failed !" << std::endl;
 		return -1;
 	}
 
@@ -73,7 +72,6 @@ int GetAllAccountSignNum()
 	ofstream file("sign.txt");
 	if( !file.is_open() )
 	{
-		std::cout << "打开文件 sign.txt 失败！" << std::endl;
 		return -2;
 	}
 
@@ -81,7 +79,6 @@ int GetAllAccountSignNum()
 	auto db_status = pRocksDb->GetBlockTop(txn, blockHeight);
 	if (db_status != 0)
 	{
-		std::cout << "GetBlockTop 失败！" << std::endl;
 		bRollback = true;
         return -3;
     }
@@ -89,7 +86,6 @@ int GetAllAccountSignNum()
 	
 	if(blockHeight <= 0)
 	{
-		std::cout << "高度为0！" << std::endl;
 		return -4;
 	}
 
@@ -99,7 +95,6 @@ int GetAllAccountSignNum()
 		db_status = pRocksDb->GetBlockHashsByBlockHeight(txn, height, hashs);
 		if(db_status != 0) 
 		{
-			std::cout << "GetBlockHashsByBlockHeight 失败！" << std::endl;
 			bRollback = true; 
 			return -3;
 		}
@@ -110,7 +105,6 @@ int GetAllAccountSignNum()
 			db_status = pRocksDb->GetBlockByBlockHash(txn, blockHash, blockHeaderStr);
 			if(db_status != 0)
 			{
-				std::cout << "GetBlockByBlockHash 失败！" << std::endl;
 				bRollback = true; 
 				return -3;
 			}
@@ -208,7 +202,6 @@ int InitRockdb()
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(rocksdb init) TransactionInit failed !" << std::endl;
 		return -1;
 	}
 	
@@ -288,7 +281,6 @@ int InitRockdb()
     if (pRocksDb->SetInitVer(txn, getVersion()) != 0)
     {
         bRollback = true;
-		std::cout << " init ver failed !" << std::endl;
 		return -4;
     }
     
@@ -297,7 +289,6 @@ int InitRockdb()
 	if( pRocksDb->TransactionCommit(txn) )
 	{
 		bRollback = true;
-		std::cout << "(rocksdb init) TransactionCommit failed !" << std::endl;
 		return -5;
 	}
 
@@ -308,24 +299,20 @@ void test_time() {
     tm tmp_time;
 
     string date_s, date_e;
-    cout << "请输入开始日期(格式 2020-01-01): ";
     cin >> date_s;
     date_s += " 00:00:00";
     strptime(date_s.c_str(), "%Y-%m-%d %H:%M:%S", &tmp_time);
     uint64_t t_s = (uint64_t)mktime(&tmp_time);
-    cout << t_s << endl;
 
-    cout << "请输入结束日期(格式 2020-01-07): ";
     cin >> date_e;
     date_e += " 23:59:59";
     strptime(date_e.c_str(), "%Y-%m-%d %H:%M:%S", &tmp_time);
     uint64_t t_e = (uint64_t)mktime(&tmp_time);
-    cout << t_e << endl;
 
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT {
@@ -340,11 +327,10 @@ void test_time() {
     bool b {false};
 
     while (true) {
-        auto db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hashs);
+        rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hashs);
         for (auto v : hashs) {
             std::string header;
-            db_status = rdb_ptr->GetBlockByBlockHash(txn, v, header);
-            cout << __LINE__ << " " << db_status << endl;
+            rdb_ptr->GetBlockByBlockHash(txn, v, header);
             CBlock cblock;
             cblock.ParseFromString(header);
             for (auto i = 2; i < cblock.txs_size(); i += 3) {
@@ -373,20 +359,12 @@ void test_time() {
         }
         top--;
     }
-
-    for (auto v : addr_award) {
-        cout << "addr " << v.first << " award " << v.second << endl;
-    }
 }
 
 void ex_count_init() {
     size_t b_count {0};
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = pRocksDb->TransactionInit();
-    if( txn == NULL )
-    {
-        std::cout << "(ca->case 5:) TransactionInit failed !" << std::endl;
-    }
 
     ON_SCOPE_EXIT{
         pRocksDb->TransactionDelete(txn, true);
@@ -404,8 +382,6 @@ void ex_count_init() {
         for (size_t i = top; i > 0; --i) {
             pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs);
             b_count += vBlockHashs.size();
-            cout << "height------- " << i << endl;
-            cout << "count======= " << vBlockHashs.size() << endl;
             vBlockHashs.clear();
         }
 
@@ -449,7 +425,7 @@ bool ca_init()
 		g_synch->Process();
 	});
     
-
+//获取矿机在线时长
     g_deviceonline_timer.StartTimer(5 * 60 * 1000,GetOnLineTime);
 
 	return true;
@@ -539,28 +515,7 @@ void ca_print()
                 std::cout<<"input FromAddr :"<<std::endl;
 				std::cin>>FromAddr;
 
-				if (FromAddr == "q")
-				{
-					testExchangeInterface();
-					break;
-				} 
-                else if (FromAddr == "a") 
-                {
-                    testExchangeInterface2();
-                    break;
-                } 
-                else if (FromAddr == "w") 
-                {
-                    testExchangeInterface3();
-                    break;
-				} 
-                else if (FromAddr == "e") 
-                {
-                    testExchangeInterface4();
-                    break;
-                }
-
-                uint32_t needVerifyPreHashCount = 0;
+                int needVerifyPreHashCount = 0;
                 std::string minerFees;
 
 				std::cout<<"input ToAddr :"<<std::endl;
@@ -572,17 +527,28 @@ void ca_print()
 				std::cout<<"input minerFees :"<<std::endl;
 				std::cin>>minerFees;
 
-                if( !isInteger( std::to_string(needVerifyPreHashCount) ) || needVerifyPreHashCount < 3 )
+                if( !isInteger( std::to_string(needVerifyPreHashCount) ) || needVerifyPreHashCount < g_MinNeedVerifyPreHashCount )
                 {
                     std::cout << "input needVerifyPreHashCount error ! " << std::endl;
                     break;
                 }
 
-                if( std::stod(minerFees) <= 0)
+                if( std::stod(minerFees) <= 0 )
                 {
                     std::cout << "input minerFees error ! " << std::endl;
                     break;
                 }
+                if(std::stod(minerFees) < 0.01 || std::stod(minerFees) > 0.1)
+                {
+                    std::cout << "The minerFees is not within reasonable range ! " << std::endl;
+                    break;
+                }
+                
+                if(!FromAddr.compare(ToAddr))
+                {
+                    std::cout << "The FromAddr is equal with Toaddr ! " << std::endl;
+                    break;
+                } 
 
 				if(1 == FromAddr.size())
 				{
@@ -601,50 +567,7 @@ void ca_print()
                 break;
 			}
 			 case 4:
-			 {
-				
-				
-				
-				
-				
-				
-
-				
-				
-
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-           
-               
-                
-               
-                
-                
-                
-                
-                
-                
-                
-                
-               
-                
-                
-                
-	     
-                
-                
+			 {                
                TestSetOnLineTime();
                 break;
 			}
@@ -946,7 +869,7 @@ void ca_print()
                         cout<<"请输入GasFee:"<<endl;
                         std::cin >> GasFee;
                         
-                        CreatePledgeTransaction(fromAddrstr, pledge, 3, GasFee);
+                        CreatePledgeTransaction(fromAddrstr, pledge, g_MinNeedVerifyPreHashCount, GasFee);
 						break;
 					}
 					case 3:
@@ -964,8 +887,10 @@ void ca_print()
                         std::vector<std::string> utxoHashs;
                         pRocksDb->GetUtxoHashsByAddress(txn, addr, utxoHashs);
                         uint64_t total = 0;
+                        std::cout << "账户:" << addr << std::endl << "utxo:" << std::endl;
                         for (auto i : utxoHashs)
                         {
+                            std::cout << i << std::endl;
                             std::string txRaw;
                             pRocksDb->GetTransactionByHash(txn, i, txRaw);
 
@@ -1117,7 +1042,7 @@ void ca_print()
 
                         if (utxos.size() > 0)
                         {
-                            CreateRedeemTransaction(addr, 3, GasFee, utxo);
+                            CreateRedeemTransaction(addr, g_MinNeedVerifyPreHashCount, GasFee, utxo);
                         }
 						break;
 					}
@@ -1131,7 +1056,7 @@ void ca_print()
                             std::cin >> addr;
 
                             std::shared_ptr<GetPledgeListReq> req = std::make_shared<GetPledgeListReq>();
-                            req->set_version("test");
+                            req->set_version(getVersion());
                             req->set_addr(addr);
                             req->set_index(0);
                             req->set_count(100);
@@ -1228,7 +1153,7 @@ void ca_print()
                             std::cin >> count;
 
                             std::shared_ptr<GetTxInfoListReq> req = std::make_shared<GetTxInfoListReq>();
-                            req->set_version("test");
+                            req->set_version(getVersion());
                             req->set_addr(addr);
                             req->set_index(index);
                             req->set_count(count);
@@ -1304,7 +1229,7 @@ void ca_print()
                             std::cin >> addr;
 
                             std::shared_ptr<GetTxInfoDetailReq> req = std::make_shared<GetTxInfoDetailReq>();
-                            req->set_version("test");
+                            req->set_version(getVersion());
                             req->set_txhash(txHash);
                             req->set_addr(addr);
                             
@@ -1353,7 +1278,7 @@ void ca_print()
                         std::cin >> count;
                         
                         GetBlockInfoListReq req;
-                        req.set_version("test");
+                        req.set_version(getVersion());
                         req.set_index(index);
                         req.set_count(count);
 
@@ -1420,7 +1345,7 @@ void ca_print()
                         std::cin >> hash;
 
                         GetBlockInfoDetailReq req;
-                        req.set_version("test");
+                        req.set_version(getVersion());
                         req.set_blockhash(hash);
 
                         std::cout << " -- 附近节点id列表 -- " << std::endl;
@@ -1559,8 +1484,88 @@ void ca_print()
                         });
 
                         GetNodeInfoReq req;
-                        req.set_version("test");
+                        req.set_version(getVersion());
                         net_send_message<GetNodeInfoReq>(id, req);
+                        break;
+                    }
+                    case 19:
+                    {
+                        int sleepNum = 5;
+
+                        int addrNum = 0;
+                        std::cout << "账号数量：";
+                        std::cin >> addrNum;
+
+                        std::vector<std::string> addrs;
+                        for (int i = 0; i < addrNum; ++i)
+                        {
+                            std::string tmpAddr;
+                            std::cout << "账号" << i << ": ";
+                            std::cin >> tmpAddr;
+                            addrs.push_back(tmpAddr);
+                        }
+
+                        while(1)
+                        {
+                            srand(time(NULL));
+                            int i = rand() % 3;
+                            switch(i)
+                            {
+                                case 0:
+                                {
+                                    int tmpNumber1 = rand() % addrNum;
+                                    if (tmpNumber1 >= (int)addrs.size())
+                                    {
+                                        tmpNumber1 = 0;
+                                    }
+
+                                    int tmpNumber2 = tmpNumber1 + 1;
+                                    if (tmpNumber2 >= (int)addrs.size())
+                                    {
+                                        tmpNumber2 = 0;
+                                    }
+
+                                    std::cout << "=============普通交易=============" << std::endl;
+
+                                    CreateTx(addrs[tmpNumber1].c_str(), addrs[tmpNumber2].c_str(), "100", NULL, 6, "0.01");
+
+                                    std::cout << "==================================" << std::endl << std::endl << std::endl;
+                                                                        sleep(sleepNum);
+                                    std::cout << "==============sleep===============" << std::endl << std::endl << std::endl;
+                                    break;
+                                }
+                                case 1:
+                                {
+                                    std::cout << "=============质押交易=============" << std::endl;
+                                    CreatePledgeTransaction(addrs[0], "500", 6, "0.01");
+                                    std::cout << "==================================" << std::endl << std::endl << std::endl;
+                                                                        sleep(sleepNum);
+                                    std::cout << "==============sleep===============" << std::endl << std::endl << std::endl;
+                                    break;
+                                }
+                                case 2: 
+                                {
+                                    std::cout << "=============解质押交易=============" << std::endl;
+                                    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+                                    Transaction* txn = pRocksDb->TransactionInit();
+                                    ON_SCOPE_EXIT{
+                                        pRocksDb->TransactionDelete(txn, true);
+                                    };
+
+                                    std::vector<string> utxos;
+                                    pRocksDb->GetPledgeAddressUtxo(txn, addrs[0], utxos);
+                                    if (utxos.size() == 0)
+                                        break;
+
+                                    CreateRedeemTransaction(addrs[0], 6, "0.01", utxos[0]);
+                                    std::cout << "==================================" << std::endl << std::endl << std::endl;
+                                    sleep(sleepNum);
+                                    std::cout << "==============sleep===============" << std::endl << std::endl << std::endl;
+                                    break;
+                                }
+
+                            }
+                        }
                         break;
                     }
 					default:
@@ -1816,7 +1821,7 @@ void testExchangeInterface() {
 
     for (auto i = 0; i < account_num; ++i) {
         cout << account_map[i] << endl;
-        CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", account_map[i], asset, NULL, 3, "0.1");
+        CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", account_map[i], asset, NULL, g_MinNeedVerifyPreHashCount, "0.1");
         usleep(sleeps);
     }
 
@@ -1838,7 +1843,7 @@ void testExchangeInterface() {
             }
         }
 
-        int re = CreateTx(account_map[compare1], account_map[compare2], asset_random.c_str(), NULL, 3, "0.1");
+        int re = CreateTx(account_map[compare1], account_map[compare2], asset_random.c_str(), NULL, g_MinNeedVerifyPreHashCount, "0.1");
         if (re == 0) {
             cout << "success" << endl;
         } else {
@@ -1874,7 +1879,7 @@ void testExchangeInterface2() {
     sprintf(asset, "%d", dis_asset);
 
     cout << account_map[0] << endl;
-    CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", account_map[0], asset, NULL, 3, "0.1");
+    CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", account_map[0], asset, NULL, g_MinNeedVerifyPreHashCount, "0.1");
 
     
     uniform_int_distribution<unsigned> rand_engine(0, account_num - 1);
@@ -1883,7 +1888,7 @@ void testExchangeInterface2() {
     string asset_random = "1";
 
     while (true) {
-        int re = CreateTx(account_map[0], account_map[1], asset_random.c_str(), NULL, 3, "0.1");
+        int re = CreateTx(account_map[0], account_map[1], asset_random.c_str(), NULL, g_MinNeedVerifyPreHashCount, "0.1");
         if (re == 0) {
             cout << "success" << endl;
         } else {
@@ -1978,7 +1983,7 @@ void testExchangeInterface3() {
     for (auto v : account_list) {
         uint64_t amount = CheckBalanceFromRocksDb(v.c_str());
         if (amount < 200*1000) {
-            CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", v.c_str(), asset, NULL, 3, "0.1");
+            CreateTx("16psRip78QvUruQr9fMzr8EomtFS1bVaXk", v.c_str(), asset, NULL, g_MinNeedVerifyPreHashCount, "0.1");
             cout << "16psRip78QvUruQr9fMzr8EomtFS1bVaXk------->>" << v.c_str() << endl;
             pRocksDb->GetBlockTop(txn, top);
             cout << "top-->" << top << endl;
@@ -2054,7 +2059,7 @@ void testExchangeInterface3() {
             cout << account_list[compare1] << endl;
             cout << account_list[compare2] << endl;
 
-            CreateTx(account_list[compare1].c_str(), account_list[compare2].c_str(), "1", NULL, 3, d_gas);
+            CreateTx(account_list[compare1].c_str(), account_list[compare2].c_str(), "1", NULL, g_MinNeedVerifyPreHashCount, d_gas);
             usleep(i_sleeps);
         }
 
@@ -2074,7 +2079,7 @@ void testExchangeInterface3() {
                     continue;
                 }
 
-                CreateTx(account_list[i].c_str(), account_list[i+1].c_str(), "1", NULL, 3, "3");
+                CreateTx(account_list[i].c_str(), account_list[i+1].c_str(), "1", NULL, g_MinNeedVerifyPreHashCount, "3");
                 cout << "bus-----1 " << account_list[i] << endl;
                 cout << "bus-----2 " << account_list[i+1] << endl;
                 ++temp_top;
@@ -2184,12 +2189,12 @@ void testExchangeInterface4()
         {
             if(g_testflag == 1)
             {
-                CreateTx(testnetstr.c_str(), v.c_str(), "10000", NULL, 3, "3");
+                CreateTx(testnetstr.c_str(), v.c_str(), "10000", NULL, g_MinNeedVerifyPreHashCount, "3");
                 cout << "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu------->>" << v.c_str() << endl;
             }
             else
             {
-                CreateTx(mainnetstr.c_str(), v.c_str(), "10000", NULL, 3, "3");
+                CreateTx(mainnetstr.c_str(), v.c_str(), "10000", NULL, g_MinNeedVerifyPreHashCount, "3");
                 cout << "16psRip78QvUruQr9fMzr8EomtFS1bVaXk------->>" << v.c_str() << endl;
             }
             usleep(13*1000*1000);
@@ -2254,8 +2259,7 @@ void testExchangeInterface4()
 		}	
 		int a1 = i % account_list.size();
 		int a2 = (i + 1) % account_list.size();
-		CreateTx(account_list[a1].c_str(), account_list[a2].c_str(), "1", NULL, 3, d_gas);
-		
+		CreateTx(account_list[a1].c_str(), account_list[a2].c_str(), "1", NULL, g_MinNeedVerifyPreHashCount, d_gas);
 		cout << account_list[a1] << " ---> " << account_list[a2] << " : " << 1 << endl;
         usleep(i_sleeps);
 	}

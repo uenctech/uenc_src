@@ -47,7 +47,7 @@ struct TableStruct_ca_5fprotomsg_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[16]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[20]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -69,6 +69,12 @@ extern SyncBlockInfoAckDefaultTypeInternal _SyncBlockInfoAck_default_instance_;
 class SyncBlockInfoReq;
 class SyncBlockInfoReqDefaultTypeInternal;
 extern SyncBlockInfoReqDefaultTypeInternal _SyncBlockInfoReq_default_instance_;
+class SyncGetPledgeNodeAck;
+class SyncGetPledgeNodeAckDefaultTypeInternal;
+extern SyncGetPledgeNodeAckDefaultTypeInternal _SyncGetPledgeNodeAck_default_instance_;
+class SyncGetPledgeNodeReq;
+class SyncGetPledgeNodeReqDefaultTypeInternal;
+extern SyncGetPledgeNodeReqDefaultTypeInternal _SyncGetPledgeNodeReq_default_instance_;
 class SyncGetnodeInfoAck;
 class SyncGetnodeInfoAckDefaultTypeInternal;
 extern SyncGetnodeInfoAckDefaultTypeInternal _SyncGetnodeInfoAck_default_instance_;
@@ -84,6 +90,12 @@ extern SyncLoseBlockAckDefaultTypeInternal _SyncLoseBlockAck_default_instance_;
 class SyncLoseBlockReq;
 class SyncLoseBlockReqDefaultTypeInternal;
 extern SyncLoseBlockReqDefaultTypeInternal _SyncLoseBlockReq_default_instance_;
+class SyncVerifyPledgeNodeAck;
+class SyncVerifyPledgeNodeAckDefaultTypeInternal;
+extern SyncVerifyPledgeNodeAckDefaultTypeInternal _SyncVerifyPledgeNodeAck_default_instance_;
+class SyncVerifyPledgeNodeReq;
+class SyncVerifyPledgeNodeReqDefaultTypeInternal;
+extern SyncVerifyPledgeNodeReqDefaultTypeInternal _SyncVerifyPledgeNodeReq_default_instance_;
 class TestGetNodeHeightHashBase58AddrAck;
 class TestGetNodeHeightHashBase58AddrAckDefaultTypeInternal;
 extern TestGetNodeHeightHashBase58AddrAckDefaultTypeInternal _TestGetNodeHeightHashBase58AddrAck_default_instance_;
@@ -108,11 +120,15 @@ template<> ::CheckHash* Arena::CreateMaybeMessage<::CheckHash>(Arena*);
 template<> ::SignNodeMsg* Arena::CreateMaybeMessage<::SignNodeMsg>(Arena*);
 template<> ::SyncBlockInfoAck* Arena::CreateMaybeMessage<::SyncBlockInfoAck>(Arena*);
 template<> ::SyncBlockInfoReq* Arena::CreateMaybeMessage<::SyncBlockInfoReq>(Arena*);
+template<> ::SyncGetPledgeNodeAck* Arena::CreateMaybeMessage<::SyncGetPledgeNodeAck>(Arena*);
+template<> ::SyncGetPledgeNodeReq* Arena::CreateMaybeMessage<::SyncGetPledgeNodeReq>(Arena*);
 template<> ::SyncGetnodeInfoAck* Arena::CreateMaybeMessage<::SyncGetnodeInfoAck>(Arena*);
 template<> ::SyncGetnodeInfoReq* Arena::CreateMaybeMessage<::SyncGetnodeInfoReq>(Arena*);
 template<> ::SyncHeaderMsg* Arena::CreateMaybeMessage<::SyncHeaderMsg>(Arena*);
 template<> ::SyncLoseBlockAck* Arena::CreateMaybeMessage<::SyncLoseBlockAck>(Arena*);
 template<> ::SyncLoseBlockReq* Arena::CreateMaybeMessage<::SyncLoseBlockReq>(Arena*);
+template<> ::SyncVerifyPledgeNodeAck* Arena::CreateMaybeMessage<::SyncVerifyPledgeNodeAck>(Arena*);
+template<> ::SyncVerifyPledgeNodeReq* Arena::CreateMaybeMessage<::SyncVerifyPledgeNodeReq>(Arena*);
 template<> ::TestGetNodeHeightHashBase58AddrAck* Arena::CreateMaybeMessage<::TestGetNodeHeightHashBase58AddrAck>(Arena*);
 template<> ::TestGetNodeHeightHashBase58AddrReq* Arena::CreateMaybeMessage<::TestGetNodeHeightHashBase58AddrReq>(Arena*);
 template<> ::TestSendExitNodeReq* Arena::CreateMaybeMessage<::TestSendExitNodeReq>(Arena*);
@@ -433,6 +449,586 @@ class CheckHash :
 };
 // -------------------------------------------------------------------
 
+class SyncGetPledgeNodeReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:SyncGetPledgeNodeReq) */ {
+ public:
+  SyncGetPledgeNodeReq();
+  virtual ~SyncGetPledgeNodeReq();
+
+  SyncGetPledgeNodeReq(const SyncGetPledgeNodeReq& from);
+  SyncGetPledgeNodeReq(SyncGetPledgeNodeReq&& from) noexcept
+    : SyncGetPledgeNodeReq() {
+    *this = ::std::move(from);
+  }
+
+  inline SyncGetPledgeNodeReq& operator=(const SyncGetPledgeNodeReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncGetPledgeNodeReq& operator=(SyncGetPledgeNodeReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SyncGetPledgeNodeReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SyncGetPledgeNodeReq* internal_default_instance() {
+    return reinterpret_cast<const SyncGetPledgeNodeReq*>(
+               &_SyncGetPledgeNodeReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(SyncGetPledgeNodeReq& a, SyncGetPledgeNodeReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SyncGetPledgeNodeReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SyncGetPledgeNodeReq* New() const final {
+    return CreateMaybeMessage<SyncGetPledgeNodeReq>(nullptr);
+  }
+
+  SyncGetPledgeNodeReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SyncGetPledgeNodeReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SyncGetPledgeNodeReq& from);
+  void MergeFrom(const SyncGetPledgeNodeReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SyncGetPledgeNodeReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "SyncGetPledgeNodeReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSyncHeaderMsgFieldNumber = 1,
+  };
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  bool has_syncheadermsg() const;
+  private:
+  bool _internal_has_syncheadermsg() const;
+  public:
+  void clear_syncheadermsg();
+  const ::SyncHeaderMsg& syncheadermsg() const;
+  ::SyncHeaderMsg* release_syncheadermsg();
+  ::SyncHeaderMsg* mutable_syncheadermsg();
+  void set_allocated_syncheadermsg(::SyncHeaderMsg* syncheadermsg);
+  private:
+  const ::SyncHeaderMsg& _internal_syncheadermsg() const;
+  ::SyncHeaderMsg* _internal_mutable_syncheadermsg();
+  public:
+
+  // @@protoc_insertion_point(class_scope:SyncGetPledgeNodeReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::SyncHeaderMsg* syncheadermsg_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SyncGetPledgeNodeAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:SyncGetPledgeNodeAck) */ {
+ public:
+  SyncGetPledgeNodeAck();
+  virtual ~SyncGetPledgeNodeAck();
+
+  SyncGetPledgeNodeAck(const SyncGetPledgeNodeAck& from);
+  SyncGetPledgeNodeAck(SyncGetPledgeNodeAck&& from) noexcept
+    : SyncGetPledgeNodeAck() {
+    *this = ::std::move(from);
+  }
+
+  inline SyncGetPledgeNodeAck& operator=(const SyncGetPledgeNodeAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncGetPledgeNodeAck& operator=(SyncGetPledgeNodeAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SyncGetPledgeNodeAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SyncGetPledgeNodeAck* internal_default_instance() {
+    return reinterpret_cast<const SyncGetPledgeNodeAck*>(
+               &_SyncGetPledgeNodeAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(SyncGetPledgeNodeAck& a, SyncGetPledgeNodeAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SyncGetPledgeNodeAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SyncGetPledgeNodeAck* New() const final {
+    return CreateMaybeMessage<SyncGetPledgeNodeAck>(nullptr);
+  }
+
+  SyncGetPledgeNodeAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SyncGetPledgeNodeAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SyncGetPledgeNodeAck& from);
+  void MergeFrom(const SyncGetPledgeNodeAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SyncGetPledgeNodeAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "SyncGetPledgeNodeAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdsFieldNumber = 1,
+  };
+  // repeated string ids = 1;
+  int ids_size() const;
+  private:
+  int _internal_ids_size() const;
+  public:
+  void clear_ids();
+  const std::string& ids(int index) const;
+  std::string* mutable_ids(int index);
+  void set_ids(int index, const std::string& value);
+  void set_ids(int index, std::string&& value);
+  void set_ids(int index, const char* value);
+  void set_ids(int index, const char* value, size_t size);
+  std::string* add_ids();
+  void add_ids(const std::string& value);
+  void add_ids(std::string&& value);
+  void add_ids(const char* value);
+  void add_ids(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_ids();
+  private:
+  const std::string& _internal_ids(int index) const;
+  std::string* _internal_add_ids();
+  public:
+
+  // @@protoc_insertion_point(class_scope:SyncGetPledgeNodeAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> ids_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SyncVerifyPledgeNodeReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:SyncVerifyPledgeNodeReq) */ {
+ public:
+  SyncVerifyPledgeNodeReq();
+  virtual ~SyncVerifyPledgeNodeReq();
+
+  SyncVerifyPledgeNodeReq(const SyncVerifyPledgeNodeReq& from);
+  SyncVerifyPledgeNodeReq(SyncVerifyPledgeNodeReq&& from) noexcept
+    : SyncVerifyPledgeNodeReq() {
+    *this = ::std::move(from);
+  }
+
+  inline SyncVerifyPledgeNodeReq& operator=(const SyncVerifyPledgeNodeReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncVerifyPledgeNodeReq& operator=(SyncVerifyPledgeNodeReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SyncVerifyPledgeNodeReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SyncVerifyPledgeNodeReq* internal_default_instance() {
+    return reinterpret_cast<const SyncVerifyPledgeNodeReq*>(
+               &_SyncVerifyPledgeNodeReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(SyncVerifyPledgeNodeReq& a, SyncVerifyPledgeNodeReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SyncVerifyPledgeNodeReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SyncVerifyPledgeNodeReq* New() const final {
+    return CreateMaybeMessage<SyncVerifyPledgeNodeReq>(nullptr);
+  }
+
+  SyncVerifyPledgeNodeReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SyncVerifyPledgeNodeReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SyncVerifyPledgeNodeReq& from);
+  void MergeFrom(const SyncVerifyPledgeNodeReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SyncVerifyPledgeNodeReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "SyncVerifyPledgeNodeReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdsFieldNumber = 2,
+    kSyncHeaderMsgFieldNumber = 1,
+  };
+  // repeated string ids = 2;
+  int ids_size() const;
+  private:
+  int _internal_ids_size() const;
+  public:
+  void clear_ids();
+  const std::string& ids(int index) const;
+  std::string* mutable_ids(int index);
+  void set_ids(int index, const std::string& value);
+  void set_ids(int index, std::string&& value);
+  void set_ids(int index, const char* value);
+  void set_ids(int index, const char* value, size_t size);
+  std::string* add_ids();
+  void add_ids(const std::string& value);
+  void add_ids(std::string&& value);
+  void add_ids(const char* value);
+  void add_ids(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_ids();
+  private:
+  const std::string& _internal_ids(int index) const;
+  std::string* _internal_add_ids();
+  public:
+
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  bool has_syncheadermsg() const;
+  private:
+  bool _internal_has_syncheadermsg() const;
+  public:
+  void clear_syncheadermsg();
+  const ::SyncHeaderMsg& syncheadermsg() const;
+  ::SyncHeaderMsg* release_syncheadermsg();
+  ::SyncHeaderMsg* mutable_syncheadermsg();
+  void set_allocated_syncheadermsg(::SyncHeaderMsg* syncheadermsg);
+  private:
+  const ::SyncHeaderMsg& _internal_syncheadermsg() const;
+  ::SyncHeaderMsg* _internal_mutable_syncheadermsg();
+  public:
+
+  // @@protoc_insertion_point(class_scope:SyncVerifyPledgeNodeReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> ids_;
+  ::SyncHeaderMsg* syncheadermsg_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SyncVerifyPledgeNodeAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:SyncVerifyPledgeNodeAck) */ {
+ public:
+  SyncVerifyPledgeNodeAck();
+  virtual ~SyncVerifyPledgeNodeAck();
+
+  SyncVerifyPledgeNodeAck(const SyncVerifyPledgeNodeAck& from);
+  SyncVerifyPledgeNodeAck(SyncVerifyPledgeNodeAck&& from) noexcept
+    : SyncVerifyPledgeNodeAck() {
+    *this = ::std::move(from);
+  }
+
+  inline SyncVerifyPledgeNodeAck& operator=(const SyncVerifyPledgeNodeAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SyncVerifyPledgeNodeAck& operator=(SyncVerifyPledgeNodeAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SyncVerifyPledgeNodeAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SyncVerifyPledgeNodeAck* internal_default_instance() {
+    return reinterpret_cast<const SyncVerifyPledgeNodeAck*>(
+               &_SyncVerifyPledgeNodeAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(SyncVerifyPledgeNodeAck& a, SyncVerifyPledgeNodeAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SyncVerifyPledgeNodeAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SyncVerifyPledgeNodeAck* New() const final {
+    return CreateMaybeMessage<SyncVerifyPledgeNodeAck>(nullptr);
+  }
+
+  SyncVerifyPledgeNodeAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SyncVerifyPledgeNodeAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SyncVerifyPledgeNodeAck& from);
+  void MergeFrom(const SyncVerifyPledgeNodeAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SyncVerifyPledgeNodeAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "SyncVerifyPledgeNodeAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdsFieldNumber = 1,
+  };
+  // repeated string ids = 1;
+  int ids_size() const;
+  private:
+  int _internal_ids_size() const;
+  public:
+  void clear_ids();
+  const std::string& ids(int index) const;
+  std::string* mutable_ids(int index);
+  void set_ids(int index, const std::string& value);
+  void set_ids(int index, std::string&& value);
+  void set_ids(int index, const char* value);
+  void set_ids(int index, const char* value, size_t size);
+  std::string* add_ids();
+  void add_ids(const std::string& value);
+  void add_ids(std::string&& value);
+  void add_ids(const char* value);
+  void add_ids(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& ids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_ids();
+  private:
+  const std::string& _internal_ids(int index) const;
+  std::string* _internal_add_ids();
+  public:
+
+  // @@protoc_insertion_point(class_scope:SyncVerifyPledgeNodeAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> ids_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
 class SyncGetnodeInfoReq :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:SyncGetnodeInfoReq) */ {
  public:
@@ -475,7 +1071,7 @@ class SyncGetnodeInfoReq :
                &_SyncGetnodeInfoReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    6;
 
   friend void swap(SyncGetnodeInfoReq& a, SyncGetnodeInfoReq& b) {
     a.Swap(&b);
@@ -609,7 +1205,7 @@ class SyncGetnodeInfoAck :
                &_SyncGetnodeInfoAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    7;
 
   friend void swap(SyncGetnodeInfoAck& a, SyncGetnodeInfoAck& b) {
     a.Swap(&b);
@@ -772,7 +1368,7 @@ class VerifyReliableNodeReq :
                &_VerifyReliableNodeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    8;
 
   friend void swap(VerifyReliableNodeReq& a, VerifyReliableNodeReq& b) {
     a.Swap(&b);
@@ -917,7 +1513,7 @@ class VerifyReliableNodeAck :
                &_VerifyReliableNodeAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    9;
 
   friend void swap(VerifyReliableNodeAck& a, VerifyReliableNodeAck& b) {
     a.Swap(&b);
@@ -1098,7 +1694,7 @@ class SyncBlockInfoReq :
                &_SyncBlockInfoReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    10;
 
   friend void swap(SyncBlockInfoReq& a, SyncBlockInfoReq& b) {
     a.Swap(&b);
@@ -1274,7 +1870,7 @@ class SyncBlockInfoAck :
                &_SyncBlockInfoAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    11;
 
   friend void swap(SyncBlockInfoAck& a, SyncBlockInfoAck& b) {
     a.Swap(&b);
@@ -1464,7 +2060,7 @@ class SyncLoseBlockReq :
                &_SyncLoseBlockReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    12;
 
   friend void swap(SyncLoseBlockReq& a, SyncLoseBlockReq& b) {
     a.Swap(&b);
@@ -1638,7 +2234,7 @@ class SyncLoseBlockAck :
                &_SyncLoseBlockAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    13;
 
   friend void swap(SyncLoseBlockAck& a, SyncLoseBlockAck& b) {
     a.Swap(&b);
@@ -1790,7 +2386,7 @@ class SignNodeMsg :
                &_SignNodeMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    14;
 
   friend void swap(SignNodeMsg& a, SignNodeMsg& b) {
     a.Swap(&b);
@@ -1972,7 +2568,7 @@ class TxMsg :
                &_TxMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    15;
 
   friend void swap(TxMsg& a, TxMsg& b) {
     a.Swap(&b);
@@ -2192,7 +2788,7 @@ class BuileBlockBroadcastMsg :
                &_BuileBlockBroadcastMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    16;
 
   friend void swap(BuileBlockBroadcastMsg& a, BuileBlockBroadcastMsg& b) {
     a.Swap(&b);
@@ -2345,7 +2941,7 @@ class TestSendExitNodeReq :
                &_TestSendExitNodeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    17;
 
   friend void swap(TestSendExitNodeReq& a, TestSendExitNodeReq& b) {
     a.Swap(&b);
@@ -2480,7 +3076,7 @@ class TestGetNodeHeightHashBase58AddrReq :
                &_TestGetNodeHeightHashBase58AddrReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    18;
 
   friend void swap(TestGetNodeHeightHashBase58AddrReq& a, TestGetNodeHeightHashBase58AddrReq& b) {
     a.Swap(&b);
@@ -2633,7 +3229,7 @@ class TestGetNodeHeightHashBase58AddrAck :
                &_TestGetNodeHeightHashBase58AddrAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    19;
 
   friend void swap(TestGetNodeHeightHashBase58AddrAck& a, TestGetNodeHeightHashBase58AddrAck& b) {
     a.Swap(&b);
@@ -3022,6 +3618,364 @@ inline void CheckHash::set_allocated_hash(std::string* hash) {
   }
   hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hash);
   // @@protoc_insertion_point(field_set_allocated:CheckHash.hash)
+}
+
+// -------------------------------------------------------------------
+
+// SyncGetPledgeNodeReq
+
+// .SyncHeaderMsg syncHeaderMsg = 1;
+inline bool SyncGetPledgeNodeReq::_internal_has_syncheadermsg() const {
+  return this != internal_default_instance() && syncheadermsg_ != nullptr;
+}
+inline bool SyncGetPledgeNodeReq::has_syncheadermsg() const {
+  return _internal_has_syncheadermsg();
+}
+inline void SyncGetPledgeNodeReq::clear_syncheadermsg() {
+  if (GetArenaNoVirtual() == nullptr && syncheadermsg_ != nullptr) {
+    delete syncheadermsg_;
+  }
+  syncheadermsg_ = nullptr;
+}
+inline const ::SyncHeaderMsg& SyncGetPledgeNodeReq::_internal_syncheadermsg() const {
+  const ::SyncHeaderMsg* p = syncheadermsg_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::SyncHeaderMsg*>(
+      &::_SyncHeaderMsg_default_instance_);
+}
+inline const ::SyncHeaderMsg& SyncGetPledgeNodeReq::syncheadermsg() const {
+  // @@protoc_insertion_point(field_get:SyncGetPledgeNodeReq.syncHeaderMsg)
+  return _internal_syncheadermsg();
+}
+inline ::SyncHeaderMsg* SyncGetPledgeNodeReq::release_syncheadermsg() {
+  // @@protoc_insertion_point(field_release:SyncGetPledgeNodeReq.syncHeaderMsg)
+  
+  ::SyncHeaderMsg* temp = syncheadermsg_;
+  syncheadermsg_ = nullptr;
+  return temp;
+}
+inline ::SyncHeaderMsg* SyncGetPledgeNodeReq::_internal_mutable_syncheadermsg() {
+  
+  if (syncheadermsg_ == nullptr) {
+    auto* p = CreateMaybeMessage<::SyncHeaderMsg>(GetArenaNoVirtual());
+    syncheadermsg_ = p;
+  }
+  return syncheadermsg_;
+}
+inline ::SyncHeaderMsg* SyncGetPledgeNodeReq::mutable_syncheadermsg() {
+  // @@protoc_insertion_point(field_mutable:SyncGetPledgeNodeReq.syncHeaderMsg)
+  return _internal_mutable_syncheadermsg();
+}
+inline void SyncGetPledgeNodeReq::set_allocated_syncheadermsg(::SyncHeaderMsg* syncheadermsg) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete syncheadermsg_;
+  }
+  if (syncheadermsg) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      syncheadermsg = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, syncheadermsg, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  syncheadermsg_ = syncheadermsg;
+  // @@protoc_insertion_point(field_set_allocated:SyncGetPledgeNodeReq.syncHeaderMsg)
+}
+
+// -------------------------------------------------------------------
+
+// SyncGetPledgeNodeAck
+
+// repeated string ids = 1;
+inline int SyncGetPledgeNodeAck::_internal_ids_size() const {
+  return ids_.size();
+}
+inline int SyncGetPledgeNodeAck::ids_size() const {
+  return _internal_ids_size();
+}
+inline void SyncGetPledgeNodeAck::clear_ids() {
+  ids_.Clear();
+}
+inline std::string* SyncGetPledgeNodeAck::add_ids() {
+  // @@protoc_insertion_point(field_add_mutable:SyncGetPledgeNodeAck.ids)
+  return _internal_add_ids();
+}
+inline const std::string& SyncGetPledgeNodeAck::_internal_ids(int index) const {
+  return ids_.Get(index);
+}
+inline const std::string& SyncGetPledgeNodeAck::ids(int index) const {
+  // @@protoc_insertion_point(field_get:SyncGetPledgeNodeAck.ids)
+  return _internal_ids(index);
+}
+inline std::string* SyncGetPledgeNodeAck::mutable_ids(int index) {
+  // @@protoc_insertion_point(field_mutable:SyncGetPledgeNodeAck.ids)
+  return ids_.Mutable(index);
+}
+inline void SyncGetPledgeNodeAck::set_ids(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:SyncGetPledgeNodeAck.ids)
+  ids_.Mutable(index)->assign(value);
+}
+inline void SyncGetPledgeNodeAck::set_ids(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:SyncGetPledgeNodeAck.ids)
+  ids_.Mutable(index)->assign(std::move(value));
+}
+inline void SyncGetPledgeNodeAck::set_ids(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:SyncGetPledgeNodeAck.ids)
+}
+inline void SyncGetPledgeNodeAck::set_ids(int index, const char* value, size_t size) {
+  ids_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:SyncGetPledgeNodeAck.ids)
+}
+inline std::string* SyncGetPledgeNodeAck::_internal_add_ids() {
+  return ids_.Add();
+}
+inline void SyncGetPledgeNodeAck::add_ids(const std::string& value) {
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:SyncGetPledgeNodeAck.ids)
+}
+inline void SyncGetPledgeNodeAck::add_ids(std::string&& value) {
+  ids_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:SyncGetPledgeNodeAck.ids)
+}
+inline void SyncGetPledgeNodeAck::add_ids(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:SyncGetPledgeNodeAck.ids)
+}
+inline void SyncGetPledgeNodeAck::add_ids(const char* value, size_t size) {
+  ids_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:SyncGetPledgeNodeAck.ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+SyncGetPledgeNodeAck::ids() const {
+  // @@protoc_insertion_point(field_list:SyncGetPledgeNodeAck.ids)
+  return ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+SyncGetPledgeNodeAck::mutable_ids() {
+  // @@protoc_insertion_point(field_mutable_list:SyncGetPledgeNodeAck.ids)
+  return &ids_;
+}
+
+// -------------------------------------------------------------------
+
+// SyncVerifyPledgeNodeReq
+
+// .SyncHeaderMsg syncHeaderMsg = 1;
+inline bool SyncVerifyPledgeNodeReq::_internal_has_syncheadermsg() const {
+  return this != internal_default_instance() && syncheadermsg_ != nullptr;
+}
+inline bool SyncVerifyPledgeNodeReq::has_syncheadermsg() const {
+  return _internal_has_syncheadermsg();
+}
+inline void SyncVerifyPledgeNodeReq::clear_syncheadermsg() {
+  if (GetArenaNoVirtual() == nullptr && syncheadermsg_ != nullptr) {
+    delete syncheadermsg_;
+  }
+  syncheadermsg_ = nullptr;
+}
+inline const ::SyncHeaderMsg& SyncVerifyPledgeNodeReq::_internal_syncheadermsg() const {
+  const ::SyncHeaderMsg* p = syncheadermsg_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::SyncHeaderMsg*>(
+      &::_SyncHeaderMsg_default_instance_);
+}
+inline const ::SyncHeaderMsg& SyncVerifyPledgeNodeReq::syncheadermsg() const {
+  // @@protoc_insertion_point(field_get:SyncVerifyPledgeNodeReq.syncHeaderMsg)
+  return _internal_syncheadermsg();
+}
+inline ::SyncHeaderMsg* SyncVerifyPledgeNodeReq::release_syncheadermsg() {
+  // @@protoc_insertion_point(field_release:SyncVerifyPledgeNodeReq.syncHeaderMsg)
+  
+  ::SyncHeaderMsg* temp = syncheadermsg_;
+  syncheadermsg_ = nullptr;
+  return temp;
+}
+inline ::SyncHeaderMsg* SyncVerifyPledgeNodeReq::_internal_mutable_syncheadermsg() {
+  
+  if (syncheadermsg_ == nullptr) {
+    auto* p = CreateMaybeMessage<::SyncHeaderMsg>(GetArenaNoVirtual());
+    syncheadermsg_ = p;
+  }
+  return syncheadermsg_;
+}
+inline ::SyncHeaderMsg* SyncVerifyPledgeNodeReq::mutable_syncheadermsg() {
+  // @@protoc_insertion_point(field_mutable:SyncVerifyPledgeNodeReq.syncHeaderMsg)
+  return _internal_mutable_syncheadermsg();
+}
+inline void SyncVerifyPledgeNodeReq::set_allocated_syncheadermsg(::SyncHeaderMsg* syncheadermsg) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete syncheadermsg_;
+  }
+  if (syncheadermsg) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      syncheadermsg = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, syncheadermsg, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  syncheadermsg_ = syncheadermsg;
+  // @@protoc_insertion_point(field_set_allocated:SyncVerifyPledgeNodeReq.syncHeaderMsg)
+}
+
+// repeated string ids = 2;
+inline int SyncVerifyPledgeNodeReq::_internal_ids_size() const {
+  return ids_.size();
+}
+inline int SyncVerifyPledgeNodeReq::ids_size() const {
+  return _internal_ids_size();
+}
+inline void SyncVerifyPledgeNodeReq::clear_ids() {
+  ids_.Clear();
+}
+inline std::string* SyncVerifyPledgeNodeReq::add_ids() {
+  // @@protoc_insertion_point(field_add_mutable:SyncVerifyPledgeNodeReq.ids)
+  return _internal_add_ids();
+}
+inline const std::string& SyncVerifyPledgeNodeReq::_internal_ids(int index) const {
+  return ids_.Get(index);
+}
+inline const std::string& SyncVerifyPledgeNodeReq::ids(int index) const {
+  // @@protoc_insertion_point(field_get:SyncVerifyPledgeNodeReq.ids)
+  return _internal_ids(index);
+}
+inline std::string* SyncVerifyPledgeNodeReq::mutable_ids(int index) {
+  // @@protoc_insertion_point(field_mutable:SyncVerifyPledgeNodeReq.ids)
+  return ids_.Mutable(index);
+}
+inline void SyncVerifyPledgeNodeReq::set_ids(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:SyncVerifyPledgeNodeReq.ids)
+  ids_.Mutable(index)->assign(value);
+}
+inline void SyncVerifyPledgeNodeReq::set_ids(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:SyncVerifyPledgeNodeReq.ids)
+  ids_.Mutable(index)->assign(std::move(value));
+}
+inline void SyncVerifyPledgeNodeReq::set_ids(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:SyncVerifyPledgeNodeReq.ids)
+}
+inline void SyncVerifyPledgeNodeReq::set_ids(int index, const char* value, size_t size) {
+  ids_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:SyncVerifyPledgeNodeReq.ids)
+}
+inline std::string* SyncVerifyPledgeNodeReq::_internal_add_ids() {
+  return ids_.Add();
+}
+inline void SyncVerifyPledgeNodeReq::add_ids(const std::string& value) {
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:SyncVerifyPledgeNodeReq.ids)
+}
+inline void SyncVerifyPledgeNodeReq::add_ids(std::string&& value) {
+  ids_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:SyncVerifyPledgeNodeReq.ids)
+}
+inline void SyncVerifyPledgeNodeReq::add_ids(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:SyncVerifyPledgeNodeReq.ids)
+}
+inline void SyncVerifyPledgeNodeReq::add_ids(const char* value, size_t size) {
+  ids_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:SyncVerifyPledgeNodeReq.ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+SyncVerifyPledgeNodeReq::ids() const {
+  // @@protoc_insertion_point(field_list:SyncVerifyPledgeNodeReq.ids)
+  return ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+SyncVerifyPledgeNodeReq::mutable_ids() {
+  // @@protoc_insertion_point(field_mutable_list:SyncVerifyPledgeNodeReq.ids)
+  return &ids_;
+}
+
+// -------------------------------------------------------------------
+
+// SyncVerifyPledgeNodeAck
+
+// repeated string ids = 1;
+inline int SyncVerifyPledgeNodeAck::_internal_ids_size() const {
+  return ids_.size();
+}
+inline int SyncVerifyPledgeNodeAck::ids_size() const {
+  return _internal_ids_size();
+}
+inline void SyncVerifyPledgeNodeAck::clear_ids() {
+  ids_.Clear();
+}
+inline std::string* SyncVerifyPledgeNodeAck::add_ids() {
+  // @@protoc_insertion_point(field_add_mutable:SyncVerifyPledgeNodeAck.ids)
+  return _internal_add_ids();
+}
+inline const std::string& SyncVerifyPledgeNodeAck::_internal_ids(int index) const {
+  return ids_.Get(index);
+}
+inline const std::string& SyncVerifyPledgeNodeAck::ids(int index) const {
+  // @@protoc_insertion_point(field_get:SyncVerifyPledgeNodeAck.ids)
+  return _internal_ids(index);
+}
+inline std::string* SyncVerifyPledgeNodeAck::mutable_ids(int index) {
+  // @@protoc_insertion_point(field_mutable:SyncVerifyPledgeNodeAck.ids)
+  return ids_.Mutable(index);
+}
+inline void SyncVerifyPledgeNodeAck::set_ids(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:SyncVerifyPledgeNodeAck.ids)
+  ids_.Mutable(index)->assign(value);
+}
+inline void SyncVerifyPledgeNodeAck::set_ids(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:SyncVerifyPledgeNodeAck.ids)
+  ids_.Mutable(index)->assign(std::move(value));
+}
+inline void SyncVerifyPledgeNodeAck::set_ids(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:SyncVerifyPledgeNodeAck.ids)
+}
+inline void SyncVerifyPledgeNodeAck::set_ids(int index, const char* value, size_t size) {
+  ids_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:SyncVerifyPledgeNodeAck.ids)
+}
+inline std::string* SyncVerifyPledgeNodeAck::_internal_add_ids() {
+  return ids_.Add();
+}
+inline void SyncVerifyPledgeNodeAck::add_ids(const std::string& value) {
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:SyncVerifyPledgeNodeAck.ids)
+}
+inline void SyncVerifyPledgeNodeAck::add_ids(std::string&& value) {
+  ids_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:SyncVerifyPledgeNodeAck.ids)
+}
+inline void SyncVerifyPledgeNodeAck::add_ids(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  ids_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:SyncVerifyPledgeNodeAck.ids)
+}
+inline void SyncVerifyPledgeNodeAck::add_ids(const char* value, size_t size) {
+  ids_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:SyncVerifyPledgeNodeAck.ids)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+SyncVerifyPledgeNodeAck::ids() const {
+  // @@protoc_insertion_point(field_list:SyncVerifyPledgeNodeAck.ids)
+  return ids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+SyncVerifyPledgeNodeAck::mutable_ids() {
+  // @@protoc_insertion_point(field_mutable_list:SyncVerifyPledgeNodeAck.ids)
+  return &ids_;
 }
 
 // -------------------------------------------------------------------
@@ -5260,6 +6214,14 @@ inline void TestGetNodeHeightHashBase58AddrAck::set_allocated_base58addr(std::st
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

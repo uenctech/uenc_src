@@ -25,6 +25,22 @@ class CheckHashDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<CheckHash> _instance;
 } _CheckHash_default_instance_;
+class SyncGetPledgeNodeReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SyncGetPledgeNodeReq> _instance;
+} _SyncGetPledgeNodeReq_default_instance_;
+class SyncGetPledgeNodeAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SyncGetPledgeNodeAck> _instance;
+} _SyncGetPledgeNodeAck_default_instance_;
+class SyncVerifyPledgeNodeReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SyncVerifyPledgeNodeReq> _instance;
+} _SyncVerifyPledgeNodeReq_default_instance_;
+class SyncVerifyPledgeNodeAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SyncVerifyPledgeNodeAck> _instance;
+} _SyncVerifyPledgeNodeAck_default_instance_;
 class SyncGetnodeInfoReqDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SyncGetnodeInfoReq> _instance;
@@ -155,6 +171,35 @@ static void InitDefaultsscc_info_SyncBlockInfoReq_ca_5fprotomsg_2eproto() {
       &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,
       &scc_info_CheckHash_ca_5fprotomsg_2eproto.base,}};
 
+static void InitDefaultsscc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_SyncGetPledgeNodeAck_default_instance_;
+    new (ptr) ::SyncGetPledgeNodeAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::SyncGetPledgeNodeAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto}, {}};
+
+static void InitDefaultsscc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_SyncGetPledgeNodeReq_default_instance_;
+    new (ptr) ::SyncGetPledgeNodeReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::SyncGetPledgeNodeReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto}, {
+      &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
+
 static void InitDefaultsscc_info_SyncGetnodeInfoAck_ca_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -227,6 +272,35 @@ static void InitDefaultsscc_info_SyncLoseBlockReq_ca_5fprotomsg_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_SyncLoseBlockReq_ca_5fprotomsg_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SyncLoseBlockReq_ca_5fprotomsg_2eproto}, {
+      &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
+
+static void InitDefaultsscc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_SyncVerifyPledgeNodeAck_default_instance_;
+    new (ptr) ::SyncVerifyPledgeNodeAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::SyncVerifyPledgeNodeAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto}, {}};
+
+static void InitDefaultsscc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_SyncVerifyPledgeNodeReq_default_instance_;
+    new (ptr) ::SyncVerifyPledgeNodeReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::SyncVerifyPledgeNodeReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto}, {
       &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
 
 static void InitDefaultsscc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto() {
@@ -316,7 +390,7 @@ static void InitDefaultsscc_info_VerifyReliableNodeReq_ca_5fprotomsg_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_VerifyReliableNodeReq_ca_5fprotomsg_2eproto}, {
       &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_ca_5fprotomsg_2eproto[16];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_ca_5fprotomsg_2eproto[20];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_ca_5fprotomsg_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_ca_5fprotomsg_2eproto = nullptr;
 
@@ -336,6 +410,31 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ca_5fprotomsg_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::CheckHash, begin_),
   PROTOBUF_FIELD_OFFSET(::CheckHash, end_),
   PROTOBUF_FIELD_OFFSET(::CheckHash, hash_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::SyncGetPledgeNodeReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::SyncGetPledgeNodeReq, syncheadermsg_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::SyncGetPledgeNodeAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::SyncGetPledgeNodeAck, ids_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::SyncVerifyPledgeNodeReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::SyncVerifyPledgeNodeReq, syncheadermsg_),
+  PROTOBUF_FIELD_OFFSET(::SyncVerifyPledgeNodeReq, ids_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::SyncVerifyPledgeNodeAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::SyncVerifyPledgeNodeAck, ids_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SyncGetnodeInfoReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -454,25 +553,33 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ca_5fprotomsg_2eproto::offsets
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::SyncHeaderMsg)},
   { 7, -1, sizeof(::CheckHash)},
-  { 15, -1, sizeof(::SyncGetnodeInfoReq)},
-  { 21, -1, sizeof(::SyncGetnodeInfoAck)},
-  { 29, -1, sizeof(::VerifyReliableNodeReq)},
-  { 36, -1, sizeof(::VerifyReliableNodeAck)},
-  { 45, -1, sizeof(::SyncBlockInfoReq)},
-  { 54, -1, sizeof(::SyncBlockInfoAck)},
-  { 63, -1, sizeof(::SyncLoseBlockReq)},
-  { 72, -1, sizeof(::SyncLoseBlockAck)},
-  { 79, -1, sizeof(::SignNodeMsg)},
-  { 88, -1, sizeof(::TxMsg)},
-  { 99, -1, sizeof(::BuileBlockBroadcastMsg)},
-  { 106, -1, sizeof(::TestSendExitNodeReq)},
-  { 112, -1, sizeof(::TestGetNodeHeightHashBase58AddrReq)},
-  { 119, -1, sizeof(::TestGetNodeHeightHashBase58AddrAck)},
+  { 15, -1, sizeof(::SyncGetPledgeNodeReq)},
+  { 21, -1, sizeof(::SyncGetPledgeNodeAck)},
+  { 27, -1, sizeof(::SyncVerifyPledgeNodeReq)},
+  { 34, -1, sizeof(::SyncVerifyPledgeNodeAck)},
+  { 40, -1, sizeof(::SyncGetnodeInfoReq)},
+  { 46, -1, sizeof(::SyncGetnodeInfoAck)},
+  { 54, -1, sizeof(::VerifyReliableNodeReq)},
+  { 61, -1, sizeof(::VerifyReliableNodeAck)},
+  { 70, -1, sizeof(::SyncBlockInfoReq)},
+  { 79, -1, sizeof(::SyncBlockInfoAck)},
+  { 88, -1, sizeof(::SyncLoseBlockReq)},
+  { 97, -1, sizeof(::SyncLoseBlockAck)},
+  { 104, -1, sizeof(::SignNodeMsg)},
+  { 113, -1, sizeof(::TxMsg)},
+  { 124, -1, sizeof(::BuileBlockBroadcastMsg)},
+  { 131, -1, sizeof(::TestSendExitNodeReq)},
+  { 137, -1, sizeof(::TestGetNodeHeightHashBase58AddrReq)},
+  { 144, -1, sizeof(::TestGetNodeHeightHashBase58AddrAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncHeaderMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_CheckHash_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncGetPledgeNodeReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncGetPledgeNodeAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncVerifyPledgeNodeReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncVerifyPledgeNodeAck_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncGetnodeInfoReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SyncGetnodeInfoAck_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_VerifyReliableNodeReq_default_instance_),
@@ -493,52 +600,62 @@ const char descriptor_table_protodef_ca_5fprotomsg_2eproto[] PROTOBUF_SECTION_VA
   "\n\021ca_protomsg.proto\",\n\rSyncHeaderMsg\022\017\n\007"
   "version\030\001 \001(\014\022\n\n\002id\030\004 \001(\014\"5\n\tCheckHash\022\r"
   "\n\005begin\030\001 \001(\004\022\013\n\003end\030\002 \001(\004\022\014\n\004hash\030\003 \001(\t"
-  "\";\n\022SyncGetnodeInfoReq\022%\n\rsyncHeaderMsg\030"
-  "\001 \001(\0132\016.SyncHeaderMsg\"Y\n\022SyncGetnodeInfo"
-  "Ack\022%\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHeaderM"
-  "sg\022\016\n\006height\030\002 \001(\004\022\014\n\004hash\030\003 \001(\014\"N\n\025Veri"
-  "fyReliableNodeReq\022%\n\rsyncHeaderMsg\030\001 \001(\013"
-  "2\016.SyncHeaderMsg\022\016\n\006height\030\002 \001(\003\"h\n\025Veri"
-  "fyReliableNodeAck\022%\n\rsyncHeaderMsg\030\001 \001(\013"
-  "2\016.SyncHeaderMsg\022\n\n\002id\030\002 \001(\t\022\016\n\006height\030\003"
-  " \001(\004\022\014\n\004hash\030\004 \001(\014\"y\n\020SyncBlockInfoReq\022%"
-  "\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg\022\016\n"
-  "\006height\030\002 \001(\004\022\035\n\tcheckhash\030\003 \003(\0132\n.Check"
-  "Hash\022\017\n\007max_num\030\004 \001(\004\"\204\001\n\020SyncBlockInfoA"
-  "ck\022%\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMs"
-  "g\022%\n\021invalid_checkhash\030\002 \003(\0132\n.CheckHash"
-  "\022\016\n\006blocks\030\003 \001(\014\022\022\n\npoolblocks\030\004 \001(\014\"g\n\020"
-  "SyncLoseBlockReq\022%\n\rsyncHeaderMsg\030\001 \001(\0132"
-  "\016.SyncHeaderMsg\022\r\n\005begin\030\002 \001(\004\022\013\n\003end\030\003 "
-  "\001(\004\022\020\n\010all_hash\030\004 \001(\t\"I\n\020SyncLoseBlockAc"
-  "k\022%\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg"
-  "\022\016\n\006blocks\030\002 \001(\014\"V\n\013SignNodeMsg\022\017\n\007signM"
-  "sg\030\001 \001(\014\022\022\n\nsignPubKey\030\002 \001(\014\022\016\n\006gasFee\030\003"
-  " \001(\t\022\022\n\nonlineTime\030\004 \001(\001\"v\n\005TxMsg\022\017\n\007ver"
-  "sion\030\001 \001(\t\022\n\n\002id\030\002 \001(\014\022\n\n\002Tx\030\003 \001(\014\022\024\n\014tx"
-  "EncodeHash\030\004 \001(\t\022!\n\013signNodeMsg\030\005 \003(\0132\014."
-  "SignNodeMsg\022\013\n\003top\030\006 \001(\004\";\n\026BuileBlockBr"
-  "oadcastMsg\022\017\n\007version\030\001 \001(\t\022\020\n\010blockRaw\030"
-  "\002 \001(\014\"&\n\023TestSendExitNodeReq\022\017\n\007version\030"
-  "\001 \001(\t\"A\n\"TestGetNodeHeightHashBase58Addr"
-  "Req\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"s\n\"Test"
-  "GetNodeHeightHashBase58AddrAck\022\017\n\007versio"
-  "n\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\022\016\n\006height\030\003 \001(\004\022\014\n\004h"
-  "ash\030\004 \001(\t\022\022\n\nbase58addr\030\005 \001(\tb\006proto3"
+  "\"=\n\024SyncGetPledgeNodeReq\022%\n\rsyncHeaderMs"
+  "g\030\001 \001(\0132\016.SyncHeaderMsg\"#\n\024SyncGetPledge"
+  "NodeAck\022\013\n\003ids\030\001 \003(\t\"M\n\027SyncVerifyPledge"
+  "NodeReq\022%\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHea"
+  "derMsg\022\013\n\003ids\030\002 \003(\t\"&\n\027SyncVerifyPledgeN"
+  "odeAck\022\013\n\003ids\030\001 \003(\t\";\n\022SyncGetnodeInfoRe"
+  "q\022%\n\rsyncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg"
+  "\"Y\n\022SyncGetnodeInfoAck\022%\n\rsyncHeaderMsg\030"
+  "\001 \001(\0132\016.SyncHeaderMsg\022\016\n\006height\030\002 \001(\004\022\014\n"
+  "\004hash\030\003 \001(\014\"N\n\025VerifyReliableNodeReq\022%\n\r"
+  "syncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg\022\016\n\006h"
+  "eight\030\002 \001(\003\"h\n\025VerifyReliableNodeAck\022%\n\r"
+  "syncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg\022\n\n\002i"
+  "d\030\002 \001(\t\022\016\n\006height\030\003 \001(\004\022\014\n\004hash\030\004 \001(\014\"y\n"
+  "\020SyncBlockInfoReq\022%\n\rsyncHeaderMsg\030\001 \001(\013"
+  "2\016.SyncHeaderMsg\022\016\n\006height\030\002 \001(\004\022\035\n\tchec"
+  "khash\030\003 \003(\0132\n.CheckHash\022\017\n\007max_num\030\004 \001(\004"
+  "\"\204\001\n\020SyncBlockInfoAck\022%\n\rsyncHeaderMsg\030\001"
+  " \001(\0132\016.SyncHeaderMsg\022%\n\021invalid_checkhas"
+  "h\030\002 \003(\0132\n.CheckHash\022\016\n\006blocks\030\003 \001(\014\022\022\n\np"
+  "oolblocks\030\004 \001(\014\"g\n\020SyncLoseBlockReq\022%\n\rs"
+  "yncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg\022\r\n\005be"
+  "gin\030\002 \001(\004\022\013\n\003end\030\003 \001(\004\022\020\n\010all_hash\030\004 \001(\t"
+  "\"I\n\020SyncLoseBlockAck\022%\n\rsyncHeaderMsg\030\001 "
+  "\001(\0132\016.SyncHeaderMsg\022\016\n\006blocks\030\002 \001(\014\"V\n\013S"
+  "ignNodeMsg\022\017\n\007signMsg\030\001 \001(\014\022\022\n\nsignPubKe"
+  "y\030\002 \001(\014\022\016\n\006gasFee\030\003 \001(\t\022\022\n\nonlineTime\030\004 "
+  "\001(\001\"v\n\005TxMsg\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001("
+  "\014\022\n\n\002Tx\030\003 \001(\014\022\024\n\014txEncodeHash\030\004 \001(\t\022!\n\013s"
+  "ignNodeMsg\030\005 \003(\0132\014.SignNodeMsg\022\013\n\003top\030\006 "
+  "\001(\004\";\n\026BuileBlockBroadcastMsg\022\017\n\007version"
+  "\030\001 \001(\t\022\020\n\010blockRaw\030\002 \001(\014\"&\n\023TestSendExit"
+  "NodeReq\022\017\n\007version\030\001 \001(\t\"A\n\"TestGetNodeH"
+  "eightHashBase58AddrReq\022\017\n\007version\030\001 \001(\t\022"
+  "\n\n\002id\030\002 \001(\t\"s\n\"TestGetNodeHeightHashBase"
+  "58AddrAck\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\022\016"
+  "\n\006height\030\003 \001(\004\022\014\n\004hash\030\004 \001(\t\022\022\n\nbase58ad"
+  "dr\030\005 \001(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_ca_5fprotomsg_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_5fprotomsg_2eproto_sccs[16] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_5fprotomsg_2eproto_sccs[20] = {
   &scc_info_BuileBlockBroadcastMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_CheckHash_ca_5fprotomsg_2eproto.base,
   &scc_info_SignNodeMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncBlockInfoAck_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncBlockInfoReq_ca_5fprotomsg_2eproto.base,
+  &scc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto.base,
+  &scc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncGetnodeInfoAck_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncGetnodeInfoReq_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncLoseBlockAck_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncLoseBlockReq_ca_5fprotomsg_2eproto.base,
+  &scc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto.base,
+  &scc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto.base,
   &scc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto.base,
   &scc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto.base,
   &scc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto.base,
@@ -549,10 +666,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_ca_5fprotomsg_2eproto_once;
 static bool descriptor_table_ca_5fprotomsg_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ca_5fprotomsg_2eproto = {
-  &descriptor_table_ca_5fprotomsg_2eproto_initialized, descriptor_table_protodef_ca_5fprotomsg_2eproto, "ca_protomsg.proto", 1397,
-  &descriptor_table_ca_5fprotomsg_2eproto_once, descriptor_table_ca_5fprotomsg_2eproto_sccs, descriptor_table_ca_5fprotomsg_2eproto_deps, 16, 0,
+  &descriptor_table_ca_5fprotomsg_2eproto_initialized, descriptor_table_protodef_ca_5fprotomsg_2eproto, "ca_protomsg.proto", 1616,
+  &descriptor_table_ca_5fprotomsg_2eproto_once, descriptor_table_ca_5fprotomsg_2eproto_sccs, descriptor_table_ca_5fprotomsg_2eproto_deps, 20, 0,
   schemas, file_default_instances, TableStruct_ca_5fprotomsg_2eproto::offsets,
-  file_level_metadata_ca_5fprotomsg_2eproto, 16, file_level_enum_descriptors_ca_5fprotomsg_2eproto, file_level_service_descriptors_ca_5fprotomsg_2eproto,
+  file_level_metadata_ca_5fprotomsg_2eproto, 20, file_level_enum_descriptors_ca_5fprotomsg_2eproto, file_level_service_descriptors_ca_5fprotomsg_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -1038,6 +1155,842 @@ void CheckHash::InternalSwap(CheckHash* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CheckHash::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SyncGetPledgeNodeReq::InitAsDefaultInstance() {
+  ::_SyncGetPledgeNodeReq_default_instance_._instance.get_mutable()->syncheadermsg_ = const_cast< ::SyncHeaderMsg*>(
+      ::SyncHeaderMsg::internal_default_instance());
+}
+class SyncGetPledgeNodeReq::_Internal {
+ public:
+  static const ::SyncHeaderMsg& syncheadermsg(const SyncGetPledgeNodeReq* msg);
+};
+
+const ::SyncHeaderMsg&
+SyncGetPledgeNodeReq::_Internal::syncheadermsg(const SyncGetPledgeNodeReq* msg) {
+  return *msg->syncheadermsg_;
+}
+SyncGetPledgeNodeReq::SyncGetPledgeNodeReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:SyncGetPledgeNodeReq)
+}
+SyncGetPledgeNodeReq::SyncGetPledgeNodeReq(const SyncGetPledgeNodeReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from._internal_has_syncheadermsg()) {
+    syncheadermsg_ = new ::SyncHeaderMsg(*from.syncheadermsg_);
+  } else {
+    syncheadermsg_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:SyncGetPledgeNodeReq)
+}
+
+void SyncGetPledgeNodeReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto.base);
+  syncheadermsg_ = nullptr;
+}
+
+SyncGetPledgeNodeReq::~SyncGetPledgeNodeReq() {
+  // @@protoc_insertion_point(destructor:SyncGetPledgeNodeReq)
+  SharedDtor();
+}
+
+void SyncGetPledgeNodeReq::SharedDtor() {
+  if (this != internal_default_instance()) delete syncheadermsg_;
+}
+
+void SyncGetPledgeNodeReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SyncGetPledgeNodeReq& SyncGetPledgeNodeReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SyncGetPledgeNodeReq_ca_5fprotomsg_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SyncGetPledgeNodeReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:SyncGetPledgeNodeReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaNoVirtual() == nullptr && syncheadermsg_ != nullptr) {
+    delete syncheadermsg_;
+  }
+  syncheadermsg_ = nullptr;
+  _internal_metadata_.Clear();
+}
+
+const char* SyncGetPledgeNodeReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // .SyncHeaderMsg syncHeaderMsg = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_syncheadermsg(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SyncGetPledgeNodeReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:SyncGetPledgeNodeReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  if (this->has_syncheadermsg()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::syncheadermsg(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:SyncGetPledgeNodeReq)
+  return target;
+}
+
+size_t SyncGetPledgeNodeReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:SyncGetPledgeNodeReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  if (this->has_syncheadermsg()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *syncheadermsg_);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SyncGetPledgeNodeReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:SyncGetPledgeNodeReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SyncGetPledgeNodeReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SyncGetPledgeNodeReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:SyncGetPledgeNodeReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:SyncGetPledgeNodeReq)
+    MergeFrom(*source);
+  }
+}
+
+void SyncGetPledgeNodeReq::MergeFrom(const SyncGetPledgeNodeReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:SyncGetPledgeNodeReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.has_syncheadermsg()) {
+    _internal_mutable_syncheadermsg()->::SyncHeaderMsg::MergeFrom(from._internal_syncheadermsg());
+  }
+}
+
+void SyncGetPledgeNodeReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:SyncGetPledgeNodeReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SyncGetPledgeNodeReq::CopyFrom(const SyncGetPledgeNodeReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:SyncGetPledgeNodeReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SyncGetPledgeNodeReq::IsInitialized() const {
+  return true;
+}
+
+void SyncGetPledgeNodeReq::InternalSwap(SyncGetPledgeNodeReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(syncheadermsg_, other->syncheadermsg_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SyncGetPledgeNodeReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SyncGetPledgeNodeAck::InitAsDefaultInstance() {
+}
+class SyncGetPledgeNodeAck::_Internal {
+ public:
+};
+
+SyncGetPledgeNodeAck::SyncGetPledgeNodeAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:SyncGetPledgeNodeAck)
+}
+SyncGetPledgeNodeAck::SyncGetPledgeNodeAck(const SyncGetPledgeNodeAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      ids_(from.ids_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:SyncGetPledgeNodeAck)
+}
+
+void SyncGetPledgeNodeAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto.base);
+}
+
+SyncGetPledgeNodeAck::~SyncGetPledgeNodeAck() {
+  // @@protoc_insertion_point(destructor:SyncGetPledgeNodeAck)
+  SharedDtor();
+}
+
+void SyncGetPledgeNodeAck::SharedDtor() {
+}
+
+void SyncGetPledgeNodeAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SyncGetPledgeNodeAck& SyncGetPledgeNodeAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SyncGetPledgeNodeAck_ca_5fprotomsg_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SyncGetPledgeNodeAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:SyncGetPledgeNodeAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ids_.Clear();
+  _internal_metadata_.Clear();
+}
+
+const char* SyncGetPledgeNodeAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated string ids = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_ids();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "SyncGetPledgeNodeAck.ids"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SyncGetPledgeNodeAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:SyncGetPledgeNodeAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated string ids = 1;
+  for (int i = 0, n = this->_internal_ids_size(); i < n; i++) {
+    const auto& s = this->_internal_ids(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "SyncGetPledgeNodeAck.ids");
+    target = stream->WriteString(1, s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:SyncGetPledgeNodeAck)
+  return target;
+}
+
+size_t SyncGetPledgeNodeAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:SyncGetPledgeNodeAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string ids = 1;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(ids_.size());
+  for (int i = 0, n = ids_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      ids_.Get(i));
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SyncGetPledgeNodeAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:SyncGetPledgeNodeAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SyncGetPledgeNodeAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SyncGetPledgeNodeAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:SyncGetPledgeNodeAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:SyncGetPledgeNodeAck)
+    MergeFrom(*source);
+  }
+}
+
+void SyncGetPledgeNodeAck::MergeFrom(const SyncGetPledgeNodeAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:SyncGetPledgeNodeAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  ids_.MergeFrom(from.ids_);
+}
+
+void SyncGetPledgeNodeAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:SyncGetPledgeNodeAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SyncGetPledgeNodeAck::CopyFrom(const SyncGetPledgeNodeAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:SyncGetPledgeNodeAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SyncGetPledgeNodeAck::IsInitialized() const {
+  return true;
+}
+
+void SyncGetPledgeNodeAck::InternalSwap(SyncGetPledgeNodeAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ids_.InternalSwap(&other->ids_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SyncGetPledgeNodeAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SyncVerifyPledgeNodeReq::InitAsDefaultInstance() {
+  ::_SyncVerifyPledgeNodeReq_default_instance_._instance.get_mutable()->syncheadermsg_ = const_cast< ::SyncHeaderMsg*>(
+      ::SyncHeaderMsg::internal_default_instance());
+}
+class SyncVerifyPledgeNodeReq::_Internal {
+ public:
+  static const ::SyncHeaderMsg& syncheadermsg(const SyncVerifyPledgeNodeReq* msg);
+};
+
+const ::SyncHeaderMsg&
+SyncVerifyPledgeNodeReq::_Internal::syncheadermsg(const SyncVerifyPledgeNodeReq* msg) {
+  return *msg->syncheadermsg_;
+}
+SyncVerifyPledgeNodeReq::SyncVerifyPledgeNodeReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:SyncVerifyPledgeNodeReq)
+}
+SyncVerifyPledgeNodeReq::SyncVerifyPledgeNodeReq(const SyncVerifyPledgeNodeReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      ids_(from.ids_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from._internal_has_syncheadermsg()) {
+    syncheadermsg_ = new ::SyncHeaderMsg(*from.syncheadermsg_);
+  } else {
+    syncheadermsg_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:SyncVerifyPledgeNodeReq)
+}
+
+void SyncVerifyPledgeNodeReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto.base);
+  syncheadermsg_ = nullptr;
+}
+
+SyncVerifyPledgeNodeReq::~SyncVerifyPledgeNodeReq() {
+  // @@protoc_insertion_point(destructor:SyncVerifyPledgeNodeReq)
+  SharedDtor();
+}
+
+void SyncVerifyPledgeNodeReq::SharedDtor() {
+  if (this != internal_default_instance()) delete syncheadermsg_;
+}
+
+void SyncVerifyPledgeNodeReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SyncVerifyPledgeNodeReq& SyncVerifyPledgeNodeReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SyncVerifyPledgeNodeReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:SyncVerifyPledgeNodeReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ids_.Clear();
+  if (GetArenaNoVirtual() == nullptr && syncheadermsg_ != nullptr) {
+    delete syncheadermsg_;
+  }
+  syncheadermsg_ = nullptr;
+  _internal_metadata_.Clear();
+}
+
+const char* SyncVerifyPledgeNodeReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // .SyncHeaderMsg syncHeaderMsg = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_syncheadermsg(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated string ids = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_ids();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "SyncVerifyPledgeNodeReq.ids"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SyncVerifyPledgeNodeReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:SyncVerifyPledgeNodeReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  if (this->has_syncheadermsg()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::syncheadermsg(this), target, stream);
+  }
+
+  // repeated string ids = 2;
+  for (int i = 0, n = this->_internal_ids_size(); i < n; i++) {
+    const auto& s = this->_internal_ids(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "SyncVerifyPledgeNodeReq.ids");
+    target = stream->WriteString(2, s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:SyncVerifyPledgeNodeReq)
+  return target;
+}
+
+size_t SyncVerifyPledgeNodeReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:SyncVerifyPledgeNodeReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string ids = 2;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(ids_.size());
+  for (int i = 0, n = ids_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      ids_.Get(i));
+  }
+
+  // .SyncHeaderMsg syncHeaderMsg = 1;
+  if (this->has_syncheadermsg()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *syncheadermsg_);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SyncVerifyPledgeNodeReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:SyncVerifyPledgeNodeReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SyncVerifyPledgeNodeReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SyncVerifyPledgeNodeReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:SyncVerifyPledgeNodeReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:SyncVerifyPledgeNodeReq)
+    MergeFrom(*source);
+  }
+}
+
+void SyncVerifyPledgeNodeReq::MergeFrom(const SyncVerifyPledgeNodeReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:SyncVerifyPledgeNodeReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  ids_.MergeFrom(from.ids_);
+  if (from.has_syncheadermsg()) {
+    _internal_mutable_syncheadermsg()->::SyncHeaderMsg::MergeFrom(from._internal_syncheadermsg());
+  }
+}
+
+void SyncVerifyPledgeNodeReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:SyncVerifyPledgeNodeReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SyncVerifyPledgeNodeReq::CopyFrom(const SyncVerifyPledgeNodeReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:SyncVerifyPledgeNodeReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SyncVerifyPledgeNodeReq::IsInitialized() const {
+  return true;
+}
+
+void SyncVerifyPledgeNodeReq::InternalSwap(SyncVerifyPledgeNodeReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ids_.InternalSwap(&other->ids_);
+  swap(syncheadermsg_, other->syncheadermsg_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SyncVerifyPledgeNodeReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SyncVerifyPledgeNodeAck::InitAsDefaultInstance() {
+}
+class SyncVerifyPledgeNodeAck::_Internal {
+ public:
+};
+
+SyncVerifyPledgeNodeAck::SyncVerifyPledgeNodeAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:SyncVerifyPledgeNodeAck)
+}
+SyncVerifyPledgeNodeAck::SyncVerifyPledgeNodeAck(const SyncVerifyPledgeNodeAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      ids_(from.ids_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:SyncVerifyPledgeNodeAck)
+}
+
+void SyncVerifyPledgeNodeAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto.base);
+}
+
+SyncVerifyPledgeNodeAck::~SyncVerifyPledgeNodeAck() {
+  // @@protoc_insertion_point(destructor:SyncVerifyPledgeNodeAck)
+  SharedDtor();
+}
+
+void SyncVerifyPledgeNodeAck::SharedDtor() {
+}
+
+void SyncVerifyPledgeNodeAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SyncVerifyPledgeNodeAck& SyncVerifyPledgeNodeAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SyncVerifyPledgeNodeAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:SyncVerifyPledgeNodeAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ids_.Clear();
+  _internal_metadata_.Clear();
+}
+
+const char* SyncVerifyPledgeNodeAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated string ids = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_ids();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "SyncVerifyPledgeNodeAck.ids"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SyncVerifyPledgeNodeAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:SyncVerifyPledgeNodeAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated string ids = 1;
+  for (int i = 0, n = this->_internal_ids_size(); i < n; i++) {
+    const auto& s = this->_internal_ids(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "SyncVerifyPledgeNodeAck.ids");
+    target = stream->WriteString(1, s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:SyncVerifyPledgeNodeAck)
+  return target;
+}
+
+size_t SyncVerifyPledgeNodeAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:SyncVerifyPledgeNodeAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string ids = 1;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(ids_.size());
+  for (int i = 0, n = ids_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      ids_.Get(i));
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SyncVerifyPledgeNodeAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:SyncVerifyPledgeNodeAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SyncVerifyPledgeNodeAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SyncVerifyPledgeNodeAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:SyncVerifyPledgeNodeAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:SyncVerifyPledgeNodeAck)
+    MergeFrom(*source);
+  }
+}
+
+void SyncVerifyPledgeNodeAck::MergeFrom(const SyncVerifyPledgeNodeAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:SyncVerifyPledgeNodeAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  ids_.MergeFrom(from.ids_);
+}
+
+void SyncVerifyPledgeNodeAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:SyncVerifyPledgeNodeAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SyncVerifyPledgeNodeAck::CopyFrom(const SyncVerifyPledgeNodeAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:SyncVerifyPledgeNodeAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SyncVerifyPledgeNodeAck::IsInitialized() const {
+  return true;
+}
+
+void SyncVerifyPledgeNodeAck::InternalSwap(SyncVerifyPledgeNodeAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ids_.InternalSwap(&other->ids_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SyncVerifyPledgeNodeAck::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -4856,6 +5809,18 @@ template<> PROTOBUF_NOINLINE ::SyncHeaderMsg* Arena::CreateMaybeMessage< ::SyncH
 }
 template<> PROTOBUF_NOINLINE ::CheckHash* Arena::CreateMaybeMessage< ::CheckHash >(Arena* arena) {
   return Arena::CreateInternal< ::CheckHash >(arena);
+}
+template<> PROTOBUF_NOINLINE ::SyncGetPledgeNodeReq* Arena::CreateMaybeMessage< ::SyncGetPledgeNodeReq >(Arena* arena) {
+  return Arena::CreateInternal< ::SyncGetPledgeNodeReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::SyncGetPledgeNodeAck* Arena::CreateMaybeMessage< ::SyncGetPledgeNodeAck >(Arena* arena) {
+  return Arena::CreateInternal< ::SyncGetPledgeNodeAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::SyncVerifyPledgeNodeReq* Arena::CreateMaybeMessage< ::SyncVerifyPledgeNodeReq >(Arena* arena) {
+  return Arena::CreateInternal< ::SyncVerifyPledgeNodeReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::SyncVerifyPledgeNodeAck* Arena::CreateMaybeMessage< ::SyncVerifyPledgeNodeAck >(Arena* arena) {
+  return Arena::CreateInternal< ::SyncVerifyPledgeNodeAck >(arena);
 }
 template<> PROTOBUF_NOINLINE ::SyncGetnodeInfoReq* Arena::CreateMaybeMessage< ::SyncGetnodeInfoReq >(Arena* arena) {
   return Arena::CreateInternal< ::SyncGetnodeInfoReq >(arena);

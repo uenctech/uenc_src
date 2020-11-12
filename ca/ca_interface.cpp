@@ -145,6 +145,10 @@ void RegisterCallback()
     net_register_callback<VerifyReliableNodeAck>(HandleVerifyReliableNodeAck);
     net_register_callback<SyncLoseBlockReq>(HandleSyncLoseBlockReq);
     net_register_callback<SyncLoseBlockAck>(HandleSyncLoseBlockAck);
+    net_register_callback<SyncGetPledgeNodeReq>(HandleSyncGetPledgeNodeReq);
+    net_register_callback<SyncGetPledgeNodeAck>(HandleSyncGetPledgeNodeAck);
+    net_register_callback<SyncVerifyPledgeNodeReq>(HandleSyncVerifyPledgeNodeReq);
+    net_register_callback<SyncVerifyPledgeNodeAck>(HandleSyncVerifyPledgeNodeAck);
 
     
     net_register_callback<TxMsg>(HandleTx);
@@ -224,7 +228,6 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
     if(From != NULL)
     {
         if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, From)) {
-            std::cout << "非法账号" << std::endl;
             return -2;
         }
     }
@@ -268,7 +271,6 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         phoneControlDevicePledgeTxAck.set_code(-102);
         phoneControlDevicePledgeTxAck.set_message("TransactionInit failed !");
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-		std::cout << "(CreatePledgeTransaction) TransactionInit failed !" << std::endl;
 		return -102;
 	}
 
@@ -296,7 +298,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-    extra["GasFee"] = GasFee;
+    extra["SignFee"] = GasFee;
     extra["PackageFee"] = 0;   
     extra["TransactionType"] = TXTYPE_PLEDGE;
     extra["TransactionInfo"] = txInfo;
@@ -324,7 +326,6 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         phoneControlDevicePledgeTxAck.set_code(-104);
         phoneControlDevicePledgeTxAck.set_message("Illegal account !");
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        std::cout << "非法账号" << std::endl;
         return -104;
     }
 
@@ -459,7 +460,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-    extra["GasFee"] = GasFee;
+    extra["SignFee"] = GasFee;
     extra["PackageFee"] = 0;   
     extra["TransactionType"] = TXTYPE_REDEEM;
     extra["TransactionInfo"] = txInfo;
@@ -479,7 +480,6 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     
     if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
     {
-        std::cout << "非法账号" << std::endl;
         return -2;
     }
 
@@ -544,7 +544,6 @@ bool net_segment_allip(const char *ip, const char *mask, std::vector<std::string
     unsigned int temp_min;
     if(max < min)
     {
-        std::cout << "network segment start and end failed !" << std::endl;
         return false;
     }
 
@@ -713,12 +712,8 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
             threads[i] = std::thread(getuserip_all, &vv[i], port, &outip_mac, &sum, ip_vect.size(), spp);   
         }
 
-        std::cout << "Done spawning threads. Now waiting for them to join:\n";  
         for (int i = 0; i<10; ++i)  
             threads[i].join();  
-
-        std::cout << "All threads joined!\n";  
-    
     }
 
     cJSON * root =  cJSON_CreateObject();
@@ -733,7 +728,6 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
         map<string,string>::iterator iter;
         iter = outip_mac[i].begin();
         string mac = iter->second;
-        cout<< "macaddress=" << mac.c_str() <<endl;
         char name1[256] = {0};
         sprintf(name1, "%s", mac.c_str());
         cJSON_AddItemToObject(ipaddr, "titile", cJSON_CreateString(name1));
@@ -745,7 +739,6 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
 	cJSON_AddItemToObject(root, "data", data);
 
     cstring * cs = cstr_new(cJSON_PrintUnformatted(root));
-    cout << "cs:" << cs->str <<endl;
     cJSON_Delete(root); 
 
     if(cs->len > *outdatalen)
@@ -782,7 +775,7 @@ int senddata(int fdnum)
     GetMacReq getMacReq;
 	CommonMsg msg;
 	msg.set_type("GetMacReq");
-	msg.set_version("1");
+	msg.set_version(getVersion());
 	msg.set_data(getMacReq.SerializeAsString());
 
 	std::string data = msg.SerializeAsString();
@@ -796,7 +789,6 @@ int senddata(int fdnum)
 	memcpy(buff + 4 + data.size(), &checksum, 4);
 	memcpy(buff + 4 + data.size() + 4, &end_flag, 4);
     int s = send(fdnum,buff,len + 4,0);     
-    cout<<"datas ="<<s<<endl;
     delete buff;
     return s;
 } 
@@ -804,8 +796,7 @@ int senddata(int fdnum)
 
 void ScanPortProcFun(const char * ip, unsigned int current, unsigned int total)
 {
-    cout << "================ " << (double)current / (double)total * 100 << "% ================" << endl;
-    cout<<"================"<<ip<<"========================="<<endl;
+
 }
 
 ScanPortProc pScanPortProcFun = ScanPortProcFun;
@@ -818,7 +809,6 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
      
         int datalen; 
         memcpy(&datalen,mybuf,4);
-        std::cout << "datalen:" << datalen << std::endl;
         if (datalen >0)
         {
 
@@ -836,8 +826,6 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
         }
 
         std::string type = common_msg.type();
-        std::cout << "recvdata type:" << type << std::endl;
-
         
         GetMacAck getMacAck;
         r = getMacAck.ParseFromString(common_msg.data());
@@ -847,7 +835,6 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
             return 0;
         }
        
-         cout<<"mac=:"<<getMacAck.mac()<<endl;
          map<string,string> mac_and_ip;
          mac_and_ip.insert(make_pair(ip_vect->at(i).c_str(),getMacAck.mac()));
          outip_mac->push_back(mac_and_ip);  

@@ -29,7 +29,6 @@ void net_set_self_fee(uint64_t fee)
 	if(global::fee_inited >= 2)
 	{
 		global::cond_fee_is_set.notify_all();
-		std::cout << "cond_fee_is_set:notify_all" << std::endl;
 	}
     
 }
@@ -59,8 +58,6 @@ void net_set_self_package_fee(uint64_t package_fee)
     if(global::fee_inited >= 2)
 	{
 		global::cond_fee_is_set.notify_all();
-   		std::cout << "cond_package_fee_is_set:notify_all" << std::endl;
-
 	}
     
 }

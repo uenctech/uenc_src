@@ -7,63 +7,6 @@ using namespace std;
 // m = 70, c = 2, b = 0.025
 namespace a_award {
 
-
-void AwardAlgorithm::TestPrint(bool lable) {
-    if (lable) {
-        auto br = []() {
-            cout << "|---------------------------------------------------------------|" << endl;
-        };
-
-        cout << "\033[1;40;32m";
-        br();
-        cout << " 档位奖励池总金额" << endl;
-        cout << " " << this->award_pool << endl;
-
-        br();
-        cout << " 签名地址: " << endl;
-        for (auto v : vec_addr) {
-            cout << " "<<  v << endl;
-        }
-
-        br();
-        cout << " 在线天数" << endl;
-        for (auto v : get<0>(this->t_list)) {
-            cout << " " << v << endl;
-        }
-
-        br();
-        cout << " 总签名数" << endl;
-        for (auto v : get<1>(this->t_list)) {
-            cout << " " << v << endl;
-        }
-
-        br();
-        cout << " 总签名获取的额外奖励金额" << endl;
-        for (auto v : get<2>(this->t_list)) {
-            cout << " " << v << endl;
-        }
-
-        br();
-        cout << " 比率" << endl;
-        for (auto v : get<3>(this->t_list)) {
-            cout << " " << v << endl;
-        }
-
-        br();
-        cout << " 奖励分配池" << endl;
-
-        for (auto v : this->map_addr_award) {
-            cout << " 金额 " << v.first << endl;
-            cout << " 地址 " << v.second << endl;
-        }
-        br();
-
-        cout << "\033[0m" << endl;
-    }
-}
-
-
-
 AwardAlgorithm::AwardAlgorithm() : need_verify_count(0), award_pool(0.0), sign_amount(0) {
     this->now_time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
     this->now_time = now_time == 0 ? time(0) : now_time / 1000000;
@@ -207,7 +150,6 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
     Transaction* txn = pRocksDb->TransactionInit();
     if (txn == NULL)
     {
-        std::cout << "(GetBlockNumInUnitTime) TransactionInit failed !" <<  __LINE__ << std::endl;
         error("(GetBlockNumInUnitTime) TransactionInit failed !");
         return -1;
     }
@@ -219,7 +161,6 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
     uint32_t top = 0;
     if ( 0 != pRocksDb->GetBlockTop(txn, top) )
     {
-        std::cout << "(GetBlockNumInUnitTime) GetBlockTop failed !" <<  __LINE__ << std::endl;
         error("(GetBlockNumInUnitTime) GetBlockTop failed !");
         return -2;
     }
@@ -239,7 +180,6 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
             std::vector<std::string> blockHashs;
             if ( 0 != pRocksDb->GetBlockHashsByBlockHeight(txn, top, blockHashs) )
             {
-                std::cout << "(GetBlockNumInUnitTime) GetBlockHashsByBlockHeight failed !" <<  __LINE__ << std::endl;
                 error("(GetBlockNumInUnitTime) GetBlockHashsByBlockHeight failed !");
                 return -3;
             }
@@ -249,7 +189,6 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
                 uint64_t blockTime = 0;
                 if ( 0 != GetTimeFromBlockHash(blockHash, blockTime) )
                 {
-                    std::cout << "(GetBlockNumInUnitTime) GetTimeFromBlock failed !" <<  __LINE__ << std::endl;
                     error("(GetBlockNumInUnitTime) GetTimeFromBlock failed !");
                     return -3;
                 }
@@ -375,8 +314,6 @@ int AwardAlgorithm::GetSignCountByAddr(const std::string addr, uint64_t & count)
     Transaction* txn = pRocksDb->TransactionInit();
     if (txn == NULL)
     {
-        std::cout << "(GetSignCountByAddr) TransactionInit failed !" <<  __LINE__ << std::endl;
-        error("(GetSignCountByAddr) TransactionInit failed !");
         return -1;
     }
 
@@ -386,8 +323,6 @@ int AwardAlgorithm::GetSignCountByAddr(const std::string addr, uint64_t & count)
 
     if ( 0 != pRocksDb->GetAwardCount(txn, count) ) 
     {
-        std::cout << "(GetSignCountByAddr) GetAwardCount failed !" <<  __LINE__ << std::endl;
-        error("(GetSignCountByAddr) GetAwardCount failed !");
         return -2;
     }
 
@@ -403,7 +338,6 @@ int AwardAlgorithm::GetAwardAmountByAddr(const std::string addr, uint64_t & awar
     Transaction* txn = pRocksDb->TransactionInit();
     if (txn == NULL)
     {
-        error("(GetAwardAmountByAddr) TransactionInit failed !");
         return -1;
     }
 

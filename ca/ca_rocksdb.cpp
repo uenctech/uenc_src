@@ -797,8 +797,6 @@ int Rocksdb::SetPledgeAddresses(Transaction* txn,  const std::string &address)
         auto position = valueString.find(address);
         if(position != valueString.npos)
         {
-            cout << "position is : " << position << endl;
-            
             return ROCKSDB_IS_EXIST;
         }
         else
@@ -881,7 +879,6 @@ int Rocksdb::SetPledgeAddressUtxo(Transaction* txn, const std::string &address, 
         auto position = valueString.find(utxo);
         if(position != valueString.npos)
         {
-            cout << "position is : " << position << endl;
             return ROCKSDB_IS_EXIST;
         }
         else

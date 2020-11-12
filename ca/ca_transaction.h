@@ -188,13 +188,12 @@ void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>
 
 /* ====================================================================================  
  # @description: 随机查找签名价格合适的节点作为下一个签名节点
- # @param verifySum  签名总数
- # @param minerFee   发起交易方所给的签名费
+ # @param tx  交易体
  # @param nextNodeNumber   需要获取的节点个数
  # @param nextNode   出参，下一个签名节点的集合
  # @return: 成功返回0；失败返回小于0的值。
  ==================================================================================== */
-int FindSignNode(int verifySum, uint64_t minerFee, int nextNodeNumber, std::vector<std::string> &nextNode, bool isPledge, bool isInitAccount);
+int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<std::string> &nextNode);
 
 
 void CalcBlockMerkle(CBlock & cblock);

@@ -31,7 +31,9 @@ nlohmann::json jsonrpc_get_txids_by_height(const nlohmann::json & param);
 nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param);
 nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param);
 nlohmann::json jsonrpc_send_tx(const nlohmann::json & param);
-
+nlohmann::json jsonrpc_get_avg_fee(const nlohmann::json & param);
+nlohmann::json jsonrpc_generate_wallet(const nlohmann::json & param);
+nlohmann::json jsonrpc_generate_sign(const nlohmann::json & param);
 
 
 

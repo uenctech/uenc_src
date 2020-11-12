@@ -7,10 +7,10 @@
 
 int g_testflag = 1;
 
-std::string g_LinuxCompatible   = "0.3";
-std::string g_WindowsCompatible = "0.3";
-std::string g_IOSCompatible = "3.0.14";
-std::string g_AndroidCompatible = "3.0.15";
+std::string g_LinuxCompatible   = "1.0";
+std::string g_WindowsCompatible = "1.0";
+std::string g_IOSCompatible = "4.0.3";
+std::string g_AndroidCompatible = "3.0.17";
 
 char BLKDB_DATA_FILE[256];
 char BLKDB_DATA_PATH[256];
@@ -22,10 +22,13 @@ accountinfo g_AccountInfo;
 bool g_phone;
 char g_ip[NETWORKID_LEN];
 
-int g_MinNeedVerifyPreHashCount = 3;  
+const int g_MinNeedVerifyPreHashCount = 6;  
 int g_SyncDataCount = 500;
 Sync* g_synch = new Sync();
 std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
+
+const uint64_t g_minSignFee = 1000;
+const uint64_t g_maxSignFee = 100000;
 
 std::unordered_set<std::string> g_blockCacheList;
 
@@ -43,13 +46,15 @@ bool g_ready = false;
 
 uint64_t g_TxNeedPledgeAmt = 500000000;  
 
+uint64_t g_MaxAwardTotal = 14.025 * DECIMAL_NUM;
+
 std::string g_InitAccount;
 
 uint64_t g_minPledgeNodeNum = 10;
 
 string  getVersion()
 {
-    string versionNum = "0.3";
+    string versionNum = "1.0";
     std::ostringstream ss;
     ss << getSystem();
     std::string version = ss.str() + "_" + versionNum ; 
@@ -61,7 +66,7 @@ string  getVersion()
     else 
     {
         g_InitAccount = "16psRip78QvUruQr9fMzr8EomtFS1bVaXk";
-        version = version + "_" + "m";
+        version = version + "_" + "p";
     }
     return version;
 }

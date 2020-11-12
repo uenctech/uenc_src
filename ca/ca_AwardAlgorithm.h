@@ -24,11 +24,6 @@ public:
     AwardAlgorithm();
 
     /**
-     * @brief 测试
-     */
-    void TestPrint(bool lable = false);
-
-    /**
      * @brief 组合工具函数 得出额外奖励TODO
      * @param need_verify 共识数
      * @param vec_hash 钱包地址数组

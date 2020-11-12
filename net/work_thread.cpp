@@ -6,7 +6,6 @@
 #include "utils/time_task.h"
 #include "../include/net_interface.h"
 #include "global.h"
-#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "dispatcher.h"
 #include "./socket_buf.h"

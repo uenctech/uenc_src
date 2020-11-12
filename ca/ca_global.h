@@ -31,7 +31,7 @@ extern ECDSA<ECP, SHA1>::PublicKey g_publicKey;
 extern accountinfo g_AccountInfo;
 extern bool g_phone;
 extern char g_ip[NETWORKID_LEN];
-extern int g_MinNeedVerifyPreHashCount;
+extern const int g_MinNeedVerifyPreHashCount;
 extern Sync* g_synch;
 extern std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
 
@@ -49,8 +49,13 @@ extern bool g_ready ;
 extern std::mutex g_mu_tx;
 extern int g_testflag;
 
+extern const uint64_t g_minSignFee;
+extern const uint64_t g_maxSignFee;
+
 extern uint64_t g_TxNeedPledgeAmt;   
 extern std::string g_InitAccount;    
+
+extern uint64_t g_MaxAwardTotal;
 
 extern uint64_t g_minPledgeNodeNum;   
 
@@ -118,8 +123,8 @@ extern char BLKDB_DATA_PATH[256];
 #define COIN_BASE_TX_SIGN_HASH "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
 #define COIN_BASE_TX_SIGN_HASH_LEN 64
 
-#define GAS_SIGN_STR "GAS                                                             "
-#define GAS_SIGN_STR_LEN 64
+#define FEE_SIGN_STR "FEE                                                             "
+#define FEE_SIGN_STR_LEN 64
 
 
 #define EXTRA_AWARD_SIGN_STR "AWARD                                                           "

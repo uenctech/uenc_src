@@ -48,13 +48,25 @@ bool Sync::SetPotentialNodes(const std::string &id, const int64_t &height, const
 }
 
 
+void Sync::SetPledgeNodes(const std::vector<std::string> & ids)
+{
+	std::lock_guard<std::mutex> lck(mu_get_pledge);
+	std::vector<std::string> pledgeNodes = this->pledgeNodes;
+	this->pledgeNodes.clear();
+
+	std::vector<std::string> v_diff;
+	std::set_difference(ids.begin(),ids.end(),pledgeNodes.begin(),pledgeNodes.end(),std::back_inserter(v_diff));
+
+	this->pledgeNodes.assign(v_diff.begin(), v_diff.end());
+}
+
+
 
 
 void Sync::Process()
 {   
 	if(sync_adding)
 	{
-		std::cout << "sync_adding..." << std::endl;
 		return;
 	}               
     
@@ -72,7 +84,6 @@ void Sync::Process()
 
     
     std::vector<std::string> sendid = randomNode(nodesum);
-   	
     for(auto& id : sendid)
     {
         SendSyncGetnodeInfoReq(id);
@@ -85,16 +96,9 @@ void Sync::Process()
     }
     
     std::sort(potential_nodes.begin(), potential_nodes.end());
-    for(auto i : potential_nodes)
-    {
-        
-        
-        
-    }
 
 	if(IsOverIt(potential_nodes.back().height))
 	{
-		std::cout << "sync is over other,not sync." << std::endl;
 		return;
 	}
     
@@ -197,6 +201,177 @@ void SendSyncGetnodeInfoReq(std::string id)
 	net_send_message<SyncGetnodeInfoReq>(id, getBestchainInfoReq, true);
 }
 
+int SendVerifyPledgeNodeReq(std::vector<std::string> ids)
+{
+	if (ids.size() == 0)
+	{
+		return -1;
+	}
+
+	SyncVerifyPledgeNodeReq syncVerifyPledgeNodeReq;
+	SetSyncHeaderMsg<SyncVerifyPledgeNodeReq>(syncVerifyPledgeNodeReq);
+
+	for (auto id : ids)
+	{
+		syncVerifyPledgeNodeReq.add_ids(id);
+	}
+
+	for (auto id : ids)
+	{
+		net_send_message<SyncVerifyPledgeNodeReq>(id, syncVerifyPledgeNodeReq, true);
+	}
+
+	return 0;
+}
+
+void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeReq>& msg, const MsgData& msgdata )
+{
+	
+	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
+	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
+	{
+		error("HandleSyncGetnodeInfoReq IsVersionCompatible");
+		return ;
+	}
+	
+	if (msg->ids_size() == 0)
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) msg->ids_size() == 0");
+		return ;
+	}
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) TransactionInit failed !");
+		return ;
+	}
+
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	std::vector<std::string> addrs;
+	if ( 0 != pRocksDb->GetPledgeAddress(txn, addrs) )
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) GetPledgeAddress failed!");
+		return ;
+	}
+
+	SyncVerifyPledgeNodeAck syncVerifyPledgeNodeAck;
+
+	std::map<std::string, std::string> idBase58s = net_get_node_ids_and_base58address();
+	for (auto & idBase58 : idBase58s)
+	{
+		auto iter = find(addrs.begin(), addrs.end(), idBase58.second);
+		if (iter != addrs.end())
+		{
+			uint64_t amount = 0;
+			SearchPledge(idBase58.second, amount);
+
+			if (amount >= g_TxNeedPledgeAmt)
+			{
+				syncVerifyPledgeNodeAck.add_ids(idBase58.first);
+			}
+		}
+	}
+
+	if (syncVerifyPledgeNodeAck.ids_size() == 0)
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) ids == 0!");
+		return ;
+	}
+
+	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
+	net_send_message<SyncVerifyPledgeNodeAck>(headerMsg->id(), syncVerifyPledgeNodeAck, true);
+}
+
+void HandleSyncVerifyPledgeNodeAck( const std::shared_ptr<SyncVerifyPledgeNodeAck>& msg, const MsgData& msgdata )
+{
+	if (msg->ids_size() == 0)
+	{
+		return ;
+	}
+
+	std::vector<std::string> ids;
+	for (int i = 0; i < msg->ids_size(); ++i)
+	{
+		ids.push_back(msg->ids(i));
+	}
+
+	g_synch->SetPledgeNodes(ids);
+}
+
+void SendSyncGetPledgeNodeReq(std::string id)
+{
+	if(id.size() == 0)
+	{
+		return;
+	}
+
+    SyncGetPledgeNodeReq getBestchainInfoReq;
+    SetSyncHeaderMsg<SyncGetPledgeNodeReq>(getBestchainInfoReq);
+	net_send_message<SyncGetPledgeNodeReq>(id, getBestchainInfoReq, true);
+}
+
+void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& msg, const MsgData& msgdata )
+{
+	
+	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
+	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
+	{
+		error("HandleSyncGetnodeInfoReq IsVersionCompatible");
+		return ;
+	}
+	
+	SyncGetPledgeNodeAck syncGetPledgeNodeAck;
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		return ;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+	std::vector<string> addresses;
+	pRocksDb->GetPledgeAddress(txn, addresses);
+
+	std::map<std::string, std::string> idBase58s = net_get_node_ids_and_base58address();
+	for (auto idBase58 : idBase58s)
+	{
+		auto iter = find(addresses.begin(), addresses.end(), idBase58.second);
+		if (iter != addresses.end())
+		{
+			uint64_t amount = 0;
+			SearchPledge(idBase58.second, amount);
+
+			if (amount >= g_TxNeedPledgeAmt)
+			{
+				syncGetPledgeNodeAck.add_ids(idBase58.first);
+			}
+		}
+	}
+	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
+	net_send_message<SyncGetPledgeNodeAck>(headerMsg->id(), syncGetPledgeNodeAck, true);
+}
+
+void HandleSyncGetPledgeNodeAck( const std::shared_ptr<SyncGetPledgeNodeAck>& msg, const MsgData& msgdata )
+{
+	std::vector<std::string> ids;
+	for (int i = 0; i < msg->ids_size(); ++i)
+	{
+		ids.push_back(msg->ids(i));
+	}
+
+	g_synch->SetPledgeNodes(ids);
+}
+
 
 void SendVerifyReliableNodeReq(std::string id, int64_t height)
 {
@@ -238,7 +413,6 @@ std::vector<CheckHash> get_check_hash(int height)
 	}
 	check_range.push_back(std::make_tuple(check_end*100, height - 1));
 
-	
     for(auto i: check_range)
     {
 		int begin = std::get<0>(i);
@@ -516,10 +690,6 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
 	for (int i = 0; i < msg->invalid_checkhash_size(); i++) {
 		const CheckHash& checkhash = msg->invalid_checkhash(i);
-		std::cout << "invalid_checkhash==================:" << std::endl;
-		std::cout << "begin:" << checkhash.begin() << std::endl;
-		std::cout << "end:" << checkhash.end() << std::endl;
-		std::cout << "invalid_checkhash===============end" << std::endl;
 
 		SyncLoseBlockReq syncLoseBlockReq;
 		SetSyncHeaderMsg<SyncLoseBlockReq>(syncLoseBlockReq);
@@ -600,7 +770,6 @@ void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const
 		{
 			auto res = std::find(std::begin(v_hashs), std::end(v_hashs), hash.substr(0,HASH_LEN));
 			if (res == std::end(v_hashs)) {
-				std::cout << "HandleSyncLoseBlockReq hash:" << hash.substr(0,HASH_LEN) << std::endl;
 				string strHeader;
 				pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
 				ser_block.push_back(Str2Hex(strHeader));
@@ -640,7 +809,6 @@ bool IsOverIt(int64_t height)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(ReqBlock) TransactionInit failed !" << std::endl;
 		return false;
 	}
 
@@ -669,7 +837,7 @@ std::string get_blkinfo_ser(int64_t begin, int64_t end, int64_t max_num)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(get_blkinfo_ser) TransactionInit failed !" << std::endl;
+		
 	}
 
 	ON_SCOPE_EXIT{
@@ -710,7 +878,7 @@ std::vector<std::string> get_blkinfo(int64_t begin, int64_t end, int64_t max_num
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(get_blkinfo_ser) TransactionInit failed !" << std::endl;
+		
 	}
 
 	ON_SCOPE_EXIT{
@@ -751,7 +919,6 @@ int SyncData(std::string &headerstr, bool isSync)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(SyncData) TransactionInit failed !" << std::endl;
 		return -1;
 	}
 

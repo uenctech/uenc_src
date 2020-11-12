@@ -67,6 +67,8 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
 void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, GetTxInfoDetailAck & ack);
 
+
+uint64_t getAvgFee();
 }
 
 void MuiltipleApi();

@@ -184,7 +184,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	std::set<std::string> toSet;
 	for (auto & to : toAddr)
 	{
-		if (! CheckBase58Addr(to.first))
+		if (to.first != VIRTUAL_ACCOUNT_PLEDGE && ! CheckBase58Addr(to.first))
 		{
 			return -2;
 		}
@@ -329,7 +329,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 
 	nlohmann::json extra;
 	extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-	extra["GasFee"] = minerFees;
+	extra["SignFee"] = minerFees;
 	extra["PackageFee"] = publicNodePackageFee;
 	extra["TransactionType"] = TXTYPE_TX;
 	outTx.set_extra(extra.dump());

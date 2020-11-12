@@ -709,6 +709,18 @@ message GetBlockInfoDetailAck
 }
 
 
+message TestConnectReq
+{
+    string version = 1; 
+}
+
+message TestConnectAck
+{
+    string version = 1; 
+    int32 code = 2; 
+}
+
+
 
 
 

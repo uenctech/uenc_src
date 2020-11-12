@@ -25,8 +25,9 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         }
         for (auto v : node_fee)
         {
-            if (v.second != 0) 
+            if (v.second != 0 &&  v.second >= 1000  &&  v.second <=100000) 
             {
+
                 node_fee_list.push_back(v.second);
             }
         }
@@ -34,15 +35,8 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         sort(node_fee_list.begin(), node_fee_list.end());
         uint32_t fee_list_count = static_cast<uint32_t>(node_fee_list.size());
 
-        std::cout << "fee_list_count 0--" << node_fee_list[0] << std::endl;
-        std::cout << "fee_list_count e--" << node_fee_list[fee_list_count-1] << std::endl;
-        std::cout << "fee_list_count" << fee_list_count << std::endl;
-        
         uint32_t list_begin = fee_list_count * 0.51;
         uint32_t list_end = fee_list_count;
-
-        std::cout << "list_begin" << list_begin << std::endl;
-        std::cout << "list_end" << list_end << std::endl;
 
         list_begin = list_begin == 0 ? 1 : list_begin;
         list_end = list_end == 0 ? 1 : list_end;
@@ -56,26 +50,23 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         }
         max_fee = node_fee_list[list_end - 1];
         service_fee = (max_fee + min_fee)/2;
-
-        if( min_fee < 1|| max_fee > 1000000)
+        if(min_fee == 0)
+        {
+            min_fee = 1000;
+        }
+        if( min_fee < 1|| max_fee > 100000)
         {
             node_fee_ack.set_code(-1);
             node_fee_ack.set_description("单节点签名费错误");
-            cout<<"min_fee and  max_fee show "<<endl;
             return ;
         }
-        std::cout << "min_fee" << min_fee << std::endl;
-        std::cout << "max_fee" << max_fee << std::endl;
-        std::cout << "service_fee" << service_fee << std::endl;
     }
-
-    std::cout << "node_fee.size() " << node_fee.size() << std::endl;
 
     auto servicep_fee = node_fee_ack.add_service_fee_info();
     servicep_fee->set_max_fee(to_string(((double)max_fee)/DECIMAL_NUM));
     servicep_fee->set_min_fee(to_string(((double)min_fee)/DECIMAL_NUM));
-    servicep_fee->set_service_fee(to_string(((double)service_fee)/DECIMAL_NUM));
 
+    servicep_fee->set_service_fee(to_string(((double)service_fee)/DECIMAL_NUM));
     node_fee_ack.set_version(getVersion());
     node_fee_ack.set_code(0);
     node_fee_ack.set_description("获取成功");
@@ -86,10 +77,8 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
 void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFeeAck &fee_ack) 
 {
     using namespace std;
-
     fee_ack.set_version(getVersion());
     std::string dev_pass = fee_req->password();
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee " << dev_pass << endl;
     std::string hashOriPass = generateDeviceHashPassword(dev_pass);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
     if (hashOriPass != targetPassword) 
@@ -98,34 +87,26 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
         fee_ack.set_description("密码错误");
         return;
     }
-    cout << "fee_req->service_fee()" << fee_req->service_fee() << endl;
     double nodesignfee = stod(fee_req->service_fee());
-    if(nodesignfee < 0.000001 || nodesignfee > 1)
+    if(nodesignfee < 0.001 || nodesignfee > 0.1)
     {
         fee_ack.set_code(-7);
         fee_ack.set_description("滑动条数值显示错误");
-        cout<<"return num show nodesignfee = "<<nodesignfee<<endl;
         return;
     }
     uint64_t service_fee = (uint64_t)(stod(fee_req->service_fee()) * DECIMAL_NUM);
     
-    cout << "fee " << service_fee << endl;
-    
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
-   
-    auto status = rdb_ptr->SetDeviceSignatureFee(service_fee);
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee2 " << dev_pass << endl;
 
+    auto status = rdb_ptr->SetDeviceSignatureFee(service_fee);
     if (!status) 
     {
-        cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee3 " << dev_pass << endl;
-        cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee4 " << service_fee << endl;
         net_update_fee_and_broadcast(service_fee);
     }
 
     fee_ack.set_code(status);
     fee_ack.set_description("设置成功");
-
+    
     return;
 }
 
@@ -136,7 +117,7 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+
     }
 
     ON_SCOPE_EXIT 
@@ -166,7 +147,7 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
     db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hash);
     if (db_status) 
     {
-        std::cout << __LINE__ << std::endl;
+
     }
     std::string block_hash = hash[0];
 
@@ -175,10 +156,11 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
     uint64_t max_fee, min_fee, def_fee, avg_fee, count;
     uint64_t temp_fee {0};
 
-    min_fee = 1;
-    max_fee = 1000000;
+    min_fee = 1000;
+    max_fee = 100000;
 
-    if (top > 5) 
+
+    
     {
         CBlockHeader block;
         std::string serialize_block;
@@ -189,7 +171,7 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
             db_status = rdb_ptr->GetBlockHeaderByBlockHash(txn, block_hash, serialize_block);
             if (db_status) 
             {
-                std::cout << __LINE__ << std::endl;
+
             }
             block.ParseFromString(serialize_block);
 
@@ -210,13 +192,11 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
                         if (txout.value() > 0) 
                         {
                             temp_fee = txout.value();
-                            cout << "temp_fee++ " << temp_fee << endl;
                             break;
                         }
                     }
                 }
             }
-            cout<<"temp_fee--"<<temp_fee<<endl;
             if (i == (int32_t)top) 
             {
                 max_fee = temp_fee;
@@ -229,14 +209,17 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
                 min_fee = min_fee < temp_fee ? min_fee : temp_fee;
                 count += temp_fee;
             }
-            cout<<"i--"<<i<<endl;
             block_hash = block.prevhash();
         }
     }
 
     uint64_t show_service_fee = 0;
 
-    rdb_ptr->GetDeviceSignatureFee(show_service_fee);
+    db_status =rdb_ptr->GetDeviceSignatureFee(show_service_fee);
+    if (db_status) 
+    {
+        
+    }
 
     if (!show_service_fee) 
     {
@@ -247,39 +230,31 @@ void GetServiceInfo(const std::shared_ptr<TApiGetBlockTopAck> &blktop_ack, GetSe
     {
         def_fee = show_service_fee;
     }
-        cout << "max_fee " << max_fee << endl;
-        cout << "min_fee " << min_fee << endl;
     if (top == 100) 
     {
-        cout << "top == 100 " << count << endl;
         avg_fee = count/100;
     } 
     else 
     {
-        cout << "top != 100 " << top << endl;
         avg_fee = (max_fee + min_fee)/2;
     }
 
-    min_fee = 1;
-    max_fee = 1000000;
+    min_fee = 1000;
+    max_fee = 100000;
 
+  
     response_ack.set_version(getVersion());
     response_ack.set_code(0);
     response_ack.set_description("获取成功");
 
     response_ack.set_mac_hash("test_hash"); 
-    response_ack.set_device_version(getVersion()); 
+    response_ack.set_device_version(g_LinuxCompatible); 
 
     auto service_fee = response_ack.add_service_fee_info();
     service_fee->set_max_fee(to_string(((double)max_fee)/DECIMAL_NUM));
     service_fee->set_min_fee(to_string(((double)min_fee)/DECIMAL_NUM));
     service_fee->set_service_fee(to_string(((double)def_fee)/DECIMAL_NUM));
     service_fee->set_avg_fee(to_string(((double)avg_fee)/DECIMAL_NUM));
-
-    std::cout << "max_fee " << to_string(((double)max_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "min_fee " << to_string(((double)min_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "def_fee " << to_string(((double)def_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "avg_fee " << to_string(((double)avg_fee)/DECIMAL_NUM) << std::endl;
 
     return;
 }
@@ -291,7 +266,7 @@ uint64_t getAvgFee()
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT 
@@ -307,7 +282,7 @@ uint64_t getAvgFee()
     db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hash);
     if (db_status) 
     {
-        std::cout << __LINE__ << std::endl;
+        
     }
     std::string block_hash = hash[0];
 
@@ -316,9 +291,8 @@ uint64_t getAvgFee()
     uint64_t max_fee, min_fee, def_fee, avg_fee, count;
     uint64_t temp_fee {0};
 
-    min_fee = 1;
-    max_fee = 1000000;
-
+    min_fee = 1000;
+    max_fee = 100000;
 
     CBlockHeader block;
     std::string serialize_block;
@@ -329,7 +303,7 @@ uint64_t getAvgFee()
         db_status = rdb_ptr->GetBlockHeaderByBlockHash(txn, block_hash, serialize_block);
         if (db_status)
         {
-            std::cout << __LINE__ << std::endl;
+            
         }
         block.ParseFromString(serialize_block);
 
@@ -350,13 +324,12 @@ uint64_t getAvgFee()
                     if (txout.value() > 0) 
                     {
                         temp_fee = txout.value();
-                        cout << "temp_fee++ " << temp_fee << endl;
                         break;
                     }
                 }
             }
         }
-        cout<<"temp_fee--"<<temp_fee<<endl;
+
         if (i == (int32_t)top) 
         {
             max_fee = temp_fee;
@@ -369,7 +342,7 @@ uint64_t getAvgFee()
             min_fee = min_fee < temp_fee ? min_fee : temp_fee;
             count += temp_fee;
         }
-        cout<<"i--"<<i<<endl;
+
         block_hash = block.prevhash();
     }
 
@@ -386,19 +359,16 @@ uint64_t getAvgFee()
     {
         def_fee = show_service_fee;
     }
-    cout << "max_fee " << max_fee << endl;
-    cout << "min_fee " << min_fee << endl;
+    (void)def_fee;
     if (top == 100)
     {
-        cout << "top == 100 " << count << endl;
         avg_fee = count/100;
     } 
     else
     {
-        cout << "top != 100 " << top << endl;
         avg_fee = (max_fee + min_fee)/2;
     }
-    cout << __LINE__ << " " << def_fee << endl;
+
     return avg_fee;
 }
 
@@ -427,13 +397,9 @@ void HandleGetServiceInfoReq(const std::shared_ptr<GetServiceInfoReq>& msg,
         get_blktop_req.set_port(msgdata.port);
         get_blktop_req.set_ip(msgdata.ip);
 
-            std::cout << "public_net_ip---  " << msg->public_net_ip() << std::endl;
         if (Singleton<Config>::get_instance()->GetIsPublicNode() || msg->is_show()) 
         {
-            std::cout << "public_net_ip2---  " << msg->public_net_ip() << std::endl;
-
             Node node = net_get_self_node();
-            std::cout << "IpPort" << IpPort::ipsz(node.public_ip) << endl;
             if (IpPort::ipsz(node.public_ip) == msg->public_net_ip() || msg->is_show()) 
             {
                 GetServiceInfoAck get_sinfo_ack;
@@ -446,8 +412,7 @@ void HandleGetServiceInfoReq(const std::shared_ptr<GetServiceInfoReq>& msg,
                 ack_msg->set_fd(0);
                 ack_msg->set_port(0);
                 ack_msg->set_ip(0);
-                std::cout << "public_net_ip3  " << msg->public_net_ip() << std::endl;
-                std::cout << "node_id3  " << node_id << std::endl;
+
                 GetServiceInfo(ack_msg, get_sinfo_ack, true);
                 net_send_message<GetServiceInfoAck>(msgdata, get_sinfo_ack);
                 return;
@@ -469,19 +434,16 @@ void HandleGetServiceInfoReq(const std::shared_ptr<GetServiceInfoReq>& msg,
             }
         }
 
-            std::cout << "public_net_ip  " << msg->public_net_ip() << std::endl;
-            std::cout << "node_id  " << node_id << std::endl;
 
         if (node_id.empty())
         {
-            std::cout << "is_sync  " << GetServiceInfoAck::FAIL << std::endl;
             GetServiceInfoAck response_ack;
             response_ack.set_version(getVersion());
             response_ack.set_code(-404);
             response_ack.set_description("连接失败超时");
 
             response_ack.set_mac_hash("test_hash"); 
-            response_ack.set_device_version(getVersion()); 
+            response_ack.set_device_version(g_LinuxCompatible); 
 
             uint64_t service_fees = 0;
 
@@ -489,8 +451,8 @@ void HandleGetServiceInfoReq(const std::shared_ptr<GetServiceInfoReq>& msg,
             rdb_ptr->GetDeviceSignatureFee(service_fees);
 
             auto service_fee = response_ack.add_service_fee_info();
-            service_fee->set_max_fee(to_string(1));
-            service_fee->set_min_fee(to_string(0.000001));
+            service_fee->set_max_fee(to_string(0.1));
+            service_fee->set_min_fee(to_string(0.001));
             service_fee->set_service_fee(to_string(((double)service_fees)/DECIMAL_NUM));
             service_fee->set_avg_fee(to_string(((double)getAvgFee())/DECIMAL_NUM));
             response_ack.set_is_sync(GetServiceInfoAck::FAIL);
@@ -517,7 +479,7 @@ void HandleGetBlockTopReq(const std::shared_ptr<GetBlockTopReq>& msg,
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT {
@@ -534,7 +496,7 @@ void HandleGetBlockTopReq(const std::shared_ptr<GetBlockTopReq>& msg,
 void TApiGetBlockTopAckFunc(const std::shared_ptr<TApiGetBlockTopAck>& msg, 
     const MsgData& msgdata) 
 {
-
+   
     GetServiceInfoAck get_sinfo_ack;
     GetServiceInfo(msg, get_sinfo_ack, false);
 
@@ -550,12 +512,11 @@ void GetPacketFee(const std::shared_ptr<GetPacketFeeReq> &packet_req, GetPacketF
 {
     using namespace std;
 
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GetPacketFee " << packet_req->public_net_ip() << endl;
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT {
@@ -588,7 +549,7 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(AddBlockInfo) TransactionInit failed !" << std::endl;
+        
     }
 
     bool bRollback = false;
@@ -639,11 +600,10 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
             char * hexStr = new char[scriptSigLen * 2 + 2]{0};
 
             std::string sign_str(scriptSig.sign().data(), scriptSig.sign().size());
-            
-            if (sign_str == GAS_SIGN_STR || sign_str == EXTRA_AWARD_SIGN_STR) 
+
+            if (sign_str == FEE_SIGN_STR || sign_str == EXTRA_AWARD_SIGN_STR) 
             {
                 vin_list->set_script_sig(sign_str);
-                
             } 
             else 
             {
@@ -689,7 +649,7 @@ uint64_t GetBalanceByAddress(const std::string & address)
     Transaction* txn = pRocksDb->TransactionInit();
     if (!txn) 
     {
-        std::cout << "(CheckBalanceFromRocksDb) TransactionInit failed ! " << __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT
@@ -742,14 +702,12 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     int32_t height = block_info_req->height();
     int32_t count = block_info_req->count();
 
-    cout << "height  ---> " << height << endl;
-    cout << "count  ---> " << count << endl;
     int db_status;
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
     {
-        std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        
     }
 
     ON_SCOPE_EXIT {
@@ -761,11 +719,10 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     db_status = rdb_ptr->GetBestChainHash(txn, bestChainHash);
     if (db_status != 0) 
     {
-        std::cout << __LINE__ << std::endl;
+        
     }
     if (bestChainHash.size() == 0) 
     { 
-        
         return;
     }
     
@@ -774,7 +731,7 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     db_status = rdb_ptr->GetBlockTop(txn, top);
     if (db_status) 
     {
-        std::cout << __LINE__ << std::endl;
+        
     }
 
     
@@ -799,15 +756,14 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
         db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, height - j, hash);
         if (db_status) 
         {
-            std::cout << __LINE__ << std::endl;
+            
         }
-        cout << "count-- " << hash.size() << endl;
         for (auto hs : hash)
         {
             db_status = rdb_ptr->GetBlockHeaderByBlockHash(txn, hs, serialize_block);
             if (db_status) 
             {
-                std::cout << __LINE__ << std::endl;
+                
             }
             block.ParseFromString(serialize_block);
             
@@ -820,47 +776,6 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
             break;
         }
     }
-
-    cout << block_info_ack.version() << endl;
-    cout << block_info_ack.code() << endl;
-    cout << block_info_ack.description() << endl;
-    cout << block_info_ack.top() << endl;
-    cout << endl;
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     return;
 }
@@ -900,9 +815,6 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
 
     std::string old_pass = pass_req->old_pass();
     std::string new_pass = pass_req->new_pass();
-
-    cout << "old-->" << old_pass << endl;
-    cout << "new-->" << new_pass << endl;
 
     pass_ack.set_version(getVersion());
     if (old_pass.empty() || new_pass.empty()) {
@@ -967,7 +879,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     Transaction* txn = pRocksDb->TransactionInit();
     if(!txn) 
     {
-        std::cout << "(GetTransactionInfo) TransactionInit failed !" << std::endl;
+       
     }
 
     std::string retString;
@@ -979,7 +891,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     db_status = pRocksDb->GetBestChainHash(txn, bestChainHash);
     if (db_status) 
     {
-        std::cout << __LINE__ << std::endl;
+       
     }
 
     addr_ack.set_version(getVersion());
@@ -995,7 +907,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     db_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs);
     if (!db_status) 
     {
-        std::cout << __LINE__ << std::endl;
+      
     }
 
     std::reverse(vTxHashs.begin(), vTxHashs.end());
@@ -1007,7 +919,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
         db_status = pRocksDb->GetBlockHashByTransactionHash(txn, strTxHash, blockHash);
         if (!db_status) 
         {
-            std::cout << __LINE__ << std::endl;
+          
         }
         vBlockHashs.push_back(blockHash);
     }
@@ -1035,7 +947,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
         db_status = pRocksDb->GetBlockHeaderByBlockHash(txn, hash, serBlock);
         if (db_status) 
         {
-            std::cout << __LINE__ << std::endl;
+         
         }
         CBlockHeader block;
         block.ParseFromString(serBlock);
@@ -1219,13 +1131,6 @@ void GetClientInfo(const std::shared_ptr<GetClientInfoReq> &clnt_req, GetClientI
         std::string sVersion;
         std::string sDesc;
         std::string sDownload;
-
-        cout << "clientInfo " << clientInfo << endl;
-        cout << "phone_type " << phone_type << endl;
-        cout << "phone_lang " << phone_lang << endl;
-        cout << "sVersion " << sVersion << endl;
-        cout << "sDesc " << sDesc << endl;
-        cout << "sDownload " << sDownload << endl;
 
         int r = ca_getUpdateInfo(clientInfo, phone_type, phone_lang, sVersion, sDesc, sDownload);
         if (!r) 
@@ -1426,6 +1331,17 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
         net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
 		return ;
 	}
+
+    if (msg->sertx().data() == nullptr || msg->sertx().size() == 0 || 
+        msg->strsignature().data() == nullptr || msg->strsignature().size() == 0 || 
+        msg->strpub().data() == nullptr || msg->strpub().size() == 0)
+    {
+   		PledgeTxMsgAck.set_code(-102);
+		PledgeTxMsgAck.set_message("param error");
+        net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
+		return ;
+    }
+
 	
 	unsigned char serTxCstr[msg->sertx().size()] = {0};
 	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
@@ -1465,7 +1381,7 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-        PledgeTxMsgAck.set_code(-102);
+        PledgeTxMsgAck.set_code(-103);
 		PledgeTxMsgAck.set_message(" TransactionInit failed !");
         net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
         return;
@@ -1535,8 +1451,7 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
     {
 		pRocksDb->TransactionDelete(txn, false);
 	};
-     cout<<"2222222222222222222"<<endl;
-    
+
     std::vector<string> addresses;
     int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
     if(db_status != 0)
@@ -1584,18 +1499,22 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
         }
      }
     cblock.ParseFromString(blockHeaderStr);
-    std::string utxoStr;
-    for (int i = 0; i < cblock.txs_size(); i++)
+
+    std::string utxoStr = msg->txhash();
+    if (utxoStr.empty())
     {
-        CTransaction tx = cblock.txs(i);
-        if (CheckTransactionType(tx) == kTransactionType_Tx)
+        for (int i = 0; i < cblock.txs_size(); i++)
         {
-            for (int j = 0; j < tx.vout_size(); j++)
-            {   
-                CTxout vout = tx.vout(j);
-                if (vout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-                {
-                    utxoStr = tx.hash();
+            CTransaction tx = cblock.txs(i);
+            if (CheckTransactionType(tx) == kTransactionType_Tx)
+            {
+                for (int j = 0; j < tx.vout_size(); j++)
+                {   
+                    CTxout vout = tx.vout(j);
+                    if (vout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
+                    {
+                        utxoStr = tx.hash();
+                    }
                 }
             }
         }
@@ -1683,8 +1602,8 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
 	nlohmann::json extra;
     extra["fromaddr"] = fromAddr;
 	extra["NeedVerifyPreHashCount"] = needverifyprehashcount;
-	extra["GasFee"] = gasFee;
-    extra["PackageFee"] = packageFee;   
+	extra["SignFee"] = gasFee;
+    extra["PackageFee"] = packageFee; 
 	extra["TransactionType"] = TXTYPE_REDEEM;
     extra["TransactionInfo"] = txInfo;
 
@@ -1758,7 +1677,7 @@ void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgD
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(HandleRedeemTxMsgReq) TransactionInit failed !" << std::endl;
+		
 	}
 
 	bool bRollback = true;
@@ -1999,7 +1918,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
         uint64_t amount = 0;
         CTxin txIn0 = tx.vin(0);
-        if (txIn0.scriptsig().sign() == std::string(GAS_SIGN_STR) || 
+        if (txIn0.scriptsig().sign() == std::string(FEE_SIGN_STR) || 
             txIn0.scriptsig().sign() == std::string(EXTRA_AWARD_SIGN_STR))
         {
             
@@ -2012,7 +1931,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
             for (auto & t : cblock.txs())
             {
                 CTxin tmpTxIn0 = t.vin(0);
-                if (tmpTxIn0.scriptsig().sign() != std::string(GAS_SIGN_STR) &&
+                if (tmpTxIn0.scriptsig().sign() != std::string(FEE_SIGN_STR) &&
                     tmpTxIn0.scriptsig().sign() != std::string(EXTRA_AWARD_SIGN_STR))
                 {
                     tmpTx = t;
@@ -2038,7 +1957,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
             pItem->set_txhash(tx.hash());
             pItem->set_time(tx.time());
             
-            if (txIn0.scriptsig().sign() == std::string(GAS_SIGN_STR))
+            if (txIn0.scriptsig().sign() == std::string(FEE_SIGN_STR))
             {
                 pItem->set_type(TxInfoType_Gas);
             }
@@ -2080,7 +1999,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 for (auto & tmpTx : cblock.txs())
                 {
                     CTxin txIn0 = tmpTx.vin(0);
-                    if (txIn0.scriptsig().sign() == std::string(GAS_SIGN_STR))
+                    if (txIn0.scriptsig().sign() == std::string(FEE_SIGN_STR))
                     {
                         for (auto & tmpTxOut : tmpTx.vout())
                         {
@@ -2179,7 +2098,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 for (auto & tmpTx : cblock.txs())
                 {
                     CTxin txIn0 = tmpTx.vin(0);
-                    if (txIn0.scriptsig().sign() == std::string(GAS_SIGN_STR))
+                    if (txIn0.scriptsig().sign() == std::string(FEE_SIGN_STR))
                     {
                         for (auto & tmpTxOut : tmpTx.vout())
                         {
@@ -2382,7 +2301,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
             for (auto & t : cblock.txs())
             {
                 CTxin txin0 = t.vin(0);
-                if (txin0.scriptsig().sign() != std::string(GAS_SIGN_STR) && 
+                if (txin0.scriptsig().sign() != std::string(FEE_SIGN_STR) && 
                     txin0.scriptsig().sign() != std::string(EXTRA_AWARD_SIGN_STR))
                 {
                     tx = t;
@@ -2457,10 +2376,6 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
 
 void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& msg, const MsgData& msgdata)
 {
-    std::cout << "接受数据: " << std::endl;
-    std::cout << "version: " << msg->version() <<std::endl;
-    std::cout << "blockhash: " << msg->blockhash() << std::endl;
-    
     GetBlockInfoDetailAck getBlockInfoDetailAck;
     getBlockInfoDetailAck.set_version( getVersion() );
 
@@ -2513,7 +2428,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     CTransaction awardTx;
     for (auto & t : cblock.txs())
     {
-        if (t.vin(0).scriptsig().sign() == std::string(GAS_SIGN_STR))
+        if (t.vin(0).scriptsig().sign() == std::string(FEE_SIGN_STR))
         {
             gasTx = t;
         }
@@ -2681,7 +2596,7 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
     CTransaction awardTx;
     for (auto & t : cblock.txs())
     {
-        if (t.vin(0).scriptsig().sign() == std::string(GAS_SIGN_STR))
+        if (t.vin(0).scriptsig().sign() == std::string(FEE_SIGN_STR))
         {
             gasTx = t;
         }
@@ -2851,8 +2766,6 @@ void HandleCreateDeviceRedeemTxReq(const std::shared_ptr<CreateDeviceRedeemTxReq
 
 void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const std::string msg_name) 
 {
-    cout << "msg_name " << msg_name << endl;
-
     if (msg_name == "GetNodeServiceFeeReq") 
     {
         const std::shared_ptr<GetNodeServiceFeeReq>ack_msg = dynamic_pointer_cast<GetNodeServiceFeeReq>(msg);
@@ -2947,9 +2860,6 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
     {
         const std::shared_ptr<GetBlockInfoReq>ack_msg = dynamic_pointer_cast<GetBlockInfoReq>(msg);
 
-        cout << "GetBlockInfoReq: height " << ack_msg->height() << endl;
-        cout << "GetBlockInfoReq: count " << ack_msg->count() << endl;
-
         GetBlockInfoAck block_info_ack;
         if (!is_version) 
         {
@@ -2967,7 +2877,6 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
     else if (msg_name == "GetDevPasswordReq") 
     {
         const std::shared_ptr<GetDevPasswordReq>ack_msg = dynamic_pointer_cast<GetDevPasswordReq>(msg);
-        cout << "GetDevPasswordReq: pass " << ack_msg->password() << endl;
 
         GetDevPasswordAck pass_ack;
         if (!is_version) 
@@ -2986,8 +2895,6 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
     else if (msg_name == "SetDevPasswordReq") 
     {
         const std::shared_ptr<SetDevPasswordReq>ack_msg = dynamic_pointer_cast<SetDevPasswordReq>(msg);
-        cout << "SetDevPasswordReq: pass " << ack_msg->old_pass() << endl;
-        cout << "SetDevPasswordReq: pass " << ack_msg->new_pass() << endl;
 
         SetDevPasswordAck pass_ack;
         if (!is_version) 
@@ -3185,6 +3092,13 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
 
         HandlePreMultiTxRaw(req, msgdata);
     }
+    else if (msg_name == "TestConnectReq")
+    {
+        TestConnectAck ack;
+        ack.set_version(getVersion());
+        ack.set_code(0);
+        net_send_message<TestConnectAck>(msgdata, ack);
+    }
 }
 
 
@@ -3194,15 +3108,11 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
     const google::protobuf::Descriptor *descriptor = msg->GetDescriptor();
     const google::protobuf::Reflection *reflection = msg->GetReflection();
 
-    cout << "descriptor->field_count()" << descriptor->name() << endl;
-
     const google::protobuf::FieldDescriptor* field = descriptor->field(0);
 
     std::string version = reflection->GetString(*msg, field);
-    cout << "version--" << version << endl;
 
     is_version = IsVersionCompatible(version);
-    cout << "is version--" << is_version << endl;
 
     assign(msg, msgdata, descriptor->name());
 }
@@ -3384,6 +3294,12 @@ void MuiltipleApi()
     });
 
     net_register_callback<MultiTxMsgReq>([](const std::shared_ptr<MultiTxMsgReq>& msg, 
+    const MsgData& msgdata) 
+    {
+        m_api::verify(msg, msgdata);
+    });
+
+    net_register_callback<TestConnectReq>([](const std::shared_ptr<TestConnectReq>& msg, 
     const MsgData& msgdata) 
     {
         m_api::verify(msg, msgdata);

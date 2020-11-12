@@ -6,7 +6,6 @@
 #include "peer_node.h"
 #include "../include/net_interface.h"
 #include "./global.h"
-#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "common.pb.h"
 #include "dispatcher.h"
@@ -33,11 +32,6 @@ void handlePrintMsgReq(const std::shared_ptr<PrintMsgReq>& printMsgReq, const Ms
 void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq>& registerNode, const MsgData& from)
 {	
     NodeInfo * nodeinfo = registerNode->mutable_mynode();
-    
-    
-    
-    
-    
 
 	if (!Singleton<Config>::get_instance()->GetIsPublicNode())
 	{
@@ -112,7 +106,6 @@ void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq>& registerNode,
 
 void handleRegisterNodeAck(const std::shared_ptr<RegisterNodeAck>& registerNodeAck, const MsgData& from)
 {	
-	std::cout << "公网 " << IpPort::ipsz(from.ip) << "返回的节点信息：" << endl;
 	for (int i = 0; i < registerNodeAck->nodes_size(); i++) {
 		const NodeInfo& nodeinfo = registerNodeAck->nodes(i);
 		Node node;
@@ -126,9 +119,6 @@ void handleRegisterNodeAck(const std::shared_ptr<RegisterNodeAck>& registerNodeA
 		node.fee			= nodeinfo.fee();
 		node.package_fee	= nodeinfo.package_fee();
 		node.base58address  = nodeinfo.base58addr();
-		std::cout << "id:" << node.id  << std::endl;
-		std::cout << "public_ip:" << string(IpPort::ipsz(node.public_ip))  << std::endl;
-		std::cout << "local_ip:" << string(IpPort::ipsz(node.local_ip))  << std::endl;
 		
 		if(from.ip == node.public_ip && from.port == node.public_port)
 		{	
@@ -392,7 +382,6 @@ void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck>& syncNodeAck, const Ms
 	{
 		for(int i = 0; i < syncNodeAck->ids_size(); i++)
 		{
-			std::cout << "sync delete id===:" << syncNodeAck->ids(i) << std::endl;
 			Singleton<PeerNode>::get_instance()->delete_node(syncNodeAck->ids(i));
 		}	
 	}
@@ -414,12 +403,7 @@ void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck>& syncNodeAck, const Ms
 			node.base58address  = nodeinfo.base58addr();
 
 			if(node.id != Singleton<PeerNode>::get_instance()->get_self_id())
-			{
-				std::cout << "======handleSyncNodeAck add node==========" << std::endl;
-				std::cout << "id:" << node.id  << std::endl;
-				std::cout << "public_ip:" << string(IpPort::ipsz(node.public_ip))  << std::endl;
-				std::cout << "local_ip:" << string(IpPort::ipsz(node.local_ip))  << std::endl;
-				
+			{				
 				Singleton<PeerNode>::get_instance()->add(node);
 			}
 		}

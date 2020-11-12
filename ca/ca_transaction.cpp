@@ -106,7 +106,7 @@ uint64_t CheckBalanceFromRocksDb(const std::string & address)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(CheckBalanceFromRocksDb) TransactionInit failed !" << std::endl;
+		
 	}
 
 	ON_SCOPE_EXIT{
@@ -139,7 +139,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(FindUtxosFromRocksDb) TransactionInit failed !" << std::endl;
+		
 		return false;
 	}
 
@@ -248,6 +248,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 		}
 	}
 
+
 	if (total < amt)
 	{
 		error("FindUtxosFromRocksDb total < amt");
@@ -326,7 +327,7 @@ TransactionType CheckTransactionType(const CTransaction & tx)
 	}
 
 	CTxin txin = tx.vin(0);
-	if ( txin.scriptsig().sign() == std::string(GAS_SIGN_STR))
+	if ( txin.scriptsig().sign() == std::string(FEE_SIGN_STR))
 	{
 		return kTransactionType_Fee;
 	}
@@ -599,7 +600,6 @@ int CreateTransactionFromRocksDb( const std::shared_ptr<CreateTxMsgReq>& msg, st
 	double minerFeeConvert = stod( msg->minerfees() );
 	if(minerFeeConvert <= 0)
 	{
-		std::cout << "phone -> minerFeeConvert == 0 !" << std::endl;
 		return -2;
 	}
 	uint64_t gasFee = minerFeeConvert * DECIMAL_NUM;
@@ -642,7 +642,6 @@ int GetRedemUtxoAmount(const std::string & redeemUtxoStr, uint64_t & amount)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(VerifyBlockHeader) TransactionInit failed !" << std::endl;
 		return -2;
 	}
 
@@ -683,7 +682,6 @@ bool VerifyBlockHeader(const CBlock & cblock)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(VerifyBlockHeader) TransactionInit failed !" << std::endl;
 		return false;
 	}
 
@@ -706,7 +704,6 @@ bool VerifyBlockHeader(const CBlock & cblock)
 	std::string strPrevHeader;
 	db_status = pRocksDb->GetBlockByBlockHash(txn, cblock.prevhash(), strPrevHeader);
     if (db_status != 0) {
-        std::cout << "(GetBlockByBlockHash) failed ! " << __LINE__ << std::endl;
     }
 	if (strPrevHeader.size() == 0)
 	{
@@ -857,8 +854,6 @@ bool VerifyBlockHeader(const CBlock & cblock)
 			}
 		}
 
-		
-		bool bIsRedeem = false;
 		std::string redempUtxoStr;
 		for (int i = 0; i < cblock.txs_size(); i++)
 		{
@@ -872,7 +867,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 
 				if (txType == TXTYPE_REDEEM)
 				{
-					bIsRedeem = true;
+					
 
 					nlohmann::json txInfo = txExtra["TransactionInfo"].get<nlohmann::json>();
 					redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
@@ -880,99 +875,6 @@ bool VerifyBlockHeader(const CBlock & cblock)
 			}
 		}
 
-		
-		uint64_t vinValueTotal = 0;
-		uint64_t voutValueTotal = 0;
-
-		
-		std::vector<std::string> usedUtxos;
-		for (int i = 0; i < cblock.txs_size(); i++)
-		{
-			CTransaction transaction = cblock.txs(i);
-			if ( CheckTransactionType(transaction) == kTransactionType_Tx)
-			{
-				CTransaction copyTx = transaction;
-				for (int i = 0; i != copyTx.vin_size(); ++i)
-				{
-					CTxin txin = copyTx.vin(i);
-
-					char buf[2048] = {0};
-                    size_t buf_len = sizeof(buf);
-					GetBase58Addr(buf, &buf_len, 0x00, txin.scriptsig().pub().data(), txin.scriptsig().pub().size());
-
-					
-					if (usedUtxos.end() != find(usedUtxos.begin(), usedUtxos.end(), txin.prevout().hash()))
-					{
-						continue;
-					}
-
-					
-					std::vector<std::string> utxos;
-					if (0 != pRocksDb->GetUtxoHashsByAddress(txn, std::string(buf), utxos))
-					{
-						error("GetUtxoHashsByAddress failed !");
-						bRollback = true;
-						return false;
-					}
-
-					if (utxos.end() != find(utxos.begin(), utxos.end(), txin.prevout().hash()))
-					{
-						vinValueTotal += TxHelper::GetUtxoAmount(txin.prevout().hash(), std::string(buf));
-						usedUtxos.push_back(txin.prevout().hash());
-					}
-				}
-			}
-		}
-
-		
-		uint64_t redempUtxoAmount = 0;
-		if (bIsRedeem)
-		{
-			if ( 0 != GetRedemUtxoAmount(redempUtxoStr, redempUtxoAmount) )
-			{
-				error("GetRedemUtxoAmount failed !");
-				bRollback = true;
-				return false;
-			}
-
-			vinValueTotal += redempUtxoAmount;
-		}
-
-		
-		for (int i = 0; i < cblock.txs_size(); i++)
-		{
-			CTransaction transaction = cblock.txs(i);
-			if ( CheckTransactionType(transaction) != kTransactionType_Award)
-			{
-				CTransaction copyTx = transaction;
-				for (int i = 0; i != copyTx.vout_size(); ++i)
-				{
-					CTxout txout = copyTx.vout(i);
-					voutValueTotal += txout.value();
-				}
-			}
-		}
-
-		if (vinValueTotal == 0 || voutValueTotal == 0)
-		{
-			std::cout << "(VerifyBlockHeader) error: The total value of vin or vout is 0!" << std::endl;
-			std::cout << "vinValueTotal = " << vinValueTotal << std::endl;
-			std::cout << "voutValueTotal = " << voutValueTotal << std::endl;
-			error("(VerifyBlockHeader) error: The total value of vin or vout is 0!");
-			bRollback = true;
-			return false;
-		}
-		else if (vinValueTotal != voutValueTotal)
-		{
-			std::cout << "(VerifyBlockHeader) error: vinValueTotal != voutValueTotal!" << std::endl;
-			std::cout << "vinValueTotal = " << vinValueTotal << std::endl;
-			std::cout << "voutValueTotal = " << voutValueTotal << std::endl;
-			error("(VerifyBlockHeader) error: vinValueTotal != voutValueTotal!");
-			bRollback = true;
-			return false;
-		}
-
-		
 		std::vector< std::string > signBase58Addrs;
 		for (int i = 0; i < cblock.txs_size(); i++)
 		{
@@ -1015,6 +917,21 @@ bool VerifyBlockHeader(const CBlock & cblock)
 						bRollback = true;
 						return false;
 					}
+				}
+			}
+			else if ( CheckTransactionType(transaction) == kTransactionType_Award )
+			{
+				uint64_t awardAmountTotal = 0;
+				for (auto & txout : transaction.vout())
+				{
+					awardAmountTotal += txout.value();
+				}
+
+				if (awardAmountTotal > g_MaxAwardTotal)
+				{
+					error("awardAmountTotal error !");
+					bRollback = true;
+					return false;
 				}
 			}
 		}
@@ -1120,7 +1037,7 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(CreateBlock) TransactionInit failed !" << std::endl;
+
 	}
 
 	ON_SCOPE_EXIT{
@@ -1130,7 +1047,7 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 	std::string bestChainHash;
 	db_status = pRocksDb->GetBestChainHash(txn, bestChainHash);
     if (db_status != 0) {
-        std::cout << __LINE__ << std::endl;
+       
     }
 	if (bestChainHash.size() == 0)
 	{
@@ -1183,7 +1100,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(AddBlock) TransactionInit failed !" << std::endl;
+		
 		return false;
 	}
 
@@ -1336,9 +1253,6 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 
 	if(totalGasFee == 0 && !isRedeem)
 	{
-		ca_console redColor(kConsoleColor_Red, kConsoleColor_Black, true);
-		std::cout << redColor.color() << "tx sign GasFee is 0! AddBlock failed! " << redColor.reset() << std::endl;
-
 		bRollback = true;
 		return false;
 	}
@@ -1610,7 +1524,6 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 
 	if( pRocksDb->TransactionCommit(txn) )
 	{
-		std::cout << "(Addblock) TransactionCommit failed !" << std::endl;
 		bRollback = true;
 		return false;
 	}	
@@ -1719,7 +1632,6 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(VerifyTransactionSign) TransactionInit failed !" << std::endl;
 		return false;
 	}
 
@@ -1751,7 +1663,6 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 
 		if(0 != txHashStr.compare(txHash))
 		{
-			std::cout << "接收到的txhash值 != 计算出的txhash值 ! " << std::endl;
 			return false;
 		}
 		
@@ -1855,7 +1766,7 @@ unsigned get_extra_award_height() {
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(get_extra_award_height) TransactionInit failed !" << std::endl;
+		
 	}
 
 	ON_SCOPE_EXIT{
@@ -1899,7 +1810,7 @@ void new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_
     
 	nlohmann::json extra = nlohmann::json::parse(tx.extra());
 	int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
-	int gasFee = extra["GasFee"].get<int>();
+	int gasFee = extra["SignFee"].get<int>();
 	int packageFee = extra["PackageFee"].get<int>();
 
     
@@ -1947,7 +1858,7 @@ void new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_
                     auto re = VerifyMessage(publicKey, message, temp_signature);
                     if (!re) 
 					{
-                        cout << __FILE__ << " " << __LINE__ << "VerifyMessage err!!!!!!!" << endl;
+                        
                     } 
 					else 
 					{
@@ -2058,7 +1969,7 @@ CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward, const std::sha
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(CreateWorkTx) TransactionInit failed !" << std::endl;
+		
 	}
 
 	ON_SCOPE_EXIT{
@@ -2110,7 +2021,7 @@ CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward, const std::sha
 
         if (!bIsAward) 
 		{
-            scriptSig->set_sign(GAS_SIGN_STR);
+            scriptSig->set_sign(FEE_SIGN_STR);
         } 
 		else 
 		{
@@ -2312,6 +2223,85 @@ int RollbackRedeemTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTrans
 			}
 		}
 
+		
+		std::vector<std::string> vinUtxos;
+		uint64_t vinAmountTotal = 0;
+		uint64_t voutAmountTotal = 0;
+		for (auto & txin : tx.vin())
+		{
+			vinUtxos.push_back(txin.prevout().hash());
+		}
+
+		auto iter = find(vinUtxos.begin(), vinUtxos.end(), redempUtxoStr);
+		if (iter != vinUtxos.end())
+		{
+			vinUtxos.erase(iter);
+		}
+		else
+		{
+			printf("%s Find redempUtxoStr in vinUtxos failed ! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+			return -2;
+		}
+		
+		for (auto & vinUtxo : vinUtxos)
+		{
+			vinAmountTotal += TxHelper::GetUtxoAmount(vinUtxo, txOwner);
+		}
+		
+		for (auto & txout : tx.vout())
+		{
+			voutAmountTotal += txout.value();
+		}
+
+		
+		nlohmann::json extra = nlohmann::json::parse(tx.extra());
+		uint64_t signFee = extra["SignFee"].get<int>();
+		uint64_t NeedVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
+		uint64_t packageFee = extra["PackageFee"].get<int>();
+
+		voutAmountTotal += signFee * NeedVerifyPreHashCount;
+		voutAmountTotal += packageFee;
+
+		bool bIsUnused = true;
+		if (voutAmountTotal != vinAmountTotal)
+		{
+			uint64_t usable = TxHelper::GetUtxoAmount(redempUtxoStr, txOwner);
+			if (voutAmountTotal == vinAmountTotal - usable)
+			{
+				
+				bIsUnused = false;
+			}
+		}
+
+		for (auto & txin : tx.vin())
+		{
+			if (txin.prevout().hash() == redempUtxoStr && bIsUnused)
+			{
+				continue;
+			}
+			
+			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, txOwner, txin.prevout().hash()) )
+			{
+				std::string txRaw;
+				if ( 0 != pRocksDb->GetTransactionByHash(txn, txin.prevout().hash(), txRaw) )
+				{
+					printf("%sGetTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -2;
+				}
+
+				CTransaction vinUtxoTx;
+				vinUtxoTx.ParseFromString(txRaw);
+
+				nlohmann::json extra = nlohmann::json::parse(vinUtxoTx.extra());
+				std::string txType = extra["TransactionType"].get<std::string>();
+				if (txType != TXTYPE_REDEEM)
+				{
+					printf("%sSetUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -3;
+				}
+			}
+		}
+
 		int64_t value = 0;
 		if ( 0 != pRocksDb->GetBalanceByAddress(txn, txOwner, value) )
 		{
@@ -2360,6 +2350,86 @@ int RollbackRedeemTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTrans
 				return -7;
 			}
 		}
+
+		if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txOwner, tx.hash()))
+		{
+			printf("%sRemoveUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+			return -8;
+		}
+	}
+	else if (CheckTransactionType(tx) == kTransactionType_Fee || CheckTransactionType(tx) == kTransactionType_Award)
+	{
+		uint64_t signFee = 0;
+		std::string txOwnerAddr;
+		std::string txRaw;
+		if (0 != pRocksDb->GetTransactionByHash(txn, redempUtxoStr, txRaw) )
+		{
+			printf("%sGetTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+			return -9;
+		}
+
+		CTransaction utxoTx;
+		utxoTx.ParseFromString(txRaw);
+
+		for (int j = 0; j < utxoTx.vout_size(); j++)
+		{
+			CTxout txOut = utxoTx.vout(j);
+			if (txOut.scriptpubkey() != VIRTUAL_ACCOUNT_PLEDGE)
+			{
+				txOwnerAddr += txOut.scriptpubkey();
+			}
+		}
+
+		for (int j = 0; j < tx.vout_size(); j++)
+		{
+			CTxout txout = tx.vout(j);
+
+			if (txout.scriptpubkey() != txOwnerAddr)
+			{
+				signFee += txout.value();
+			}
+
+			int64_t value = 0;
+			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
+			{
+				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -10;
+			}
+			int64_t amount = value - txout.value();
+			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
+			{
+				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -11;
+			}
+			if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
+			{
+				printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -12;
+			}
+			if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()) )
+			{
+				printf("%sRemoveUtxoHashsByAddress  2  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -13;
+			}
+		}
+
+		if (CheckTransactionType(tx) == kTransactionType_Fee)
+		{
+			int64_t value = 0;
+			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txOwnerAddr, value) )
+			{
+				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -14;
+			}
+
+			signFee += value;
+
+			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txOwnerAddr, signFee) )
+			{
+				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+				return -15;
+			}
+		}
 	}
 
 	return 0;
@@ -2405,8 +2475,29 @@ int RollbackPledgeTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTrans
 
 			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, vin_owner, vin_hash ))
 			{
-				printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -17;
+				
+				std::string txRaw;
+				if ( 0 != pRocksDb->GetTransactionByHash(txn, vin_hash, txRaw) )
+				{
+					printf("%sGetTransactionByHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -17;
+				}
+
+				CTransaction vinHashTx;
+				vinHashTx.ParseFromString(txRaw);
+
+				nlohmann::json extra = nlohmann::json::parse(vinHashTx.extra());
+				std::string txType = extra["TransactionType"];
+
+				if (txType != TXTYPE_REDEEM)
+				{
+					printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -17;
+				}
+				else
+				{
+					continue;
+				}	
 			}
 
 			
@@ -2510,8 +2601,29 @@ int RollbackTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTransaction
 
 			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, vin_owner, vin_hash ))
 			{
-				printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -17;
+				
+				std::string txRaw;
+				if ( 0 != pRocksDb->GetTransactionByHash(txn, vin_hash, txRaw) )
+				{
+					printf("%sGetTransactionByHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -17;
+				}
+
+				CTransaction vinHashTx;
+				vinHashTx.ParseFromString(txRaw);
+
+				nlohmann::json extra = nlohmann::json::parse(vinHashTx.extra());
+				std::string txType = extra["TransactionType"];
+
+				if (txType != TXTYPE_REDEEM)
+				{
+					printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
+					return -17;
+				}
+				else
+				{
+					continue;
+				}	
 			}
 
 			
@@ -2883,8 +2995,174 @@ int BuildBlock(std::string &recvTxString, const std::shared_ptr<TxMsg>& SendTxMs
 	return 0;
 }
 
+int IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion)
+{
+	if (vRecvVersion.size() == 0)
+	{
+		std::cout << "(linux)版本错误：-1" << std::endl;
+		return -1;
+	}
+	std::string ownerVersion = getVersion();
+	std::vector<std::string> vOwnerVersion;
+	SplitString(ownerVersion, vOwnerVersion, "_");
+
+	if (vOwnerVersion.size() != 3)
+	{
+		std::cout << "(linux)版本错误：-2" << std::endl;
+		return -2;
+	}
+
+	
+	std::vector<std::string> vOwnerVersionNum;
+	SplitString(vOwnerVersion[1], vOwnerVersionNum, ".");
+	if (vOwnerVersionNum.size() == 0)
+	{
+		std::cout << "(linux)版本错误：-3" << std::endl;
+		return -3;
+	}
+
+	std::vector<std::string> vRecvVersionNum;
+	SplitString(vRecvVersion[1], vRecvVersionNum, ".");
+	if (vRecvVersionNum.size() != vOwnerVersionNum.size())
+	{
+		std::cout << "(linux)版本错误：-4" << std::endl;
+		return -4;
+	}
+
+	for (size_t i = 0; i < vRecvVersionNum.size(); i++)
+	{
+		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
+		{
+			std::cout << "(linux)版本错误：-5" << std::endl;
+			return -5;
+		}
+	}
+
+	if (g_testflag == 1)
+	{
+		if (vRecvVersion[2] != "t")
+		{
+			std::cout << "(linux)版本错误：-6" << std::endl;
+			return -6;
+		}
+	}
+	else
+	{
+		if (vRecvVersion[2] != "p")
+		{
+			std::cout << "(linux)版本错误：-7" << std::endl;
+			return -7;
+		}
+	}
+
+	return 0;
+}
+
+int IsOtherVersionCompatible(const std::string & vRecvVersion, bool bIsAndroid)
+{
+	if (vRecvVersion.size() == 0)
+	{
+		std::cout << "(other) 版本错误: -1" << std::endl;
+		return -1;
+	}
+
+	std::vector<std::string> vRecvVersionNum;
+	SplitString(vRecvVersion, vRecvVersionNum, ".");
+	if (vRecvVersionNum.size() != 3)
+	{
+		std::cout << "(other) 版本错误: -2" << std::endl;
+		return -2;
+	}
+
+	std::string ownerVersion;
+	if (bIsAndroid)
+	{
+		ownerVersion = g_AndroidCompatible;
+	}
+	else
+	{
+		ownerVersion = g_IOSCompatible;
+	}
+	
+	std::vector<std::string> vOwnerVersionNum;
+	SplitString(ownerVersion, vOwnerVersionNum, ".");
+
+	for (size_t i = 0; i < vOwnerVersionNum.size(); ++i)
+	{
+		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
+		{
+			std::cout << "(other) 版本错误: -3" << std::endl;
+			std::cout << "(other) 接收到的版本：" << vRecvVersion << std::endl;
+			std::cout << "(other) 本地的版本：" << ownerVersion << std::endl;
+			return -3;
+		}
+	}
+
+	return 0;
+}
+
 int IsVersionCompatible( std::string recvVersion )
 {
+	if (recvVersion.size() == 0)
+	{
+		std::cout << "版本错误：-1" << std::endl;
+		return -1;
+	}
+
+	std::vector<std::string> vRecvVersion;
+	SplitString(recvVersion, vRecvVersion, "_");
+	if (vRecvVersion.size() != 2 && vRecvVersion.size() != 3)
+	{
+		std::cout << "版本错误：-2" << std::endl;
+		return -2;
+	}
+
+	int versionPrefix = std::stoi(vRecvVersion[0]);
+	if (versionPrefix > 4 || versionPrefix < 1)
+	{
+		std::cout << "版本错误：-3" << std::endl;
+		return -3;
+	}
+	
+	switch(versionPrefix)
+	{
+		case 1:
+		{
+			
+			if ( 0 != IsLinuxVersionCompatible(vRecvVersion) )
+			{
+				return -4;
+			}
+			break;
+		}
+		case 2:
+		{
+			
+			return -5;
+		}
+		case 3:
+		{
+			
+			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], false) )
+			{
+				return -6;
+			}
+			break;
+		}
+		case 4:
+		{
+			
+			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], true) )
+			{
+				return -6;
+			}
+			break;
+		}
+		default:
+		{
+			return -7;
+		}
+	}
 	return 0;
 }
 
@@ -2957,6 +3235,15 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 		net_send_message<TxMsgAck>(msgdata, txMsgAck);
 		error("HandleTx txstr_parse() error");
 		return -4;	
+	}
+
+	if (verify_num < g_MinNeedVerifyPreHashCount)
+	{
+		txMsgAck.set_code(-6);
+		txMsgAck.set_message("verify_num error");
+		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		error("HandleTx verify_num error");
+		return -19;
 	}
 
 	CalcTransactionHash(tx);
@@ -3104,9 +3391,9 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 	}
 
 	nlohmann::json txExtra = nlohmann::json::parse(tx.extra());
-	int txOwnerPayGasFee = txExtra["GasFee"].get<int>();
+	int txOwnerPayGasFee = txExtra["SignFee"].get<int>();
 
-	if(txOwnerPayGasFee <= 0)
+	if((uint64_t)txOwnerPayGasFee < g_minSignFee || (uint64_t)txOwnerPayGasFee > g_maxSignFee)
 	{
 		txMsgAck.set_code(-10);
 		txMsgAck.set_message("GasFee error!");
@@ -3151,23 +3438,8 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 			nodeSize = 1;
 		}
 
-		bool isPledge = false;
-		nlohmann::json extra = nlohmann::json::parse(tx.extra());
-		std::string txType = extra["TransactionType"].get<std::string>();
-		if (txType == TXTYPE_PLEDGE)
-		{
-			isPledge = true;
-		}
-
-		bool isInitAccount = false;
-		std::vector<std::string> VTxowners = TxHelper::GetTxOwner(tx);
-		if (VTxowners.size() == 1 && VTxowners.end() != find(VTxowners.begin(), VTxowners.end(), g_InitAccount) )
-		{
-			isInitAccount = true;
-		}
-
 		std::string nextNode;
-		int ret = FindSignNode(verify_num, txOwnerPayGasFee, nodeSize, v, isPledge, isInitAccount);
+		int ret = FindSignNode(tx, nodeSize, v);
 		if( ret < 0 )
 		{
 			txMsgAck.set_code(-11);
@@ -3233,7 +3505,15 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 		GetBase58Addr(SignerCstr, &SignerCstrLen, 0x00, ownPubKey.c_str(),ownPubKey.size());
 
 		double mineronlinetime = 0;
-		pRocksDb->GetDeviceOnLineTime(mineronlinetime);
+		if ( 0 != pRocksDb->GetDeviceOnLineTime(mineronlinetime) )
+		{
+			
+			
+			
+			
+			
+		}
+
 		if(mineronlinetime == 0)
 		{
 			mineronlinetime = 0.00001157;
@@ -3298,11 +3578,20 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 			uint64_t mineSignatureFee = 0;
 			pRocksDb->GetDeviceSignatureFee( mineSignatureFee );
 			double mineronlinetime = 0;
-			pRocksDb->GetDeviceOnLineTime(mineronlinetime);
+			if ( 0 != pRocksDb->GetDeviceOnLineTime(mineronlinetime) )
+			{
+				
+				
+				
+				
+				
+			}
+
 			if(mineronlinetime == 0)
 			{
 				mineronlinetime = 0.00001157;
 			}
+			
 			char SignerCstr[2048] = {0};
 			size_t SignerCstrLen = sizeof(SignerCstr);
 			GetBase58Addr(SignerCstr, &SignerCstrLen, 0x00, ownPubKey.c_str(),ownPubKey.size());
@@ -3502,7 +3791,6 @@ void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const Ms
 
 void GetDeviceInfo(const std::shared_ptr<GetMacReq>& getMacReq, const MsgData& from)
 {	
-	std::cout << "GetDeviceInfo ok" << std::endl;
 	std::vector<string> outmac;
 	get_mac_info(outmac);
 	
@@ -3514,7 +3802,6 @@ void GetDeviceInfo(const std::shared_ptr<GetMacReq>& getMacReq, const MsgData& f
 	string md5 = getMD5hash(macstr.c_str());
 	GetMacAck getMacAck;
 	getMacAck.set_mac(md5);
-	cout <<"mac:="<<md5<<endl;
 
 	net_send_message(from, getMacAck);
 }
@@ -3592,7 +3879,6 @@ int SearchPledge(const std::string &address, uint64_t &pledgeamount, std::string
 	int db_status = pRocksDb->GetPledgeAddressUtxo(txn, address, utxos);
 	if (db_status != 0) 
 	{
-		std::cout << __LINE__ << std::endl;
 		return -1;
 	}
 	uint64_t total = 0;
@@ -3627,12 +3913,29 @@ int SearchPledge(const std::string &address, uint64_t &pledgeamount, std::string
 	return 0;
 }
 
-int FindSignNode(int verifySum, uint64_t minerFee, int nextNodeNumber, std::vector<std::string> &nextNode, bool isPledge, bool isInitAccount)
+int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<std::string> &nextNode)
 {
 	
-	if(verifySum <= 0 || minerFee <= 0)
+	if(nextNodeNumber <= 0)
 	{
 		return -1;
+	}
+
+	nlohmann::json txExtra = nlohmann::json::parse(tx.extra());
+	uint64_t minerFee = txExtra["SignFee"].get<int>();
+
+	bool isPledge = false;
+	std::string txType = txExtra["TransactionType"].get<std::string>();
+	if (txType == TXTYPE_PLEDGE)
+	{
+		isPledge = true;
+	}
+
+	bool isInitAccount = false;
+	std::vector<std::string> VTxowners = TxHelper::GetTxOwner(tx);
+	if (VTxowners.size() == 1 && VTxowners.end() != find(VTxowners.begin(), VTxowners.end(), g_InitAccount) )
+	{
+		isInitAccount = true;
 	}
 
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
@@ -3658,6 +3961,23 @@ int FindSignNode(int verifySum, uint64_t minerFee, int nextNodeNumber, std::vect
 	if(iter != idsInfo.end())
 	{
 		idsInfo.erase(iter);
+	}
+
+	
+	std::vector<std::string> txAddrs;
+	for(int i = 0; i < tx.vout_size(); ++i)
+	{
+		CTxout txout = tx.vout(i);
+		txAddrs.push_back(txout.scriptpubkey());
+	}
+
+	
+	for (auto idBase58 : idBase58s)
+	{
+		if (txAddrs.end() != find(txAddrs.begin(), txAddrs.end(), idBase58.second))
+		{
+			idsInfo.erase(idBase58.first);
+		}
 	}
 
 	std::vector<string> addresses;
@@ -3726,12 +4046,12 @@ int FindSignNode(int verifySum, uint64_t minerFee, int nextNodeNumber, std::vect
 void GetOnLineTime()
 {
 	static time_t startTime = time(NULL);
+	std::cout << "初始化startTime：" << startTime << std::endl;
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
 	if(!txn) 
 	{
 		std::cout << " TransactionInit failed !" << std::endl;
-		std::cout << __LINE__ << std::endl;
 		return ;
 	}
 
@@ -3740,7 +4060,7 @@ void GetOnLineTime()
 	};
 
 	{
-		// patch
+		
 		double minertime = 0.0;
 		if (0 != pRocksDb->GetDeviceOnLineTime(minertime))
 		{
@@ -3761,12 +4081,13 @@ void GetOnLineTime()
 		}
 	}
 
+	
 	std::vector<std::string> vTxHashs;
 	std::string addr = g_AccountInfo.DefaultKeyBs58Addr;
 	int db_get_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs); 	
 	if (db_get_status != 0) 
 	{
-		std::cout << __LINE__ << std::endl;
+
 	}
 
 	std::vector<Node> vnode = net_get_public_node();
@@ -3775,6 +4096,7 @@ void GetOnLineTime()
 		double onLineTime = 0.0;
 		if ( 0 != pRocksDb->GetDeviceOnLineTime(onLineTime) )
 		{
+			std::cout << "获取在线时长失败, SetDeviceOnlineTime" << std::endl;
 			std::cout << "start: " << startTime << std::endl;
 			if ( 0 != pRocksDb->SetDeviceOnlineTime(0.00001157) )
 			{
@@ -3806,6 +4128,7 @@ void GetOnLineTime()
 		}
 		
 		startTime = endTime;
+		std::cout << "更新在初始时间：" << startTime << std::endl << std::endl << std::endl;
 	}
 	else
 	{
@@ -3827,7 +4150,6 @@ int PrintOnLineTime()
 	cout <<"onlinetiem ="<< onlinetime <<endl;
 	if(db_status == 0)
 	{
-		std::cout << __LINE__ << std::endl;
 		cout<<"Get the data success"<<endl;
 		return 0;
 	}    
@@ -3898,8 +4220,6 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 		string  minerpasswd = Singleton<Config>::get_instance()->GetDevPassword();
 		std::string passwordStr = generateDeviceHashPassword(msg->password());
 
-		std::cout << "接收到的密码：" << passwordStr << std::endl;
-		std::cout << "本地的密码：" << minerpasswd << std::endl;
 
 		if( !passwordStr.compare( minerpasswd ) )
 		{
@@ -3933,7 +4253,7 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 
 		MinutesCountLock.lock_shared();
 						
-				std::cout << "倒计时剩余：" << minutescount << std::endl;
+		std::cout << "倒计时剩余：" << minutescount << std::endl;
 
 				
 		std::string minutescountStr = std::to_string(minutescount);

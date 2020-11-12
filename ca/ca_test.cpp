@@ -83,7 +83,6 @@ void printRocksdb(uint64_t start, uint64_t end) {
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(printRocksdb) TransactionInit failed !" << std::endl;
 		return ;
 	}
 
@@ -241,8 +240,6 @@ void printRocksdb(uint64_t start, uint64_t end) {
         }
         if (i == 0) break;
     }
-    std::cout << "count>>>>>>> " << b_count << std::endl;
-    std::cout << std::endl;
     close(fd);
 }
 

@@ -82,17 +82,9 @@ int net_tcp::Connect(int fd, const struct sockaddr *sa, socklen_t salen)
 	
 	info("modify socket recv buff size %d !", nBufLen);
 	
-
-	
-	
-	
-
-	sockaddr_in *si = (sockaddr_in *)sa;
-	char addr[20] = {0};
 	if ((n = connect(fd, sa, salen)) < 0)
 	{
 		debug(RED "Connect fun  %d" RESET, n);
-		printf("to %s/%d connect error : %s\n", inet_ntop(AF_INET, &si->sin_addr.s_addr, addr, sizeof(addr)), ntohs(si->sin_port), strerror(errno));
 	}
 
 	return n;
@@ -111,7 +103,6 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 {
 	if (sockfd < 0)
 	{
-		std::cout << "Send func: file description err..." << std::endl;
 		debug("Send 文件描述符错误...");
 		return -1;
 	}
@@ -461,11 +452,9 @@ std::string net_data::get_mac_md5()
 	net_data::get_mac_info(vec);
 	for (auto it = vec.begin(); it != vec.end(); ++it)
 	{
-		std::cout << "mac: " << *it << std::endl;
 		data += *it;
 	}
 	string md5 = getMD5hash(data);
-	std::cout << "md5:" << md5 << std::endl;
 
 	return md5;
 }
@@ -560,8 +549,6 @@ bool net_com::net_init()
 {
 	
 	global::cpu_nums = sysconf(_SC_NPROCESSORS_ONLN);
-	std::cout << "当前cpu核心数：" << global::cpu_nums << std::endl;
-
 	
 	uint32_t seed[1] = {0};
 	srand((unsigned long)seed);
@@ -814,7 +801,6 @@ void net_com::InitRegisterNode()
 	bool get_nodelist_flag = true;
 	for (auto &node : nodelist)
 	{	
-		cout << "配置文件公网节点信息： " << IpPort::ipsz(node.public_ip) << endl;
 		if (node.is_public_node)
 		{
 			bool res = net_com::SendRegisterNodeReq(node, get_nodelist_flag);
@@ -996,9 +982,7 @@ void net_com::DealHeart()
 			node.heart_probes -= 1;
 			if(node.heart_probes <= 0)
 			{
-				std::cout << "DealHeart delete node==========" << endl;
 				node.print();
-
 				Singleton<PeerNode>::get_instance()->delete_node(node.id);
 			}else
 			{

@@ -16,6 +16,29 @@ message CheckHash
 }
 
 
+message SyncGetPledgeNodeReq
+{
+	SyncHeaderMsg syncHeaderMsg = 1;
+}
+
+message SyncGetPledgeNodeAck
+{
+	repeated string ids = 1;
+}
+
+
+message SyncVerifyPledgeNodeReq
+{
+	SyncHeaderMsg syncHeaderMsg = 1;
+	repeated string ids         = 2;
+}
+
+message SyncVerifyPledgeNodeAck
+{
+	repeated string ids         = 1;
+}
+
+
 message SyncGetnodeInfoReq
 {
     SyncHeaderMsg syncHeaderMsg = 1;						

@@ -19,6 +19,8 @@
 #include "ca_base64.h"
 #include "ca_message.h"
 #include <sstream>
+#include "ca_MultipleApi.h"
+#include "ca_jcAPI.h"
 
 void ca_register_http_callbacks()
 {
@@ -42,6 +44,10 @@ void ca_register_http_callbacks()
     HttpServer::registerJsonRpcCallback("get_tx_by_txid",jsonrpc_get_tx_by_txid);
     HttpServer::registerJsonRpcCallback("create_tx_message",jsonrpc_create_tx_message);
     HttpServer::registerJsonRpcCallback("send_tx",jsonrpc_send_tx);
+    HttpServer::registerJsonRpcCallback("get_avg_fee",jsonrpc_get_avg_fee);
+    HttpServer::registerJsonRpcCallback("generate_wallet",jsonrpc_generate_wallet);
+    HttpServer::registerJsonRpcCallback("generate_sign",jsonrpc_generate_sign);
+
 }
 
 
@@ -90,7 +96,7 @@ void api_jsonrpc(const Request & req, Response & res)
         ret["error"]["message"] = "Parse error";
         ret["id"] = ""; 
     }
-    std::cout << ret.dump(4) << std::endl;
+
     res.set_content(ret.dump(4), "application/json");
 }
 
@@ -116,9 +122,6 @@ void api_print_block(const Request & req, Response & res)
        num = atol(req.get_param_value("num").c_str());
     } 
 
-    std::cout << req.body << std::endl;
-
-
     std::string str = printBlocks(num);
     res.set_content(str, "text/plain");
 }
@@ -130,7 +133,6 @@ void api_info(const Request & req, Response & res)
     auto cout_buff = std::cout.rdbuf(); 
     std::cout.rdbuf(local.rdbuf()); 
 
-    std::cout << "amount----------:" << std::endl;
     for(auto& i:g_AccountInfo.AccountList)
     {
         uint64_t amount = CheckBalanceFromRocksDb(i.first); 
@@ -139,8 +141,7 @@ void api_info(const Request & req, Response & res)
     std::cout << "\n" << std::endl;
 
     auto list = Singleton<PeerNode>::get_instance()->get_nodelist();
-    std::cout << "PeerNode size is: " << list.size() << std::endl;
-    std::cout << "nodelist---------:" << std::endl;
+
     Singleton<PeerNode>::get_instance()->print(list);
 
     std::cout.rdbuf(cout_buff);
@@ -224,8 +225,7 @@ void api_get_block(const Request & req, Response & res)
                 std::string addr = GetBase58Addr(pub); 
 
                 uint64_t amount = TxHelper::GetUtxoAmount(utxo_hash, addr);
-                vin->mutable_prevout()->set_hash(addr + "_" + std::to_string(amount));
-                
+                vin->mutable_prevout()->set_hash(addr + "_" + std::to_string(amount) + "_" + utxo_hash);
             }
             strHeader = cblock.SerializeAsString();
 
@@ -561,15 +561,27 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
     CTransaction utxoTx;
     utxoTx.ParseFromString(strTxRaw);
 
+    nlohmann::json extra = nlohmann::json::parse(utxoTx.extra());
+    std::string txType = extra["TransactionType"].get<std::string>();
+
     ret["result"]["hash"] = utxoTx.hash();
     ret["result"]["time"] = utxoTx.time();
-
-    std::vector<std::string> vins = TxHelper::GetTxOwner(hash);
-    int k = 0;
-    for(auto & addr:vins)
+    ret["result"]["type"] = txType;
+    
+    for (int i = 0; i < utxoTx.vin_size(); i++)
     {
-        ret["result"]["vin"][k++] = addr;
+        CTxin vin = utxoTx.vin(i);
+        std::string  utxo_hash = vin.prevout().hash();
+        std::string  pub = vin.scriptsig().pub();
+        std::string addr = GetBase58Addr(pub); 
+
+        uint64_t amount = TxHelper::GetUtxoAmount(utxo_hash, addr);
+        ret["result"]["vin"][i]["address"] =  addr;
+        ret["result"]["vin"][i]["prev_hash"] =  utxo_hash;
+        ret["result"]["vin"][i]["output_index"] =  0;
+        ret["result"]["vin"][i]["output_value"] = std::to_string((double)amount/DECIMAL_NUM);
     }
+
 
     for (int i = 0; i < utxoTx.vout_size(); i++)
     {
@@ -599,13 +611,12 @@ nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param)
         }        
         istringstream issInputFee(strFee);
         issInputFee >> fee;
-        fee = fee * DECIMAL_NUM;
+        fee = (fee + FIX_DOUBLE_MIN_PRECISION )* DECIMAL_NUM;
 
         if(param.find("from_addr") != param.end())
         {
              for(const auto& addr:param["from_addr"])
             {
-                std::cout << "from addr:" << addr.get<std::string>() << std::endl;
                 from_addrs.push_back(addr.get<std::string>());
             }
         }
@@ -621,12 +632,10 @@ nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param)
             {   
                 if(param["to_addr"][i].find("addr") != param["to_addr"][i].end() && param["to_addr"][i].find("value") != param["to_addr"][i].end())
                 {   
-                    std::cout << "to addr:" << addr["addr"].get<std::string>() << std::endl;
-                    std::cout << "value:" << addr["value"].get<std::string>() << std::endl;
                     double value = 0;
                     istringstream issInputValue(addr["value"].get<std::string>());
                     issInputValue >> value;
-                    value = value * DECIMAL_NUM;
+                    value = (value + FIX_DOUBLE_MIN_PRECISION )* DECIMAL_NUM;
                     toAddrAmount[addr["addr"].get<std::string>()] = value;
                 }
                 else
@@ -649,7 +658,7 @@ nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param)
     }
     
 	CTransaction outTx;
-	int error_number = TxHelper::CreateTxMessage(from_addrs, toAddrAmount, 3, fee, outTx);
+	int error_number = TxHelper::CreateTxMessage(from_addrs, toAddrAmount, g_MinNeedVerifyPreHashCount, fee, outTx);
 	if( error_number != 0)
 	{
         ret["error"]["code"] = -32000;
@@ -742,8 +751,8 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json & param)
 	}
 	
 	std::string serTx = tx.SerializeAsString();
-	
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), 3 );
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
+	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), g_MinNeedVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 
 	TxMsg txMsg;
@@ -773,6 +782,97 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json & param)
         return ret;
     }
     ret["result"]["tx_hash"] = tx_hash;
+
+    return ret;
+}
+
+nlohmann::json jsonrpc_get_avg_fee(const nlohmann::json & param)
+{
+    uint64_t avg_fee_tmp = m_api::getAvgFee();
+
+    double avg_fee = (double) avg_fee_tmp / DECIMAL_NUM; 
+
+    nlohmann::json ret;
+    ret["result"]["avg_fee"] = std::to_string(avg_fee); 
+    return ret;
+}
+
+nlohmann::json jsonrpc_generate_wallet(const nlohmann::json & param)
+{
+    nlohmann::json ret;
+
+    const int BUFF_SIZE = 128;
+    char *out_private_key = new char[BUFF_SIZE]{0};
+    int *out_private_key_len = new int{BUFF_SIZE};
+    char *out_public_key = new char[BUFF_SIZE]{0};
+    int *out_public_key_len = new int{BUFF_SIZE}; 
+    char *out_bs58addr = new char[BUFF_SIZE]{0};
+    int *out_bs58addr_len = new int{BUFF_SIZE};
+    GenWallet_(out_private_key, out_private_key_len, out_public_key, out_public_key_len, out_bs58addr, out_bs58addr_len);
+
+    char *base64_pri_key = new char[BUFF_SIZE]{0};
+    char *base64_pub_key = new char[BUFF_SIZE]{0};
+    base64_encode((unsigned char *)out_private_key, *out_private_key_len, (unsigned char *)base64_pri_key);
+    base64_encode((unsigned char *)out_public_key, *out_public_key_len, (unsigned char *)base64_pub_key);
+    std::string private_key(base64_pri_key);
+    std::string public_key(base64_pub_key);
+    std::string address(out_bs58addr);
+
+    ret["result"]["private_key"] = private_key;
+    ret["result"]["public_key"] = public_key; 
+    ret["result"]["address"] = address;
+
+    delete [] out_private_key;
+    delete [] out_private_key_len;
+    delete [] out_public_key;
+    delete [] out_public_key_len;
+    delete [] out_bs58addr;
+    delete [] out_bs58addr_len;
+    delete [] base64_pub_key;
+    delete [] base64_pri_key;
+
+    return ret;
+}
+
+nlohmann::json jsonrpc_generate_sign(const nlohmann::json & param)
+{   
+    nlohmann::json ret;
+    std::string data;
+    std::string private_key_base64;
+    const int BUFF_SIZE = 128;
+    try
+    {   
+        if(param.find("data") != param.end() && 
+            param.find("private_key") != param.end())
+        {
+            data = param["data"].get<std::string>();
+            private_key_base64 = param["private_key"].get<std::string>();
+            char *private_key = new char[BUFF_SIZE]{0};
+            int size = base64_decode((unsigned char *)private_key_base64.c_str(), private_key_base64.size(), (unsigned char *)private_key);
+
+
+            char *signature_msg = new char[BUFF_SIZE]{0};
+            int *out_len = new int{BUFF_SIZE};
+            GenSign_(private_key, size, data.c_str(), data.size(), signature_msg, out_len);
+
+            std::string signature(signature_msg, *out_len);
+            ret["result"]["message"] = signature;
+
+            delete [] out_len;
+            delete [] signature_msg;
+            delete [] private_key;
+        }
+        else
+        {
+            throw std::exception();
+        }  
+    }
+    catch(const std::exception& e)
+    {
+        ret["error"]["code"] = -32602;
+        ret["error"]["message"] = "Invalid params";
+        return ret;
+    }
 
     return ret;
 }

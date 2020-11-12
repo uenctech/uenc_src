@@ -118,8 +118,6 @@ bool TimeUtil::setLocalTime(x_uint64_t timestamp)
     struct timeval tv;
     tv.tv_sec = timestamp/1000000;
 	tv.tv_usec = timestamp - timestamp/1000000*1000000;
-    std::cout << "sec:" << tv.tv_sec << std::endl;
-    std::cout << "usec:" << tv.tv_usec << std::endl;
 	if (settimeofday(&tv, NULL) < 0)
 	{
 		return false;

@@ -155,7 +155,7 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
     nlohmann::json extra;
     extra["TransactionType"] = TXTYPE_TX;
 	extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-	extra["GasFee"] = minerFees;
+	extra["SignFee"] = minerFees;
     extra["PackageFee"] = packageFee;   
 	outTx.set_extra(extra.dump());
 
@@ -290,7 +290,7 @@ void HandlePreMultiTxRaw( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgDa
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(HandlePreMultiTxRaw) TransactionInit failed !" << std::endl;
+		
 	}
 
 	bool bRollback = true;
@@ -406,7 +406,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     nlohmann::json txExtra = nlohmann::json::parse(outTx.extra());
     txExtra["TransactionType"] = TXTYPE_TX;	
     txExtra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-	txExtra["GasFee"] = gasFee;
+	txExtra["SignFee"] = gasFee;
     txExtra["PackageFee"] = packageFee;   
 
     outTx.set_extra(txExtra.dump());
