@@ -4284,6 +4284,17 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 		return ;
 	}
 
+	std::string password = msg->password();
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    if (hashOriPass != targetPassword) 
+    {
+        txMsgAck.set_code(-5);
+        txMsgAck.set_message("password error!");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        error("password error!");
+        return;
+    }
 	
 	if(msg->from().size() <= 0 || msg->to().size() <= 0 || msg->amt().size() <= 0 ||
 		msg->minerfees().size() <= 0 || msg->needverifyprehashcount().size() <= 0)

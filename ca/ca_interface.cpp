@@ -29,6 +29,7 @@
 #include "Crypto_ECDSA.h"
 #include "../include/cJSON.h"
 #include "ca_test.h"
+#include "ca_device.h"
 #ifndef _CA_FILTER_FUN_
 #include "../include/net_interface.h"
 #include "../include/logging.h"
@@ -248,7 +249,7 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
 }
 
 
-int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & amount_str, uint32_t needVerifyPreHashCount, std::string gasFeeStr, const MsgData &msgdata, std::string pledgeType)
+int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & amount_str, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string password, const MsgData &msgdata, std::string pledgeType)
 {
     TxMsgAck phoneControlDevicePledgeTxAck;
     phoneControlDevicePledgeTxAck.set_version(getVersion());
@@ -262,6 +263,18 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
         error("CreatePledgeFromAddr parameter error!");
         return -101;
+    }
+
+
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    if (hashOriPass != targetPassword) 
+    {
+        phoneControlDevicePledgeTxAck.set_code(-104);
+        phoneControlDevicePledgeTxAck.set_message("password error!");
+        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+        error("password error!");
+        return -104;
     }
 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
@@ -361,7 +374,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     return 0;
 }
 
-int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, const MsgData &msgdata)
+int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, const MsgData &msgdata)
 {
     TxMsgAck txMsgAck;
     txMsgAck.set_version(getVersion());
@@ -375,6 +388,17 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
         net_send_message<TxMsgAck>(msgdata, txMsgAck);
         error("CreateRedeemTransaction FromAddr parameter error!");
         return -1;
+    }
+
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    if (hashOriPass != targetPassword) 
+    {
+        txMsgAck.set_code(-9);
+        txMsgAck.set_message("password error!");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        error("password error!");
+        return -9;
     }
 
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();

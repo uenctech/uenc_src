@@ -129,6 +129,7 @@ int free_buf(char **buf);
  * @param amount_str 质押资产的金额
  * @param needVerifyPreHashCount 共识数 
  * @param gasFeeStr 签名费 
+ * @param password 矿机密码
  * @param msgdata 网络传输所必须的信息体,手机端交易时使用
  * @param pledgeType 质押类型
  * @return 成功返回0;
@@ -138,6 +139,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,
                             const std::string & amount_str, 
                             uint32_t needVerifyPreHashCount, 
                             std::string gasFeeStr, 
+                            std::string password,
                             const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""}, 
                             std::string pledgeType = PLEDGE_NET_LICENCE);
 
@@ -147,6 +149,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,
  * @param fromAddr 解质押资产的账号
  * @param needVerifyPreHashCount 共识数 
  * @param GasFeeStr 签名费
+ * @param password 矿机密码
  * @param blockHeaderStr 要解质押的那笔交易所在块的块头
  * @param msgdata 网络传输所必须的信息体,手机端交易时使用
  * @return 成功返回0；
@@ -159,6 +162,11 @@ int CreatePledgeTransaction(const std::string & fromAddr,
  *               -7，质押资产总额小于解质押资产值
  *               -8，创建交易体失败
  */
-int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string GasFeeStr, std::string blockHeaderStr, const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""});
+int CreateRedeemTransaction(const std::string & fromAddr, 
+                            uint32_t needVerifyPreHashCount, 
+                            std::string GasFeeStr, 
+                            std::string blockHeaderStr, 
+                            std::string password,
+                            const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""});
 
 #endif

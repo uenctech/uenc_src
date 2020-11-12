@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-09-18 18:01:27
- * @LastEditTime: 2020-10-13 20:33:03
+ * @LastEditTime: 2020-11-12 17:02:26
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ebpc\ca\ca_phonetx.h
@@ -30,6 +30,7 @@ enum ERRCODE
     PHONE_TX_NO_AMOUNT = -6, 
     PHONE_TX_TXN_ERROR = -7, 
     PHONE_TX_GET_PACK_FEE_ERROR = -8, 
+    PHONE_TX_PASSWORD_ERROR = -9, 
 };
 
 

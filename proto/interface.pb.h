@@ -9197,6 +9197,7 @@ class CreateDeviceTxMsgReq :
     kAmtFieldNumber = 4,
     kMinerFeesFieldNumber = 5,
     kNeedVerifyPreHashCountFieldNumber = 6,
+    kPasswordFieldNumber = 7,
   };
   // string version = 1;
   void clear_version();
@@ -9294,6 +9295,22 @@ class CreateDeviceTxMsgReq :
   std::string* _internal_mutable_needverifyprehashcount();
   public:
 
+  // string password = 7;
+  void clear_password();
+  const std::string& password() const;
+  void set_password(const std::string& value);
+  void set_password(std::string&& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  std::string* mutable_password();
+  std::string* release_password();
+  void set_allocated_password(std::string* password);
+  private:
+  const std::string& _internal_password() const;
+  void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
+  public:
+
   // @@protoc_insertion_point(class_scope:CreateDeviceTxMsgReq)
  private:
   class _Internal;
@@ -9305,6 +9322,7 @@ class CreateDeviceTxMsgReq :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr amt_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr minerfees_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr needverifyprehashcount_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -9421,6 +9439,7 @@ class CreateDeviceMultiTxMsgReq :
     kVersionFieldNumber = 1,
     kGasFeesFieldNumber = 4,
     kNeedVerifyPreHashCountFieldNumber = 5,
+    kPasswordFieldNumber = 6,
   };
   // repeated string from = 2;
   int from_size() const;
@@ -9512,6 +9531,22 @@ class CreateDeviceMultiTxMsgReq :
   std::string* _internal_mutable_needverifyprehashcount();
   public:
 
+  // string password = 6;
+  void clear_password();
+  const std::string& password() const;
+  void set_password(const std::string& value);
+  void set_password(std::string&& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  std::string* mutable_password();
+  std::string* release_password();
+  void set_allocated_password(std::string* password);
+  private:
+  const std::string& _internal_password() const;
+  void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
+  public:
+
   // @@protoc_insertion_point(class_scope:CreateDeviceMultiTxMsgReq)
  private:
   class _Internal;
@@ -9522,6 +9557,7 @@ class CreateDeviceMultiTxMsgReq :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr gasfees_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr needverifyprehashcount_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -10884,6 +10920,7 @@ class CreateDevicePledgeTxMsgReq :
     kAmtFieldNumber = 3,
     kNeedVerifyPreHashCountFieldNumber = 4,
     kGasFeesFieldNumber = 5,
+    kPasswordFieldNumber = 6,
   };
   // string version = 1;
   void clear_version();
@@ -10965,6 +11002,22 @@ class CreateDevicePledgeTxMsgReq :
   std::string* _internal_mutable_gasfees();
   public:
 
+  // string password = 6;
+  void clear_password();
+  const std::string& password() const;
+  void set_password(const std::string& value);
+  void set_password(std::string&& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  std::string* mutable_password();
+  std::string* release_password();
+  void set_allocated_password(std::string* password);
+  private:
+  const std::string& _internal_password() const;
+  void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
+  public:
+
   // @@protoc_insertion_point(class_scope:CreateDevicePledgeTxMsgReq)
  private:
   class _Internal;
@@ -10975,6 +11028,7 @@ class CreateDevicePledgeTxMsgReq :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr amt_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr needverifyprehashcount_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr gasfees_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -11091,6 +11145,7 @@ class CreateDeviceRedeemTxReq :
     kNeedVerifyPreHashCountFieldNumber = 3,
     kGasFeesFieldNumber = 4,
     kUtxoFieldNumber = 5,
+    kPasswordFieldNumber = 6,
   };
   // string version = 1;
   void clear_version();
@@ -11172,6 +11227,22 @@ class CreateDeviceRedeemTxReq :
   std::string* _internal_mutable_utxo();
   public:
 
+  // string password = 6;
+  void clear_password();
+  const std::string& password() const;
+  void set_password(const std::string& value);
+  void set_password(std::string&& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  std::string* mutable_password();
+  std::string* release_password();
+  void set_allocated_password(std::string* password);
+  private:
+  const std::string& _internal_password() const;
+  void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
+  public:
+
   // @@protoc_insertion_point(class_scope:CreateDeviceRedeemTxReq)
  private:
   class _Internal;
@@ -11182,6 +11253,7 @@ class CreateDeviceRedeemTxReq :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr needverifyprehashcount_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr gasfees_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr utxo_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -24201,6 +24273,66 @@ inline void CreateDeviceTxMsgReq::set_allocated_needverifyprehashcount(std::stri
   // @@protoc_insertion_point(field_set_allocated:CreateDeviceTxMsgReq.needVerifyPreHashCount)
 }
 
+// string password = 7;
+inline void CreateDeviceTxMsgReq::clear_password() {
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CreateDeviceTxMsgReq::password() const {
+  // @@protoc_insertion_point(field_get:CreateDeviceTxMsgReq.password)
+  return _internal_password();
+}
+inline void CreateDeviceTxMsgReq::set_password(const std::string& value) {
+  _internal_set_password(value);
+  // @@protoc_insertion_point(field_set:CreateDeviceTxMsgReq.password)
+}
+inline std::string* CreateDeviceTxMsgReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:CreateDeviceTxMsgReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& CreateDeviceTxMsgReq::_internal_password() const {
+  return password_.GetNoArena();
+}
+inline void CreateDeviceTxMsgReq::_internal_set_password(const std::string& value) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CreateDeviceTxMsgReq::set_password(std::string&& value) {
+  
+  password_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CreateDeviceTxMsgReq.password)
+}
+inline void CreateDeviceTxMsgReq::set_password(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreateDeviceTxMsgReq.password)
+}
+inline void CreateDeviceTxMsgReq::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CreateDeviceTxMsgReq.password)
+}
+inline std::string* CreateDeviceTxMsgReq::_internal_mutable_password() {
+  
+  return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CreateDeviceTxMsgReq::release_password() {
+  // @@protoc_insertion_point(field_release:CreateDeviceTxMsgReq.password)
+  
+  return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CreateDeviceTxMsgReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:CreateDeviceTxMsgReq.password)
+}
+
 // -------------------------------------------------------------------
 
 // CreateDeviceMultiTxMsgReq
@@ -24496,6 +24628,66 @@ inline void CreateDeviceMultiTxMsgReq::set_allocated_needverifyprehashcount(std:
   }
   needverifyprehashcount_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), needverifyprehashcount);
   // @@protoc_insertion_point(field_set_allocated:CreateDeviceMultiTxMsgReq.needVerifyPreHashCount)
+}
+
+// string password = 6;
+inline void CreateDeviceMultiTxMsgReq::clear_password() {
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CreateDeviceMultiTxMsgReq::password() const {
+  // @@protoc_insertion_point(field_get:CreateDeviceMultiTxMsgReq.password)
+  return _internal_password();
+}
+inline void CreateDeviceMultiTxMsgReq::set_password(const std::string& value) {
+  _internal_set_password(value);
+  // @@protoc_insertion_point(field_set:CreateDeviceMultiTxMsgReq.password)
+}
+inline std::string* CreateDeviceMultiTxMsgReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:CreateDeviceMultiTxMsgReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& CreateDeviceMultiTxMsgReq::_internal_password() const {
+  return password_.GetNoArena();
+}
+inline void CreateDeviceMultiTxMsgReq::_internal_set_password(const std::string& value) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CreateDeviceMultiTxMsgReq::set_password(std::string&& value) {
+  
+  password_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CreateDeviceMultiTxMsgReq.password)
+}
+inline void CreateDeviceMultiTxMsgReq::set_password(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreateDeviceMultiTxMsgReq.password)
+}
+inline void CreateDeviceMultiTxMsgReq::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CreateDeviceMultiTxMsgReq.password)
+}
+inline std::string* CreateDeviceMultiTxMsgReq::_internal_mutable_password() {
+  
+  return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CreateDeviceMultiTxMsgReq::release_password() {
+  // @@protoc_insertion_point(field_release:CreateDeviceMultiTxMsgReq.password)
+  
+  return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CreateDeviceMultiTxMsgReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:CreateDeviceMultiTxMsgReq.password)
 }
 
 // -------------------------------------------------------------------
@@ -26606,6 +26798,66 @@ inline void CreateDevicePledgeTxMsgReq::set_allocated_gasfees(std::string* gasfe
   // @@protoc_insertion_point(field_set_allocated:CreateDevicePledgeTxMsgReq.gasFees)
 }
 
+// string password = 6;
+inline void CreateDevicePledgeTxMsgReq::clear_password() {
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CreateDevicePledgeTxMsgReq::password() const {
+  // @@protoc_insertion_point(field_get:CreateDevicePledgeTxMsgReq.password)
+  return _internal_password();
+}
+inline void CreateDevicePledgeTxMsgReq::set_password(const std::string& value) {
+  _internal_set_password(value);
+  // @@protoc_insertion_point(field_set:CreateDevicePledgeTxMsgReq.password)
+}
+inline std::string* CreateDevicePledgeTxMsgReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:CreateDevicePledgeTxMsgReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& CreateDevicePledgeTxMsgReq::_internal_password() const {
+  return password_.GetNoArena();
+}
+inline void CreateDevicePledgeTxMsgReq::_internal_set_password(const std::string& value) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CreateDevicePledgeTxMsgReq::set_password(std::string&& value) {
+  
+  password_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CreateDevicePledgeTxMsgReq.password)
+}
+inline void CreateDevicePledgeTxMsgReq::set_password(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreateDevicePledgeTxMsgReq.password)
+}
+inline void CreateDevicePledgeTxMsgReq::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CreateDevicePledgeTxMsgReq.password)
+}
+inline std::string* CreateDevicePledgeTxMsgReq::_internal_mutable_password() {
+  
+  return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CreateDevicePledgeTxMsgReq::release_password() {
+  // @@protoc_insertion_point(field_release:CreateDevicePledgeTxMsgReq.password)
+  
+  return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CreateDevicePledgeTxMsgReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:CreateDevicePledgeTxMsgReq.password)
+}
+
 // -------------------------------------------------------------------
 
 // CreateDeviceRedeemTxReq
@@ -26908,6 +27160,66 @@ inline void CreateDeviceRedeemTxReq::set_allocated_utxo(std::string* utxo) {
   }
   utxo_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), utxo);
   // @@protoc_insertion_point(field_set_allocated:CreateDeviceRedeemTxReq.utxo)
+}
+
+// string password = 6;
+inline void CreateDeviceRedeemTxReq::clear_password() {
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CreateDeviceRedeemTxReq::password() const {
+  // @@protoc_insertion_point(field_get:CreateDeviceRedeemTxReq.password)
+  return _internal_password();
+}
+inline void CreateDeviceRedeemTxReq::set_password(const std::string& value) {
+  _internal_set_password(value);
+  // @@protoc_insertion_point(field_set:CreateDeviceRedeemTxReq.password)
+}
+inline std::string* CreateDeviceRedeemTxReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:CreateDeviceRedeemTxReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& CreateDeviceRedeemTxReq::_internal_password() const {
+  return password_.GetNoArena();
+}
+inline void CreateDeviceRedeemTxReq::_internal_set_password(const std::string& value) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CreateDeviceRedeemTxReq::set_password(std::string&& value) {
+  
+  password_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CreateDeviceRedeemTxReq.password)
+}
+inline void CreateDeviceRedeemTxReq::set_password(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreateDeviceRedeemTxReq.password)
+}
+inline void CreateDeviceRedeemTxReq::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CreateDeviceRedeemTxReq.password)
+}
+inline std::string* CreateDeviceRedeemTxReq::_internal_mutable_password() {
+  
+  return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CreateDeviceRedeemTxReq::release_password() {
+  // @@protoc_insertion_point(field_release:CreateDeviceRedeemTxReq.password)
+  
+  return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CreateDeviceRedeemTxReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:CreateDeviceRedeemTxReq.password)
 }
 
 // -------------------------------------------------------------------

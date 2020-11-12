@@ -1797,6 +1797,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::CreateDeviceTxMsgReq, amt_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceTxMsgReq, minerfees_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceTxMsgReq, needverifyprehashcount_),
+  PROTOBUF_FIELD_OFFSET(::CreateDeviceTxMsgReq, password_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::CreateDeviceMultiTxMsgReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1807,6 +1808,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::CreateDeviceMultiTxMsgReq, to_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceMultiTxMsgReq, gasfees_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceMultiTxMsgReq, needverifyprehashcount_),
+  PROTOBUF_FIELD_OFFSET(::CreateDeviceMultiTxMsgReq, password_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::CreatePledgeTxMsgReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1878,6 +1880,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::CreateDevicePledgeTxMsgReq, amt_),
   PROTOBUF_FIELD_OFFSET(::CreateDevicePledgeTxMsgReq, needverifyprehashcount_),
   PROTOBUF_FIELD_OFFSET(::CreateDevicePledgeTxMsgReq, gasfees_),
+  PROTOBUF_FIELD_OFFSET(::CreateDevicePledgeTxMsgReq, password_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::CreateDeviceRedeemTxReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1888,6 +1891,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::CreateDeviceRedeemTxReq, needverifyprehashcount_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceRedeemTxReq, gasfees_),
   PROTOBUF_FIELD_OFFSET(::CreateDeviceRedeemTxReq, utxo_),
+  PROTOBUF_FIELD_OFFSET(::CreateDeviceRedeemTxReq, password_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GetPledgeListReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -2100,31 +2104,31 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 406, -1, sizeof(::VerifyDevicePasswordReq)},
   { 413, -1, sizeof(::VerifyDevicePasswordAck)},
   { 421, -1, sizeof(::CreateDeviceTxMsgReq)},
-  { 432, -1, sizeof(::CreateDeviceMultiTxMsgReq)},
-  { 442, -1, sizeof(::CreatePledgeTxMsgReq)},
-  { 452, -1, sizeof(::CreatePledgeTxMsgAck)},
-  { 462, -1, sizeof(::PledgeTxMsgReq)},
-  { 472, -1, sizeof(::CreateRedeemTxMsgReq)},
-  { 483, -1, sizeof(::CreateRedeemTxMsgAck)},
-  { 493, -1, sizeof(::RedeemTxMsgReq)},
-  { 503, -1, sizeof(::CreateDevicePledgeTxMsgReq)},
-  { 513, -1, sizeof(::CreateDeviceRedeemTxReq)},
-  { 523, -1, sizeof(::GetPledgeListReq)},
-  { 532, -1, sizeof(::PledgeItem)},
-  { 545, -1, sizeof(::GetPledgeListAck)},
-  { 555, -1, sizeof(::GetTxInfoListReq)},
-  { 564, -1, sizeof(::TxInfoItem)},
-  { 573, -1, sizeof(::GetTxInfoListAck)},
-  { 584, -1, sizeof(::GetTxInfoDetailReq)},
-  { 592, -1, sizeof(::GetTxInfoDetailAck)},
-  { 611, -1, sizeof(::GetBlockInfoListReq)},
-  { 619, -1, sizeof(::BlockInfoItem)},
-  { 631, -1, sizeof(::GetBlockInfoListAck)},
-  { 642, -1, sizeof(::GetBlockInfoDetailReq)},
-  { 649, -1, sizeof(::BlockInfoOutAddr)},
-  { 656, -1, sizeof(::GetBlockInfoDetailAck)},
-  { 672, -1, sizeof(::TestConnectReq)},
-  { 678, -1, sizeof(::TestConnectAck)},
+  { 433, -1, sizeof(::CreateDeviceMultiTxMsgReq)},
+  { 444, -1, sizeof(::CreatePledgeTxMsgReq)},
+  { 454, -1, sizeof(::CreatePledgeTxMsgAck)},
+  { 464, -1, sizeof(::PledgeTxMsgReq)},
+  { 474, -1, sizeof(::CreateRedeemTxMsgReq)},
+  { 485, -1, sizeof(::CreateRedeemTxMsgAck)},
+  { 495, -1, sizeof(::RedeemTxMsgReq)},
+  { 505, -1, sizeof(::CreateDevicePledgeTxMsgReq)},
+  { 516, -1, sizeof(::CreateDeviceRedeemTxReq)},
+  { 527, -1, sizeof(::GetPledgeListReq)},
+  { 536, -1, sizeof(::PledgeItem)},
+  { 549, -1, sizeof(::GetPledgeListAck)},
+  { 559, -1, sizeof(::GetTxInfoListReq)},
+  { 568, -1, sizeof(::TxInfoItem)},
+  { 577, -1, sizeof(::GetTxInfoListAck)},
+  { 588, -1, sizeof(::GetTxInfoDetailReq)},
+  { 596, -1, sizeof(::GetTxInfoDetailAck)},
+  { 615, -1, sizeof(::GetBlockInfoListReq)},
+  { 623, -1, sizeof(::BlockInfoItem)},
+  { 635, -1, sizeof(::GetBlockInfoListAck)},
+  { 646, -1, sizeof(::GetBlockInfoDetailReq)},
+  { 653, -1, sizeof(::BlockInfoOutAddr)},
+  { 660, -1, sizeof(::GetBlockInfoDetailAck)},
+  { 676, -1, sizeof(::TestConnectReq)},
+  { 682, -1, sizeof(::TestConnectAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -2315,89 +2319,91 @@ const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIAB
   "\030\004 \001(\t\"<\n\027VerifyDevicePasswordReq\022\017\n\007ver"
   "sion\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"I\n\027VerifyDe"
   "vicePasswordAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code"
-  "\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"\201\001\n\024CreateDevice"
+  "\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"\223\001\n\024CreateDevice"
   "TxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022"
   "\n\n\002to\030\003 \001(\t\022\013\n\003amt\030\004 \001(\t\022\021\n\tminerFees\030\005 "
-  "\001(\t\022\036\n\026needVerifyPreHashCount\030\006 \001(\t\"\200\001\n\031"
-  "CreateDeviceMultiTxMsgReq\022\017\n\007version\030\001 \001"
-  "(\t\022\014\n\004from\030\002 \003(\t\022\023\n\002to\030\003 \003(\0132\007.ToAddr\022\017\n"
-  "\007gasFees\030\004 \001(\t\022\036\n\026needVerifyPreHashCount"
-  "\030\005 \001(\t\"s\n\024CreatePledgeTxMsgReq\022\017\n\007versio"
-  "n\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026ne"
-  "edVerifyPreHashCount\030\004 \001(\t\022\017\n\007gasFees\030\005 "
-  "\001(\t\"p\n\024CreatePledgeTxMsgAck\022\017\n\007version\030\001"
-  " \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022"
-  "\016\n\006txData\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n"
-  "\016PledgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serT"
-  "x\030\002 \001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030"
-  "\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"\203\001\n\024CreateRe"
-  "deemTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 "
+  "\001(\t\022\036\n\026needVerifyPreHashCount\030\006 \001(\t\022\020\n\010p"
+  "assword\030\007 \001(\t\"\222\001\n\031CreateDeviceMultiTxMsg"
+  "Req\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \003(\t\022\023\n\002to"
+  "\030\003 \003(\0132\007.ToAddr\022\017\n\007gasFees\030\004 \001(\t\022\036\n\026need"
+  "VerifyPreHashCount\030\005 \001(\t\022\020\n\010password\030\006 \001"
+  "(\t\"s\n\024CreatePledgeTxMsgReq\022\017\n\007version\030\001 "
+  "\001(\t\022\014\n\004addr\030\002 \001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVe"
+  "rifyPreHashCount\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\""
+  "p\n\024CreatePledgeTxMsgAck\022\017\n\007version\030\001 \001(\t"
+  "\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006t"
+  "xData\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016Ple"
+  "dgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 "
+  "\001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001("
+  "\t\022\024\n\014txEncodeHash\030\005 \001(\t\"\203\001\n\024CreateRedeem"
+  "TxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022"
+  "\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCount\030\004"
+  " \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\016\n\006txHash\030\006 \001(\t\"p\n"
+  "\024CreateRedeemTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014"
+  "\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006txD"
+  "ata\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016Redee"
+  "mTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001("
+  "\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001(\t\022"
+  "\024\n\014txEncodeHash\030\005 \001(\t\"\213\001\n\032CreateDevicePl"
+  "edgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 "
   "\001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCou"
-  "nt\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\016\n\006txHash\030\006 \001("
-  "\t\"p\n\024CreateRedeemTxMsgAck\022\017\n\007version\030\001 \001"
-  "(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n"
-  "\006txData\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016R"
-  "edeemTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030"
-  "\002 \001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 "
-  "\001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"y\n\032CreateDevic"
-  "ePledgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr"
-  "\030\002 \001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHash"
-  "Count\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\"w\n\027CreateDe"
-  "viceRedeemTxReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr"
-  "\030\002 \001(\t\022\036\n\026needVerifyPreHashCount\030\003 \001(\t\022\017"
-  "\n\007gasFees\030\004 \001(\t\022\014\n\004utxo\030\005 \001(\t\"O\n\020GetPled"
-  "geListReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t"
-  "\022\r\n\005index\030\003 \001(\r\022\r\n\005count\030\004 \001(\r\"\222\001\n\nPledg"
-  "eItem\022\021\n\tblockhash\030\001 \001(\t\022\023\n\013blockheight\030"
-  "\002 \001(\r\022\014\n\004utxo\030\003 \001(\t\022\016\n\006amount\030\004 \001(\t\022\014\n\004t"
-  "ime\030\005 \001(\004\022\020\n\010fromaddr\030\006 \001(\t\022\016\n\006toaddr\030\007 "
-  "\001(\t\022\016\n\006detail\030\010 \001(\t\"p\n\020GetPledgeListAck\022"
-  "\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descri"
-  "ption\030\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.PledgeItem\022\r"
-  "\n\005total\030\005 \001(\r\"O\n\020GetTxInfoListReq\022\017\n\007ver"
-  "sion\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005index\030\003 \001(\r\022"
-  "\r\n\005count\030\004 \001(\r\"U\n\nTxInfoItem\022\031\n\004type\030\001 \001"
-  "(\0162\013.TxInfoType\022\016\n\006txhash\030\002 \001(\t\022\014\n\004time\030"
-  "\003 \001(\004\022\016\n\006amount\030\004 \001(\t\"\177\n\020GetTxInfoListAc"
-  "k\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013desc"
-  "ription\030\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.TxInfoItem"
-  "\022\r\n\005total\030\005 \001(\r\022\r\n\005index\030\006 \001(\r\"C\n\022GetTxI"
-  "nfoDetailReq\022\017\n\007version\030\001 \001(\t\022\016\n\006txhash\030"
-  "\002 \001(\t\022\014\n\004addr\030\003 \001(\t\"\214\002\n\022GetTxInfoDetailA"
-  "ck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013des"
-  "cription\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013blo"
-  "ckheight\030\005 \001(\r\022\016\n\006txhash\030\006 \001(\t\022\014\n\004time\030\007"
-  " \001(\004\022\020\n\010fromaddr\030\010 \003(\t\022\027\n\006toaddr\030\t \003(\0132\007"
-  ".ToAddr\022\013\n\003gas\030\n \001(\t\022\016\n\006amount\030\013 \001(\t\022\r\n\005"
-  "award\030\014 \001(\t\022\020\n\010awardGas\030\r \001(\t\022\023\n\013awardAm"
-  "ount\030\016 \001(\t\"D\n\023GetBlockInfoListReq\022\017\n\007ver"
-  "sion\030\001 \001(\t\022\r\n\005index\030\002 \001(\r\022\r\n\005count\030\003 \001(\r"
-  "\"\207\001\n\rBlockInfoItem\022\021\n\tblockhash\030\001 \001(\t\022\023\n"
-  "\013blockheight\030\002 \001(\r\022\014\n\004time\030\003 \001(\004\022\016\n\006txHa"
-  "sh\030\004 \001(\t\022\020\n\010fromAddr\030\005 \003(\t\022\016\n\006toAddr\030\006 \003"
-  "(\t\022\016\n\006amount\030\007 \001(\t\"\205\001\n\023GetBlockInfoListA"
-  "ck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013des"
-  "cription\030\003 \001(\t\022\013\n\003top\030\004 \001(\r\022\017\n\007txcount\030\005"
-  " \001(\r\022\034\n\004list\030\006 \003(\0132\016.BlockInfoItem\";\n\025Ge"
-  "tBlockInfoDetailReq\022\017\n\007version\030\001 \001(\t\022\021\n\t"
-  "blockhash\030\002 \001(\t\"0\n\020BlockInfoOutAddr\022\014\n\004a"
-  "ddr\030\001 \001(\t\022\016\n\006amount\030\002 \001(\t\"\371\001\n\025GetBlockIn"
-  "foDetailAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001"
-  "(\005\022\023\n\013description\030\003 \001(\t\022\021\n\tblockhash\030\004 \001"
-  "(\t\022\023\n\013blockheight\030\005 \001(\r\022\022\n\nmerkleRoot\030\006 "
-  "\001(\t\022\020\n\010prevHash\030\007 \001(\t\022\014\n\004time\030\010 \001(\004\022\023\n\013t"
-  "atalAmount\030\t \001(\t\022\016\n\006signer\030\n \003(\t\022+\n\020bloc"
-  "kInfoOutAddr\030\013 \003(\0132\021.BlockInfoOutAddr\"!\n"
-  "\016TestConnectReq\022\017\n\007version\030\001 \001(\t\"/\n\016Test"
-  "ConnectAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001("
-  "\005**\n\nDeviceType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Andr"
-  "oid\020\002*\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020"
-  "\001*\323\001\n\nTxInfoType\022\026\n\022TxInfoType_Unknown\020\000"
-  "\022\031\n\025TxInfoType_Originator\020\001\022\027\n\023TxInfoTyp"
-  "e_Receiver\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxIn"
-  "foType_Award\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n"
-  "\021TxInfoType_Redeem\020\006\022!\n\035TxInfoType_Pledg"
-  "edAndRedeemed\020\007b\006proto3"
+  "nt\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\020\n\010password\030\006 "
+  "\001(\t\"\211\001\n\027CreateDeviceRedeemTxReq\022\017\n\007versi"
+  "on\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\036\n\026needVerifyPreH"
+  "ashCount\030\003 \001(\t\022\017\n\007gasFees\030\004 \001(\t\022\014\n\004utxo\030"
+  "\005 \001(\t\022\020\n\010password\030\006 \001(\t\"O\n\020GetPledgeList"
+  "Req\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005in"
+  "dex\030\003 \001(\r\022\r\n\005count\030\004 \001(\r\"\222\001\n\nPledgeItem\022"
+  "\021\n\tblockhash\030\001 \001(\t\022\023\n\013blockheight\030\002 \001(\r\022"
+  "\014\n\004utxo\030\003 \001(\t\022\016\n\006amount\030\004 \001(\t\022\014\n\004time\030\005 "
+  "\001(\004\022\020\n\010fromaddr\030\006 \001(\t\022\016\n\006toaddr\030\007 \001(\t\022\016\n"
+  "\006detail\030\010 \001(\t\"p\n\020GetPledgeListAck\022\017\n\007ver"
+  "sion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030"
+  "\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.PledgeItem\022\r\n\005tota"
+  "l\030\005 \001(\r\"O\n\020GetTxInfoListReq\022\017\n\007version\030\001"
+  " \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005index\030\003 \001(\r\022\r\n\005cou"
+  "nt\030\004 \001(\r\"U\n\nTxInfoItem\022\031\n\004type\030\001 \001(\0162\013.T"
+  "xInfoType\022\016\n\006txhash\030\002 \001(\t\022\014\n\004time\030\003 \001(\004\022"
+  "\016\n\006amount\030\004 \001(\t\"\177\n\020GetTxInfoListAck\022\017\n\007v"
+  "ersion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descriptio"
+  "n\030\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.TxInfoItem\022\r\n\005to"
+  "tal\030\005 \001(\r\022\r\n\005index\030\006 \001(\r\"C\n\022GetTxInfoDet"
+  "ailReq\022\017\n\007version\030\001 \001(\t\022\016\n\006txhash\030\002 \001(\t\022"
+  "\014\n\004addr\030\003 \001(\t\"\214\002\n\022GetTxInfoDetailAck\022\017\n\007"
+  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descripti"
+  "on\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013blockheig"
+  "ht\030\005 \001(\r\022\016\n\006txhash\030\006 \001(\t\022\014\n\004time\030\007 \001(\004\022\020"
+  "\n\010fromaddr\030\010 \003(\t\022\027\n\006toaddr\030\t \003(\0132\007.ToAdd"
+  "r\022\013\n\003gas\030\n \001(\t\022\016\n\006amount\030\013 \001(\t\022\r\n\005award\030"
+  "\014 \001(\t\022\020\n\010awardGas\030\r \001(\t\022\023\n\013awardAmount\030\016"
+  " \001(\t\"D\n\023GetBlockInfoListReq\022\017\n\007version\030\001"
+  " \001(\t\022\r\n\005index\030\002 \001(\r\022\r\n\005count\030\003 \001(\r\"\207\001\n\rB"
+  "lockInfoItem\022\021\n\tblockhash\030\001 \001(\t\022\023\n\013block"
+  "height\030\002 \001(\r\022\014\n\004time\030\003 \001(\004\022\016\n\006txHash\030\004 \001"
+  "(\t\022\020\n\010fromAddr\030\005 \003(\t\022\016\n\006toAddr\030\006 \003(\t\022\016\n\006"
+  "amount\030\007 \001(\t\"\205\001\n\023GetBlockInfoListAck\022\017\n\007"
+  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descripti"
+  "on\030\003 \001(\t\022\013\n\003top\030\004 \001(\r\022\017\n\007txcount\030\005 \001(\r\022\034"
+  "\n\004list\030\006 \003(\0132\016.BlockInfoItem\";\n\025GetBlock"
+  "InfoDetailReq\022\017\n\007version\030\001 \001(\t\022\021\n\tblockh"
+  "ash\030\002 \001(\t\"0\n\020BlockInfoOutAddr\022\014\n\004addr\030\001 "
+  "\001(\t\022\016\n\006amount\030\002 \001(\t\"\371\001\n\025GetBlockInfoDeta"
+  "ilAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013"
+  "description\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013"
+  "blockheight\030\005 \001(\r\022\022\n\nmerkleRoot\030\006 \001(\t\022\020\n"
+  "\010prevHash\030\007 \001(\t\022\014\n\004time\030\010 \001(\004\022\023\n\013tatalAm"
+  "ount\030\t \001(\t\022\016\n\006signer\030\n \003(\t\022+\n\020blockInfoO"
+  "utAddr\030\013 \003(\0132\021.BlockInfoOutAddr\"!\n\016TestC"
+  "onnectReq\022\017\n\007version\030\001 \001(\t\"/\n\016TestConnec"
+  "tAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005**\n\nD"
+  "eviceType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Android\020\002*"
+  "\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020\001*\323\001\n\n"
+  "TxInfoType\022\026\n\022TxInfoType_Unknown\020\000\022\031\n\025Tx"
+  "InfoType_Originator\020\001\022\027\n\023TxInfoType_Rece"
+  "iver\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxInfoType"
+  "_Award\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n\021TxInf"
+  "oType_Redeem\020\006\022!\n\035TxInfoType_PledgedAndR"
+  "edeemed\020\007b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_interface_2eproto_deps[1] = {
 };
@@ -2479,7 +2485,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_interface_2eproto_once;
 static bool descriptor_table_interface_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_interface_2eproto = {
-  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 7743,
+  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 7817,
   &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 73, 0,
   schemas, file_default_instances, TableStruct_interface_2eproto::offsets,
   file_level_metadata_interface_2eproto, 73, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
@@ -16782,6 +16788,10 @@ CreateDeviceTxMsgReq::CreateDeviceTxMsgReq(const CreateDeviceTxMsgReq& from)
   if (!from._internal_needverifyprehashcount().empty()) {
     needverifyprehashcount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.needverifyprehashcount_);
   }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
   // @@protoc_insertion_point(copy_constructor:CreateDeviceTxMsgReq)
 }
 
@@ -16793,6 +16803,7 @@ void CreateDeviceTxMsgReq::SharedCtor() {
   amt_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   minerfees_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 CreateDeviceTxMsgReq::~CreateDeviceTxMsgReq() {
@@ -16807,6 +16818,7 @@ void CreateDeviceTxMsgReq::SharedDtor() {
   amt_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   minerfees_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void CreateDeviceTxMsgReq::SetCachedSize(int size) const {
@@ -16830,6 +16842,7 @@ void CreateDeviceTxMsgReq::Clear() {
   amt_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   minerfees_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -16891,6 +16904,15 @@ const char* CreateDeviceTxMsgReq::_InternalParse(const char* ptr, ::PROTOBUF_NAM
           auto str = _internal_mutable_needverifyprehashcount();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceTxMsgReq.needVerifyPreHashCount"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string password = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceTxMsgReq.password"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -16980,6 +17002,16 @@ failure:
         6, this->_internal_needverifyprehashcount(), target);
   }
 
+  // string password = 7;
+  if (this->password().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "CreateDeviceTxMsgReq.password");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_password(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -17038,6 +17070,13 @@ size_t CreateDeviceTxMsgReq::ByteSizeLong() const {
         this->_internal_needverifyprehashcount());
   }
 
+  // string password = 7;
+  if (this->password().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -17093,6 +17132,10 @@ void CreateDeviceTxMsgReq::MergeFrom(const CreateDeviceTxMsgReq& from) {
 
     needverifyprehashcount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.needverifyprehashcount_);
   }
+  if (from.password().size() > 0) {
+
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
 }
 
 void CreateDeviceTxMsgReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -17127,6 +17170,8 @@ void CreateDeviceTxMsgReq::InternalSwap(CreateDeviceTxMsgReq* other) {
   minerfees_.Swap(&other->minerfees_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   needverifyprehashcount_.Swap(&other->needverifyprehashcount_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
 }
 
@@ -17166,6 +17211,10 @@ CreateDeviceMultiTxMsgReq::CreateDeviceMultiTxMsgReq(const CreateDeviceMultiTxMs
   if (!from._internal_needverifyprehashcount().empty()) {
     needverifyprehashcount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.needverifyprehashcount_);
   }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
   // @@protoc_insertion_point(copy_constructor:CreateDeviceMultiTxMsgReq)
 }
 
@@ -17174,6 +17223,7 @@ void CreateDeviceMultiTxMsgReq::SharedCtor() {
   version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 CreateDeviceMultiTxMsgReq::~CreateDeviceMultiTxMsgReq() {
@@ -17185,6 +17235,7 @@ void CreateDeviceMultiTxMsgReq::SharedDtor() {
   version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void CreateDeviceMultiTxMsgReq::SetCachedSize(int size) const {
@@ -17207,6 +17258,7 @@ void CreateDeviceMultiTxMsgReq::Clear() {
   version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -17267,6 +17319,15 @@ const char* CreateDeviceMultiTxMsgReq::_InternalParse(const char* ptr, ::PROTOBU
           auto str = _internal_mutable_needverifyprehashcount();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceMultiTxMsgReq.needVerifyPreHashCount"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string password = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceMultiTxMsgReq.password"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -17344,6 +17405,16 @@ failure:
         5, this->_internal_needverifyprehashcount(), target);
   }
 
+  // string password = 6;
+  if (this->password().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "CreateDeviceMultiTxMsgReq.password");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_password(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -17396,6 +17467,13 @@ size_t CreateDeviceMultiTxMsgReq::ByteSizeLong() const {
         this->_internal_needverifyprehashcount());
   }
 
+  // string password = 6;
+  if (this->password().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -17441,6 +17519,10 @@ void CreateDeviceMultiTxMsgReq::MergeFrom(const CreateDeviceMultiTxMsgReq& from)
 
     needverifyprehashcount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.needverifyprehashcount_);
   }
+  if (from.password().size() > 0) {
+
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
 }
 
 void CreateDeviceMultiTxMsgReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -17471,6 +17553,8 @@ void CreateDeviceMultiTxMsgReq::InternalSwap(CreateDeviceMultiTxMsgReq* other) {
   gasfees_.Swap(&other->gasfees_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   needverifyprehashcount_.Swap(&other->needverifyprehashcount_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
 }
 
@@ -19661,6 +19745,10 @@ CreateDevicePledgeTxMsgReq::CreateDevicePledgeTxMsgReq(const CreateDevicePledgeT
   if (!from._internal_gasfees().empty()) {
     gasfees_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.gasfees_);
   }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
   // @@protoc_insertion_point(copy_constructor:CreateDevicePledgeTxMsgReq)
 }
 
@@ -19671,6 +19759,7 @@ void CreateDevicePledgeTxMsgReq::SharedCtor() {
   amt_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 CreateDevicePledgeTxMsgReq::~CreateDevicePledgeTxMsgReq() {
@@ -19684,6 +19773,7 @@ void CreateDevicePledgeTxMsgReq::SharedDtor() {
   amt_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void CreateDevicePledgeTxMsgReq::SetCachedSize(int size) const {
@@ -19706,6 +19796,7 @@ void CreateDevicePledgeTxMsgReq::Clear() {
   amt_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   needverifyprehashcount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -19758,6 +19849,15 @@ const char* CreateDevicePledgeTxMsgReq::_InternalParse(const char* ptr, ::PROTOB
           auto str = _internal_mutable_gasfees();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDevicePledgeTxMsgReq.gasFees"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string password = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDevicePledgeTxMsgReq.password"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -19837,6 +19937,16 @@ failure:
         5, this->_internal_gasfees(), target);
   }
 
+  // string password = 6;
+  if (this->password().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "CreateDevicePledgeTxMsgReq.password");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_password(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -19886,6 +19996,13 @@ size_t CreateDevicePledgeTxMsgReq::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_gasfees());
+  }
+
+  // string password = 6;
+  if (this->password().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -19939,6 +20056,10 @@ void CreateDevicePledgeTxMsgReq::MergeFrom(const CreateDevicePledgeTxMsgReq& fro
 
     gasfees_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.gasfees_);
   }
+  if (from.password().size() > 0) {
+
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
 }
 
 void CreateDevicePledgeTxMsgReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -19971,6 +20092,8 @@ void CreateDevicePledgeTxMsgReq::InternalSwap(CreateDevicePledgeTxMsgReq* other)
   needverifyprehashcount_.Swap(&other->needverifyprehashcount_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   gasfees_.Swap(&other->gasfees_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
 }
 
@@ -20016,6 +20139,10 @@ CreateDeviceRedeemTxReq::CreateDeviceRedeemTxReq(const CreateDeviceRedeemTxReq& 
   if (!from._internal_utxo().empty()) {
     utxo_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.utxo_);
   }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
   // @@protoc_insertion_point(copy_constructor:CreateDeviceRedeemTxReq)
 }
 
@@ -20026,6 +20153,7 @@ void CreateDeviceRedeemTxReq::SharedCtor() {
   needverifyprehashcount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   utxo_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 CreateDeviceRedeemTxReq::~CreateDeviceRedeemTxReq() {
@@ -20039,6 +20167,7 @@ void CreateDeviceRedeemTxReq::SharedDtor() {
   needverifyprehashcount_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   utxo_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void CreateDeviceRedeemTxReq::SetCachedSize(int size) const {
@@ -20061,6 +20190,7 @@ void CreateDeviceRedeemTxReq::Clear() {
   needverifyprehashcount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfees_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   utxo_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -20113,6 +20243,15 @@ const char* CreateDeviceRedeemTxReq::_InternalParse(const char* ptr, ::PROTOBUF_
           auto str = _internal_mutable_utxo();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceRedeemTxReq.utxo"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string password = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "CreateDeviceRedeemTxReq.password"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -20192,6 +20331,16 @@ failure:
         5, this->_internal_utxo(), target);
   }
 
+  // string password = 6;
+  if (this->password().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "CreateDeviceRedeemTxReq.password");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_password(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -20241,6 +20390,13 @@ size_t CreateDeviceRedeemTxReq::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_utxo());
+  }
+
+  // string password = 6;
+  if (this->password().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -20294,6 +20450,10 @@ void CreateDeviceRedeemTxReq::MergeFrom(const CreateDeviceRedeemTxReq& from) {
 
     utxo_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.utxo_);
   }
+  if (from.password().size() > 0) {
+
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
 }
 
 void CreateDeviceRedeemTxReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -20326,6 +20486,8 @@ void CreateDeviceRedeemTxReq::InternalSwap(CreateDeviceRedeemTxReq* other) {
   gasfees_.Swap(&other->gasfees_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   utxo_.Swap(&other->utxo_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
 }
 

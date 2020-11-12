@@ -429,6 +429,7 @@ message CreateDeviceTxMsgReq
 	string amt					= 4;						
 	string minerFees			= 5;						
 	string needVerifyPreHashCount = 6;						
+    string password             = 7;
 }
 
 
@@ -443,6 +444,7 @@ message CreateDeviceMultiTxMsgReq
 	repeated ToAddr to		    = 3;						
 	string gasFees			    = 4;						
 	string needVerifyPreHashCount = 5;						
+    string password             = 6;
 }
 
 
@@ -524,6 +526,7 @@ message CreateDevicePledgeTxMsgReq
     string amt                    = 3;                       
     string needVerifyPreHashCount = 4;                       
     string gasFees                = 5;                       
+    string password               = 6;
 }
 
 
@@ -533,7 +536,8 @@ message CreateDeviceRedeemTxReq
     string addr                   = 2;                       
     string needVerifyPreHashCount = 3;                       
     string gasFees                = 4;                       
-    string utxo                   = 5;                       
+    string utxo                   = 5;
+    string password               = 6;                       
 }
 
 

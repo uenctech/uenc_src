@@ -869,7 +869,15 @@ void ca_print()
                         cout<<"请输入GasFee:"<<endl;
                         std::cin >> GasFee;
                         
-                        CreatePledgeTransaction(fromAddrstr, pledge, g_MinNeedVerifyPreHashCount, GasFee);
+                        std::string password;
+                        std::cout << "password" << endl;
+                        std::cin >> password;
+                        
+                        int r = CreatePledgeTransaction(fromAddrstr, pledge, g_MinNeedVerifyPreHashCount, GasFee, password);
+                        if (r == -104)
+                        {
+                            std::cout << "password error!!!" << std::endl;
+                        }
 						break;
 					}
 					case 3:
@@ -1040,9 +1048,17 @@ void ca_print()
                         std::cout << "GasFee：";
                         std::cin >> GasFee;
 
+                        std::string password;
+                        std::cout << "password";
+                        std::cin >> password;
+
                         if (utxos.size() > 0)
                         {
-                            CreateRedeemTransaction(addr, g_MinNeedVerifyPreHashCount, GasFee, utxo);
+                            int r = CreateRedeemTransaction(addr, g_MinNeedVerifyPreHashCount, GasFee, utxo, password);
+                            if (r == -9)
+                            {
+                                std::cout << "password error!!!" << std::endl;
+                            }
                         }
 						break;
 					}
@@ -1537,7 +1553,7 @@ void ca_print()
                                 case 1:
                                 {
                                     std::cout << "=============质押交易=============" << std::endl;
-                                    CreatePledgeTransaction(addrs[0], "500", 6, "0.01");
+                                    CreatePledgeTransaction(addrs[0], "500", 6, "0.01", "12345678");
                                     std::cout << "==================================" << std::endl << std::endl << std::endl;
                                                                         sleep(sleepNum);
                                     std::cout << "==============sleep===============" << std::endl << std::endl << std::endl;
@@ -1557,7 +1573,8 @@ void ca_print()
                                     if (utxos.size() == 0)
                                         break;
 
-                                    CreateRedeemTransaction(addrs[0], 6, "0.01", utxos[0]);
+                                    std::string password = "12345678";
+                                    CreateRedeemTransaction(addrs[0], 6, "0.01", utxos[0], password);
                                     std::cout << "==================================" << std::endl << std::endl << std::endl;
                                     sleep(sleepNum);
                                     std::cout << "==============sleep===============" << std::endl << std::endl << std::endl;

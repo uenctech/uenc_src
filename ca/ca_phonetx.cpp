@@ -6,6 +6,7 @@
 #include "ca_message.h"
 #include "ca_transaction.h"
 #include "MagicSingleton.h"
+#include "ca_device.h"
 
 #include "../net/msg_queue.h"
 #include "../proto/ca_protomsg.pb.h"
@@ -319,6 +320,18 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 		error("HandleCreateDeviceMultiTxMsgReq: IsVersionCompatible error!!!\n");
 		return ;
 	}
+
+    std::string password = msg->password();
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    if (hashOriPass != targetPassword) 
+    {
+        txMsgAck.set_code(PHONE_TX_PASSWORD_ERROR);
+        txMsgAck.set_message("password error!");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        error("password error!");
+        return;
+    }
 
     std::vector<std::string> fromAddr;
     std::map<std::string, int64_t> toAddr;
