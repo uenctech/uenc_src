@@ -558,6 +558,25 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
         ret["error"]["message"] = "not find";
         return ret;
     }
+    string blockhash;
+    unsigned height;
+    int stat;
+    stat = pRocksDb->GetBlockHashByTransactionHash(txn, hash, blockhash);
+    if(stat != 0)
+    {
+        ret["error"]["code"] = -32602;
+        ret["error"]["message"] = "rocksdb error";
+        return ret;
+    }
+    stat = pRocksDb->GetBlockHeightByBlockHash(txn, blockhash, height);
+     if(stat != 0)
+    {
+        ret["error"]["code"] = -32602;
+        ret["error"]["message"] = "rocksdb error";
+        return ret;
+    }
+    ret["result"]["height"] = std::to_string(height);
+
     CTransaction utxoTx;
     utxoTx.ParseFromString(strTxRaw);
 
@@ -567,7 +586,7 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
     ret["result"]["hash"] = utxoTx.hash();
     ret["result"]["time"] = utxoTx.time();
     ret["result"]["type"] = txType;
-    
+  
     for (int i = 0; i < utxoTx.vin_size(); i++)
     {
         CTxin vin = utxoTx.vin(i);
@@ -589,6 +608,8 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
         ret["result"]["vout"][i]["address"] =  txout.scriptpubkey();
         ret["result"]["vout"][i]["value"] = std::to_string( (double)txout.value()/DECIMAL_NUM );
     }
+
+
     return ret;
 }
 

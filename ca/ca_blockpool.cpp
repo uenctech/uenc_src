@@ -71,7 +71,7 @@ bool BlockPoll::CheckConflict(const CBlock& block)
 	return false;
 }
 
-void BlockPoll::Add(const Block& block)
+bool BlockPoll::Add(const Block& block)
 {
 	std::lock_guard<std::mutex> lck(mu_block_);
 
@@ -80,14 +80,14 @@ void BlockPoll::Add(const Block& block)
 		std::cout << "BlockPoll::Add sync=====height:" << block.blockheader_.height() << " hash:" << block.blockheader_.hash().substr(0,HASH_LEN) << std::endl;
 
 		sync_blocks_.push_back(block);
-		return;
+		return false;
 	}
 	CBlock blockheader = block.blockheader_;
 
 	if(!VerifyHeight(blockheader))
 	{
 		error("BlockPoll:VerifyHeight fail!!");
-		return;
+		return false;
 	}
 
 	
@@ -100,17 +100,18 @@ void BlockPoll::Add(const Block& block)
 			error("BlockPoll::Add====has conflict");
 			if(curr_block.blockheader_.time() < blockheader.time())   
 			{
-				return;
-			}else{     
+				return false;
+			}else{     //预留块中的晚
 				it = blocks_.erase(it);
 				blocks_.push_back(block);
-				return;
+				return true;
 			}
 		}
 	}
 	std::cout << "BlockPoll::Add=====height:" << blockheader.height() << " hash:" << blockheader.hash().substr(0,HASH_LEN) << std::endl;
 	info("BlockPoll::Add:%s", block.blockheader_.hash().c_str());
 	blocks_.push_back(block);
+	return true;
 }
 
 

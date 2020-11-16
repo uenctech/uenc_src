@@ -41,7 +41,7 @@ public:
 	~BlockPoll() = default;
 
 
-    void Add(const Block& block);
+    bool Add(const Block& block);
     void Process();
     bool CheckConflict(const CBlock& block1, const CBlock& block2);
     bool CheckConflict(const CBlock& block);

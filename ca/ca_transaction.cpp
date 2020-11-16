@@ -2984,8 +2984,11 @@ int BuildBlock(std::string &recvTxString, const std::shared_ptr<TxMsg>& SendTxMs
 		return -1;
 	}
 
-	MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock));
-
+	bool succ = MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock));
+	if(!succ)
+	{
+		return -1;
+	}
 	BuileBlockBroadcastMsg buileBlockBroadcastMsg;
 	buileBlockBroadcastMsg.set_version(getVersion());
 	buileBlockBroadcastMsg.set_blockraw(serBlock);
