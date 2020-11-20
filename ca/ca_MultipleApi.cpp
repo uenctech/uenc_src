@@ -1801,14 +1801,22 @@ void HandleGetPledgeListReq(const std::shared_ptr<GetPledgeListReq>& req,  GetPl
             continue;
         }
         
+        std::vector<std::string> txOwnerVec;
+		SplitString(tx.txowner(), txOwnerVec, "_");
+
+        if (txOwnerVec.size() == 0)
+        {
+            continue;
+        }
+        
         PledgeItem * pItem = ack.add_list();
         
         pItem->set_blockhash(block.hash());
         pItem->set_blockheight(block.height());
         pItem->set_utxo(strUtxo);
         pItem->set_time(tx.time());
-        
-        pItem->set_fromaddr(tx.txowner());
+
+        pItem->set_fromaddr(txOwnerVec[0]);
 
         for (int i = 0; i < tx.vout_size(); i++)
         {
@@ -2011,9 +2019,16 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                     }
                 }
 
-                if (owners[0] != tx.txowner() && tx.txowner().length() != 0)
+                std::vector<std::string> txOwnerVec;
+                SplitString(tx.txowner(), txOwnerVec, "_");
+                if (txOwnerVec.size() == 0)
                 {
-                    owners[0] = tx.txowner();
+                    continue;
+                }
+
+                if (owners[0] != txOwnerVec[0] && txOwnerVec[0].length() != 0)
+                {
+                    owners[0] = txOwnerVec[0];
                 }
 
                 if (owners[0] == addr && 
@@ -2452,8 +2467,19 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     bool isRedeem = false;
     if (tx.vout_size() == 2)
     {
+        std::vector<std::string> txOwnerVec;
+        SplitString(tx.txowner(), txOwnerVec, "_");
+        if (txOwnerVec.size() == 0)
+        {
+            getBlockInfoDetailAck.set_code(-4);
+            getBlockInfoDetailAck.set_description("txowner empty !");
+            net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+            
+            return ;
+        }
+
         if (tx.vout(0).scriptpubkey() == tx.vout(1).scriptpubkey() && 
-            tx.txowner() == tx.vout(0).scriptpubkey())
+            txOwnerVec[0] == tx.vout(0).scriptpubkey())
         {
             isRedeem = true;
         }
@@ -2633,8 +2659,18 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
     bool isRedeem = false;
     if (tx.vout_size() == 2)
     {
+        std::vector<std::string> txOwnerVec;
+        SplitString(tx.txowner(), txOwnerVec, "_");
+
+        if (txOwnerVec.size() == 0)
+        {
+            ack.set_code(-4);
+            ack.set_description("txowner is empty");
+            return;
+        }
+
         if (tx.vout(0).scriptpubkey() == tx.vout(1).scriptpubkey() && 
-            tx.txowner() == tx.vout(0).scriptpubkey())
+            txOwnerVec[0] == tx.vout(0).scriptpubkey())
         {
             isRedeem = true;
         }

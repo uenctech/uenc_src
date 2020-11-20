@@ -1720,11 +1720,60 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 		v_union.assign(tmpSet.begin(), tmpSet.end());
 
 		std::vector<std::string> v_diff;
-		std::set_difference(v_union.begin(),v_union.end(),owner_utxo.begin(),owner_utxo.end(),std::back_inserter(v_diff));	
-		
+		std::set_difference(v_union.begin(),v_union.end(),owner_utxo.begin(),owner_utxo.end(),std::back_inserter(v_diff));
+
 		if(v_diff.size() > 0)
 		{
 			printf("VerifyTransactionSign fail. not have enough utxo!!! \n");
+			return false;
+		}
+
+		// 判断手机或RPC交易时，交易签名者是否是交易发起人
+		std::set<std::string> txVinVec;
+		for(auto & vin : tx.vin())
+		{
+			std::string prevUtxo = vin.prevout().hash();
+			std::string strTxRaw;
+			db_status = pRocksDb->GetTransactionByHash(txn, prevUtxo, strTxRaw);
+			if (db_status != 0)
+			{
+				return false;
+			}
+
+			CTransaction prevTx;
+			prevTx.ParseFromString(strTxRaw);
+			if (prevTx.hash().size() == 0)
+			{
+				return false;
+			}
+			
+			std::string vinBase58Addr = GetBase58Addr(vin.scriptsig().pub());
+			txVinVec.insert(vinBase58Addr);
+
+			std::vector<std::string> txOutVec;
+			for (auto & txOut : prevTx.vout())
+			{
+				txOutVec.push_back(txOut.scriptpubkey());
+			}
+
+			if (std::find(txOutVec.begin(), txOutVec.end(), vinBase58Addr) == txOutVec.end())
+			{
+				return false;
+			}
+		}
+
+		std::vector<std::string> txOwnerVec;
+		SplitString(tx.txowner(), txOwnerVec, "_");
+
+		std::vector<std::string> tmptxVinSet;
+		tmptxVinSet.assign(txVinVec.begin(), txVinVec.end());
+
+		std::vector<std::string> ivec(txOwnerVec.size() + tmptxVinSet.size());
+		auto iVecIter = set_symmetric_difference(txOwnerVec.begin(), txOwnerVec.end(), tmptxVinSet.begin(), tmptxVinSet.end(), ivec.begin());
+		ivec.resize(iVecIter - ivec.begin());
+
+		if (ivec.size()!= 0)
+		{
 			return false;
 		}
 	}

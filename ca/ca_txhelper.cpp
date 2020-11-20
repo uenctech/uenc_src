@@ -323,7 +323,19 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	uint64_t time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
 	outTx.set_time(time);
 
-	outTx.set_txowner(fromAddr.front());
+	std::string tmpAddr;
+	for (auto & addr : fromAddr)
+	{
+		tmpAddr += addr;
+		tmpAddr += "_";
+	}
+	
+	// if((*tmpAddr.end()) == '-')
+	{
+		tmpAddr.erase(tmpAddr.end() -1);
+	}
+
+	outTx.set_txowner(tmpAddr);
 
 	outTx.set_ip(net_get_self_node_id());
 
