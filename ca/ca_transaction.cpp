@@ -4259,7 +4259,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 	{
 		if (addrAward.second > upperLimitValue)
 		{
-			std::cout << "********** 异常账号：" << addrAward.first << "   总奖励 = " << addrAward.second << std::endl;
+			// std::cout << "********** 异常账号：" << addrAward.first << "   总奖励 = " << addrAward.second << std::endl;
 			addrList.push_back(addrAward.first);
 		}
 	}

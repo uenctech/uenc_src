@@ -369,7 +369,7 @@ bool Version_Client::send_verify_version_request()
                     
                     if (res == "")
                     {
-                        cout << "接收数据超时或者异常！" << endl;
+                        // cout << "接收数据超时或者异常！" << endl;
                         socket.disConnect();
                         sleep(1);
                         continue;
@@ -459,7 +459,7 @@ bool Version_Client::send_update_confirm_request(string ip, unsigned short port)
     socket.disConnect();
     if (res == "")
     {
-        cout << "接收数据超时或者异常！" << endl;
+        // cout << "接收数据超时或者异常！" << endl;
         return false;
     }
     else if (res == "Latest")

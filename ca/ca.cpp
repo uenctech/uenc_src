@@ -1704,7 +1704,7 @@ void ca_print()
                         {
                             if ((uint64_t)addrAward.second > upperLimitValue)
                             {
-                                std::cout << "********** 异常账号：" << addrAward.first << "   总奖励 = " << addrAward.second << std::endl;
+                                // std::cout << "********** 异常账号：" << addrAward.first << "   总奖励 = " << addrAward.second << std::endl;
                             }
                         }
                         break;
