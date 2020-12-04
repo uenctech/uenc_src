@@ -11,27 +11,27 @@ cstring *message_str(const unsigned char netmagic[4],
 {
     cstring *s = cstr_new_sz(P2P_HEADER_SIZE + data_len);
 
-    
+    /* network identifier (magic number) */
     cstr_append_buf(s, netmagic, 4);
     
-    
+    /* command string */
     char command[12 + 2] = {};
     strncpy(command, command_, 12);
     cstr_append_buf(s, command, 12);
 
-    
-  
+    /* data length */
+  //  uint32_t data_len_le = htole32(data_len);
     uint32_t data_len_le = H32toh(data_len);
     cstr_append_buf(s, &data_len_le, 4);
     
-    
+    /* data checksum */
     unsigned char md32[4];
     
     bu_Hash4(md32, data, data_len);
 
     cstr_append_buf(s, &md32[0], 4);
     
-    
+    /* data payload */
     if (data_len > 0)
         cstr_append_buf(s, data, data_len);
 
@@ -83,7 +83,7 @@ bool txstr_parse(void *data, uint32_t data_len, CTransaction &tx, std::vector<st
 
     string txstr(tmp, data_len - sizeof(int) * 2 - bufLen * len);
     tx.ParseFromString(txstr);
-    
-    
+    // cout << "ip:" << tx.ip() << "\n"
+    //     << "hash" << tx.hash() << endl;
     return true;
 }

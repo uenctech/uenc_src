@@ -2,9 +2,9 @@
 #define _CLIENTTYPE_H_
 
 typedef enum emClientType{
-    kClientType_PC, 
-    kClientType_iOS, 
-    kClientType_Android 
+    kClientType_PC, // PC 设备
+    kClientType_iOS, // iOS设备
+    kClientType_Android // 安卓设备
 }ClientType;
 
 typedef enum emClientLanguage{
@@ -12,4 +12,4 @@ typedef enum emClientLanguage{
     kkClientLanguage_en_US,
 }ClientLanguage;
 
-#endif 
+#endif // !_CLIENTTYPE_H_

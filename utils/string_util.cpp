@@ -6,9 +6,9 @@ void StringUtil::Trim(std::string& str, bool bLeft, bool bRight)
 {
     static const std::string delims = " \t\r\n";
     if(bRight)
-        str.erase(str.find_last_not_of(delims)+1); 
+        str.erase(str.find_last_not_of(delims)+1); // trim right
     if(bLeft)
-        str.erase(0, str.find_first_not_of(delims)); 
+        str.erase(0, str.find_first_not_of(delims)); // trim left
 }
 
 

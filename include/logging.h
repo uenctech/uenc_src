@@ -121,4 +121,4 @@ private:
 
 }
 
-#endif
+#endif//_LOGGING_H_

@@ -5,22 +5,22 @@
 
 bool cstr_resize(cstring *s, size_t new_sz)
 {
-    
+    // no change
     if (new_sz == s->len)
         return true;
 
-    
+    // truncate string
     if (new_sz <= s->len) {
         s->len = new_sz;
         s->str[s->len] = 0;
         return true;
     }
 
-    
+    // increase string size
     if (!cstr_alloc_min_sz(s, new_sz))
         return false;
 
-    
+    // contents of string tail undefined
     
     s->len = new_sz;
     s->str[s->len] = 0;
@@ -65,7 +65,7 @@ bool cstr_append_buf(cstring *s, const void *buf, size_t sz)
 }
 bool cstr_alloc_min_sz(cstring *s, size_t sz)
 {
-    sz++;       
+    sz++;       // NUL overhead
 
     if (s->alloc && (s->alloc >= sz))
         return true;

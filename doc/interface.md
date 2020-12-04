@@ -860,7 +860,7 @@
        sint32 code 						= 2;
        string description 					= 3;
    
-       
+       //data
        uint64 top 							= 4; 
        repeated BlockInfo block_info_list 	= 5;
        uint64 tx_count 					= 6; 

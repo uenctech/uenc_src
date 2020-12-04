@@ -4,7 +4,7 @@
 #include <iostream>
 #include <map>
 #include "ca_base58.h"
-
+//using std::cout;
 using std::endl;
 
 #include <string>

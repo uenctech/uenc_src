@@ -5,7 +5,7 @@
 #include "../utils/time_task.h"
 #include <mutex>
 
-int g_testflag = 1;
+int g_testflag = 0;
 
 std::string g_LinuxCompatible   = "1.0";
 std::string g_WindowsCompatible = "1.0";
@@ -22,7 +22,7 @@ accountinfo g_AccountInfo;
 bool g_phone;
 char g_ip[NETWORKID_LEN];
 
-const int g_MinNeedVerifyPreHashCount = 6;  
+const int g_MinNeedVerifyPreHashCount = 6;  //最小共识数
 int g_SyncDataCount = 500;
 Sync* g_synch = new Sync();
 std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
@@ -30,21 +30,26 @@ std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
 const uint64_t g_minSignFee = 1000;
 const uint64_t g_maxSignFee = 100000;
 
-std::unordered_set<std::string> g_blockCacheList;
 
 const char * build_time = "20200706-10:52";
-const char * build_commit_hash = "8d939e9";
+string  build_commit_hash = "a018f71";
 
-Timer g_blockpool_timer; 
-Timer g_synch_timer; 
-Timer g_deviceonline_timer;
-std::mutex g_mu_tx;
+CTimer g_blockpool_timer; 
+CTimer g_synch_timer; 
+CTimer g_deviceonline_timer;
+CTimer g_public_node_refresh_timer; // public node refresh to config
+CTimer g_device2pubnet_timer;
 
 int g_VerifyPasswordCount = 0;
 int minutescount = 7200;
 bool g_ready = false;
 
-uint64_t g_TxNeedPledgeAmt = 500000000;  
+std::vector<string>   g_random_normal_node;
+std::vector<string>   g_random_public_node;
+std::mutex mu_return;
+std::atomic_int64_t echo_counter = 5; 
+
+uint64_t g_TxNeedPledgeAmt = 500000000;  // 500 * DECIMAL_NUM
 
 uint64_t g_MaxAwardTotal = 14.025 * DECIMAL_NUM;
 
@@ -52,9 +57,15 @@ std::string g_InitAccount;
 
 uint64_t g_minPledgeNodeNum = 10;
 
+string getEbpcVersion()
+{
+    static string version = "1.1";
+    return version;
+}
+
 string  getVersion()
 {
-    string versionNum = "1.0";
+    string versionNum = getEbpcVersion();
     std::ostringstream ss;
     ss << getSystem();
     std::string version = ss.str() + "_" + versionNum ; 

@@ -9,9 +9,9 @@ void Trim(std::string& str, bool bLeft, bool bRight)
 {
     static const std::string delims = " \t\r\n";
     if(bRight)
-        str.erase(str.find_last_not_of(delims)+1); 
+        str.erase(str.find_last_not_of(delims)+1); // trim right
     if(bLeft)
-        str.erase(0, str.find_first_not_of(delims)); 
+        str.erase(0, str.find_first_not_of(delims)); // trim left
 }
 
 TimeUtil::TimeUtil()
@@ -64,7 +64,7 @@ x_uint64_t TimeUtil::getNtpTimestampConf()
     for(int i = 0; i < 3; i++)
     {
         std::string host = ntp_host[rand()%(ntp_host.size())];
-        
+        //std::cout << "host is :" << host << std::endl;   
         Trim(host,true,true);      
         err = ntp_get_time(host.c_str(), NTP_PORT, 1000, &timev);
         if (0 == err)
@@ -99,7 +99,7 @@ x_uint64_t TimeUtil::getNtpTimestamp(bool is_sync)
     for(int i = 0; i < 3; i++)
     {
         std::string host = ntp_host[rand()%(ntp_host.size())];
-        
+        // std::cout << "host is :" << host << std::endl;            
         err = ntp_get_time(host.c_str(), NTP_PORT, 1000, &timev);
         if (0 == err)
         {
@@ -118,6 +118,8 @@ bool TimeUtil::setLocalTime(x_uint64_t timestamp)
     struct timeval tv;
     tv.tv_sec = timestamp/1000000;
 	tv.tv_usec = timestamp - timestamp/1000000*1000000;
+    std::cout << "sec:" << tv.tv_sec << std::endl;
+    std::cout << "usec:" << tv.tv_usec << std::endl;
 	if (settimeofday(&tv, NULL) < 0)
 	{
 		return false;
@@ -132,7 +134,7 @@ void TimeUtil::testNtpDelay()
 
     x_uint64_t xut_timev = 0ULL;
 
-    
+    // 常用的 NTP 服务器地址列表
     std::vector< std::string > ntp_host;
     ntp_host.push_back(std::string("ntp1.aliyun.com"));
     ntp_host.push_back(std::string("ntp2.aliyun.com"));

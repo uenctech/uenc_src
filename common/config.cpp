@@ -29,7 +29,7 @@ std::string Config::GetAbsopath()
 }
 bool Config::NewFile(std::string strFile)
 {
-    	
+    	// 如果文件存在 创建会覆盖原文件
    
     ofstream file( strFile.c_str(), fstream::out );
     if( file.fail() )
@@ -37,8 +37,8 @@ bool Config::NewFile(std::string strFile)
         debug(" file_path = %s", strFile.c_str());
 		return false;
     }
-	
-    
+	//json格式化网站：http://www.bejson.com/jsonviewernew/
+    //如果要新添加配置，去上面的网站格式化一下，然后再格式化回来就行 
     std::string jsonstr;
     if(g_testflag == 1)
     {
@@ -98,7 +98,7 @@ bool Config::GetIsPublicNode()
 }
 
 
-
+/*如果未定义默认为false*/
 bool Config::GetCond(const std::string &cond_name)
 {
     auto ret = this->m_Json["cond"][cond_name.c_str()].get<bool>();
@@ -149,7 +149,7 @@ bool Config::SetKID(std::string strKID)
     WriteFile();
     return true;
 }
-
+//设置本地Ip
 bool Config::SetLocalIP(const std::string strIP)
 {
     this->m_Json["var"]["local_ip"] = strIP;
@@ -157,7 +157,7 @@ bool Config::SetLocalIP(const std::string strIP)
     return true;
 }
 
-
+/*动态加载配置文件*/
 void Config::Reload(const std::string &name)
 {
     std::ifstream fconf;
@@ -181,7 +181,7 @@ void Config::Reload(const std::string &name)
     this->m_Json = tmp_CJSon;
 }
 
-
+/*检查配置文件是否具有必须配置*/
 bool Config::VerifyConf(nlohmann::json &target)
 {
     for(auto i:target["server"])
@@ -195,7 +195,7 @@ bool Config::VerifyConf(nlohmann::json &target)
 
 
 
-
+///////////////////////////////////////////////////////
 const char * KCfgFile = "./config.json";
 const char * kCfgJSonKeyVersion = "version";
 const char * kCfgJSonKeyEnable = "enable";
@@ -210,19 +210,19 @@ const char * kCfgJSonKeyFlag = "flag";
 const char * kCfgJSonKeyTargetVersion = "target_version";
 const char * kCfgJSonKeyVersionServer = "version_server";
 
-
+// client
 const char * kCfgJSonKeyClient = "client";
 const char * kCfgJSonKeyiOSMinVersion = "iOSMinVersion";
 const char * kCfgJSonKeyAndroidMinVersion = "AndroidMinVersion";
 
-
+// tx
 const char * kCfgJEnabelTx = "Tx";
 const char * kCfgJEnabelGetBlock = "GetBlock";
 const char * kCfgJEnabelGetTxInfo = "GetTxInfo";
 const char * kCfgJEnabelGetAmount = "GetAmount";
 const char * kCfgJEnabelGetMoney = "GetMoney";
 
-
+// node
 const char * kCfgJNode = "node";
 const char * kCfgJNodeLocal = "local";
 const char * kCfgJNodeInfo = "info";
@@ -231,13 +231,17 @@ const char * kCfgJNodeIp = "ip";
 const char * kCfgJNodePort = "port";
 const char * kCfgJNodeEnable = "enable";
 
-
+// dev pass
 const char * kCfgJDevPass = "DevicePassword";
 
 const int kCfgSyncDataCount = 500;
 const int kCfgSyncDataPollTime = 60;
 const char * kCfgPyScriptIp = "47.105.219.186";
 const int kCfgStartSyncDelay = 60;
+
+const char * kCfgServer = "server";
+const char * kCfgServerIp = "IP";
+const char * kCfgServerPort = "PORT";
 
 
 bool Config::GetEnable(ConfigEnabelType type, bool * enable)
@@ -414,28 +418,70 @@ std::vector<node_info> Config::GetNodeInfo_s()
     return vec;
 } 
 
-
-
+//更新配置文件
+//参数：1、更新标志 2.目标版本号 3.版本服务器ip 4.当前版本号
 bool Config::UpdateConfig(int flag,const std::string &target_version, const std::string &ip,const std::string &latest_version)
 {
   
-    if (latest_version != "")   
+    if (latest_version != "")   //等于空不更新
     {
         this->m_Json[kCfgJSonKeyVersion] = latest_version;
     }
-    if (ip != "not") 
+    if (ip != "not") //等于not不更新
     {
         this->m_Json[kCfgJSonKeyVersionServer] = ip;
     }
-    if (flag != 2)  
+    if (flag != 2)  //等于2不更新
     {
         this->m_Json[kCfgJSonKeyFlag] = flag;
     }
-    if (target_version != "not")    
+    if (target_version != "not")    //等于not不更新
     {
         this->m_Json[kCfgJSonKeyTargetVersion] = target_version;
     }
 
     WriteFile();
     return true;
+}
+
+int Config::ClearNode()
+{
+    m_Json[kCfgJNode].clear();
+
+    return 0;
+}
+
+// Declare: add new node to config, add 20201111
+int Config::AddNewNode(const node_info& node)
+{
+    nlohmann::json jsonNodeInfo;
+    jsonNodeInfo[kCfgJNodeIp] = node.ip;
+    jsonNodeInfo[kCfgJNodePort] = std::to_string(node.port);
+    jsonNodeInfo[kCfgJNodeName] = node.name;
+    jsonNodeInfo[kCfgJNodeEnable] = node.enable;
+
+    nlohmann::json jsonNode;
+    jsonNode[kCfgJNodeInfo].push_back(jsonNodeInfo);
+    jsonNode[kCfgJNodeLocal] = node.name;
+
+    m_Json[kCfgJNode].push_back(jsonNode);
+
+    return 0;
+}
+
+int Config::ClearServer()
+{
+    m_Json[kCfgServer].clear();
+    return 0;
+}
+
+int Config::AddNewServer(const std::string& ip, unsigned short port)
+{
+    nlohmann::json jsonServerInfo;
+    jsonServerInfo[kCfgServerIp] = ip;
+    jsonServerInfo[kCfgServerPort] = port;
+
+    m_Json[kCfgServer].push_back(jsonServerInfo);
+
+    return 0;
 }

@@ -59,7 +59,7 @@ std::string TxHelper::GetTxOwnerStr(const std::string tx_hash)
 
 std::vector<std::string> TxHelper::GetTxOwner(const CTransaction & tx)
 {
-	
+	// std::cout << "GetTxOwner:=========" << std::endl;
 	std::vector<std::string> address;
 	for (int i = 0; i < tx.vin_size(); i++)
 	{
@@ -70,7 +70,7 @@ std::vector<std::string> TxHelper::GetTxOwner(const CTransaction & tx)
 		if (res == std::end(address)) 
 		{
 			address.push_back(addr);
-			
+			// std::cout << "addr:" << addr << std::endl;
 		}
 	}
 
@@ -172,7 +172,8 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	const std::map<std::string, int64_t> toAddr, 
 	uint32_t needVerifyPreHashCount, 
 	uint64_t minerFees, 
-	CTransaction & outTx)
+	CTransaction & outTx,
+	bool is_local)
 {
 	if (fromAddr.size() == 0 || toAddr.size() == 0)
 	{
@@ -180,6 +181,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 		return -1;
 	}
 
+	// std::cout << "CreateTxMessage fee is: " << minerFees << std::endl;
 	std::set<std::string> fromSet;
 	std::set<std::string> toSet;
 	for (auto & to : toAddr)
@@ -232,10 +234,10 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	}
 	amount += ( (needVerifyPreHashCount - 1) * minerFees );
 
-	
+	// 是否需要打包费
 	bool bIsNeedPackage = IsNeedPackage(fromAddr);
 	
-	
+	// 交易发起方支付打包费
 	uint64_t publicNodePackageFee = 0;
 	if (bIsNeedPackage)
 	{
@@ -262,6 +264,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 
 	uint64_t total = 0;
 	std::string change_addr;
+	std::set<std::string> txowners;
 	for(auto& addr:fromAddr)
 	{
 		for (auto& item : utxoHashs[addr])
@@ -279,7 +282,9 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 				CTxout txout = utxoTx.vout(i);
 				if(txout.scriptpubkey() == addr)
 				{
+					txowners.insert(addr);
 					change_addr = addr;
+					// std::cout << "total:" << total << "addr:" << addr << "txout.value():" << txout.value() << std::endl;
 					total += txout.value();
 
 					CTxin * txin = outTx.add_vin();
@@ -287,9 +292,15 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 					prevout->set_hash(utxoTx.hash());
 					prevout->set_n(utxoTx.n());
 
-					std::string strPub;
-					g_AccountInfo.GetPubKeyStr(txout.scriptpubkey().c_str(), strPub);
-					txin->mutable_scriptsig()->set_pub(strPub);
+					if(is_local)
+					{
+						std::string strPub;
+						g_AccountInfo.GetPubKeyStr(txout.scriptpubkey().c_str(), strPub);
+						txin->mutable_scriptsig()->set_pub(strPub);
+					}else{
+						txin->mutable_scriptsig()->set_pub(addr);
+						std::cout << "CreateTxMessage:" << "vin addr:" << addr << std::endl;
+					}
 				}
 			}
 			if (total >= amount)
@@ -302,6 +313,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 			break;
 		}		
 	}
+	// std::cout << "total:" << total << std::endl;
 
 	if (total < amount)
 	{
@@ -324,7 +336,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	outTx.set_time(time);
 
 	std::string tmpAddr;
-	for (auto & addr : fromAddr)
+	for (auto & addr : txowners)
 	{
 		tmpAddr += addr;
 		tmpAddr += "_";
@@ -346,6 +358,22 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	extra["TransactionType"] = TXTYPE_TX;
 	outTx.set_extra(extra.dump());
 
+	//========test print==================
+	/*
+	for(int j = 0; j < outTx.vin_size(); j++)
+	{
+		CTxin vin = outTx.vin(j);
+		std::string hash = vin.prevout().hash();
+		std::cout << "prevout hash:" << hash << std::endl;
+	}
+	for(int j = 0; j < outTx.vout_size(); j++)
+	{
+		CTxout vout = outTx.vout(j);
+	
+		std::cout << "vout:" << vout.scriptpubkey() << "--" << vout.value() << std::endl;
+	}
+	std::cout << "extra:" << extra.dump() << std::endl;
+	*/
 	return 0;
 }
 
@@ -375,7 +403,7 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 		std::string pub = txin->mutable_scriptsig()->pub();
 		txin->clear_scriptsig();
 		addrs.push_back(GetBase58Addr(pub));
-		
+		// std::cout << "GetBase58Addr(pub):" << GetBase58Addr(pub) << std::endl;
 	}
 
 	std::string serTx = outTx.SerializeAsString();
@@ -388,11 +416,11 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-	
+	//签名
 	for (int i = 0; i < outTx.vin_size(); i++)
 	{
 		std::string addr = addrs[i];
-		
+		// std::cout << "DoCreateTx:签名:" << addr << std::endl;
 		std::string signature;
 		std::string strPub;
 		g_AccountInfo.Sign(addr.c_str(), encodeStrHash, signature);
@@ -403,7 +431,7 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 	}
 	
 	serTx = outTx.SerializeAsString();
-	
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
 	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 
@@ -421,14 +449,14 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 	unsigned int top = 0;
 	pRocksDb->GetBlockTop(txn, top);	
 	txMsg.set_top(top);
-	
+	// msgdata是为了方便调用接口，没有实际意义
 	net_pack pack;
 	const MsgData msgdata = {E_READ, 0, 0, 0, "", pack, ""};
 	auto msg = make_shared<TxMsg>(txMsg);
 	HandleTx( msg, msgdata );
-	
-	
-	
+	// using namespace andrivet::ADVobfuscator;
+	// using namespace andrivet::ADVobfuscator::Machine1;
+	// OBFUSCATED_CALL(HandleTx, msg, msgdata);
 	
 	cstr_free(txstr, true);
 }

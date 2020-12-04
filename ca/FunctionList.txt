@@ -1,45 +1,45 @@
 ca.h
-void ca_print() 
+void ca_print() //ca共识开始函数
 
 ca_transaction.h
-void block_print(struct blkinfo *bi) 
-void blk_print(struct blkdb *db) 
-void NetMessage(const void *inData, void *outData) 
-int CreateTx(const char* From, const char * To, const char * amt, const char *ip, uint32_t needVerifyPreHashCount, double minerFees);
-struct blkinfo * CreateBlock(void * inData, void *outData) 
-bool AddBlock(const CBlock & cblock, bool isSync) 
-CTransaction CreateWorkTx(const CTransaction & tx, int extra_award = 0) 
-void Init() 
-void InitAccount(accountinfo *acc)
-void GetDefault58Addr(char *buf, size_t len) 
-void *DataSynch(void *arg)  
-cstring *ser_reqblkinfo(const struct blkdb *db) 
+void block_print(struct blkinfo *bi) //区块信息打印
+void blk_print(struct blkdb *db) //区块链信息打印
+void NetMessage(const void *inData, void *outData) //交易数据处理函数
+int CreateTx(const char* From, const char * To, const char * amt, const char *ip, uint32_t needVerifyPreHashCount, double minerFees);//发起交易
+struct blkinfo * CreateBlock(void * inData, void *outData) //生成块函数
+bool AddBlock(const CBlock & cblock, bool isSync) //块加入链
+CTransaction CreateWorkTx(const CTransaction & tx, int extra_award = 0) //产生奖励交易
+void Init() //ca交易初始化
+void InitAccount(accountinfo *acc)//账户初始化
+void GetDefault58Addr(char *buf, size_t len) //获取系统默认账户地址
+void *DataSynch(void *arg)  //数据同步线程函数
+cstring *ser_reqblkinfo(const struct blkdb *db) //序列化区块同步请求数据
 
 ca_base58.h
-bool GetBase58Addr(char *b58c, size_t *b58c_sz, uint8_t ver, const void *data, size_t datasz); 
+bool GetBase58Addr(char *b58c, size_t *b58c_sz, uint8_t ver, const void *data, size_t datasz); //根据公钥计算base58地址
 
 ca_cstr.h
 C语言实现 cstring 实现对字符串的操作，及相关函数
 ca_global.h
 全局变量及宏定义
 
-extern struct chain_info g_chain_metadata; 
-extern ECDSA<ECP, SHA1>::PrivateKey g_privateKey; 
-extern ECDSA<ECP, SHA1>::PublicKey g_publicKey; 
-extern accountinfo g_AccountInfo; 
-extern bool g_phone; 
-extern pthread_rwlock_t db_rwlock; 
-extern pthread_rwlock_t tx_rwlock; 
+extern struct chain_info g_chain_metadata; //初始化区块句柄使用
+extern ECDSA<ECP, SHA1>::PrivateKey g_privateKey; //全局变量存放私钥
+extern ECDSA<ECP, SHA1>::PublicKey g_publicKey; //全局变量存放公钥
+extern accountinfo g_AccountInfo; //全局变量存放账户信息
+extern bool g_phone; //区分手机和PC
+extern pthread_rwlock_t db_rwlock; //线程锁
+extern pthread_rwlock_t tx_rwlock; //线程锁 
 
-DECIMAL_NUM  
-PRE_BLOCK_VALID_HEIGHT 
-SYNC_DATA  
-SYNC_DATA_COUNT 
-ENCOURAGE_TX  
-TXHASHDB_SWITCH 
+DECIMAL_NUM  //交易小数点位数
+PRE_BLOCK_VALID_HEIGHT //最高有效块之后的块数量
+SYNC_DATA  //同步开关
+SYNC_DATA_COUNT //一次同步块数量
+ENCOURAGE_TX  //奖励交易开关
+TXHASHDB_SWITCH //交易过程中存储交易开关
 
 ca_message.h
-cstring *message_str(const unsigned char netmagic[4], const char *command_, const void *data, uint32_t data_len); 
+cstring *message_str(const unsigned char netmagic[4], const char *command_, const void *data, uint32_t data_len); //根据command_命令生成网络区块数据包
 
 ca_serialize.h
 变量类型的序列化和反序列化函数

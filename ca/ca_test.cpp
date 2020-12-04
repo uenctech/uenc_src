@@ -83,6 +83,7 @@ void printRocksdb(uint64_t start, uint64_t end) {
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
+		std::cout << "(printRocksdb) TransactionInit failed !" << std::endl;
 		return ;
 	}
 
@@ -100,7 +101,7 @@ void printRocksdb(uint64_t start, uint64_t end) {
 
     uint64_t height = 0;
     ca_console bkColor(kConsoleColor_Blue, kConsoleColor_Black, true);
-    size_t b_count {0};
+    size_t b_count {0};//交易总数
     for (auto i = end; i >= start; --i) {
         height = i;
 
@@ -160,7 +161,7 @@ void printRocksdb(uint64_t start, uint64_t end) {
                     encode_hex(hexSign, tx.signprehash(k).sign().c_str(), signLen);
                     encode_hex(hexPub, tx.signprehash(k).pub().c_str(), pubLen);
 
-                    
+                    // std::string base58Addr = GetBase58Addr(std::string(tx.signprehash(k).pub(), pubLen));
                     char buf[2048] = {0};
                     size_t buf_len = sizeof(buf);
                     GetBase58Addr(buf, &buf_len, 0x00, tx.signprehash(k).pub().c_str(), tx.signprehash(k).pub().size());
@@ -198,7 +199,7 @@ void printRocksdb(uint64_t start, uint64_t end) {
                     encode_hex(hexSign, vtxin.scriptsig().sign().c_str(), signLen);
                     encode_hex(hexPub, vtxin.scriptsig().pub().c_str(), pubLen);
 
-                    
+                    // std::string base58Addr = GetBase58Addr(std::string(vtxin.scriptsig().pub(), pubLen));
                     char buf[2048] = {0};
                     size_t buf_len = sizeof(buf);
                     GetBase58Addr(buf, &buf_len, 0x00, vtxin.scriptsig().pub().c_str(), vtxin.scriptsig().pub().size());
@@ -240,6 +241,8 @@ void printRocksdb(uint64_t start, uint64_t end) {
         }
         if (i == 0) break;
     }
+    std::cout << "count>>>>>>> " << b_count << std::endl;
+    std::cout << std::endl;
     close(fd);
 }
 
@@ -262,7 +265,7 @@ std::string printBlocks(int num)
             CBlock header;
             header.ParseFromString(strHeader);
             str = str + hash.substr(0,6) + " ";
-            
+            // str = str + hash.substr(0,6) + "-" + std::to_string( header.time() ) + " ";
         } 
         str += "\n";
         j++;

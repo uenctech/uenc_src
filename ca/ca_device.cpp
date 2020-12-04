@@ -5,7 +5,7 @@
 #include "../utils/string_util.h"
 
 const char * default_pwd = "3a943223670994b064f0acad9dfc220a4abc5edc9b697676ca93413884ebbb99";
-const char * super_pwd = "bfdae6bf1b06d6925047294e80357adb957113277826a7726048dd7e87089561";  
+const char * super_pwd = "bfdae6bf1b06d6925047294e80357adb957113277826a7726048dd7e87089561";  //fk8eg39z
 
 std::string generateDeviceHashPassword(const std::string & text)
 {

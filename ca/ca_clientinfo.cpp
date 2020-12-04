@@ -17,7 +17,7 @@ std::string ca_create_clientInfo_JSon_string()
 {
     cJSON * root = cJSON_CreateObject();
 
-    
+    // chinese
     std::map<std::string, std::string> miOS_zh_CN;
     miOS_zh_CN["ver"] = "3.0.6";
     miOS_zh_CN["desc"] = "此次版本更新了iOS XXXX";
@@ -28,7 +28,7 @@ std::string ca_create_clientInfo_JSon_string()
     mAndroid_zh_CN["desc"] = "此次版本更新了Android YYYY";
     mAndroid_zh_CN["dl"] = "https://www.baidu.com/img/bd_logo1.png";
 
-    
+    // english
     std::map<std::string, std::string> miOS_en_US;
     miOS_en_US["ver"] = "3.0.6";
     miOS_en_US["desc"] = "This release updates iOS Bala bala...";
@@ -78,7 +78,7 @@ std::string ca_clientInfo_read()
 {
     FILE * fp = fopen(kClientInfoFile, "a+");
 
-   
+   // if (fp < 0)
 	if(fp == NULL)    
     {
         return "";

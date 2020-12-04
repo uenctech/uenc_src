@@ -15,4 +15,4 @@
     #include "proto/transaction.pb.h"
 #endif
 
-#endif 
+#endif // !_CA_HEADER_H_

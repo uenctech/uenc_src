@@ -15,7 +15,7 @@
 
 const int PROCESS_TIME = 10;
 const int SYNC_ADD_FAIL_TIME = 5;
-const int SYNC_ADD_FAIL_LIMIT = 100;
+const int SYNC_ADD_FAIL_LIMIT = 10;
 const int ROLLBACK_HEIGHT = 10;
 const int PENDING_EXPIRE_TIME = 120;
 

@@ -44,7 +44,7 @@ string decrypt(string cipherTextHex) {
         ss >> x;
         c = (char)x;
         cipherText += c;
-        if(i >= (int)cipherTextHex.length() - 2)break;
+        if(i >= (int)cipherTextHex.length() - 2) break;
         i += 2;
     }
 
@@ -60,11 +60,14 @@ string decrypt(string cipherTextHex) {
 
 void te() {
     string text = "cccnnnd";
+    cout << "text : " << text << endl;
  
     initKV();
     string cipherHex = encrypt(text);
+    cout << "encrypt : " << cipherHex << endl;
 
     string dec_str = decrypt(cipherHex);
+    cout << "decrypt : " << dec_str << endl;
 }
 
 
@@ -177,6 +180,8 @@ int genPairKey(char *out_pri_key, int *out_pri_len, char *out_pub_key, int *out_
     memcpy(out_pub_key, str_pub.c_str(), str_pub.size());
     *out_pub_len = strlen(out_pub_key);
 
+// std::cout << "str_pub " << str_pub.size() << " out_pub_len " << *out_pub_len << std::endl;
+
     return 0;
 }
 
@@ -187,6 +192,8 @@ int genBs58Addr(const char *pub_key, const int pub_len, char *bs58_addr, int *bs
     GetBase58Addr(buf, &buf_len, uint8_t(ver), pub_key, pub_len);
     memcpy(bs58_addr, buf, buf_len - 1);
     *bs58_len = buf_len - 1;
+
+// std::cout << "bs58 " << buf << " bs58_len " << *bs58_len << std::endl;
 
     return 0;
 }

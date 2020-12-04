@@ -1,16 +1,18 @@
 syntax = "proto3";
 
-
+//req
 message GetMacReq 
 {
 
 }
 
-
+//ack
 message GetMacAck
 {
-    
+    //data
     string mac = 1;
 	string ip =2;
 	uint32 port =3;
 }
+
+

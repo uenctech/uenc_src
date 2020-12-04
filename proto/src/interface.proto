@@ -1,47 +1,53 @@
 syntax = "proto3";
 
-
-
-message GetAmountReq {
+// [START messages]
+//获取余额req
+message GetAmountReq 
+{
     string version = 1;
     string address = 2;
 }
 
-
-message GetAmountAck {
+//获取余额ack
+message GetAmountAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
 
-    
+    //data
     string address = 4;
     string balance = 5;
 }
+// [END messages]
 
-
-
-
-message GetBlockInfoReq {
+// [START messages]
+//查询块信息 params 高度 查询块数量
+message GetBlockInfoReq 
+{
     string version = 1;
     sint32 height = 2;
     sint32 count = 3;
 }
 
-
-message TxVinInfo {
+//vin_info
+message TxVinInfo 
+{
     string script_sig = 1;
     string pre_vout_hash = 2;
     uint64 pre_vout_index = 3;
 }
 
-
-message TxVoutInfo {
+//vout_info
+message TxVoutInfo 
+{
     string script_pubkey = 1;
     string amount = 2;
 }
 
-
-message TxInfo {
+//tx_info
+message TxInfo 
+{
     string tx_hash = 1;
     repeated string transaction_signer = 2;
     repeated TxVinInfo vin_list = 3;
@@ -52,66 +58,74 @@ message TxInfo {
     uint32 version = 8;
 }
 
-
-message BlockInfo {
+//block_info
+message BlockInfo 
+{
     sint32 height = 1;
     string hash_merkle_root = 2;
     string hash_prev_block = 3;
     string block_hash = 4;
     uint64 ntime = 5;
     repeated TxInfo tx_info_list = 6;
-    string packet_fee = 7; 
-    string packet_ip = 8; 
+    string packet_fee = 7; //打包费
+    string packet_ip = 8; //打包费节点ip
 }
 
-message GetBlockInfoAck {
+message GetBlockInfoAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
 
-    
-    uint64 top = 4; 
+    //data
+    uint64 top = 4; //块高度
     repeated BlockInfo block_info_list = 5;
-    uint64 tx_count = 6; 
+    uint64 tx_count = 6; //交易数
 }
+// [END messages]
 
-
-
-
-message GetAddrInfoReq {
+// [START messages]
+//根据钱包地址查询交易信息
+message GetAddrInfoReq 
+{
     string version = 1;
     string address = 2;
     uint32 index = 3;
     uint32 count = 4;
 }
 
-message GetAddrInfoAck {
+message GetAddrInfoAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
     uint64 total = 4;
     repeated BlockInfo block_info_list = 5;
 }
+// [END messages]
 
-
-message SetDevPasswordReq {
+message SetDevPasswordReq 
+{
     string version = 1;
     string old_pass = 2;
     string new_pass = 3;
 }
 
-message SetDevPasswordAck {
+message SetDevPasswordAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
 }
 
-message GetDevPasswordReq {
+message GetDevPasswordReq 
+{
     string version = 1;
     string password = 2;
 }
 
-message GetDevPasswordAck {
+message GetDevPasswordAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
@@ -119,25 +133,29 @@ message GetDevPasswordAck {
     string address = 4;
 }
 
-enum DeviceType {
+enum DeviceType 
+{
     PC = 0;
     iOS = 1;
     Android = 2;
 }
 
-enum DeviceLang {
+enum DeviceLang 
+{
     ZH_CN = 0;
     EN_US = 1;
 }
 
-message GetClientInfoReq {
+message GetClientInfoReq 
+{
     string version = 1;
     DeviceType phone_type = 2;
     DeviceLang phone_lang = 3;
     string phone_version = 4;
 }
 
-message GetClientInfoAck {
+message GetClientInfoAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
@@ -149,11 +167,13 @@ message GetClientInfoAck {
     string dl = 8 ;
 }
 
-message GetNodeInfoReq {
+message GetNodeInfoReq 
+{
     string version = 1;
 }
 
-message NodeInfos {
+message NodeInfos 
+{
     string enable = 1;
     string ip = 2;
     string name = 3;
@@ -161,12 +181,14 @@ message NodeInfos {
     string price = 5;
 }
 
-message NodeList {
+message NodeList 
+{
     repeated NodeInfos node_info = 1;
     string local = 2;
 }
 
-message GetNodeInfoAck {
+message GetNodeInfoAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
@@ -174,70 +196,76 @@ message GetNodeInfoAck {
     repeated NodeList node_list = 4;
 }
 
+// new interface s *****************************************************************************
 
-
-
+// 信息
 message GetServiceInfoReq
 {
-	string version				= 1;						
-	string password				= 2;						
-	string public_net_ip		= 3;						
-    bool is_show = 4; 
+	string      version				    = 1;						// 版本
+	string      password				= 2;						// 密码
+	string      public_net_ip		    = 3;						// 当前连接的的公网的ip
+    bool        is_show                 = 4;                        //扫描矿机的时候传为true
+    uint32      sequence_number         = 5;                        //请求的序列号
+
 }
 
-
+// 返回手续费
 message ServiceFee
 {
-	string max_fee 				= 1;						
-	string min_fee 				= 2;						
-	string service_fee 			= 3;						
-    string avg_fee = 4;
+	string max_fee 				= 1;						// 前100块最高费用
+	string min_fee 				= 2;						// 前100块最低费用
+	string service_fee 			= 3;						// 矿工设定的手续费
+    string avg_fee              = 4;
 }
 
-
+// 矿机信息协议
 message GetServiceInfoAck
 {
-	string 		 version		= 1;						
-    sint32 code = 2;
-    string description = 3;
-	string 		 mac_hash		= 4;					
-	string 		 device_version	= 5;					
-	repeated ServiceFee service_fee_info	= 6;		
-
+	string 		 version		= 1;						// 版本
+    sint32       code = 2;
+    string       description = 3;
+	string 		 mac_hash		= 4;					    // 矿机hash标识 FIXME
+	string 		 device_version	= 5;					    // 矿机程序版本
+	repeated     ServiceFee service_fee_info	= 6;		// 手续费
+   
 	enum SyncStatus
 	{
-		TRUE 					= 0;						
-		FALSE					= 1;						
-		FAIL					= -1;						
+		TRUE 					= 0;						// 矿机与主网已同步
+		FALSE					= 1;						// 矿机与主网未同步
+		FAIL					= -1;						// 获取主网信息失败
 	}
 
-	SyncStatus   is_sync		= 7;						
+	SyncStatus   is_sync		 = 7;						// 是否同步标识
+    sint32       height          = 8;                       //矿机高度
+    uint32       sequence        = 9;                        //回应的序列号     
 }
 
-
+// 设置矿工费请求
 message SetServiceFeeReq
 {
-	string version 				= 1;						
-	string password				= 2;						
-	string service_fee 			= 3;						
+	string version 				= 1;						// 版本
+	string password				= 2;						// 矿机密码
+	string service_fee 			= 3;						// 设定值
 }
 
-
+// 设置矿工费回执
 message SetServiceFeeAck
 {
-	string version 				= 1;						
-	sint32  code 				= 2;						
-	string description 			= 3;						
+	string version 				= 1;						// 版本
+	sint32  code 				= 2;						// 返回值
+	string description 			= 3;						// 返回信息
 }
 
-
-message GetPacketFeeReq {
-	string version				= 1;						
-	string password				= 2;						
-	string public_net_ip		= 3;						
+// 获取特定节点打包费
+message GetPacketFeeReq 
+{
+	string version				= 1;						// 版本
+	string password				= 2;						// 密码
+	string public_net_ip		= 3;						// 当前连接的的公网的ip
 }
 
-message GetPacketFeeAck {
+message GetPacketFeeAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
@@ -245,23 +273,26 @@ message GetPacketFeeAck {
     string packet_fee = 4;
 }
 
-
-message SetPacketFeeReq {
-	string version				= 1;						
-	string password				= 2;						
-	string public_net_ip		= 3;						
+// 设置特定节点打包费
+message SetPacketFeeReq 
+{
+	string version				= 1;						// 版本
+	string password				= 2;						// 密码
+	string public_net_ip		= 3;						// 当前连接的的公网的ip
     string packet_fee = 4;
 }
 
-message SetPacketFeeAck {
+message SetPacketFeeAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
 }
 
 
-
-message GetBlockTopReq {
+//获取最高交易块数 矿机端
+message GetBlockTopReq 
+{
     string version = 1;
 
     uint32 fd = 2;
@@ -269,7 +300,9 @@ message GetBlockTopReq {
     uint32 ip = 4;
 }
 
-message TApiGetBlockTopAck {
+//服务节点返回
+message TApiGetBlockTopAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
@@ -280,23 +313,49 @@ message TApiGetBlockTopAck {
     uint32 ip = 7;
 }
 
-
-message GetNodeServiceFeeReq {
+//获得全网节点矿费
+message GetNodeServiceFeeReq 
+{
     string version = 1;
 }
 
-message GetNodeServiceFeeAck {
+message GetNodeServiceFeeAck 
+{
     string version = 1;
     sint32 code = 2;
     string description = 3;
 
     repeated ServiceFee service_fee_info = 4;
 }
+//========================================================
+message GetDevInfoListReq
+{
+    string version				= 1;						// 版本
+	string password				= 2;						// 密码
+    string devaddr              = 3;
+	string public_net_ip		= 4;						// 当前连接的的公网的ip
+    bool is_show = 5; //扫描矿机的时候传为true
+}
 
 
+message GetDevInfoListAcK
+{
+    string 		 version		= 1;						// 版本
+    sint32       code = 2;
+    string       description = 3;
 
+    string 		 mac_hash		= 4;					// 矿机hash标识 FIXME
+    string       deviceaddr      =5;                    //矿机Base58地址
+	string 		 device_version	= 6;					// 矿机程序版本
+    sint32       device_height = 7;                     //矿机高度
+    sint32       public_net_height = 8;                 //公网高度
+	repeated ServiceFee service_fee_info	= 9;		// 手续费
 
+}
 
+///*****************************************************************************
+
+//获取矿机公私钥助记词请求
 message GetDevPrivateKeyReq 
 {
 	string version = 1;
@@ -310,59 +369,59 @@ message DevPrivateKeyInfo
 	string keystore = 2;
 	string mnemonic = 3;	
 }
-
+//获取矿机公私钥助记词回执
 message GetDevPrivateKeyAck
 {
     string   version = 1;
-	int32    code	    = 2;						
-	string	 description	= 3;						
+	int32    code	    = 2;						// 返回错误码
+	string	 description	= 3;						// 返回错误信息
 	repeated  DevPrivateKeyInfo  devprivatekeyinfo = 4;
 }
 
 
+/*************************************手机交易接口相关协议*************************************/
 
-
-
-
+// 手机端交易信息体
+// 第一步
 message CreateTxMsgReq
 {
-	string       version        = 1;                        
-	string from					= 2;						
-	string to					= 3;						
-	string amt					= 4;						
-	string minerFees			= 5;						
-	string needVerifyPreHashCount = 6;						
+	string       version        = 1;                        // 版本					
+	string from					= 2;						// 交易发起方地址
+	string to					= 3;						// 交易接收方地址
+	string amt					= 4;						// 交易金额
+	string minerFees			= 5;						// 发起交易方支付的单个签名的矿工费
+	string needVerifyPreHashCount = 6;						// 共识数
 }
 
 message CreateTxMsgAck
 {
-	string       version        = 1;                        
-	int32        code			= 2;						
-	string		 message		= 3;						
-	string 		 txData			= 4;						
-	string       txEncodeHash   = 5;						
+	string       version        = 1;                        // 版本					
+	int32        code			= 2;						// 返回错误码
+	string		 message		= 3;						// 返回错误信息
+	string 		 txData			= 4;						// 交易信息体
+	string       txEncodeHash   = 5;						// 交易信息体base64之后sha256的hash值
 }
 
-
+// 第二步
 message TxMsgReq
 {
-	string       version        = 1;                        
-	string		 serTx			= 2;						
-	string		 strSignature	= 3;						
-	string		 strPub			= 4;						
-	string       txEncodeHash   = 5;						
+	string       version        = 1;                        // 版本					
+	string		 serTx			= 2;						// 交易信息体
+	string		 strSignature	= 3;						// 签名信息
+	string		 strPub			= 4;						// 发起方公钥
+	string       txEncodeHash   = 5;						// 交易信息体base64之后sha256的hash值
 }
 
 message TxMsgAck
 {
-	string       version        = 1;                        
-	int32        code			= 2;						
-	string		 message		= 3;						
-	string       txHash         = 4;                        
+	string       version        = 1;                        // 版本					
+	int32        code			= 2;						// 返回错误码
+	string		 message		= 3;						// 返回错误信息
+	string       txHash         = 4;                        // txHash
 }
 
-
-
+// 手机端多重交易协议
+// 第一步
 message ToAddr
 {
 	string toAddr               = 1;
@@ -371,23 +430,23 @@ message ToAddr
 
 message CreateMultiTxMsgReq
 {
-	string       version        = 1;                        
-	repeated string from		= 2;						
-	repeated ToAddr to		    = 3;						
-	string minerFees			= 5;						
-	string needVerifyPreHashCount = 6;						
+	string       version        = 1;                        // 版本					
+	repeated string from		= 2;						// 交易发起方地址
+	repeated ToAddr to		    = 3;						// 交易接收方地址
+	string minerFees			= 5;						// 发起交易方支付的单个签名的矿工费
+	string needVerifyPreHashCount = 6;						// 共识数
 }
 
 message CreateMultiTxMsgAck
 {
-	string       version        = 1;                        
-	int32        code			= 2;						
-	string		 message		= 3;						
-	string 		 txData			= 4;						
-	string       txEncodeHash   = 5;						
+	string       version        = 1;                        // 版本					
+	int32        code			= 2;						// 返回错误码
+	string		 message		= 3;						// 返回错误信息
+	string 		 txData			= 4;						// 交易信息体
+	string       txEncodeHash   = 5;						// 交易信息体base64之后sha256的hash值
 }
 
-
+// 第二步
 message SignInfo
 {
 	string signStr              = 1;
@@ -396,261 +455,262 @@ message SignInfo
 
 message MultiTxMsgReq
 {
-	string       version        = 1;                        
-	string		 serTx			= 2;						
-	repeated SignInfo signInfo	= 3;						
-	string       txEncodeHash   = 4;						
+	string       version        = 1;                        // 版本					
+	string		 serTx			= 2;						// 交易信息体
+	repeated SignInfo signInfo	= 3;						// 签名信息
+	string       txEncodeHash   = 4;						// 交易信息体base64之后sha256的hash值
 }
 
+// 第二步应答使用 TxMsgAck
 
 
-
-
-
+// 手机端连接矿机，控制矿机发起交易发起交易
+// 第一步验证密码
 message VerifyDevicePasswordReq
 {
-	string       version        = 1;                        
-	string       password       = 2;                        
+	string       version        = 1;                        // 版本					
+	string       password       = 2;                        // 密码
 }
 
 message VerifyDevicePasswordAck
 {
-	string       version        = 1;                        
-	int32        code			= 2;						
-	string		 message		= 3;						
+	string       version        = 1;                        // 版本					
+	int32        code			= 2;						// 返回错误码
+	string		 message		= 3;						// 返回错误信息
 }
 
-
+// 第二步发起交易
 message CreateDeviceTxMsgReq
 {
-	string       version        = 1;                        
-	string from					= 2;						
-	string to					= 3;						
-	string amt					= 4;						
-	string minerFees			= 5;						
-	string needVerifyPreHashCount = 6;						
-    string password             = 7;
+	string       version        = 1;                        // 版本					
+	string from					= 2;						// 交易发起方地址
+	string to					= 3;						// 交易接收方地址
+	string amt					= 4;						// 交易金额
+	string minerFees			= 5;						// 发起交易方支付的单个签名的矿工费
+	string needVerifyPreHashCount = 6;						// 共识数
+    string password             = 7;                        // 矿机密码
 }
 
+// 应答是用TxMsgAck，但txhash无值返回
 
 
 
-
-
+// 手机端连接矿机发起多重交易
 message CreateDeviceMultiTxMsgReq
 {
-	string       version        = 1;                        
-	repeated string from		= 2;						
-	repeated ToAddr to		    = 3;						
-	string gasFees			    = 4;						
-	string needVerifyPreHashCount = 5;						
-    string password             = 6;
+	string       version        = 1;                        // 版本					
+	repeated string from		= 2;						// 交易发起方地址
+	repeated ToAddr to		    = 3;						// 交易接收方地址
+	string gasFees			    = 4;						// 发起交易方支付的单个签名的矿工费
+	string needVerifyPreHashCount = 5;						// 共识数
+    string password             = 6;                        // 矿机密码
 }
 
+// 应答是用TxMsgAck
 
 
 
+///********************************质押相关*********************************************
 
-
-
-
-
+//手机端发起质押请求(主网请求)
+// 第一步
 message CreatePledgeTxMsgReq
 {
-	string version = 1;				     		
-	string addr = 2;                            
-	string amt  = 3;                            
-	string needVerifyPreHashCount = 4;          
-	string gasFees = 5;                         
+	string version = 1;				     		// 版本号
+	string addr = 2;                            //质押地址
+	string amt  = 3;                            //质押金额
+	string needVerifyPreHashCount = 4;          //签名个数
+	string gasFees = 5;                         //燃料费
 }
 
-
+//矿机端质押回执
 message CreatePledgeTxMsgAck
 {
-	string       version      = 1;						    
-	int32        code			= 2;						
-	string		 description		= 3;					
-	string 		 txData			= 4;						
-	string       txEncodeHash         = 5;					
+	string       version      = 1;						    // 版本号
+	int32        code			= 2;						// 返回错误码
+	string		 description		= 3;					// 返回错误信息
+	string 		 txData			= 4;						// 交易信息体
+	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
 
-
+// 第二步
 message PledgeTxMsgReq
 {
-	string       version       = 1;						    
-	string		 serTx			= 2;						
-	string		 strSignature	= 3;						
-	string		 strPub			= 4;						
-	string       txEncodeHash         = 5;					
+	string       version       = 1;						    // 版本号
+	string		 serTx			= 2;						// 交易信息体
+	string		 strSignature	= 3;						// 签名信息
+	string		 strPub			= 4;						// 发起方公钥
+	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
 
+// 第二步应答使用TxMsgAck
 
-
-
-
-
+///*****************************************************************************
+// 解除质押
+// 第一步
 message CreateRedeemTxMsgReq
 {
-	string   version    = 1;						          
-    string   addr =  2;                                       
-	string   amt  = 3;                                        
-	string   needVerifyPreHashCount = 4;                      
-	string   gasFees = 5;                                     
-    string 	 txHash	= 6;						      
+	string   version    = 1;						          // 版本号
+    string   addr =  2;                                       //解质押的地址
+	string   amt  = 3;                                        //解质押金额
+	string   needVerifyPreHashCount = 4;                      //共识数个数
+	string   gasFees = 5;                                     //燃料费	
+    string 	 txHash	= 6;						      // 交易hash
 }
 
 message CreateRedeemTxMsgAck
 {
-	string       version      = 1;						    
-	int32        code			= 2;						
-	string		 description		= 3;					
-	string 		 txData			= 4;						
-	string       txEncodeHash         = 5;					
+	string       version      = 1;						    // 版本号
+	int32        code			= 2;						// 返回错误码
+	string		 description		= 3;					// 返回错误信息
+	string 		 txData			= 4;						// 交易信息体
+	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
 
-
+// 第二步
 message RedeemTxMsgReq
 {
-	string       version       = 1;						    
-	string		 serTx			= 2;						
-	string		 strSignature	= 3;						
-	string		 strPub			= 4;						
-	string       txEncodeHash         = 5;					
+	string       version       = 1;						    // 版本号
+	string		 serTx			= 2;						// 交易信息体
+	string		 strSignature	= 3;						// 签名信息
+	string		 strPub			= 4;						// 发起方公钥
+	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
 
-
+// 手机端连接矿机发起质押交易请求,回执使用TxMsgAck协议
 message CreateDevicePledgeTxMsgReq
 {
-    string version                = 1;                       
-    string addr                   = 2;                       
-    string amt                    = 3;                       
-    string needVerifyPreHashCount = 4;                       
-    string gasFees                = 5;                       
-    string password               = 6;
+    string version                = 1;                       // 版本
+    string addr                   = 2;                       // 质押地址
+    string amt                    = 3;                       // 质押金额
+    string needVerifyPreHashCount = 4;                       // 签名个数
+    string gasFees                = 5;                       // 燃料费
+    string password               = 6;                       // 矿机密码
 }
 
-
+// 手机端连接矿机发起解质押交易请求,回执使用TxMsgAck协议
 message CreateDeviceRedeemTxReq
 {
-    string version                = 1;                       
-    string addr                   = 2;                       
-    string needVerifyPreHashCount = 3;                       
-    string gasFees                = 4;                       
-    string utxo                   = 5;
-    string password               = 6;                       
+    string version                = 1;                       // 版本
+    string addr                   = 2;                       // 质押地址
+    string needVerifyPreHashCount = 3;                       // 签名个数
+    string gasFees                = 4;                       // 燃料费
+    string utxo                   = 5;                       // 要解压的utxo
+    string password               = 6;                       // 矿机密码
 }
 
 
 
+///*****************************质押列表************************************************
 
-
-
+// 质押列表请求 req
 message GetPledgeListReq 
 {
-    string version = 1; 
-    string addr = 2; 
-    uint32 index = 3; 
-    uint32 count = 4; 
+    string version = 1; // 版本
+    string addr = 2; // 查询地址
+    uint32 index = 3; // 索引
+    uint32 count = 4; // 查询数量
 }
 
-
+// 质押列表应答ack
 message PledgeItem
 {
-    string blockhash = 1; 
-    uint32 blockheight = 2; 
-    string utxo = 3; 
-    string amount = 4; 
-    uint64 time  = 5; 
-    string fromaddr = 6; 
-    string toaddr = 7;  
-    string detail = 8;  
+    string blockhash = 1; // 区块哈希
+    uint32 blockheight = 2; // 区块高度
+    string utxo = 3; // utox
+    string amount = 4; // 质押资产值
+    uint64 time  = 5; // 时间戳
+    string fromaddr = 6; //  发起地址
+    string toaddr = 7;  // 接收地址
+    string detail = 8;  // 详情描述
 }  
 
 message GetPledgeListAck
 {
-    string version = 1; 
-    int32 code = 2; 
-    string description = 3;
-    repeated PledgeItem list = 4; 
-    uint32 total = 5; 
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
+    repeated PledgeItem list = 4; // 质押信息列表
+    uint32 total = 5; // 质押条目总数量
 }
 
+///*****************************交易列表************************************************
 
-
-
+// 获得交易信息列表请求
 message GetTxInfoListReq
 {
-    string version = 1; 
-    string addr = 2; 
-    uint32 index = 3; 
-    uint32 count = 4; 
+    string version = 1; // 版本
+    string addr = 2; // 地址
+    uint32 index = 3; // 索引
+    uint32 count = 4; // 查询数量
 }
 
-enum TxInfoType {
-    TxInfoType_Unknown = 0; 
-    TxInfoType_Originator = 1; 
-    TxInfoType_Receiver  = 2; 
-    TxInfoType_Gas = 3; 
-    TxInfoType_Award = 4; 
-    TxInfoType_Pledge = 5; 
-    TxInfoType_Redeem = 6; 
-    TxInfoType_PledgedAndRedeemed  = 7; 
+enum TxInfoType 
+{
+    TxInfoType_Unknown = 0; // 未知
+    TxInfoType_Originator = 1; // 交易发起方
+    TxInfoType_Receiver  = 2; // 交易接收方
+    TxInfoType_Gas = 3; // 手续费奖励
+    TxInfoType_Award = 4; // 区块奖励
+    TxInfoType_Pledge = 5; // 质押
+    TxInfoType_Redeem = 6; // 解除质押
+    TxInfoType_PledgedAndRedeemed  = 7; // 质押但已解除
 }
 
 message TxInfoItem
 {
-    TxInfoType type = 1; 
-    string txhash = 2; 
-    uint64 time = 3; 
-    string amount = 4; 
+    TxInfoType type = 1; // 交易类型
+    string txhash = 2; // 交易哈希
+    uint64 time = 3; // 时间戳
+    string amount = 4; // 交易额
 }
 
-
+// 获得交易信息列表应答
 message GetTxInfoListAck
 {
-    string version = 1; 
-    int32 code = 2; 
-    string description = 3;
-    repeated TxInfoItem list = 4; 
-    uint32 total = 5; 
-    uint32 index = 6; 
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
+    repeated TxInfoItem list = 4; // 交易信息列表
+    uint32 total = 5; // 交易条目总数量
+    uint32 index = 6; // 已查到索引数
 }
 
+///*****************************交易详情************************************************
 
-
-
+// 获得交易详情请求
 message GetTxInfoDetailReq
 {
-    string version = 1; 
-    string txhash = 2; 
-    string addr = 3; 
+    string version = 1; // 版本
+    string txhash = 2; // 交易哈希
+    string addr = 3; // 地址，传空值则不会查询针对该地址的奖励信息
 }
 
-
+// 获得交易详情应答
 message GetTxInfoDetailAck
 {
-    string version = 1; 
-    int32 code = 2; 
-    string description = 3;
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
 
-    string blockhash = 4; 
-    uint32 blockheight = 5; 
-    string txhash = 6; 
-    uint64 time = 7; 
-    repeated string fromaddr = 8; 
-    repeated ToAddr toaddr = 9; 
-    string gas = 10; 
-    string amount = 11; 
-    string award = 12; 
+    string blockhash = 4; // 区块哈希
+    uint32 blockheight = 5; // 区块高度
+    string txhash = 6; // 交易哈希
+    uint64 time = 7; // 时间戳
+    repeated string fromaddr = 8; //  发起地址
+    repeated ToAddr toaddr = 9; // 交易接收方地址
+    string gas = 10; // 付出交易Gas
+    string amount = 11; // 交易额
+    string award = 12; // 奖励额
 
-    
-    string awardGas = 13; 
-    string awardAmount = 14; 
+    // 根据地址查询所得的奖励
+    string awardGas = 13; // 获得奖励Gas
+    string awardAmount = 14; // 区块奖励
 }
 
+///*****************************区块列表************************************************
 
-
-
+// 获得区块列表
 message GetBlockInfoListReq
 {
     string version = 1;
@@ -660,29 +720,29 @@ message GetBlockInfoListReq
 
 message BlockInfoItem
 {
-    string blockhash = 1; 
-    uint32 blockheight = 2; 
-    uint64 time = 3; 
-    string txHash = 4; 
-    repeated string fromAddr = 5;
-    repeated string toAddr = 6; 
-    string amount  = 7; 
+    string blockhash = 1; // 区块哈希
+    uint32 blockheight = 2; // 区块高度
+    uint64 time = 3; // 时间戳
+    string txHash = 4; // 交易哈希
+    repeated string fromAddr = 5;// 发起方地址
+    repeated string toAddr = 6; // 接收方地址
+    string amount  = 7; // 交易额
 } 
 
 message GetBlockInfoListAck
 {
-    string version = 1; 
-    int32 code = 2; 
-    string description = 3;
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
 
-    uint32 top = 4; 
-    uint32 txcount = 5; 
-    repeated BlockInfoItem list = 6; 
+    uint32 top = 4; // 总高度
+    uint32 txcount = 5; // 总交易笔数
+    repeated BlockInfoItem list = 6; // 区块信息列表
 }
 
+///*****************************区块详情************************************************
 
-
-
+// 区块详情
 message GetBlockInfoDetailReq
 {
     string version = 1;
@@ -691,40 +751,86 @@ message GetBlockInfoDetailReq
 
 message BlockInfoOutAddr
 {
-    string addr = 1; 
-    string amount = 2; 
+    string addr = 1; // 接收方地址
+    string amount = 2; // 接收金额
 }
 
 message GetBlockInfoDetailAck
 {
-    string version = 1; 
-    int32 code = 2; 
-    string description = 3;
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
 
-    string blockhash = 4; 
-    uint32 blockheight = 5; 
-    string merkleRoot = 6; 
-    string prevHash = 7; 
-    uint64 time = 8; 
-    string tatalAmount = 9; 
+    string blockhash = 4; // 区块哈希
+    uint32 blockheight = 5; // 区块高度
+    string merkleRoot = 6; // 区块哈希
+    string prevHash = 7; // 前置区块哈希
+    uint64 time = 8; // 时间戳
+    string tatalAmount = 9; // 交易总额,不包括手续费
 
-    repeated string signer = 10; 
-    repeated BlockInfoOutAddr blockInfoOutAddr = 11; 
+    repeated string signer = 10; // 签名者
+    repeated BlockInfoOutAddr blockInfoOutAddr = 11; // 交易额
 }
 
-
+///*****************************测试连接************************************************
 message TestConnectReq
 {
-    string version = 1; 
+    string version = 1; // 版本
 }
 
 message TestConnectAck
 {
-    string version = 1; 
-    int32 code = 2; 
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
 }
 
 
+// new interface e *****************************************************************************
+
+//================向公网节点随机访问======================//
+message Device2PubNetRandomReq
+{
+    string version =1;
+    string  id = 2;
+}
+
+//=================公网回应对应的版本号====================================//
+message RandomPubNet2DeviceAck
+{
+    string  version = 1;
+    string description = 2;// 返回错误信
+    string  id = 3;
+}
+//=================回来版本号之后进行版本判断====================================//
+message Device2AllDevReq
+{
+    string  version = 1;
+    string  id = 2;
+}
+//=================随机广播10次回应对应的版本号====================================//
+message Feedback2DeviceAck
+{
+    string  version = 1;
+    string  id = 2;
+}
+
+//=============最后下载使用=================//
+
+message DataTransReq
+{
+    string version = 1;
+    string id = 2;
+}
+
+
+message TransData
+{
+    string version = 1;
+    string description = 2;     // 返回错误信  
+    bytes encodedata = 3;
+    bytes origindata = 4;
+    string id =5;
+}
 
 
 

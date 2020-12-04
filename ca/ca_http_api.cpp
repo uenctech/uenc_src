@@ -8,6 +8,7 @@
 #include "ca_synchronization.h"
 #include "../net/httplib.h"
 #include "../utils/string_util.h"
+#include "../utils/base64.h"
 #include "block.pb.h"
 #include "MagicSingleton.h"
 #include "ca_rocksdb.h"
@@ -36,7 +37,7 @@ void ca_register_http_callbacks()
     HttpServer::registerCallback("/get_gas",api_get_gas );
     
 
-    
+    //json rpc=========
     HttpServer::registerJsonRpcCallback("jsonrpc_test",jsonrpc_test);
     HttpServer::registerJsonRpcCallback("get_height",jsonrpc_get_height);
     HttpServer::registerJsonRpcCallback("get_balance",jsonrpc_get_balance);
@@ -47,6 +48,7 @@ void ca_register_http_callbacks()
     HttpServer::registerJsonRpcCallback("get_avg_fee",jsonrpc_get_avg_fee);
     HttpServer::registerJsonRpcCallback("generate_wallet",jsonrpc_generate_wallet);
     HttpServer::registerJsonRpcCallback("generate_sign",jsonrpc_generate_sign);
+    HttpServer::registerJsonRpcCallback("send_multi_tx",jsonrpc_send_multi_tx);
 
 }
 
@@ -96,12 +98,9 @@ void api_jsonrpc(const Request & req, Response & res)
         ret["error"]["message"] = "Parse error";
         ret["id"] = ""; 
     }
-
+    // std::cout << ret.dump(4) << std::endl;
     res.set_content(ret.dump(4), "application/json");
 }
-
-
-
 
 
 void api_get_db_key(const Request & req, Response & res)
@@ -122,6 +121,9 @@ void api_print_block(const Request & req, Response & res)
        num = atol(req.get_param_value("num").c_str());
     } 
 
+    std::cout << req.body << std::endl;
+
+
     std::string str = printBlocks(num);
     res.set_content(str, "text/plain");
 }
@@ -130,18 +132,23 @@ void api_info(const Request & req, Response & res)
 {
    
     std::ostringstream local;
-    auto cout_buff = std::cout.rdbuf(); 
-    std::cout.rdbuf(local.rdbuf()); 
+    auto cout_buff = std::cout.rdbuf(); // save pointer to std::cout buffer
+    std::cout.rdbuf(local.rdbuf()); // substitute internal std::cout buffer with buffer of 'local' object
 
+    std::cout << "amount----------:" << std::endl;
     for(auto& i:g_AccountInfo.AccountList)
     {
         uint64_t amount = CheckBalanceFromRocksDb(i.first); 
         std::cout << i.first + ":" + std::to_string(amount) << std::endl;
+        std::string strPub;
+        g_AccountInfo.GetPubKeyStr(i.first.c_str(), strPub);
+        std::cout << base64Encode(strPub) << std::endl;
     } 
     std::cout << "\n" << std::endl;
 
     auto list = Singleton<PeerNode>::get_instance()->get_nodelist();
-
+    std::cout << "PeerNode size is: " << list.size() << std::endl;
+    std::cout << "nodelist---------:" << std::endl;
     Singleton<PeerNode>::get_instance()->print(list);
 
     std::cout.rdbuf(cout_buff);
@@ -166,8 +173,8 @@ void api_get_block(const Request & req, Response & res)
     if (req.has_param("hashs")) {
        hashs = req.get_param_value("hashs");
     }
-    
-    
+    // std::cout << "top:" << top << " num:" << num << std::endl;
+    // std::cout << "hash:" << hashs << std::endl;
 	std::vector<std::string> tmp;
 	StringUtil::SplitString(hashs, tmp, "_");
 	std::unordered_set<std::string> exist_hash(tmp.begin(),tmp.end());
@@ -216,7 +223,7 @@ void api_get_block(const Request & req, Response & res)
             CBlock cblock;
             cblock.ParseFromString(strHeader);
             CTransaction* tx = cblock.mutable_txs(0);
-            
+            // std::cout << "block hash：" << hash << std::endl;
             for (int i = 0; i < tx->vin_size(); i++)
             {
                 CTxin * vin = tx->mutable_vin(i);
@@ -226,6 +233,7 @@ void api_get_block(const Request & req, Response & res)
 
                 uint64_t amount = TxHelper::GetUtxoAmount(utxo_hash, addr);
                 vin->mutable_prevout()->set_hash(addr + "_" + std::to_string(amount) + "_" + utxo_hash);
+                // std::cout <<  i << ":vin:" << addr + "_" + std::to_string(amount) << std::endl;
             }
             strHeader = cblock.SerializeAsString();
 
@@ -281,10 +289,10 @@ void api_get_block_hash(const Request & req, Response & res)
     for(auto i = begin; i <= end; i++)
     {
         std::vector<std::string> vBlockHashs;
-        pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); 
-        
-        
-        
+        pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); //i height
+        // std::for_each(vBlockHashs.begin(), vBlockHashs.end(),
+        //         [](std::string &s){ s = s.substr(0,HASH_LEN);}
+        // );
         hashs.insert(hashs.end(), vBlockHashs.begin(), vBlockHashs.end());
     }
 
@@ -307,8 +315,8 @@ void api_get_block_by_hash(const Request & req, Response & res)
     if (req.has_param("hashs")) {
        hashs = req.get_param_value("hashs");
     }
-    
-    
+    // std::cout << "aaaaaaaaaaaaaaaaaaaa" << std::endl;
+    // std::cout << hashs << std::endl;
 	std::vector<std::string> v_blocks;
 	SplitString(hashs, v_blocks, "_");
 
@@ -324,6 +332,21 @@ void api_get_block_by_hash(const Request & req, Response & res)
     {
         string strHeader;
         pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
+        CBlock cblock;
+        cblock.ParseFromString(strHeader);
+        CTransaction* tx = cblock.mutable_txs(0);
+        for (int i = 0; i < tx->vin_size(); i++)
+        {
+            CTxin * vin = tx->mutable_vin(i);
+            std::string  utxo_hash = vin->mutable_prevout()->hash();
+            std::string  pub = vin->mutable_scriptsig()->pub();
+            std::string addr = GetBase58Addr(pub); 
+
+            uint64_t amount = TxHelper::GetUtxoAmount(utxo_hash, addr);
+            vin->mutable_prevout()->set_hash(addr + "_" + std::to_string(amount) + "_" + utxo_hash);
+        }
+        strHeader = cblock.SerializeAsString();
+
         blocks[i++] = httplib::detail::base64_encode(strHeader);
     }
     res.set_content(blocks.dump(4), "application/json");
@@ -381,7 +404,7 @@ void test_create_multi_tx(const Request & req, Response & res)
   
     std::stringstream ssminerfees;
     ssminerfees << fee_str;
-    uint64_t fee;
+    double fee;
     ssminerfees >> fee ;
 
     std::vector<std::string> fromAddr;
@@ -576,7 +599,7 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
         return ret;
     }
     ret["result"]["height"] = std::to_string(height);
-
+    
     CTransaction utxoTx;
     utxoTx.ParseFromString(strTxRaw);
 
@@ -586,7 +609,15 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
     ret["result"]["hash"] = utxoTx.hash();
     ret["result"]["time"] = utxoTx.time();
     ret["result"]["type"] = txType;
-  
+
+    // std::vector<std::string> vins = TxHelper::GetTxOwner(hash);
+    // int k = 0;
+    // for(auto & addr:vins)
+    // {
+    //     ret["result"]["vin"][k++] = addr;
+    //     ret["result"]
+    // }
+    
     for (int i = 0; i < utxoTx.vin_size(); i++)
     {
         CTxin vin = utxoTx.vin(i);
@@ -608,8 +639,6 @@ nlohmann::json jsonrpc_get_tx_by_txid(const nlohmann::json & param)
         ret["result"]["vout"][i]["address"] =  txout.scriptpubkey();
         ret["result"]["vout"][i]["value"] = std::to_string( (double)txout.value()/DECIMAL_NUM );
     }
-
-
     return ret;
 }
 
@@ -679,7 +708,7 @@ nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param)
     }
     
 	CTransaction outTx;
-	int error_number = TxHelper::CreateTxMessage(from_addrs, toAddrAmount, g_MinNeedVerifyPreHashCount, fee, outTx);
+	int error_number = TxHelper::CreateTxMessage(from_addrs, toAddrAmount, g_MinNeedVerifyPreHashCount, fee, outTx, false);
 	if( error_number != 0)
 	{
         ret["error"]["code"] = -32000;
@@ -687,22 +716,19 @@ nlohmann::json jsonrpc_create_tx_message(const nlohmann::json & param)
         return ret;
 	}
 
+    std::string ser_original = outTx.SerializeAsString();
+    std::string ser_original_base64 = base64Encode(ser_original);
+
     for (int i = 0; i < outTx.vin_size(); i++)
 	{
 		CTxin * txin = outTx.mutable_vin(i);;
 		txin->clear_scriptsig();
 	}
 	std::string serTx = outTx.SerializeAsString();
-
-	size_t encodeLen = serTx.size() * 2 + 1;
-	unsigned char encode[encodeLen] = {0};
-	memset(encode, 0, encodeLen);
-	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
-	std::string encodeStr( (char *)encode, codeLen );
-
+    std::string encodeStr = base64Encode(serTx);
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-    ret["result"]["tx_data"] = encodeStr;
+    ret["result"]["tx_data"] = ser_original_base64;
     ret["result"]["tx_encode_hash"] = encodeStrHash;
     return ret;
 }
@@ -763,7 +789,7 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json & param)
     CTransaction tx;
     tx.ParseFromString(tx_data_str);
 
-	
+	//签名
 	for (int i = 0; i < tx.vin_size(); i++)
 	{
         auto vin = tx.mutable_vin(i);
@@ -789,7 +815,125 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json & param)
 	unsigned int top = 0;
 	pRocksDb->GetBlockTop(txn, top);	
 	txMsg.set_top(top);
+	// msgdata是为了方便调用接口，没有实际意义
+	net_pack pack;
+	const MsgData msgdata = {E_READ, 0, 0, 0, "", pack, ""};
+	auto msg = make_shared<TxMsg>(txMsg);
+	cstr_free(txstr, true);
+    std::string tx_hash;
+	int error_num = DoHandleTx(msg, msgdata, tx_hash);
+    if(error_num != 0)
+    {
+        ret["error"]["code"] = -32000;
+        ret["error"]["message"] = "create fail,error number:" + std::to_string(error_num);
+        return ret;
+    }
+    ret["result"]["tx_hash"] = tx_hash;
+
+    return ret;
+}
+
+
+nlohmann::json jsonrpc_send_multi_tx(const nlohmann::json & param)
+{
+    nlohmann::json ret;
+    std::string tx_data;
+    std::string tx_signature;
+    std::string public_key;
+    std::string tx_encode_hash;
+
+    std::map<std::string, std::tuple<std::string, std::string>> sign;
+    try
+    {   
+        if ( param.find("tx_data") != param.end()       &&
+             param.find("tx_encode_hash") != param.end() )
+        {
+            tx_data = param["tx_data"].get<std::string>();
+            tx_encode_hash = param["tx_encode_hash"].get<std::string>(); 
+        }
+        else
+        {
+            throw std::exception();
+        }  
+
+        if(param.find("sign") != param.end())
+        {   
+            int i = 0;
+            for(const auto& item:param["sign"])
+            {   
+                if(param["sign"][i].find("public_key") != param["sign"][i].end() && param["sign"][i].find("tx_signature") != param["sign"][i].end())
+                {   
+                    std::string public_key = item["public_key"].get<std::string>();
+                    std::string tx_signature = item["tx_signature"].get<std::string>();
+                    std::string decode_pub = base64Decode(public_key);
+
+                    std::cout << "public_key:" <<public_key << std::endl;
+                    std::cout << "tx_signature:" << tx_signature << std::endl;
+                    std::cout << "addr:" << GetBase58Addr(decode_pub) << std::endl;
+
+                    sign[GetBase58Addr(decode_pub)] = std::make_tuple(decode_pub, base64Decode(tx_signature));
+                }
+                else
+                {
+                    throw std::exception();
+                }
+                i++;
+            }
+        }
+        else
+        {
+            throw std::exception();
+        }     
+    }
+    catch(const std::exception& e)
+    {   
+        ret["error"]["code"] = -32602;
+        ret["error"]["message"] = "Invalid params";
+        return ret;
+    }
+
+	std::string tx_data_str = base64Decode(tx_data); 
+
+    CTransaction tx;
+    tx.ParseFromString(tx_data_str);
+
+	//签名
+	for (int i = 0; i < tx.vin_size(); i++)
+	{
+        auto vin = tx.mutable_vin(i);
+
+        std::string addr = vin->mutable_scriptsig()->pub();
+        auto result = sign.find(addr); 
+        if(result != sign.end())
+        {
+            vin->mutable_scriptsig()->set_sign( std::get<1>(sign[addr]) );
+            vin->mutable_scriptsig()->set_pub( std::get<0>(sign[addr]) );
+            std::cout << "sign:========" << std::endl; 
+            std::cout << "addr:" << addr << endl;
+            std::cout << "pub:" << base64Encode(std::get<0>(sign[addr])) << endl;
+            std::cout << "sign:" << base64Encode(std::get<1>(sign[addr])) << endl;
+        }
+	}
 	
+	std::string serTx = tx.SerializeAsString();
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
+	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), g_MinNeedVerifyPreHashCount );
+	std::string txstrtmp(txstr->str, txstr->len);
+
+	TxMsg txMsg;
+	txMsg.set_version(getVersion());
+
+    std::string ID = Singleton<Config>::get_instance()->GetKID();
+    txMsg.set_id(ID);
+    txMsg.set_txencodehash(tx_encode_hash);
+	txMsg.set_tx( txstrtmp );
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	unsigned int top = 0;
+	pRocksDb->GetBlockTop(txn, top);	
+	txMsg.set_top(top);
+	// msgdata是为了方便调用接口，没有实际意义
 	net_pack pack;
 	const MsgData msgdata = {E_READ, 0, 0, 0, "", pack, ""};
 	auto msg = make_shared<TxMsg>(txMsg);

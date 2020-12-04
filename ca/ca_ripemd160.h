@@ -6,9 +6,9 @@
 #define RIPEMD160_DIGEST_LENGTH 20
 
 typedef struct _RIPEMD160_CTX {
-    uint32_t total[2];    
-    uint32_t state[5];    
-    uint8_t buffer[64];   
+    uint32_t total[2];    /*!< number of bytes processed  */
+    uint32_t state[5];    /*!< intermediate digest state  */
+    uint8_t buffer[64];   /*!< data block being processed */
 } RIPEMD160_CTX;
 
 void ripemd160_Init(RIPEMD160_CTX *ctx);

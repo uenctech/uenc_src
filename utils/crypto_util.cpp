@@ -19,11 +19,11 @@ std::string CryptoUtil::encryptAes(std::string sKey, std::string sIV, const char
 {
     std::string outstr;
    
-    
+    //填key    
     SecByteBlock key(AES::MAX_KEYLENGTH);
     memset(key, 0x30, key.size());
     sKey.size() <= AES::MAX_KEYLENGTH ? memcpy(key, sKey.c_str(), sKey.size()) : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
-    
+    //填iv    c++17 waring可能和std::byte冲突 
     byte iv[AES::BLOCKSIZE];
     memset(iv, 0x30, AES::BLOCKSIZE);
     sIV.size() <= AES::BLOCKSIZE ? memcpy(iv, sIV.c_str(), sIV.size()) : memcpy(iv, sIV.c_str(), AES::BLOCKSIZE);
@@ -43,12 +43,12 @@ std::string CryptoUtil::decryptAes(std::string sKey, std::string sIV, const char
 {
     std::string outstr;
 
-    
+    //填key    
     SecByteBlock key(AES::MAX_KEYLENGTH);
     memset(key, 0x30, key.size());
     sKey.size() <= AES::MAX_KEYLENGTH ? memcpy(key, sKey.c_str(), sKey.size()) : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
 
-    
+    //填iv    
     byte iv[AES::BLOCKSIZE];
     memset(iv, 0x30, AES::BLOCKSIZE);
     sIV.size() <= AES::BLOCKSIZE ? memcpy(iv, sIV.c_str(), sIV.size()) : memcpy(iv, sIV.c_str(), AES::BLOCKSIZE);

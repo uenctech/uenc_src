@@ -24,13 +24,13 @@ public:
                 bool highlight = false);
     ~ca_console();
     
-    const std::string color(); 
+    const std::string color(); // 返回颜色
     void setColor(const ConsoleColor foregroundColor = kConsoleColor_White, 
                 const ConsoleColor backgroundColor = kConsoleColor_Black, 
                 bool highlight = false);
     
-    const std::string reset(); 
-    void clear(); 
+    const std::string reset(); // 重置
+    void clear(); // 清屏
 
     operator const char * ();
     operator char * ();
@@ -41,4 +41,4 @@ private:
     bool isHightLight;
 };
 
-#endif 
+#endif // !_CA_CONSOLE_H_

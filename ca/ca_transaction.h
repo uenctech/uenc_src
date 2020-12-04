@@ -12,7 +12,7 @@
 #include "proto/interface.pb.h"
 #include "net/msg_queue.h"
 
-
+//获取md5头文件
 #include <net/if.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -31,11 +31,11 @@ void blk_print(struct blkdb *db);
 
 typedef void (*RECVFUN)(const char *ip, const char *message, char **out, int *outlen);
 
-
+//void Init();
 void InitAccount(accountinfo *acc, const char *path);
 void GetDefault58Addr(char *buf, size_t len);
-
-unsigned get_extra_award_height(); 
+// std::string ser_reqblkinfo(int64_t height);
+unsigned get_extra_award_height(); //根据高度获取额外奖励
 
 void new_add_ouput_by_signer(CTransaction &tx, bool isExtra = false, const std::shared_ptr<TxMsg>& msg = nullptr);
 
@@ -75,16 +75,16 @@ std::vector<std::string> randomNode(unsigned int n);
 #endif
 
 CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg = nullptr);
-CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward = false, const std::shared_ptr<TxMsg>& msg = nullptr); 
+CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward = false, const std::shared_ptr<TxMsg>& msg = nullptr); //extra_award额外奖励 0否 1是
 
 bool VerifyBlockHeader(const CBlock & cblock);
 bool AddBlock(const CBlock & cblock, bool isSync = false);
 
 typedef enum emTransactionType{
-	kTransactionType_Unknown = -1,		
-	kTransactionType_Tx = 0,			
-	kTransactionType_Fee,			
-	kTransactionType_Award,	
+	kTransactionType_Unknown = -1,		// 未知
+	kTransactionType_Tx = 0,			// 正常交易
+	kTransactionType_Fee,			// 手续费交易
+	kTransactionType_Award,	// 奖励交易
 } TransactionType;
 TransactionType CheckTransactionType(const CTransaction & tx);
 
@@ -213,9 +213,9 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
  # @param  msgdata： 网络通信所必须的信息
  ==================================================================================== */
 void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& msg, const MsgData& msgdata );
-
+//获取在线时长
 void GetOnLineTime();
-
+//打印显示在线时长
 int PrintOnLineTime();
 int TestSetOnLineTime();
 
@@ -234,6 +234,15 @@ bool IsNeedPackage(const CTransaction & tx);
 
 
 bool IsNeedPackage(const std::vector<std::string> & fromAddr);
+
+
+/* ==================================================================================== 
+ # @description: 获取前100块内奖励值异常的账号
+ # @param addrList 出参，异常账号列表
+ # @return 成功返回0，失败返回负值
+ ==================================================================================== */
+int GetAbnormalAwardAddrList(std::vector<std::string> & addrList);
+
 
 
 #endif

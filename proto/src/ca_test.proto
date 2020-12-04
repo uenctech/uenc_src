@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-
-
-
+// test_num参数
+// 1 获取最高块hash 最高块数
+// 2 获取mac地址
 message CaTestInfoReq {
     uint32 test_num = 1;
 }
 
-
-
-
+// test_num参数 json_data
+// 1 {best_hash : 最高块hash, top : 最高块数}
+// 2 {mac : mac地址}
 message CaTestInfoAck {
     uint32 test_num = 1;
     string json_data = 2;

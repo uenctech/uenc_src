@@ -52,11 +52,11 @@ int GetAddrsFromMsg( const std::shared_ptr<CreateMultiTxMsgReq>& msg,
 
 void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, const MsgData& msgdata )
 {
-    
+    // 手机端回执消息体
     CreateMultiTxMsgAck createMultiTxMsgAck;
     createMultiTxMsgAck.set_version(getVersion());
 
-    
+    // 判断版本是否兼容
     if( 0 != IsVersionCompatible( msg->version() ) )
 	{
 		createMultiTxMsgAck.set_code(PHONE_TX_VERSION_ERROR);
@@ -65,6 +65,15 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
 		error("HandleCreateMultiTxReq: IsVersionCompatible error!!!\n");
 		return ;
 	}
+
+    if (msg->from_size() > 1 && msg->to_size() > 1)
+    {
+        createMultiTxMsgAck.set_code(PHONE_TX_PARAM_ERROR);
+		createMultiTxMsgAck.set_message("many to many tx!");
+		net_send_message<CreateMultiTxMsgAck>(msgdata, createMultiTxMsgAck);
+		error("HandleCreateMultiTxReq: many to many tx!!!\n");
+		return ;
+    }
 
     CTransaction outTx;
     std::vector<std::string> fromAddr;
@@ -157,7 +166,7 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
     extra["TransactionType"] = TXTYPE_TX;
 	extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
 	extra["SignFee"] = minerFees;
-    extra["PackageFee"] = packageFee;   
+    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
 	outTx.set_extra(extra.dump());
 
     std::string serTx = outTx.SerializeAsString();
@@ -255,9 +264,9 @@ void HandlePreMultiTxRaw( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgDa
 		error("HandlePreMultiTxRaw: param error!\n");
     }
 
-    
+    // std::vector<std::string> address = TxHelper::GetTxOwner(tx);
 
-    
+    // 一对多交易只有一个发起方，取第0个
     SignInfo signInfo = msg->signinfo(0);
     unsigned char strsignatureCstr[signInfo.signstr().size()] = {0};
 	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)signInfo.signstr().data(), signInfo.signstr().size(), strsignatureCstr);
@@ -277,7 +286,7 @@ void HandlePreMultiTxRaw( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgDa
     int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
 
     std::string serTx = tx.SerializeAsString();
-    
+    // TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
 	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 
@@ -291,7 +300,7 @@ void HandlePreMultiTxRaw( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgDa
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		
+		std::cout << "(HandlePreMultiTxRaw) TransactionInit failed !" << std::endl;
 	}
 
 	bool bRollback = true;
@@ -321,6 +330,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 		return ;
 	}
 
+    // 判断矿机密码是否正确
     std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
@@ -331,6 +341,15 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
         net_send_message<TxMsgAck>(msgdata, txMsgAck);
         error("password error!");
         return;
+    }
+
+    if (msg->from_size() > 1 && msg->to_size() > 1)
+    {
+        txMsgAck.set_code(PHONE_TX_PARAM_ERROR);
+		txMsgAck.set_message("many to many tx!");
+		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		error("HandleCreateDeviceMultiTxMsgReq: many to many tx!\n");
+		return ;
     }
 
     std::vector<std::string> fromAddr;
@@ -420,7 +439,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     txExtra["TransactionType"] = TXTYPE_TX;	
     txExtra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
 	txExtra["SignFee"] = gasFee;
-    txExtra["PackageFee"] = packageFee;   
+    txExtra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
 
     outTx.set_extra(txExtra.dump());
 
@@ -443,11 +462,11 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-    
+    //签名
 	for (int i = 0; i < outTx.vin_size(); i++)
 	{
 		std::string addr = addrs[i];
-		
+		// std::cout << "DoCreateTx:签名:" << addr << std::endl;
 		std::string signature;
 		std::string strPub;
 		g_AccountInfo.Sign(addr.c_str(), encodeStrHash, signature);
@@ -458,7 +477,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 	}
 
     serTx = outTx.SerializeAsString();
-	
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
 	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 

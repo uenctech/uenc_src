@@ -20,4 +20,4 @@ bool isDevicePasswordValid(const std::string & text);
 extern const char * default_pwd;
 extern const char * super_pwd;
 
-#endif 
+#endif // !_CA_DEVICE_H_

@@ -9,18 +9,18 @@
 #include "../include/net_interface.h"
 #include "ca_global.h"
 
-const int SYNCNUM = 5;      
-const int CHECKNUM = 10;    
-const int CHECK_HEIGHT = 100;  
-const int HASH_LEN = 6;       
-const int SYNC_NUM_LIMIT = 500;   
+const int SYNCNUM = 5;      //同步寻找节点数
+const int CHECKNUM = 5;    //漏块检查的段数
+const int CHECK_HEIGHT = 100;  //漏块检查的段数每段个数
+const int HASH_LEN = 6;       // hash长度
+const int SYNC_NUM_LIMIT = 500;   // 最多同步多少块
 
 
 struct SyncNode
 {
-    std::string id = "";          
-    int64_t height = 0;          
-    std::string hash = "";        
+    std::string id = "";          // 节点id
+    int64_t height = 0;          // 最高块的高度
+    std::string hash = "";        // 块hash
     
     SyncNode(){
     }
@@ -50,10 +50,10 @@ public:
     void Process();
     bool DataSynch(std::string id);
 
-    std::vector<std::string> pledgeNodes;   
-    SyncNode verifying_node;                
-    std::vector<SyncNode> verifying_result;   
-    std::vector<SyncNode> potential_nodes;  
+    std::vector<std::string> pledgeNodes;     // 已经质押的节点
+    SyncNode verifying_node;                  // 正在验证的节点
+    std::vector<SyncNode> verifying_result;   // 正在验证的节点返回的结果
+    std::vector<SyncNode> potential_nodes;    // 潜在可靠节点
     bool is_sync = false;
     std::mutex mu_potential_nodes;
     std::mutex mu_verifying_result;
@@ -62,7 +62,7 @@ public:
     bool sync_adding = false;
 };
 
-
+//============区块同步交互协议================
 
 void SendSyncGetnodeInfoReq(std::string id);
 void SendVerifyReliableNodeReq(std::string id, int64_t height);

@@ -20,4 +20,4 @@ public:
 template <typename T>
 T* Singleton<T>::instance_ = new T;
 
-#endif
+#endif//_SINGLETON_H_

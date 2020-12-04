@@ -1,4 +1,12 @@
 #!/bin/sh
+###
+ # @Author: your name
+ # @Date: 2020-11-04 20:24:26
+ # @LastEditTime: 2020-11-20 15:13:27
+ # @LastEditors: Please set LastEditors
+ # @Description: In User Settings Edit
+ # @FilePath: \uenc_src\gen_version_info.sh
+### 
 
 
 name="ebpc_"

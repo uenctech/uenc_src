@@ -7,7 +7,7 @@
 
 
 using namespace std;
-
+// 登录 退出 相关
 /**
  * @description: 初始化 指定公私钥文件的路径
  * @param path 初始化路径
@@ -22,7 +22,7 @@ void interface_Init(const char *path);
  */
 bool interface_GenerateKey();
 
-
+// 钱包公私密钥相关
 /**
  * @description: 导出助记词
  * @param: bs58address 钱包地址，若传null则以interface_SetKey设置的地址导出助记词
@@ -78,7 +78,7 @@ bool interface_GetBase58Address(char *bs58address, unsigned int iLen);
  */
 bool interface_ShowMeTheMoney(const char * bs58Address, double amount, char *outdata, size_t *outdataLen);
 
-
+// misc
 typedef enum emInterfaceClientType
 {
     kInterfaceClientType_PC,
@@ -111,7 +111,7 @@ typedef void (* ScanPortProc)(const char * ip, unsigned int current, unsigned in
  * @param: spp 回调函数，实时获得当前进度和总数
  * @return: 操作成功返回true，否则返回false
  */
-bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, char *outdata, size_t *outdatalen, ScanPortProc spp);
+bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, char *outdata, size_t *outdatalen, ScanPortProc spp,int i,map<int64_t,string> &i_str);
 
 
 void interface_NetMessage(const void *inData, void **outData, int *outDataLen);
@@ -122,13 +122,14 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
 
 int free_buf(char **buf);
 
-
+void interface_testdevice_mac();
+// net_pack packTmp;
 /**
  * @description: 质押资产 
  * @param fromAddr 质押资产的账号 
  * @param amount_str 质押资产的金额
  * @param needVerifyPreHashCount 共识数 
- * @param gasFeeStr 签名费 
+ * @param gasFeeStr 签名费  
  * @param password 矿机密码
  * @param msgdata 网络传输所必须的信息体,手机端交易时使用
  * @param pledgeType 质押类型
@@ -138,8 +139,8 @@ int free_buf(char **buf);
 int CreatePledgeTransaction(const std::string & fromAddr,  
                             const std::string & amount_str, 
                             uint32_t needVerifyPreHashCount, 
-                            std::string gasFeeStr, 
                             std::string password,
+                            std::string gasFeeStr, 
                             const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""}, 
                             std::string pledgeType = PLEDGE_NET_LICENCE);
 
@@ -149,8 +150,8 @@ int CreatePledgeTransaction(const std::string & fromAddr,
  * @param fromAddr 解质押资产的账号
  * @param needVerifyPreHashCount 共识数 
  * @param GasFeeStr 签名费
- * @param password 矿机密码
  * @param blockHeaderStr 要解质押的那笔交易所在块的块头
+ * @param password 矿机密码
  * @param msgdata 网络传输所必须的信息体,手机端交易时使用
  * @return 成功返回0；
  *         失败：-1， 参数错误； 

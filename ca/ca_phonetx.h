@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-09-18 18:01:27
- * @LastEditTime: 2020-11-12 17:02:26
+ * @LastEditTime: 2020-10-13 20:33:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ebpc\ca\ca_phonetx.h
@@ -9,28 +9,28 @@
 #ifndef __CA_PHONETX_H__
 #define __CA_PHONETX_H__
 
-
+// net头文件
 #include "../net/msg_queue.h"
 
-
+// proto头文件
 #include "../proto/ca_protomsg.pb.h"
 #include "../proto/transaction.pb.h"
 #include "../proto/interface.pb.h"
 
-#endif 
+#endif // !__CA_PHONETX_H__
 
 enum ERRCODE 
 {
-    PHONE_TX_SUCCESS          = 0, 
-    PHONE_TX_VERSION_ERROR    = -1, 
-    PHONE_TX_PARAM_ERROR      = -2,  
-    PHONE_TX_CREATE_ERROR  = -3, 
-    PHONE_TX_TRANSACTION_ERROR = -4, 
-    PHONE_TX_ADDR_ERROR = -5, 
-    PHONE_TX_NO_AMOUNT = -6, 
-    PHONE_TX_TXN_ERROR = -7, 
-    PHONE_TX_GET_PACK_FEE_ERROR = -8, 
-    PHONE_TX_PASSWORD_ERROR = -9, 
+    PHONE_TX_SUCCESS          = 0, // 交易成功
+    PHONE_TX_VERSION_ERROR    = -1, // 版本错误
+    PHONE_TX_PARAM_ERROR      = -2,  // 参数错误
+    PHONE_TX_CREATE_ERROR  = -3, // 创建错误
+    PHONE_TX_TRANSACTION_ERROR = -4, // 交易获取错误
+    PHONE_TX_ADDR_ERROR = -5, // 地址错误
+    PHONE_TX_NO_AMOUNT = -6, // 余额不足
+    PHONE_TX_TXN_ERROR = -7, // 余额不足
+    PHONE_TX_GET_PACK_FEE_ERROR = -8, // 余额不足
+    PHONE_TX_PASSWORD_ERROR = -9, // 密码错误
 };
 
 

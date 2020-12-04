@@ -78,5 +78,19 @@ void handleGetNodeHeightHashBase58AddrAck( const std::shared_ptr<TestGetNodeHeig
 void handleGetNodeHeightHashBase58AddrReq( const std::shared_ptr<TestGetNodeHeightHashBase58AddrReq>& msg, const MsgData& msgdata );
 
 
+/**
+ * @description: 主菜单使用的相关实现函数
+ * @create: 20201104   LiuMingLiang
+ */
+void ca_print_basic_info();
+int set_device_signature_fee(uint64_t fee);
+int set_device_package_fee(uint64_t fee);
+int get_device_package_fee(uint64_t& packageFee);
+
+void handle_transaction();
+void handle_pledge();
+void handle_redeem_pledge();
+bool isPublicIp(const string& ip);
+int UpdatePublicNodeToConfigFile();
 
 #endif

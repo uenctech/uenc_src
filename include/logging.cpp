@@ -86,7 +86,7 @@ void Logger::maybeRotate()
 	}
 	lastRotate_ = now;
 	long old = realRotate_.exchange(now);
-	
+	//如果realRotate的值是新的，那么返回，否则，获得了旧值，进行rotate
 	if ((old - timezone) / rotateInterval_ == (lastRotate_ - timezone) / rotateInterval_)
 	{
 		return;
@@ -143,7 +143,7 @@ void Logger::logv(int level, const char *file, int line, const char *func, const
 	p += vsnprintf(p, limit - p, fmt, args);
 	va_end(args);
 	p = std::min(p, limit - 2);
-	
+	// trim the ending \n
 	while (*--p == '\n')
 	{
 	}

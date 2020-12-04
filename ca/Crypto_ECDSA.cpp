@@ -23,20 +23,20 @@ using std::make_pair;
 using std::string;
 using namespace CryptoPP;
 
-std::mutex SetKeyLock;        
+std::mutex SetKeyLock;        // SetKeyByBs58Addr时防止竞争
 
 int test_Crypto_ECDSA()
 {
 #if 0
-    
+    // Scratch result
     bool result = false;   
     
-    
+    // Private and Public keys
     ECDSA<ECP, SHA1>::PrivateKey privateKey;
     ECDSA<ECP, SHA1>::PublicKey publicKey;
     
-    
-    
+    /////////////////////////////////////////////
+    // Generate Keys
 #endif
 #if 0
     result = GeneratePrivateKey( CryptoPP::ASN1::secp256r1(), privateKey );
@@ -95,7 +95,7 @@ int test_Crypto_ECDSA()
     cout << "Recovered text length is " << recoveredTextLength << endl;
 #endif
     
-    
+    /////////////////////////////////////////////
 #if 0
     string sPriStr, sPubStr;
     GetPrivateKey(privateKey, sPriStr);
@@ -111,24 +111,24 @@ int test_Crypto_ECDSA()
     }
 #endif    
 
+    /////////////////////////////////////////////
+    // Save key in PKCS#9 and X.509 format    
+    //SavePrivateKey( "ec.private.key", privateKey );
+    //SavePublicKey( "ec.public.key", publicKey );
     
-    
-    
-    
-    
-    
-    
-    
-    
+    /////////////////////////////////////////////
+    // Load key in PKCS#9 and X.509 format     
+    //LoadPrivateKey( "ec.private.key", privateKey );
+    //LoadPublicKey( "ec.public.key", publicKey );
 
-    
-    
-    
-    
-    
+    /////////////////////////////////////////////
+    // Print Domain Parameters and Keys    
+    //PrintDomainParameters( publicKey );
+    //PrintPrivateKey( privateKey );
+    //PrintPublicKey( publicKey );
         
 #if 0
-    
+    /////////////////////////////////////////////
     string sPriStr1 = "83efac60f5589022a149a751ac2cdfc57272279bf7bdd1031a6ddc4a988893a8"; 
     string sPubStr1 = "eba6efd665c539d64d2185faedf34482e2bdc9d9d610af2bdd0c3a22e7293b416e657f124af3b7bea690471e6b66582a72bfcf01b714c5f6840513c41818e92a";
     SetPrivateKey(privateKey, sPriStr1);
@@ -136,8 +136,8 @@ int test_Crypto_ECDSA()
 #endif
 #if 0
 
-    
-    
+    /////////////////////////////////////////////
+    // Sign and Verify a message      
     string message = "Yoda said, Do or do not. There is no try.";
     string signature;
 #endif
@@ -958,7 +958,7 @@ int accountinfo::GetKeyStore(const char *Bs58Addr, const char *pass, char *buf, 
 	char json_uuid[UUID4_LEN] = {0};
 	uuid4_init();
 	uuid4_generate(json_uuid);
-
+/** json **/
 	cJSON * root =  NULL;
 	cJSON * crypto =  NULL;
 	cJSON * cipherparams =  NULL;
@@ -970,21 +970,21 @@ int accountinfo::GetKeyStore(const char *Bs58Addr, const char *pass, char *buf, 
 	cJSON_AddItemToObject(root, "crypto", crypto);
 	cJSON_AddItemToObject(crypto, "cipherparams", cipherparams);
 	cJSON_AddItemToObject(crypto, "kdfparams", kdfparams);
-	
+	//root
 	cJSON_AddItemToObject(root, "address", cJSON_CreateString(json_address.c_str()));
 	cJSON_AddItemToObject(root, "version", cJSON_CreateNumber(json_version));
 	cJSON_AddItemToObject(root, "id", cJSON_CreateString(json_uuid));
 
-	
+	//crypto
 	cJSON_AddItemToObject(crypto, "cipher", cJSON_CreateString(cipher));
 	cJSON_AddItemToObject(crypto, "ciphertext", cJSON_CreateString(json_ciphertext->str));
 	cJSON_AddItemToObject(crypto, "kdf", cJSON_CreateString(kdf));
 	cJSON_AddItemToObject(crypto, "mac", cJSON_CreateString(json_mac->str));
 
-	
+	//cipherparams
 	cJSON_AddItemToObject(cipherparams, "iv", cJSON_CreateString(json_iv->str));
 
-	
+	//kdfparams
 	cJSON_AddItemToObject(kdfparams, "salt", cJSON_CreateString(json_salt->str));
 	cJSON_AddItemToObject(kdfparams, "prf", cJSON_CreateString(kdfparams_prf));
 	cJSON_AddItemToObject(kdfparams, "c", cJSON_CreateNumber(kdfparams_c));
@@ -999,7 +999,7 @@ int accountinfo::GetKeyStore(const char *Bs58Addr, const char *pass, char *buf, 
     memcpy(buf, json_keystore->str, json_keystore->len);
     int iReturnLen = json_keystore->len;
 	cstr_free(json_keystore, true);
-
+/** json **/
 	cstr_free(json_iv, true);
 	cstr_free(json_ciphertext, true);
 	cstr_free(json_salt, true);
@@ -1097,7 +1097,7 @@ bool accountinfo::ImportKeyStore(const char *keystore, const char *pass)
 	
 	pbkdf2_hmac_sha256((const uint8_t *)pass, strlen(pass), (uint8_t*)kdfparams_salt->str, kdfparams_salt->len, kdfparams_c, (uint8_t*)key, kdfparams_dklen, NULL);	
 
-
+//mac
 	macstr.append(key, 32);
     macstr.append(ciphertext->str, ciphertext->len);
 

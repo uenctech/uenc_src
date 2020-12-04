@@ -23,7 +23,7 @@
 #ifndef __VXDTYPE_H__
 #define __VXDTYPE_H__
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 typedef long                   x_long_t;
 typedef long long              x_llong_t;
@@ -60,31 +60,31 @@ typedef void *                 x_pvoid_t;
 typedef float                  x_float_t;
 typedef double                 x_lfloat_t;
 
-
+//======================================
 
 #if defined(_WIN64) || defined(__x84_64__)
     #ifndef __x64__
     #define __x64__ 1
-    #endif 
-#endif 
+    #endif // __x64__
+#endif // defined(_WIN64) || defined(__x84_64__)
 
 #ifdef __x64__
     typedef x_llong_t          x_lsize_t;
     typedef x_uint64_t         x_size_t;
     typedef x_uint64_t         x_lptr_t;
-#else 
+#else // !__x64__
     typedef x_long_t           x_lsize_t;
     typedef x_uint32_t         x_size_t;
     typedef x_uint32_t         x_lptr_t;
-#endif 
+#endif // __x64__
 
 #ifdef __linux__
     typedef x_int32_t          x_sockfd_t;
-#else 
+#else // !__linux__
     typedef x_size_t           x_sockfd_t;
-#endif 
+#endif // __linux__
 
-
+//======================================
 
 /*
 * @brief
@@ -115,7 +115,7 @@ typedef double                 x_lfloat_t;
 * @endverbatim
 */
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 
 #define X_FALSE           0
@@ -141,6 +141,6 @@ typedef double                 x_lfloat_t;
 #define TEXT_LEN_4K       4096
 #define TEXT_LEN_PATH     260
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-#endif 
+#endif // __VXDTYPE_H__

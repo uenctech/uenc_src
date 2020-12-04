@@ -24,7 +24,7 @@
 #include "../utils/string_util.h"
 
 
- 
+/* 设置获取到的其他节点的最高块信息 */ 
 bool Sync::SetPotentialNodes(const std::string &id, const int64_t &height, const std::string &hash)
 {
 	std::lock_guard<std::mutex> lck(mu_potential_nodes);
@@ -33,7 +33,7 @@ bool Sync::SetPotentialNodes(const std::string &id, const int64_t &height, const
         return false;
     }
 
-    
+    // 遍历现有数据，防止重复数据写入
     uint64_t size = this->potential_nodes.size();
     for(uint64_t i = 0; i < size; i++)
     {
@@ -62,18 +62,19 @@ void Sync::SetPledgeNodes(const std::vector<std::string> & ids)
 
 
 
-
+// 同步开始
 void Sync::Process()
 {   
 	if(sync_adding)
 	{
+		std::cout << "sync_adding..." << std::endl;
 		return;
 	}               
-    
+    // std::cout << "\n======Sync block begin====== " << std::endl;
     potential_nodes.clear();
 	verifying_node.id.clear();
 
-    
+    // === 1.寻找潜在可靠节点 ===
     std::vector<std::string> nodes = net_get_node_ids();
     if(nodes.size() == 0)
     {
@@ -82,8 +83,9 @@ void Sync::Process()
     }
     int nodesum = std::min(SYNCNUM, (int)nodes.size());
 
-    
+    /* 随机选择节点，保证公平*/
     std::vector<std::string> sendid = randomNode(nodesum);
+   	// std::cout << "sync send is size :" << sendid.size() << std::endl;
     for(auto& id : sendid)
     {
         SendSyncGetnodeInfoReq(id);
@@ -94,14 +96,21 @@ void Sync::Process()
         error("potential_nodes == 0");
 		return;
     }
-    
+    // std::cout << "potential_nodes list:" << std::endl;
     std::sort(potential_nodes.begin(), potential_nodes.end());
+    // for(auto i : potential_nodes)
+    // {
+    //     printf("id: %s ", i.id.c_str());
+    //     printf("height: %ld ", i.height);
+    //     printf("hash: %s\n", i.hash.c_str());
+    // }
 
 	if(IsOverIt(potential_nodes.back().height))
 	{
+		// std::cout << "sync is over other,not sync." << std::endl;
 		return;
 	}
-    
+    // === 2.验证潜在可靠节点 ===
     while(potential_nodes.size() > 0)
     {
 		verifying_result.clear();
@@ -128,17 +137,17 @@ void Sync::Process()
 			potential_nodes.pop_back();
 			continue;
 		}		
-        
-        
-        
-        
+        //检查verifying_result
+        // std::cout << "verifying_node id:"<< verifying_node.id 
+        //     << " height:" << verifying_node.height
+        //     << " hash:" << verifying_node.hash << endl;
 
 		bool is_alone = true;
 		for(auto& other: verifying_result)
 		{
-            
-            
-            
+            // std::cout << "other id:"<< other.id 
+            //     << " height:" << other.height
+            //     << " hash:" << other.hash << endl;  			
 			if(other.height >= verifying_node.height)
 			{
 				is_alone = false;
@@ -146,7 +155,7 @@ void Sync::Process()
 		}
 		if(is_alone)
 		{
-			
+			// error("sync verifying_node height is alone!!!");
 			potential_nodes.pop_back();
 			continue;
 		}
@@ -173,7 +182,7 @@ void Sync::Process()
     DataSynch(verifying_node.id);
 }
 
-
+/* 发起同步请求*/
 bool Sync::DataSynch(std::string id)
 {
     if(0 == id.size())
@@ -187,7 +196,7 @@ bool Sync::DataSynch(std::string id)
 
 
 
-
+//============区块同步交互协议================
 
 void SendSyncGetnodeInfoReq(std::string id)
 {
@@ -226,7 +235,7 @@ int SendVerifyPledgeNodeReq(std::vector<std::string> ids)
 
 void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeReq>& msg, const MsgData& msgdata )
 {
-	
+	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
 	{
@@ -318,7 +327,7 @@ void SendSyncGetPledgeNodeReq(std::string id)
 
 void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& msg, const MsgData& msgdata )
 {
-	
+	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
 	{
@@ -372,7 +381,7 @@ void HandleSyncGetPledgeNodeAck( const std::shared_ptr<SyncGetPledgeNodeAck>& ms
 	g_synch->SetPledgeNodes(ids);
 }
 
-
+// 验证潜在可靠节点请求
 void SendVerifyReliableNodeReq(std::string id, int64_t height)
 {
 	if(id.size() == 0)
@@ -403,9 +412,9 @@ std::vector<CheckHash> get_check_hash(int height)
 	{
 		return v_checkhash;
 	}
-	int check_end = (height / CHECK_HEIGHT);        
-	int check_num = std::min(check_end, (CHECKNUM-1) ); 
-	int check_begin = check_end - check_num; 
+	int check_end = (height / CHECK_HEIGHT);        // 5
+	int check_num = std::min(check_end, (CHECKNUM-1) ); //5
+	int check_begin = check_end - check_num; //0
 	std::vector<std::tuple<int, int>> check_range; 
 	for(int i = check_begin; i < check_end; i++)
 	{
@@ -423,7 +432,7 @@ std::vector<CheckHash> get_check_hash(int height)
 		for(auto j = begin; j <= end; j++)
 		{
 			std::vector<std::string> vBlockHashs;
-			pRocksDb->GetBlockHashsByBlockHeight(txn, j, vBlockHashs); 
+			pRocksDb->GetBlockHashsByBlockHeight(txn, j, vBlockHashs); //j height
 			std::sort(vBlockHashs.begin(), vBlockHashs.end());
 			hashs.push_back(StringUtil::concat(vBlockHashs, "_"));
 		}
@@ -436,9 +445,9 @@ std::vector<CheckHash> get_check_hash(int height)
 			checkhash.set_hash(all_hash.substr(0,HASH_LEN));
 		}
 		v_checkhash.push_back(checkhash);
-		
-		
-		
+		// std::cout << "begin:" << begin << std::endl;
+		// std::cout << "end:" << end << std::endl;
+		// std::cout << "all_hash:" << all_hash.substr(0,HASH_LEN) << std::endl;
     }
 	return v_checkhash;
 }
@@ -482,7 +491,7 @@ void SendSyncBlockInfoReq(std::string id)
 
 void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, const MsgData& msgdata )
 {
-	
+	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
 	{
@@ -532,7 +541,7 @@ void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, c
 
 void HandleSyncGetnodeInfoAck( const std::shared_ptr<SyncGetnodeInfoAck>& msg, const MsgData& msgdata )
 {
-	
+	// 判断版本是否兼容
 	SyncHeaderMsg * pSyncHeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
@@ -590,7 +599,7 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 
 	SyncHeaderMsg * pSyncHeaderMsg = msg->mutable_syncheadermsg();
 
-	
+	// 判断版本是否兼容
 	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoReq:IsVersionCompatible");
@@ -642,15 +651,15 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 				invalid_checkhash->set_end(checkhash.end());
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		// if(v_invalid_checkhash.size() > 0 )
+		// {
+		// 	std::cout << "HandleSyncBlockInfoReq v_invalid_checkhash.size > 0" << std::endl;
+		// 	for(auto i:v_invalid_checkhash)
+		// 	{
+		// 		std::cout << "begin:" << i.begin() << std::endl;
+		// 		std::cout << "end:" << i.end() << std::endl;
+		// 	}
+		// }
 	}else{
 		error("checkhash.size not equal!! form:%d me:%d",(int)msg->checkhash_size(), (int)v_checkhash.size());
 	}
@@ -665,7 +674,7 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 {
 	SyncHeaderMsg * pSyncHeaderMsg = msg->mutable_syncheadermsg();
 
-	
+	// 判断版本是否兼容
 	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoAck:IsOverIt");
@@ -690,6 +699,10 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
 	for (int i = 0; i < msg->invalid_checkhash_size(); i++) {
 		const CheckHash& checkhash = msg->invalid_checkhash(i);
+		std::cout << "invalid_checkhash==================:" << std::endl;
+		std::cout << "begin:" << checkhash.begin() << std::endl;
+		std::cout << "end:" << checkhash.end() << std::endl;
+		std::cout << "invalid_checkhash===============end" << std::endl;
 
 		SyncLoseBlockReq syncLoseBlockReq;
 		SetSyncHeaderMsg<SyncLoseBlockReq>(syncLoseBlockReq);
@@ -700,7 +713,7 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 		for(auto i = checkhash.begin(); i <= checkhash.end(); i++)
 		{
 			std::vector<std::string> vBlockHashs;
-			pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); 
+			pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); //i height
 			std::for_each(vBlockHashs.begin(), vBlockHashs.end(),
 				 [](std::string &s){ s = s.substr(0,HASH_LEN);}
 			);
@@ -712,7 +725,7 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 		break;
 	}
 
-	
+	//加块
 	std::string blocks = msg->blocks();
 	std::string poolblocks = msg->poolblocks();
 	std::vector<std::string> v_blocks;
@@ -753,9 +766,9 @@ void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const
 	uint64_t begin = msg->begin();
 	uint64_t end = msg->end();
 	std::string all_hash = msg->all_hash();
-	
-	
-	
+	// std::cout << "begin:" << begin << std::endl;
+	// std::cout << "end:" << end << std::endl;
+	// std::cout << "all_hash:" << all_hash << std::endl;
 	std::vector<std::string> v_hashs;
 	SplitString(all_hash, v_hashs, "_");
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
@@ -765,11 +778,12 @@ void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const
 	for(auto i = begin; i <= end; i++)
 	{
 		std::vector<std::string> vBlockHashs;
-		pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); 
+		pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); //i height
 		for(auto hash:vBlockHashs)
 		{
 			auto res = std::find(std::begin(v_hashs), std::end(v_hashs), hash.substr(0,HASH_LEN));
 			if (res == std::end(v_hashs)) {
+				std::cout << "HandleSyncLoseBlockReq hash:" << hash.substr(0,HASH_LEN) << std::endl;
 				string strHeader;
 				pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
 				ser_block.push_back(Str2Hex(strHeader));
@@ -809,6 +823,7 @@ bool IsOverIt(int64_t height)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
+		std::cout << "(ReqBlock) TransactionInit failed !" << std::endl;
 		return false;
 	}
 
@@ -837,7 +852,7 @@ std::string get_blkinfo_ser(int64_t begin, int64_t end, int64_t max_num)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		
+		std::cout << "(get_blkinfo_ser) TransactionInit failed !" << std::endl;
 	}
 
 	ON_SCOPE_EXIT{
@@ -878,7 +893,7 @@ std::vector<std::string> get_blkinfo(int64_t begin, int64_t end, int64_t max_num
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		
+		std::cout << "(get_blkinfo_ser) TransactionInit failed !" << std::endl;
 	}
 
 	ON_SCOPE_EXIT{
@@ -919,6 +934,7 @@ int SyncData(std::string &headerstr, bool isSync)
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
+		std::cout << "(SyncData) TransactionInit failed !" << std::endl;
 		return -1;
 	}
 

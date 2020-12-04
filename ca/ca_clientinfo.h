@@ -23,4 +23,4 @@ std::string ca_clientInfo_read();
  */
 int ca_getUpdateInfo(const std::string & s, ClientType eClientType, ClientLanguage language, std::string & sVersion, std::string & sDesc, std::string & sDownload);
 
-#endif 
+#endif // !1

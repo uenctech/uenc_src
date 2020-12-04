@@ -1,6 +1,6 @@
 /*
-	http:
-	Written by Jeff Garzik <jeff@garzik.org> for module of GNU/Linux kernel from https:
+	http://en.wikipedia.org/wiki/SHA-3, http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+	Written by Jeff Garzik <jeff@garzik.org> for module of GNU/Linux kernel from https://lwn.net/Articles/518415/
 	LICENSE GPL
 	Originaly from linux-4.11/crypto/sha3_generic.c SHA3_256:9a0a3fecbb5a1791895a854ddaae802308f1e75ad42f6e973fa2a43f38e2216f
 */
@@ -33,7 +33,7 @@ static const int keccakf_piln[24] =
 	15, 23, 19, 13, 12, 2, 20, 14, 22, 9,  6,  1
 };
 
-
+// update the state with given number of rounds
 static void keccakf(uint64_t st[25], int rounds)
 {
 	int i, j, round;
@@ -41,7 +41,7 @@ static void keccakf(uint64_t st[25], int rounds)
 
 	for (round = 0; round < rounds; round++) {
 
-		
+		// Theta
 		for (i = 0; i < 5; i++) {
 			bc[i] = st[i] ^ st[i + 5] ^ st[i + 10] ^ st[i + 15] ^ st[i + 20];
 		}
@@ -53,7 +53,7 @@ static void keccakf(uint64_t st[25], int rounds)
 			}
 		}
 
-		
+		// Rho Pi
 		t = st[1];
 		for (i = 0; i < 24; i++) {
 			j = keccakf_piln[i];
@@ -62,7 +62,7 @@ static void keccakf(uint64_t st[25], int rounds)
 			t = bc[0];
 		}
 
-		
+		//  Chi
 		for (j = 0; j < 25; j += 5) {
 			for (i = 0; i < 5; i++) {
 				bc[i] = st[j + i];
@@ -72,7 +72,7 @@ static void keccakf(uint64_t st[25], int rounds)
 			}
 		}
 
-		
+		//  Iota
 		st[0] ^= keccakf_rndc[round];
 	}
 }
@@ -122,7 +122,7 @@ void sha3_final(struct sha3_state *sctx, uint8_t *out)
 {
 	unsigned int i, inlen = sctx->partial;
 
-	sctx->buf[inlen++] = 0x06; 
+	sctx->buf[inlen++] = 0x06; // sha3 standart
 	memset(sctx->buf + inlen, 0, sctx->rsiz - inlen);
 	sctx->buf[sctx->rsiz - 1] |= 0x80;
 
@@ -131,8 +131,8 @@ void sha3_final(struct sha3_state *sctx, uint8_t *out)
 
 	keccakf(sctx->st, KECCAK_ROUNDS);
 
-
-
+//	for (i = 0; i < sctx->rsizw; i++)
+//		sctx->st[i] = cpu_to_le64(sctx->st[i]);
 
 	memcpy(out, sctx->st, sctx->md_len);
 

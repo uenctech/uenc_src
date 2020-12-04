@@ -834,7 +834,7 @@ struct position_t
     (JSON_HEDLEY_SUNPRO_VERSION_CHECK(5,15,0) && defined(__cplusplus)) || \
     JSON_HEDLEY_PGI_VERSION_CHECK(17,10,0)
     #define JSON_HEDLEY_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
-#elif defined(_Check_return_) 
+#elif defined(_Check_return_) /* SAL */
     #define JSON_HEDLEY_WARN_UNUSED_RESULT _Check_return_
 #else
     #define JSON_HEDLEY_WARN_UNUSED_RESULT
@@ -1280,7 +1280,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #if !defined(JSON_HEDLEY_FALL_THROUGH)
     #if JSON_HEDLEY_GNUC_HAS_ATTRIBUTE(fallthrough,7,0,0) && !defined(JSON_HEDLEY_PGI_VERSION)
         #define JSON_HEDLEY_FALL_THROUGH __attribute__((__fallthrough__))
-    #elif defined(__fallthrough) 
+    #elif defined(__fallthrough) /* SAL */
         #define JSON_HEDLEY_FALL_THROUGH __fallthrough
     #else
         #define JSON_HEDLEY_FALL_THROUGH
@@ -1294,7 +1294,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     JSON_HEDLEY_HAS_ATTRIBUTE(returns_nonnull) || \
     JSON_HEDLEY_GCC_VERSION_CHECK(4,9,0)
     #define JSON_HEDLEY_RETURNS_NON_NULL __attribute__((__returns_nonnull__))
-#elif defined(_Ret_notnull_) 
+#elif defined(_Ret_notnull_) /* SAL */
     #define JSON_HEDLEY_RETURNS_NON_NULL _Ret_notnull_
 #else
     #define JSON_HEDLEY_RETURNS_NON_NULL
@@ -1568,7 +1568,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #  define JSON_HEDLEY_FLAGS_CAST(T, expr) JSON_HEDLEY_STATIC_CAST(T, expr)
 #endif
 
-
+/* Remaining macros are deprecated. */
 
 #if defined(JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK)
     #undef JSON_HEDLEY_GCC_NOT_CLANG_VERSION_CHECK
@@ -1614,7 +1614,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #endif
 #define JSON_HEDLEY_CLANG_HAS_WARNING(warning) JSON_HEDLEY_HAS_WARNING(warning)
 
-#endif 
+#endif /* !defined(JSON_HEDLEY_VERSION) || (JSON_HEDLEY_VERSION < X) */
 
 
 // This file contains all internal macro definitions
@@ -2774,8 +2774,8 @@ Returns an ordering that is similar to Python:
 inline bool operator<(const value_t lhs, const value_t rhs) noexcept
 {
     static constexpr std::array<std::uint8_t, 8> order = {{
-            0 , 3 , 4 , 5 ,
-            1 , 2 , 2 , 2 
+            0 /* null */, 3 /* object */, 4 /* array */, 5 /* string */,
+            1 /* boolean */, 2 /* integer */, 2 /* unsigned */, 2 /* float */
         }
     };
 
@@ -2936,14 +2936,14 @@ auto from_json(const BasicJsonType& j, T (&arr)[N])
 }
 
 template<typename BasicJsonType>
-void from_json_array_impl(const BasicJsonType& j, typename BasicJsonType::array_t& arr, priority_tag<3> )
+void from_json_array_impl(const BasicJsonType& j, typename BasicJsonType::array_t& arr, priority_tag<3> /*unused*/)
 {
     arr = *j.template get_ptr<const typename BasicJsonType::array_t*>();
 }
 
 template <typename BasicJsonType, typename T, std::size_t N>
 auto from_json_array_impl(const BasicJsonType& j, std::array<T, N>& arr,
-                          priority_tag<2> )
+                          priority_tag<2> /*unused*/)
 -> decltype(j.template get<T>(), void())
 {
     for (std::size_t i = 0; i < N; ++i)
@@ -2953,7 +2953,7 @@ auto from_json_array_impl(const BasicJsonType& j, std::array<T, N>& arr,
 }
 
 template<typename BasicJsonType, typename ConstructibleArrayType>
-auto from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, priority_tag<1> )
+auto from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, priority_tag<1> /*unused*/)
 -> decltype(
     arr.reserve(std::declval<typename ConstructibleArrayType::size_type>()),
     j.template get<typename ConstructibleArrayType::value_type>(),
@@ -2975,7 +2975,7 @@ auto from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr, p
 
 template <typename BasicJsonType, typename ConstructibleArrayType>
 void from_json_array_impl(const BasicJsonType& j, ConstructibleArrayType& arr,
-                          priority_tag<0> )
+                          priority_tag<0> /*unused*/)
 {
     using std::end;
 
@@ -3084,7 +3084,7 @@ void from_json(const BasicJsonType& j, std::pair<A1, A2>& p)
 }
 
 template<typename BasicJsonType, typename Tuple, std::size_t... Idx>
-void from_json_tuple_impl(const BasicJsonType& j, Tuple& t, index_sequence<Idx...> )
+void from_json_tuple_impl(const BasicJsonType& j, Tuple& t, index_sequence<Idx...> /*unused*/)
 {
     t = std::make_tuple(j.at(Idx).template get<typename std::tuple_element<Idx, Tuple>::type>()...);
 }
@@ -3649,7 +3649,7 @@ void to_json(BasicJsonType& j, const T& b)
 }
 
 template<typename BasicJsonType, typename Tuple, std::size_t... Idx>
-void to_json_tuple_impl(BasicJsonType& j, const Tuple& t, index_sequence<Idx...> )
+void to_json_tuple_impl(BasicJsonType& j, const Tuple& t, index_sequence<Idx...> /*unused*/)
 {
     j = { std::get<Idx>(t)... };
 }
@@ -4387,7 +4387,7 @@ class json_sax_dom_parser
         return true;
     }
 
-    bool number_float(number_float_t val, const string_t& )
+    bool number_float(number_float_t val, const string_t& /*unused*/)
     {
         handle_value(val);
         return true;
@@ -4444,7 +4444,7 @@ class json_sax_dom_parser
         return true;
     }
 
-    bool parse_error(std::size_t , const std::string& ,
+    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
                      const detail::exception& ex)
     {
         errored = true;
@@ -4570,7 +4570,7 @@ class json_sax_dom_callback_parser
         return true;
     }
 
-    bool number_float(number_float_t val, const string_t& )
+    bool number_float(number_float_t val, const string_t& /*unused*/)
     {
         handle_value(val);
         return true;
@@ -4691,7 +4691,7 @@ class json_sax_dom_callback_parser
         return true;
     }
 
-    bool parse_error(std::size_t , const std::string& ,
+    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
                      const detail::exception& ex)
     {
         errored = true;
@@ -4838,37 +4838,37 @@ class json_sax_acceptor
         return true;
     }
 
-    bool boolean(bool )
+    bool boolean(bool /*unused*/)
     {
         return true;
     }
 
-    bool number_integer(number_integer_t )
+    bool number_integer(number_integer_t /*unused*/)
     {
         return true;
     }
 
-    bool number_unsigned(number_unsigned_t )
+    bool number_unsigned(number_unsigned_t /*unused*/)
     {
         return true;
     }
 
-    bool number_float(number_float_t , const string_t& )
+    bool number_float(number_float_t /*unused*/, const string_t& /*unused*/)
     {
         return true;
     }
 
-    bool string(string_t& )
+    bool string(string_t& /*unused*/)
     {
         return true;
     }
 
-    bool start_object(std::size_t   = std::size_t(-1))
+    bool start_object(std::size_t  /*unused*/ = std::size_t(-1))
     {
         return true;
     }
 
-    bool key(string_t& )
+    bool key(string_t& /*unused*/)
     {
         return true;
     }
@@ -4878,7 +4878,7 @@ class json_sax_acceptor
         return true;
     }
 
-    bool start_array(std::size_t   = std::size_t(-1))
+    bool start_array(std::size_t  /*unused*/ = std::size_t(-1))
     {
         return true;
     }
@@ -4888,7 +4888,7 @@ class json_sax_acceptor
         return true;
     }
 
-    bool parse_error(std::size_t , const std::string& , const detail::exception& )
+    bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/, const detail::exception& /*unused*/)
     {
         return false;
     }
@@ -5177,7 +5177,7 @@ class binary_reader
             return false;
         }
 
-        if (JSON_HEDLEY_UNLIKELY(not parse_bson_element_list(false)))
+        if (JSON_HEDLEY_UNLIKELY(not parse_bson_element_list(/*is_array*/false)))
         {
             return false;
         }
@@ -5363,7 +5363,7 @@ class binary_reader
             return false;
         }
 
-        if (JSON_HEDLEY_UNLIKELY(not parse_bson_element_list(true)))
+        if (JSON_HEDLEY_UNLIKELY(not parse_bson_element_list(/*is_array*/true)))
         {
             return false;
         }
@@ -11901,7 +11901,7 @@ class binary_writer
                                             "BSON key cannot contain code point U+0000 (at byte " + std::to_string(it) + ")"));
         }
 
-        return  1ul + name.size() + 1u;
+        return /*id*/ 1ul + name.size() + /*zero-terminator*/1u;
     }
 
     /*!
@@ -12012,12 +12012,12 @@ class binary_writer
     {
         if (value <= static_cast<std::uint64_t>((std::numeric_limits<std::int32_t>::max)()))
         {
-            write_bson_entry_header(name, 0x10 );
+            write_bson_entry_header(name, 0x10 /* int32 */);
             write_number<std::int32_t, true>(static_cast<std::int32_t>(value));
         }
         else if (value <= static_cast<std::uint64_t>((std::numeric_limits<std::int64_t>::max)()))
         {
-            write_bson_entry_header(name, 0x12 );
+            write_bson_entry_header(name, 0x12 /* int64 */);
             write_number<std::int64_t, true>(static_cast<std::int64_t>(value));
         }
         else
@@ -12194,12 +12194,12 @@ class binary_writer
     // CBOR //
     //////////
 
-    static constexpr CharType get_cbor_float_prefix(float )
+    static constexpr CharType get_cbor_float_prefix(float /*unused*/)
     {
         return to_char_type(0xFA);  // Single-Precision Float
     }
 
-    static constexpr CharType get_cbor_float_prefix(double )
+    static constexpr CharType get_cbor_float_prefix(double /*unused*/)
     {
         return to_char_type(0xFB);  // Double-Precision Float
     }
@@ -12208,12 +12208,12 @@ class binary_writer
     // MsgPack //
     /////////////
 
-    static constexpr CharType get_msgpack_float_prefix(float )
+    static constexpr CharType get_msgpack_float_prefix(float /*unused*/)
     {
         return to_char_type(0xCA);  // float 32
     }
 
-    static constexpr CharType get_msgpack_float_prefix(double )
+    static constexpr CharType get_msgpack_float_prefix(double /*unused*/)
     {
         return to_char_type(0xCB);  // float 64
     }
@@ -12422,12 +12422,12 @@ class binary_writer
         }
     }
 
-    static constexpr CharType get_ubjson_float_prefix(float )
+    static constexpr CharType get_ubjson_float_prefix(float /*unused*/)
     {
         return 'd';  // float 32
     }
 
-    static constexpr CharType get_ubjson_float_prefix(double )
+    static constexpr CharType get_ubjson_float_prefix(double /*unused*/)
     {
         return 'D';  // float 64
     }
@@ -14335,7 +14335,7 @@ class serializer
         dump_float(x, std::integral_constant<bool, is_ieee_single_or_double>());
     }
 
-    void dump_float(number_float_t x, std::true_type )
+    void dump_float(number_float_t x, std::true_type /*is_ieee_single_or_double*/)
     {
         char* begin = number_buffer.data();
         char* end = ::nlohmann::detail::to_chars(begin, begin + number_buffer.size(), x);
@@ -14343,7 +14343,7 @@ class serializer
         o->write_characters(begin, static_cast<size_t>(end - begin));
     }
 
-    void dump_float(number_float_t x, std::false_type )
+    void dump_float(number_float_t x, std::false_type /*is_ieee_single_or_double*/)
     {
         // get number of digits for a float -> text -> float round-trip
         static constexpr auto d = std::numeric_limits<number_float_t>::max_digits10;
@@ -16773,7 +16773,7 @@ class basic_json
     //////////////////
 
     /// get a boolean (explicit)
-    boolean_t get_impl(boolean_t* ) const
+    boolean_t get_impl(boolean_t* /*unused*/) const
     {
         if (JSON_HEDLEY_LIKELY(is_boolean()))
         {
@@ -16784,85 +16784,85 @@ class basic_json
     }
 
     /// get a pointer to the value (object)
-    object_t* get_impl_ptr(object_t* ) noexcept
+    object_t* get_impl_ptr(object_t* /*unused*/) noexcept
     {
         return is_object() ? m_value.object : nullptr;
     }
 
     /// get a pointer to the value (object)
-    constexpr const object_t* get_impl_ptr(const object_t* ) const noexcept
+    constexpr const object_t* get_impl_ptr(const object_t* /*unused*/) const noexcept
     {
         return is_object() ? m_value.object : nullptr;
     }
 
     /// get a pointer to the value (array)
-    array_t* get_impl_ptr(array_t* ) noexcept
+    array_t* get_impl_ptr(array_t* /*unused*/) noexcept
     {
         return is_array() ? m_value.array : nullptr;
     }
 
     /// get a pointer to the value (array)
-    constexpr const array_t* get_impl_ptr(const array_t* ) const noexcept
+    constexpr const array_t* get_impl_ptr(const array_t* /*unused*/) const noexcept
     {
         return is_array() ? m_value.array : nullptr;
     }
 
     /// get a pointer to the value (string)
-    string_t* get_impl_ptr(string_t* ) noexcept
+    string_t* get_impl_ptr(string_t* /*unused*/) noexcept
     {
         return is_string() ? m_value.string : nullptr;
     }
 
     /// get a pointer to the value (string)
-    constexpr const string_t* get_impl_ptr(const string_t* ) const noexcept
+    constexpr const string_t* get_impl_ptr(const string_t* /*unused*/) const noexcept
     {
         return is_string() ? m_value.string : nullptr;
     }
 
     /// get a pointer to the value (boolean)
-    boolean_t* get_impl_ptr(boolean_t* ) noexcept
+    boolean_t* get_impl_ptr(boolean_t* /*unused*/) noexcept
     {
         return is_boolean() ? &m_value.boolean : nullptr;
     }
 
     /// get a pointer to the value (boolean)
-    constexpr const boolean_t* get_impl_ptr(const boolean_t* ) const noexcept
+    constexpr const boolean_t* get_impl_ptr(const boolean_t* /*unused*/) const noexcept
     {
         return is_boolean() ? &m_value.boolean : nullptr;
     }
 
     /// get a pointer to the value (integer number)
-    number_integer_t* get_impl_ptr(number_integer_t* ) noexcept
+    number_integer_t* get_impl_ptr(number_integer_t* /*unused*/) noexcept
     {
         return is_number_integer() ? &m_value.number_integer : nullptr;
     }
 
     /// get a pointer to the value (integer number)
-    constexpr const number_integer_t* get_impl_ptr(const number_integer_t* ) const noexcept
+    constexpr const number_integer_t* get_impl_ptr(const number_integer_t* /*unused*/) const noexcept
     {
         return is_number_integer() ? &m_value.number_integer : nullptr;
     }
 
     /// get a pointer to the value (unsigned number)
-    number_unsigned_t* get_impl_ptr(number_unsigned_t* ) noexcept
+    number_unsigned_t* get_impl_ptr(number_unsigned_t* /*unused*/) noexcept
     {
         return is_number_unsigned() ? &m_value.number_unsigned : nullptr;
     }
 
     /// get a pointer to the value (unsigned number)
-    constexpr const number_unsigned_t* get_impl_ptr(const number_unsigned_t* ) const noexcept
+    constexpr const number_unsigned_t* get_impl_ptr(const number_unsigned_t* /*unused*/) const noexcept
     {
         return is_number_unsigned() ? &m_value.number_unsigned : nullptr;
     }
 
     /// get a pointer to the value (floating-point number)
-    number_float_t* get_impl_ptr(number_float_t* ) noexcept
+    number_float_t* get_impl_ptr(number_float_t* /*unused*/) noexcept
     {
         return is_number_float() ? &m_value.number_float : nullptr;
     }
 
     /// get a pointer to the value (floating-point number)
-    constexpr const number_float_t* get_impl_ptr(const number_float_t* ) const noexcept
+    constexpr const number_float_t* get_impl_ptr(const number_float_t* /*unused*/) const noexcept
     {
         return is_number_float() ? &m_value.number_float : nullptr;
     }

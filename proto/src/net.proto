@@ -1,13 +1,13 @@
 syntax                  = "proto3";
 
-
+//打印消息测试
 message PrintMsgReq {
     string data         = 1;
     int32  type         = 2;
 }
 
 
-
+//node
 message NodeInfo {
   string node_id        = 1;
   uint32 local_ip       = 2;
@@ -22,42 +22,42 @@ message NodeInfo {
   string   base58addr     = 11;
 }
 
-
+//向转发节点获取所有节点
 message RegisterNodeReq {
   NodeInfo mynode = 1;
   bool     is_get_nodelist = 2;
 }
 
-
+//向转发节点获取所有节点 返回
 message RegisterNodeAck {
   repeated NodeInfo nodes = 1;
 }
 
-
+//同步节点
 message SyncNodeReq {
   repeated string ids = 1;
 }
 
-
+//同步节点返回
 message SyncNodeAck {
-  repeated NodeInfo nodes = 1;   
-  repeated string ids = 2;        
+  repeated NodeInfo nodes = 1;   //公网有我没有的节点
+  repeated string ids = 2;        //我有公网没有的节点id
 }
 
 
-
+//向对等节点发起连接请求
 message ConnectNodeReq {
   NodeInfo mynode = 1;
 }
 
-
+//通过外网转发数据请求
 message TransMsgReq {
   NodeInfo dest = 1;
   
     bytes data  = 2;
 }
 
-
+//外转内通知
 message NotifyConnectReq {
   NodeInfo server_node = 1;
   NodeInfo client_node = 2;  

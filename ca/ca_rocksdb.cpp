@@ -155,7 +155,7 @@ int Rocksdb::StringSplit(std::vector<std::string> &dst, const std::string &src, 
  # @description: 区块相关的接口
  ==================================================================================== */
 
-
+//通过块hash设置块高度
 int Rocksdb::SetBlockHeightByBlockHash(Transaction* txn, const std::string &blockHash, const unsigned int blockHeight) 
 {
     if (blockHash.empty() || txn == nullptr)
@@ -165,7 +165,7 @@ int Rocksdb::SetBlockHeightByBlockHash(Transaction* txn, const std::string &bloc
     string db_key = this->kBlockHash2BlockHeightKey + "_" + blockHash;
     return writedata(txn, db_key, to_string(blockHeight));
 }
-
+//通过块hash获取块高度
 int Rocksdb::GetBlockHeightByBlockHash(Transaction* txn, const std::string &blockHash, unsigned int &blockHeight) 
 {
     if (blockHash.empty() || txn == nullptr)
@@ -178,7 +178,7 @@ int Rocksdb::GetBlockHeightByBlockHash(Transaction* txn, const std::string &bloc
     blockHeight = stoul(strHeight);
     return ret;
 }
-
+//通过块hash移除块高度
 int Rocksdb::DeleteBlockHeightByBlockHash(Transaction* txn, const std::string & blockHash)
 {
     if (blockHash.empty() || txn == nullptr)
@@ -188,7 +188,7 @@ int Rocksdb::DeleteBlockHeightByBlockHash(Transaction* txn, const std::string & 
     std::string db_key = this->kBlockHash2BlockHeightKey + "_" + blockHash;
     return deletedata(txn, db_key);
 }
-
+//通过块高度设置块hash
 int Rocksdb::SetBlockHashByBlockHeight(Transaction* txn, const unsigned int blockHeight, const std::string &blockHash, bool is_mainblock) 
 {
     if (blockHash.empty() || txn == nullptr)
@@ -228,7 +228,7 @@ int Rocksdb::SetBlockHashByBlockHeight(Transaction* txn, const unsigned int bloc
         return writedata(txn, db_key, retString);
     }
 }
-
+//通过块高度设置块hash
 int Rocksdb::GetBlockHashsByBlockHeight(Transaction* txn, const unsigned int blockHeight, std::vector<std::string> &hashes) 
 {
     if(txn == nullptr)
@@ -258,7 +258,7 @@ int Rocksdb::GetBlockHashByBlockHeight(Transaction* txn, const int blockHeight, 
     hash = hashs[0];
     return 0;
 }
-
+//通过块高度设移除块hash
 int Rocksdb::RemoveBlockHashByBlockHeight(Transaction* txn, const unsigned int blockHeight, const std::string &blockHash)
 { 
     if (blockHash.empty() || txn == nullptr)
@@ -289,7 +289,7 @@ int Rocksdb::RemoveBlockHashByBlockHeight(Transaction* txn, const unsigned int b
     return writedata(txn, db_key, retString);
 }
 
-
+//根据块hash设置块
 int Rocksdb::SetBlockByBlockHash(Transaction* txn, const std::string &blockHash, const std::string &block) 
 {
     if (txn == nullptr || blockHash.empty() || block.empty()) 
@@ -299,7 +299,7 @@ int Rocksdb::SetBlockByBlockHash(Transaction* txn, const std::string &blockHash,
     string db_key = this->kBlockHash2BlcokRawKey + "_" + blockHash;
     return writedata(txn, db_key, block);
 }
-
+//根据块hash获取块
 int Rocksdb::GetBlockByBlockHash(Transaction* txn, const std::string &blockHash, std::string &block) 
 {
     if (blockHash.empty()|| txn == nullptr) 
@@ -309,7 +309,7 @@ int Rocksdb::GetBlockByBlockHash(Transaction* txn, const std::string &blockHash,
     string db_key = this->kBlockHash2BlcokRawKey + "_" + blockHash;
     return readdata(txn, db_key, block);
 }
-
+//根据块hash移除块
 int Rocksdb::DeleteBlockByBlockHash(Transaction* txn, const std::string & blockHash)
 {
     if (blockHash.empty()|| txn == nullptr) 
@@ -320,7 +320,7 @@ int Rocksdb::DeleteBlockByBlockHash(Transaction* txn, const std::string & blockH
     return deletedata(txn, db_key);
 }
 
-
+//通过地址设置块高度
 int Rocksdb::SetBlockTop(Transaction* txn, const unsigned int blockHeight)
 {
     if(txn == nullptr)
@@ -330,7 +330,7 @@ int Rocksdb::SetBlockTop(Transaction* txn, const unsigned int blockHeight)
     string db_key = this->kBlockTopKey + "_";
     return writedata(txn, db_key, to_string(blockHeight));
 }
-
+//通过地址获取块高度
 int Rocksdb::GetBlockTop(Transaction* txn, unsigned int &blockHeight) 
 {
     if(txn == nullptr)
@@ -343,7 +343,7 @@ int Rocksdb::GetBlockTop(Transaction* txn, unsigned int &blockHeight)
     blockHeight = stoul(height);
     return ret;
 }
-
+//设置最佳链
 int Rocksdb::SetBestChainHash(Transaction* txn, const std::string &blockHash) 
 {
     if (blockHash.empty() || txn == nullptr) 
@@ -353,7 +353,7 @@ int Rocksdb::SetBestChainHash(Transaction* txn, const std::string &blockHash)
     std::string db_key = this->kBestChainHashKey + "_";
     return writedata(txn, db_key, blockHash);
 }
-
+//获取最佳链
 int Rocksdb::GetBestChainHash(Transaction* txn, std::string &blockHash) 
 {
     if(txn == nullptr)
@@ -363,7 +363,7 @@ int Rocksdb::GetBestChainHash(Transaction* txn, std::string &blockHash)
     std::string db_key = this->kBestChainHashKey + "_";
     return readdata(txn, db_key, blockHash);
 }
-
+//通过块hash设置块头
 int Rocksdb::SetBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash, const std::string & header) 
 {
     if (blockHash.empty()||header.empty() ||txn == nullptr) 
@@ -373,7 +373,7 @@ int Rocksdb::SetBlockHeaderByBlockHash(Transaction* txn, const std::string & blo
     string db_key = this->kBlockHash2BlockHeadRawKey+"_" + blockHash;
     return writedata(txn, db_key, header);
 }
-
+//通过块hash获取块头
 int Rocksdb::GetBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash, std::string & header)
 {
     if (blockHash.empty() || txn == nullptr) 
@@ -383,7 +383,7 @@ int Rocksdb::GetBlockHeaderByBlockHash(Transaction* txn, const std::string & blo
     string db_key = this->kBlockHash2BlockHeadRawKey+"_" + blockHash;
     return readdata(txn, db_key, header);
 }
-
+//通过块hash移除块头
 int Rocksdb::DeleteBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash)
 {
     if (blockHash.empty() || txn == nullptr) 
@@ -394,7 +394,7 @@ int Rocksdb::DeleteBlockHeaderByBlockHash(Transaction* txn, const std::string & 
     return deletedata(txn, db_key);
 }
 
-
+//根据交易地址设置Utxo
 int Rocksdb::SetUtxoHashsByAddress(Transaction* txn, const std::string &address, const std::string &utxoHash) 
 {
     if (address.empty()||utxoHash.empty()|| txn == nullptr) 
@@ -425,7 +425,7 @@ int Rocksdb::SetUtxoHashsByAddress(Transaction* txn, const std::string &address,
         }
     }
 }
-
+//根据交易地址获取Utxo
 int Rocksdb::GetUtxoHashsByAddress(Transaction* txn, const std::string &address, std::vector<std::string> &utxoHashs) 
 {
     if (address.empty()||txn == nullptr) 
@@ -442,7 +442,7 @@ int Rocksdb::GetUtxoHashsByAddress(Transaction* txn, const std::string &address,
     StringSplit(utxoHashs, valueString, "_");
     return ret;
 }
-
+//根据交易地址移除Utxo
 int Rocksdb::RemoveUtxoHashsByAddress(Transaction* txn, const std::string &address, const std::string &utxoHash) 
 {
     if (address.empty()||utxoHash.empty()||txn == nullptr) 
@@ -467,7 +467,7 @@ int Rocksdb::RemoveUtxoHashsByAddress(Transaction* txn, const std::string &addre
 }
 
 
-
+//根据交易Hash设置交易原始数据
 int Rocksdb::SetTransactionByHash(Transaction* txn, const std::string &txHash, const std::string &txRaw) 
 {
     if (txHash.empty() || txRaw.empty()||txn == nullptr)
@@ -477,7 +477,7 @@ int Rocksdb::SetTransactionByHash(Transaction* txn, const std::string &txHash, c
     std::string db_key = this->kTransactionHash2TransactionRawKey + "_" + txHash;
     return writedata(txn, db_key, txRaw);
 }
-
+//根据交易Hash获取交易原始数据
 int Rocksdb::GetTransactionByHash(Transaction* txn, const std::string &txHash, std::string &txRaw) 
 {
     if (txHash.empty() ||txn == nullptr) 
@@ -487,7 +487,7 @@ int Rocksdb::GetTransactionByHash(Transaction* txn, const std::string &txHash, s
     std::string db_key = this->kTransactionHash2TransactionRawKey + "_" + txHash;
     return readdata(txn, db_key, txRaw);
 }
-
+//根据交易Hash移除交易原始数据
 int Rocksdb::DeleteTransactionByHash(Transaction* txn, const std::string & txHash)
 {
     if (txHash.empty()||txn == nullptr) 
@@ -497,7 +497,7 @@ int Rocksdb::DeleteTransactionByHash(Transaction* txn, const std::string & txHas
     std::string db_key = this->kTransactionHash2TransactionRawKey + "_" + txHash;
     return deletedata(txn, db_key);
 }
-
+//根据交易Hash设置块Hash
 int Rocksdb::SetBlockHashByTransactionHash(Transaction* txn, const std::string & txHash, const std::string & blockHash) 
 {
     if (txHash.empty() || blockHash.empty() ||txn == nullptr) 
@@ -507,7 +507,7 @@ int Rocksdb::SetBlockHashByTransactionHash(Transaction* txn, const std::string &
     string db_key = this->kTransactionHash2BlockHashKey + "_" + txHash;
     return writedata(txn, db_key, blockHash);
 }
-
+//根据交易Hash获取块Hash
 int Rocksdb::GetBlockHashByTransactionHash(Transaction* txn, const std::string & txHash, std::string & blockHash) 
 {
     if (txHash.empty()||txn == nullptr) 
@@ -517,7 +517,7 @@ int Rocksdb::GetBlockHashByTransactionHash(Transaction* txn, const std::string &
     string db_key = this->kTransactionHash2BlockHashKey + "_" + txHash;
     return readdata(txn, db_key, blockHash);
 }
-
+//根据交易Hash移除块Hash
 int Rocksdb::DeleteBlockHashByTransactionHash(Transaction* txn, const std::string & txHash)
 {
     if (txHash.empty()||txn ==nullptr) 
@@ -533,7 +533,7 @@ int Rocksdb::DeleteBlockHashByTransactionHash(Transaction* txn, const std::strin
  # @description: 交易查询相关的
  ==================================================================================== */
 
-
+//根据地址设置交易原始数据
 int Rocksdb::SetTransactionByAddress(Transaction* txn, const std::string &address, const uint32_t txNum, const std::string &txRaw) 
 {
     if (address.empty()||txRaw.empty()|| txn == nullptr) 
@@ -543,7 +543,7 @@ int Rocksdb::SetTransactionByAddress(Transaction* txn, const std::string &addres
     string db_key = this->kAddress2TransactionRawKey + "_"+ address + "_" + to_string(txNum);
     return writedata(txn, db_key, txRaw);
 }
-
+//根据地址获取交易原始数据
 int Rocksdb::GetTransactionByAddress(Transaction* txn, const std::string &address, const uint32_t txNum, std::string &txRaw) 
 {
     if (address.empty()|| txn == nullptr) 
@@ -553,7 +553,7 @@ int Rocksdb::GetTransactionByAddress(Transaction* txn, const std::string &addres
     string db_key = this->kAddress2TransactionRawKey + "_" + address + "_" + to_string(txNum);
     return readdata(txn, db_key, txRaw);
 }
-
+//根据地址移除交易原始数据
 int Rocksdb::DeleteTransactionByAddress(Transaction* txn, const std::string & address, const uint32_t txNum)
 {
     if (address.empty() || txn == nullptr) 
@@ -563,7 +563,7 @@ int Rocksdb::DeleteTransactionByAddress(Transaction* txn, const std::string & ad
     string db_key = this->kAddress2TransactionRawKey + "_" + address + "_" + to_string(txNum);
     return deletedata(txn, db_key);
 }
-
+//根据交易地址设置块Hash
 int Rocksdb::SetBlockHashByAddress(Transaction* txn, const std::string &address, const uint32_t txNum, const std::string &blockHash) 
 {
     if (address.empty()||blockHash.empty()|| txn == nullptr) 
@@ -573,7 +573,7 @@ int Rocksdb::SetBlockHashByAddress(Transaction* txn, const std::string &address,
     string db_key = this->kAddress2BlcokHashKey +"_" + address + "_" + to_string(txNum);
     return writedata(txn, db_key, blockHash);
 }
-
+//根据交易地址获取块Hash
 int Rocksdb::GetBlockHashByAddress(Transaction* txn, const std::string &address, const uint32_t txNum, std::string &blockHash) 
 {
     if (address.empty()|| txn == nullptr) 
@@ -583,7 +583,7 @@ int Rocksdb::GetBlockHashByAddress(Transaction* txn, const std::string &address,
     string db_key = this->kAddress2BlcokHashKey +"_" + address + "_" + to_string(txNum);
     return readdata(txn, db_key, blockHash);
 }
-
+//根据交易地址移除块Hash
 int Rocksdb::DeleteBlockHashByAddress(Transaction* txn, const std::string & address, const uint32_t txNum)
 {
     if (address.empty() || txn == nullptr) 
@@ -593,7 +593,7 @@ int Rocksdb::DeleteBlockHashByAddress(Transaction* txn, const std::string & addr
     string db_key = this->kAddress2BlcokHashKey +"_" + address + "_" + to_string(txNum);
     return deletedata(txn, db_key);
 }
-
+//根据地址设置交易高度
 int Rocksdb::SetTransactionTopByAddress(Transaction* txn, const std::string &address, const unsigned int txIndex) 
 {
     if (address.empty() || txn == nullptr) 
@@ -603,7 +603,7 @@ int Rocksdb::SetTransactionTopByAddress(Transaction* txn, const std::string &add
     string db_key = this->kAddress2TransactionTopKey + "_" + address;
     return writedata(txn, db_key, to_string(txIndex));
 }
-
+//根据地址获取交易高度
 int Rocksdb::GetTransactionTopByAddress(Transaction* txn, const std::string &address, unsigned int &txIndex)
 {
     if(address.empty() || txn == nullptr)
@@ -625,7 +625,7 @@ int Rocksdb::GetTransactionTopByAddress(Transaction* txn, const std::string &add
  # @description: 应用层查询
  ==================================================================================== */
 
-
+//根据地址设置账号金额
 int Rocksdb::SetBalanceByAddress(Transaction* txn, const std::string &address, int64_t balance) 
 {
     if(address.empty() || txn == nullptr)
@@ -635,7 +635,7 @@ int Rocksdb::SetBalanceByAddress(Transaction* txn, const std::string &address, i
     string db_key = this->kAddress2BalanceKey +"_" + address;
     return writedata(txn, db_key, to_string(balance));
 }
-
+//根据地址获取账号金额
 int Rocksdb::GetBalanceByAddress(Transaction* txn, const std::string &address, int64_t &balance) 
 {
     if (address.empty() ||txn == nullptr) 
@@ -652,7 +652,7 @@ int Rocksdb::GetBalanceByAddress(Transaction* txn, const std::string &address, i
     balance = stoll(value);
     return ret;
 }
-
+//根据地址设置所有交易
 int Rocksdb::SetAllTransactionByAddress(Transaction* txn, const std::string &address, const std::string &txHash) 
 {
     if (address.empty() || txHash.empty() || txn ==nullptr)
@@ -670,7 +670,7 @@ int Rocksdb::SetAllTransactionByAddress(Transaction* txn, const std::string &add
 
     return ROCKSDB_ERR;
 }
-
+//根据地址获取所有交易
 int Rocksdb::GetAllTransactionByAddreess(Transaction* txn, const std::string &address, std::vector<std::string> &txHashs)
 {
     if(address.empty() || txn == nullptr) 
@@ -687,7 +687,7 @@ int Rocksdb::GetAllTransactionByAddreess(Transaction* txn, const std::string &ad
     StringSplit(txHashs, value, "_");
     return ret;
 }
-
+//根据地址移除所有交易
 int Rocksdb::RemoveAllTransactionByAddress(Transaction* txn, const std::string & address, const std::string & txHash)
 {
     if (address.empty()||txHash.empty()|| txn == nullptr) 
@@ -722,13 +722,13 @@ int Rocksdb::RemoveAllTransactionByAddress(Transaction* txn, const std::string &
 }
 
 
-
+//设置打包费
 int Rocksdb::SetDevicePackageFee(const uint64_t publicNodePackageFee)
 {
     string db_key = this->kPackageFeeKey + "_";
     return writedata(db_key, to_string(publicNodePackageFee));
 }
-
+//获取打包费
 int Rocksdb::GetDevicePackageFee(uint64_t & publicNodePackageFee)
 {
     string db_key = this->kPackageFeeKey + "_";
@@ -742,13 +742,13 @@ int Rocksdb::GetDevicePackageFee(uint64_t & publicNodePackageFee)
     return ret;
 }
 
-
+//设置燃料费
 int Rocksdb::SetDeviceSignatureFee(const uint64_t mineSignatureFee)
 {
     string db_key = this->kGasFeeKey + "_";
     return writedata(db_key, to_string(mineSignatureFee));
 }
-
+//获取燃料费
 int Rocksdb::GetDeviceSignatureFee(uint64_t & mineSignatureFee)
 {
     string db_key = this->kGasFeeKey + "_";
@@ -762,13 +762,13 @@ int Rocksdb::GetDeviceSignatureFee(uint64_t & mineSignatureFee)
     return ret;
 }
 
-
+//设置在线时长
 int Rocksdb::SetDeviceOnlineTime(const double minerOnLineTime)
 {
     string db_key = this->kOnLineTimeKey + "_";
     return writedata(db_key, to_string(minerOnLineTime));
 }
-
+//获取在线时长
 int Rocksdb::GetDeviceOnLineTime(double & minerOnLineTime)
 {
     string db_key = this->kOnLineTimeKey + "_";
@@ -797,6 +797,8 @@ int Rocksdb::SetPledgeAddresses(Transaction* txn,  const std::string &address)
         auto position = valueString.find(address);
         if(position != valueString.npos)
         {
+            cout << "position is : " << position << endl;
+            
             return ROCKSDB_IS_EXIST;
         }
         else
@@ -859,7 +861,7 @@ int Rocksdb::RemovePledgeAddresses(Transaction* txn,  const std::string &address
     return writedata(txn, db_key, retString);
 }
 
-
+//设置滞押资产账户的utxo
 int Rocksdb::SetPledgeAddressUtxo(Transaction* txn, const std::string &address, const std::string &utxo)
 {
     if(address.empty()||utxo.empty() ||txn == nullptr) 
@@ -879,6 +881,7 @@ int Rocksdb::SetPledgeAddressUtxo(Transaction* txn, const std::string &address, 
         auto position = valueString.find(utxo);
         if(position != valueString.npos)
         {
+            cout << "position is : " << position << endl;
             return ROCKSDB_IS_EXIST;
         }
         else
@@ -944,7 +947,7 @@ int Rocksdb::RemovePledgeAddressUtxo(Transaction* txn, const std::string &addres
 
 
 
-
+//设置总交易数
 int Rocksdb::SetTxCount(Transaction* txn, uint64_t &count) 
 {
     if(txn == nullptr)
@@ -954,7 +957,7 @@ int Rocksdb::SetTxCount(Transaction* txn, uint64_t &count)
     string db_key = this->kTransactionCountKey + "_";
     return writedata(db_key, to_string(count));
 }
-
+//获取总交易数
 int Rocksdb::GetTxCount(Transaction* txn, uint64_t &counts) 
 {
     if(txn == nullptr)
@@ -968,7 +971,7 @@ int Rocksdb::GetTxCount(Transaction* txn, uint64_t &counts)
     return ret;
 }
 
-
+// 设置总燃料费
 int Rocksdb::SetGasCount(Transaction* txn, uint64_t &count) 
 {
     if(txn == nullptr)
@@ -991,7 +994,7 @@ int Rocksdb::GetGasCount(Transaction* txn, uint64_t &counts)
     return ret;
 }
 
-
+// 设置总的额外奖励费
 int Rocksdb::SetAwardCount(Transaction* txn, uint64_t &count) 
 {
     if(txn == nullptr)
@@ -1001,7 +1004,7 @@ int Rocksdb::SetAwardCount(Transaction* txn, uint64_t &count)
     string db_key = this->kAwardCountKey +"_";
     return writedata(db_key, to_string(count));
 }
-
+// 获取总的额外奖励费
 int Rocksdb::GetAwardCount(Transaction* txn, uint64_t &counts) 
 {
     if(txn == nullptr)

@@ -32,13 +32,13 @@ enum chains {
 
 struct chain_info {
     enum chains     chain_id;
-    const char      *name;      
+    const char      *name;      /* "bitcoin", "testnet3" */
 
     unsigned char       addr_pubkey;
     unsigned char       addr_script;
     
     unsigned char       netmagic[5];
-    const char      *genesis_hash;  
+    const char      *genesis_hash;  /* hex string */
 };
 
 #ifdef __cplusplus

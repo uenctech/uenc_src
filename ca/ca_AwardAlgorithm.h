@@ -1,5 +1,5 @@
 #include "../utils/string_util.h"
-#include "../utils/util.h"
+#include "../utils//util.h"
 #include "../utils/time_util.h"
 #include "ca_device.h"
 #include "ca_header.h"
@@ -22,6 +22,11 @@ public:
      * @brief 初始化私有变量
      */
     AwardAlgorithm();
+
+    /**
+     * @brief 测试
+     */
+    void TestPrint(bool lable = false);
 
     /**
      * @brief 组合工具函数 得出额外奖励TODO
@@ -61,34 +66,34 @@ public:
     std::multimap<uint32_t, std::string> &GetDisAward();
 
 private:
-    
+    /* ntp时间戳 */
     uint64_t now_time;
-    
+    /* 共识数 */
     uint32_t need_verify_count;
-    
+    /* 计算出的奖池金额 */
     uint64_t award_pool;
-    
+    /* 签名钱包地址数组 */
     std::vector<std::string> vec_addr;
 
     std::vector<double> vec_onlinet;
-    
+    /* 奖励分配map */
     std::multimap<uint32_t, std::string> map_addr_award;
 
-    
+    /* 总签名数 */
     uint sign_amount;
 
-    
-    
-    
-    
-    
+    /* 测试用参数 */
+    // vector<double> &total_online =  get<0>(t_list);
+    // vector<uint> &total_sign =  get<1>(t_list);
+    // vector<double> &total_award =  get<2>(t_list);
+    // vector<double> &rate = get<3>(t_list); //所有地址的比率 总奖励额/签名总数/时长(天)
     std::tuple<std::vector<double>, std::vector<uint>, std::vector<double>, std::vector<double>> t_list;
 
-    uint64_t unitTime = 5 * 60;  
-    uint64_t minAward = 0.025 * DECIMAL_NUM;  
-    uint64_t unitTimeMinBlockNum = 5;  
-    uint32_t slopeCurve = 70;   
-    uint64_t awardTotal = (uint64_t)80000000 * DECIMAL_NUM;  
+    uint64_t unitTime = 5 * 60;  // 时间区间，单位为秒，用于计算时间区间内产生的块数
+    uint64_t minAward = 0.025 * DECIMAL_NUM;  // 最低奖励值
+    uint64_t unitTimeMinBlockNum = 5;  // unitTime时间内最少区块数，低于5，按5计算
+    uint32_t slopeCurve = 70;   // 曲线斜率
+    uint64_t awardTotal = (uint64_t)80000000 * DECIMAL_NUM;  // 总奖励值
 };
 
 }

@@ -18,7 +18,7 @@ typedef enum emConfigEnabelType
     kConfigEnabelTypeGetMoney,
 }ConfigEnabelType;
 
-
+//存储版本服务器节点信息的结构体
 struct node_info
 {
     std::string name;
@@ -38,42 +38,42 @@ class Config
 public:
     Config(){};
     ~Config(){};
-    
+    //根据文件名构造配置文件
     Config(const std::string &name){if(!this->InitFile(name)){_Exit(0);}};
 
-    
+    //动态加载配置文件
     void Reload(const std::string &name = "config.json");
-    
+    //根据m_Json写入配置文件
     void WriteFile(const std::string &name = "config.json");
-    
+    //初始化配置文件
     bool InitFile(const std::string &name = "config.json");
-    
+    //创建配置文件
     bool NewFile(std::string strFile);
 
 
-    
-    
+    //******************net层相关的配置*******************
+    //获取是否为外网节点 is_public_node
     bool GetIsPublicNode();
 
-    
+    //获取服务器的状态
     bool GetCond(const std::string &cond_name);
 
-    
+    //获取net层定义的变量k_bucket、k_refresh_time、local_ip、work_thread_num
     int GetVarInt(const std::string &cond_name);
     std::string GetVarString(const std::string &cond_name);
 
-    
+    //获取、设置k桶节点ID
     std::string GetKID();
     bool SetKID(std::string strKID);
 
-    
+    //获取、设置节点的内网ip地址
     std::string GetLocalIP();
     bool SetLocalIP(std::string strIP);
     int GetLocalPort();
     int GetHttpPort();
     std::vector<std::tuple<std::string,int>> GetServerList();
 
-    
+    //******************ca层相关的配置***************************
     /**
      * @description: 获得是否启用
      * @param enable 返回是否启用标志 
@@ -104,11 +104,11 @@ public:
      * @return: 获取更新目标版本号
      */
     std::string GetTargetVersion();
-    
+    //获取四个版本服务器的信息
     std::vector<node_info> GetNodeInfo_s();
-    
+    //更新配置文件,参数默认值代表不更新该字段
     bool UpdateConfig(int flag = 2,const std::string &target_version = "not", const std::string &ip = "not", const std::string &latest_version = "");
-    
+    //获取之前请求更新的对应版本服务器ip
     std::string GetVersionServer();
 
 
@@ -176,6 +176,12 @@ public:
      * @return: 返回py脚本服务端ip
      */
     std::string GetPyRtPirceIp();
+
+    int ClearNode();
+    int AddNewNode(const node_info& node);
+
+    int ClearServer();
+    int AddNewServer(const std::string& ip, unsigned short port);
 
 
 private:

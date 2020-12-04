@@ -151,21 +151,21 @@ void RegisterCallback()
     net_register_callback<SyncVerifyPledgeNodeReq>(HandleSyncVerifyPledgeNodeReq);
     net_register_callback<SyncVerifyPledgeNodeAck>(HandleSyncVerifyPledgeNodeAck);
 
-    
+    // PC交易
     net_register_callback<TxMsg>(HandleTx);
 
-    
+    // 手机端交易
     net_register_callback<TxMsgReq>(HandlePreTxRaw);
     net_register_callback<CreateTxMsgReq>(HandleCreateTxInfoReq);
 
 
-    
+    // 手机连接矿机交易
     net_register_callback<VerifyDevicePasswordReq>(HandleVerifyDevicePassword);
     net_register_callback<CreateDeviceTxMsgReq>(HandleCreateDeviceTxMsgReq);
 
     net_register_callback<BuileBlockBroadcastMsg>(HandleBuileBlockBroadcastMsg);
     
-    
+    // 测试接口注册
     net_register_callback<TestSendExitNodeReq>(HandleExitNode);
     net_register_callback<TestGetNodeHeightHashBase58AddrAck>(handleGetNodeHeightHashBase58AddrAck);
     net_register_callback<TestGetNodeHeightHashBase58AddrReq>(handleGetNodeHeightHashBase58AddrReq);
@@ -181,7 +181,7 @@ void Init(const char *path)
     {
         assert( pRocksDb->SetDevicePackageFee(publicNodePackageFee) == 0 );
     }
-    
+    //publicNodePackageFee = 20000;
     net_set_self_package_fee(publicNodePackageFee);
     uint64_t minfee = 0;
 	pRocksDb->GetDeviceSignatureFee( minfee );
@@ -190,15 +190,15 @@ void Init(const char *path)
         minfee = 0;
         pRocksDb->SetDeviceSignatureFee(minfee);
     }
-    
+    //mineSignatureFee = 10000;
     net_set_self_fee(minfee); 
 
-    
+    // 向网络层注册主账号地址
     net_set_self_base58_address(g_AccountInfo.DefaultKeyBs58Addr);
     ca_console RegisterColor(kConsoleColor_Yellow, kConsoleColor_Black, true);
     std::cout << RegisterColor.color().c_str() << "RegisterCallback bs58Addr : " << g_AccountInfo.DefaultKeyBs58Addr << RegisterColor.reset().c_str() << std::endl;
 
-    
+    // 向网络层注册接口
     RegisterCallback();
 
     g_phone = false;
@@ -229,6 +229,7 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
     if(From != NULL)
     {
         if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, From)) {
+            std::cout << "非法账号" << std::endl;
             return -2;
         }
     }
@@ -248,7 +249,6 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
     return 0;
 }
 
-
 int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & amount_str, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string password, const MsgData &msgdata, std::string pledgeType)
 {
     TxMsgAck phoneControlDevicePledgeTxAck;
@@ -256,7 +256,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 
     uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
     uint64_t amount = std::stod(amount_str) * DECIMAL_NUM;
-    if(fromAddr.size() <= 0 || amount <= 0 || needVerifyPreHashCount < 3 || GasFee <= 0)
+    if(fromAddr.size() <= 0 || amount <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0)
     {
         phoneControlDevicePledgeTxAck.set_code(-101);
         phoneControlDevicePledgeTxAck.set_message("CreatePledgeFromAddr parameter error!");
@@ -265,7 +265,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         return -101;
     }
 
-
+    // 判断矿机密码是否正确
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
     if (hashOriPass != targetPassword) 
@@ -284,6 +284,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         phoneControlDevicePledgeTxAck.set_code(-102);
         phoneControlDevicePledgeTxAck.set_message("TransactionInit failed !");
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+		std::cout << "(CreatePledgeTransaction) TransactionInit failed !" << std::endl;
 		return -102;
 	}
 
@@ -312,7 +313,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
     extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   
+    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
     extra["TransactionType"] = TXTYPE_PLEDGE;
     extra["TransactionInfo"] = txInfo;
 
@@ -339,6 +340,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         phoneControlDevicePledgeTxAck.set_code(-104);
         phoneControlDevicePledgeTxAck.set_message("Illegal account !");
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+        std::cout << "非法账号" << std::endl;
         return -104;
     }
 
@@ -354,7 +356,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 	}
 
 	serTx = outTx.SerializeAsString();
-	
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
 	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 
@@ -373,15 +375,14 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 
     return 0;
 }
-
 int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, const MsgData &msgdata)
 {
     TxMsgAck txMsgAck;
     txMsgAck.set_version(getVersion());
 
-    
+    // 参数判断
     uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
-    if(fromAddr.size() <= 0 || needVerifyPreHashCount < 3 || GasFee <= 0 || utxo.empty())
+    if(fromAddr.size() <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0 || utxo.empty())
     {
         txMsgAck.set_code(-1);
         txMsgAck.set_message("CreateRedeemTransaction FromAddr parameter error!");
@@ -390,6 +391,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
         return -1;
     }
 
+    // 判断矿机密码是否正确
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
     if (hashOriPass != targetPassword) 
@@ -416,7 +418,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 		pRocksDb->TransactionDelete(txn, false);
 	};
 
-    
+    // 查询账号是否已经质押资产
     std::vector<string> addresses;
     int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
     if(db_status != 0)
@@ -485,7 +487,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
     extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   
+    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
     extra["TransactionType"] = TXTYPE_REDEEM;
     extra["TransactionInfo"] = txInfo;
 
@@ -501,9 +503,10 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-    
+    // 设置默认账号为发起账号
     if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
     {
+        std::cout << "非法账号" << std::endl;
         return -2;
     }
 
@@ -519,7 +522,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 	}
 
 	serTx = outTx.SerializeAsString();
-	
+	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
 	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
 	std::string txstrtmp(txstr->str, txstr->len);
 
@@ -568,13 +571,14 @@ bool net_segment_allip(const char *ip, const char *mask, std::vector<std::string
     unsigned int temp_min;
     if(max < min)
     {
+        std::cout << "network segment start and end failed !" << std::endl;
         return false;
     }
 
 	unsigned int b = ntohl(net_ip.s_addr);
     for(temp_min = min + 1; temp_min != max; temp_min++)
     {
-        
+        // 不记录自己的地址
         if(temp_min == b)
         {
             continue;
@@ -590,10 +594,8 @@ bool net_segment_allip(const char *ip, const char *mask, std::vector<std::string
 
 bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, std::vector<map<std::string,std::string>> *outip_mac, unsigned int * current, unsigned int && total, ScanPortProc spp)
 {
-    
     if(!ip_vect ||!outip_mac)
     {
-
         return false;
     }
     for(unsigned long int i = 0; i < ip_vect->size(); i++)
@@ -627,8 +629,8 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
         struct servent * sp;
     	fd_set rset;
         fd_set wset; 
-       
-		
+      
+		//connect为非阻塞，连接不成功立即返回-1
 		if (!connect(fd,(struct sockaddr*)&serveraddr,sizeof(struct sockaddr)))
 		{
 			sp=getservbyport(htons(scanport),"tcp");
@@ -646,23 +648,24 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
 		else 
 		{
             perror("connect error:");
-            
-            
+            //假如连接不成功，则运行select,直到超时
 			FD_ZERO(&rset);
 			FD_ZERO(&wset);
 			FD_SET(fd, &rset);
 			FD_SET(fd, &wset);
-			int error; 
+			int error; //错误代码
 			socklen_t len = sizeof(error); 
-			
+			//5秒后查看socket的状态变化 
 			if ( select(fd+1, &rset, &wset, NULL, &tm) > 0 )
             {
 				getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
+                cout<<"errornumber=" <<error <<endl;
 				if(error == 0)
                 {
                     senddata(fd); 
                     if( 0 != recvdata(fd, ip_vect, outip_mac, i) ) 
                     {
+                        senddata(fd); 
                         close(fd);
                         (*current)++;
                         continue; 
@@ -684,7 +687,7 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
 
 unsigned int sum = 0;
 
-bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, char *outdata, size_t *outdatalen, ScanPortProc spp)
+bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, char *outdata, size_t *outdatalen, ScanPortProc spp,int i,map<int64_t,string> &i_str)
 {
     if(ip == NULL || mask == NULL || outdata == NULL || outdatalen == NULL)
     {
@@ -733,14 +736,21 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
         std::thread threads[10]; 
         for (int i = 0; i < 10; ++i)
         {  
-            threads[i] = std::thread(getuserip_all, &vv[i], port, &outip_mac, &sum, ip_vect.size(), spp);   
+            threads[i] = std::thread(getuserip_all, &vv[i], port, &outip_mac, &sum, ip_vect.size(), spp);   // move-assign threads 这里调用move复制函数  
         }
 
-        for (int i = 0; i<10; ++i)  
+        std::cout << "Done spawning threads. Now waiting for them to join:\n";  
+        for (int i = 0; i<10; ++i)
+        {
             threads[i].join();  
+        }  
+            
+        std::cout << "All threads joined!\n";  
+    
     }
 
     cJSON * root =  cJSON_CreateObject();
+
 	cJSON_AddItemToObject(root, "code", cJSON_CreateNumber(0));
 	cJSON_AddItemToObject(root, "message", cJSON_CreateString("msg"));
 
@@ -752,6 +762,7 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
         map<string,string>::iterator iter;
         iter = outip_mac[i].begin();
         string mac = iter->second;
+        cout<< "macaddress=" << mac.c_str() <<endl;
         char name1[256] = {0};
         sprintf(name1, "%s", mac.c_str());
         cJSON_AddItemToObject(ipaddr, "titile", cJSON_CreateString(name1));
@@ -763,7 +774,16 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
 	cJSON_AddItemToObject(root, "data", data);
 
     cstring * cs = cstr_new(cJSON_PrintUnformatted(root));
-    cJSON_Delete(root); 
+    cout << "cs:" << cs->str <<endl;
+    cJSON_Delete(root);
+
+    string str = cs->str;
+    i_str.insert(pair<int64_t,string>(i,str));
+    cout<<"str.size()="<<str.size()<<endl;
+    size_t  length = cs->len;
+    cout<<"length ="<<length <<endl;
+    cout<<"i="<<i<<endl;
+    cout<<"*outdatalen="<<*outdatalen<<endl;
 
     if(cs->len > *outdatalen)
     {
@@ -774,6 +794,7 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
     
     memcpy(outdata, cs->str, cs->len);
     *outdatalen = cs->len;
+   
     cstr_free(cs, true);
 
     return true;
@@ -785,7 +806,7 @@ uint32_t adler32(const char *data, size_t len)
     uint32_t a = 1, b = 0;
     size_t index;
     
-    
+    // Process each byte of the data in order
     for (index = 0; index < len; ++index)
     {
         a = (a + data[index]) % MOD_ADLER;
@@ -812,7 +833,8 @@ int senddata(int fdnum)
 	memcpy(buff + 4, data.data(), data.size());
 	memcpy(buff + 4 + data.size(), &checksum, 4);
 	memcpy(buff + 4 + data.size() + 4, &end_flag, 4);
-    int s = send(fdnum,buff,len + 4,0);     
+    int s = send(fdnum,buff,len + 4,0);     //打包发送的数据
+    cout<<"datas ="<<s<<endl;
     delete buff;
     return s;
 } 
@@ -820,24 +842,66 @@ int senddata(int fdnum)
 
 void ScanPortProcFun(const char * ip, unsigned int current, unsigned int total)
 {
-
+    cout << "================ " << (double)current / (double)total * 100 << "% ================" << endl;
+    cout<<"================"<<ip<<"========================="<<endl;
 }
 
 ScanPortProc pScanPortProcFun = ScanPortProcFun;
 
+void interface_testdevice_mac()
+{
+    map<int64_t,string> addrvalue;
+    for(int i =0; i <5; i++)
+    {
+        char out_data[10240] = {0};
+        size_t data_len = 10240;
+        if(interface_ScanPort("192.168.1.60", "255.255.255.0",11188,out_data,&data_len, pScanPortProcFun,i,addrvalue))   
+        {
+            cout<<"scanport success"<<endl;
+            sleep(1);
+        } 
+        else
+        {
+            cout<<"scanport failure"<<endl;
+        }
+    }
+    map<int64_t,string>::iterator  it;  
+    int fd = -1;
+    cout<<"addrvalue.size()="<<addrvalue.size() <<endl;
+    if (addrvalue.size() > 1) 
+    {
+        fd = open("i_str.txt", O_CREAT | O_WRONLY);
+    }
+    CaTestFormatType formatType;
+    if (fd == -1) 
+    {
+        formatType = kCaTestFormatType_Print;
+    } 
+    else 
+    {
+        formatType = kCaTestFormatType_File;
+    }
+    for(it = addrvalue.begin(); it != addrvalue.end(); it++)  
+    {  
+        blkprint(formatType, fd, "%s,%u\n", it->first,it->second.c_str()); 
+    } 
+    close(fd); 
+}
+
+
 int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::string,std::string>> *outip_mac,int i)
 {
-        char mybuf[1024] ={0};
-        usleep(30000);      
-        recv(fdnum,&mybuf,sizeof(mybuf),MSG_WAITALL); 
-     
-        int datalen; 
-        memcpy(&datalen,mybuf,4);
-        if (datalen >0)
-        {
-
+    char mybuf[1024] ={0};
+    usleep(30000);      
+    recv(fdnum,&mybuf,sizeof(mybuf),MSG_WAITALL); 
+    
+    int datalen; 
+    memcpy(&datalen,mybuf,4);
+    std::cout << "datalen:" << datalen << std::endl;
+    if (datalen >0)
+    {
         char splitdata[datalen - 2*sizeof(int)] = {0};
-        memcpy(splitdata, mybuf + 4,datalen -2*sizeof(int));     
+        memcpy(splitdata, mybuf + 4,datalen -2*sizeof(int));     //内存recv接收过来的数据mac数据
 
         std::string read_data(splitdata, datalen - 2*sizeof(int));
 
@@ -850,6 +914,8 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
         }
 
         std::string type = common_msg.type();
+        std::cout << "recvdata type:" << type << std::endl;
+
         
         GetMacAck getMacAck;
         r = getMacAck.ParseFromString(common_msg.data());
@@ -858,14 +924,14 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
             error("parse getMacAck error");
             return 0;
         }
-       
-         map<string,string> mac_and_ip;
-         mac_and_ip.insert(make_pair(ip_vect->at(i).c_str(),getMacAck.mac()));
-         outip_mac->push_back(mac_and_ip);  
-         return 0;
-        }
-        else
-        {
-            return -1;
-        }       
+        cout<<"mac=:"<<getMacAck.mac()<<endl;
+        map<string,string> mac_and_ip;
+        mac_and_ip.insert(make_pair(ip_vect->at(i).c_str(),getMacAck.mac()));
+        outip_mac->push_back(mac_and_ip);  
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }       
 }

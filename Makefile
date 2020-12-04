@@ -15,16 +15,12 @@ PROTOBUF_DIR = ./protobuf
 PROTOBUF_TARGET = /src/.libs/libprotobuf.a
 PROTOBUF_LIB = $(PROTOBUF_DIR)/$(PROTOBUF_TARGET)
 
-CA_DIR = ./ca
-CA_TARGET = libca.a
-CA_LIB = $(CA_DIR)/$(CA_TARGET)
-
 BOOST_DIR = ./boost
 
 CC = gcc
 CPP = g++ -std=c++17
 INCLUDES += -I./ -I../include -I$(ROCKSDB_DIR)/include/ -I$(PROTOBUF_DIR)/src -I ./proto
-LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) $(CA_LIB) /usr/lib64/libpthread.so 
+LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) /usr/lib64/libpthread.so 
 
 G = -g
 CFLAGS :=-Wall  -Wno-unknown-pragmas $(G) 

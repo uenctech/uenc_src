@@ -1,6 +1,6 @@
 /*
-	http:
-	Written by Jeff Garzik <jeff@garzik.org> for module of GNU/Linux kernel from https:
+	http://en.wikipedia.org/wiki/SHA-3
+	Written by Jeff Garzik <jeff@garzik.org> for module of GNU/Linux kernel from https://lwn.net/Articles/518415/
 	LICENSE GPL
 	Originaly from linux-4.11/include/crypto/sha3.h SHA3_256:c96944b92955652521900dfdf798d942cc917f3d4903d98a1cda637980c55d8f
 */
@@ -44,4 +44,4 @@ void sha3_final (struct sha3_state *sctx, uint8_t *out);
 }
 # endif
 
-#endif 
+#endif /* __CRYPTO_SHA3_H__ */

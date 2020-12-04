@@ -9,7 +9,7 @@ class MagicSingleton
 {
 public:
 
-	
+	//获取全局单例对象
 	template<typename ...Args>
 	static std::shared_ptr<T> GetInstance(Args&&... args) 
     {
@@ -24,7 +24,7 @@ public:
 		return m_pSington;
 	}
 
-	
+	//主动析构单例对象（一般不需要主动析构，除非特殊需求）
 	static void DesInstance() 
     {
 		if (m_pSington) 
@@ -51,4 +51,4 @@ std::shared_ptr<T> MagicSingleton<T>::m_pSington = nullptr;
 template<typename T>
 std::mutex MagicSingleton<T>::m_Mutex;
 
-#endif 
+#endif // _MAGICSINGLETON_H_

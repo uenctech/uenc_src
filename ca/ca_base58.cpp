@@ -54,17 +54,17 @@ bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 		outi[i] = 0;
 	}
 	
-	
+	// Leading zeros, just count
 	for (i = 0; i < b58sz && b58u[i] == '1'; ++i)
 		++zerocount;
 	
 	for ( ; i < b58sz; ++i)
 	{
 		if (b58u[i] & 0x80)
-			
+			// High-bit set on invalid digit
 			return false;
 		if (b58digits_map[b58u[i]] == -1)
-			
+			// Invalid base58 digit
 			return false;
 		c = (unsigned)b58digits_map[b58u[i]];
 		for (j = outisz; j--; )
@@ -74,10 +74,10 @@ bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 			outi[j] = t & b58_almostmaxint_mask;
 		}
 		if (c)
-			
+			// Output number too big (carry to the next int32)
 			return false;
 		if (outi[0] & zeromask)
-			
+			// Output number too big (last int32 filled too far)
 			return false;
 	}
 	
@@ -96,7 +96,7 @@ bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 		}
 	}
 	
-	
+	// Count canonical base58 byte count
 	binu = (unsigned char *)bin;
 	for (i = 0; i < binsz; ++i)
 	{
@@ -140,7 +140,7 @@ bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz)
 			buf[j] = carry % 58;
 			carry /= 58;
 			if (!j) {
-				
+				// Otherwise j wraps to maxint which is > high
 				break;
 			}
 		}
@@ -188,7 +188,7 @@ int base58_encode(const char *in, size_t in_len, char *out, size_t *out_len) {
 		return -1;
 	}
 
-	
+	// leading zeroes
 	size_t total = 0;
 	for (size_t i = 0; i < in_len && !in[i]; ++i) {
 		if (total == *out_len) {
@@ -201,7 +201,7 @@ int base58_encode(const char *in, size_t in_len, char *out, size_t *out_len) {
 	in_len -= total;
 	out += total;
 
-	
+	// encoding
 	size_t idx = 0;
 	for (size_t i = 0; i < in_len; ++i) {
 		unsigned int carry = (unsigned char)in[i];
@@ -221,7 +221,7 @@ int base58_encode(const char *in, size_t in_len, char *out, size_t *out_len) {
 		}
 	}
 
-	
+	// apply alphabet and reverse
 	size_t c_idx = idx >> 1;
 	for (size_t i = 0; i < c_idx; ++i) {
 		char s = alphabet[(unsigned char)out[i]];
@@ -245,7 +245,7 @@ int base58_decode(const char *in, size_t in_len, char *out, size_t *out_len) {
 		return -1;
 	}
 
-	
+	// leading ones
 	size_t total = 0;
 	for (size_t i = 0; i < in_len && in[i] == '1'; ++i) {
 		if (total == *out_len) {
@@ -258,7 +258,7 @@ int base58_decode(const char *in, size_t in_len, char *out, size_t *out_len) {
 	in_len -= total;
 	out += total;
 
-	
+	// decoding
 	size_t idx = 0;
 	for (size_t i = 0; i < in_len; ++i) {
 		unsigned int carry = (unsigned int)alphamap[(unsigned char)in[i]];
@@ -282,7 +282,7 @@ int base58_decode(const char *in, size_t in_len, char *out, size_t *out_len) {
 		}
 	}
 
-	
+	// apply simple reverse
 	size_t c_idx = idx >> 1;
 	for (size_t i = 0; i < c_idx; ++i) {
 		char s = out[i];

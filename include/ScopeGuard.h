@@ -32,7 +32,7 @@
 
 #include <type_traits>
 
-
+// ScopeGuard for C++11
 namespace clover {
     template <typename Fun>
     class ScopeGuard {
@@ -70,16 +70,16 @@ namespace clover {
         inline ScopeGuard<Fun> operator+(ScopeGuardOnExit, Fun &&fn) {
             return ScopeGuard<Fun>(std::forward<Fun>(fn));
         }
-    } 
-} 
+    } // namespace detail
+} // namespace clover
 
-
+// Helper macro
 #define ON_SCOPE_EXIT \
     auto __SCOPEGUARD_CONCATENATE(ext_exitBlock_, __LINE__) = clover::detail::ScopeGuardOnExit() + [&]()
 
 #else
 
-
+// ScopeGuard for Objective-C
 typedef void (^ext_cleanupBlock_t)(void);
 static inline void ext_executeCleanupBlock(__strong ext_cleanupBlock_t *block) {
     (*block)();
@@ -91,4 +91,4 @@ static inline void ext_executeCleanupBlock(__strong ext_cleanupBlock_t *block) {
 
 #endif
 
-#endif 
+#endif /* __SCOPE_GUARD_H__ */

@@ -177,6 +177,7 @@ extern "C" {
         uint encode_len = signature.size() * 2;
         unsigned char* encode = new unsigned char[encode_len];
         base64_encode((unsigned char *)signature.data(), signature.size(), encode);
+        std::cout << "encode " << encode << std::endl;
 
         return (char*)encode;
     }

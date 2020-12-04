@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-
-
+/*************************************同步相关协议*************************************/
+// 同步通用头
 message SyncHeaderMsg
 {
-	bytes version = 1;										
-	bytes id      = 4;										
+	bytes version = 1;										// 版本
+	bytes id      = 4;										// id
 }
 
 message CheckHash
@@ -15,18 +15,18 @@ message CheckHash
     string 		  hash      = 3;
 }
 
-
+// 获取质押节点
 message SyncGetPledgeNodeReq
 {
 	SyncHeaderMsg syncHeaderMsg = 1;
 }
-
+// 返回质押节点的id
 message SyncGetPledgeNodeAck
 {
 	repeated string ids = 1;
 }
 
-
+// 验证质押节点
 message SyncVerifyPledgeNodeReq
 {
 	SyncHeaderMsg syncHeaderMsg = 1;
@@ -38,12 +38,12 @@ message SyncVerifyPledgeNodeAck
 	repeated string ids         = 1;
 }
 
-
+// 获取节点bestchain信息
 message SyncGetnodeInfoReq
 {
     SyncHeaderMsg syncHeaderMsg = 1;						
 }
-
+// 返回节点bestchain信息
 message SyncGetnodeInfoAck
 {
     SyncHeaderMsg syncHeaderMsg = 1;
@@ -51,13 +51,13 @@ message SyncGetnodeInfoAck
     bytes 		  hash			= 3;
 }
 
-
+// 验证节点是否合法
 message VerifyReliableNodeReq
 {
 	SyncHeaderMsg syncHeaderMsg = 1;
     int64 		  height		= 2;
 }
-
+// 验证节点是否合法的返回
 message VerifyReliableNodeAck
 {
 	SyncHeaderMsg syncHeaderMsg = 1;
@@ -66,24 +66,24 @@ message VerifyReliableNodeAck
     bytes 		  hash			= 4;
 }
 
-
+// 向可靠节点发起同步请求
 message SyncBlockInfoReq
 {
-    SyncHeaderMsg syncHeaderMsg      = 1;						
-    uint64 		  height		     = 2;						
+    SyncHeaderMsg syncHeaderMsg      = 1;						// 通用同步头
+    uint64 		  height		     = 2;						// 本节点bestchain的height
     repeated CheckHash   checkhash   = 3;  
 	uint64         max_num         = 4;
 }
-
+// 接收到的块数据，用于同步加块
 message SyncBlockInfoAck
 {
-    SyncHeaderMsg syncHeaderMsg              = 1;						
+    SyncHeaderMsg syncHeaderMsg              = 1;						// 通用同步头
     repeated CheckHash   invalid_checkhash   = 2; 
-    bytes 		  blocks		             = 3;						
-	bytes         poolblocks                 = 4;                        
+    bytes 		  blocks		             = 3;						// 同步的块信息
+	bytes         poolblocks                 = 4;                        // blockpool中的块
 }
 
-
+// 向可靠节点同步漏块
 message SyncLoseBlockReq
 {
 	SyncHeaderMsg syncHeaderMsg = 1;
@@ -97,52 +97,55 @@ message SyncLoseBlockAck
     bytes 		  blocks   = 2;	
 }
 
-
+/*************************************交易相关协议*************************************/
 message SignNodeMsg
 {
-	bytes  signMsg              = 1;                 
-	bytes  signPubKey            = 2;                
-	string gasFee               = 3;                 
-	double onlineTime           = 4;                 
+	bytes  signMsg              = 1;                 // 签名节点签名信息
+	bytes  signPubKey            = 2;                // 签名者公钥
+	string gasFee               = 3;                 // 签名所需燃油费
+	double onlineTime           = 4;                 // 矿机在线时长
 }
 
-
+// PC端交易信息体
 message TxMsg
 {
-	string       version        = 1;                        
-	bytes		 id 			= 2;						
-	bytes 		 Tx				= 3;						
-	string       txEncodeHash   = 4;                        
-	repeated SignNodeMsg signNodeMsg = 5;                   
+	string       version        = 1;                        // 版本					
+	bytes		 id 			= 2;						// id
+	bytes 		 Tx				= 3;						// 交易信息
+	string       txEncodeHash   = 4;                        // 交易信息体base64之后sha256的hash值
+	repeated SignNodeMsg signNodeMsg = 5;                   // 签名账户燃油费矿机在线时间签名节点签名信息
     uint64 		  top           = 6;
 }
 
 message BuileBlockBroadcastMsg
 {
-	string       version        = 1;                        
-	bytes 		blockRaw		= 2;						
+	string       version        = 1;                        // 版本					
+	bytes 		blockRaw		= 2;						// 块信息
 }
 
 
+/*************************************测试接口协议*************************************/
 
-
-
+// 踢出节点请求
 message TestSendExitNodeReq
 {
-	string version              = 1;                        
+	string version              = 1;                        // 版本
 }
 
 message TestGetNodeHeightHashBase58AddrReq
 {
-	string version              = 1;                        
-	string id                   = 2;                        
+	string version              = 1;                        // 版本
+	string id                   = 2;                        // 请求节点ID
 }
 
 message TestGetNodeHeightHashBase58AddrAck
 {
-	string version              = 1;                        
-	string id                   = 2;                        
-	uint64 height               = 3;                        
-	string hash                 = 4;                        
-	string base58addr           = 5;                        
+	string version              = 1;                        // 版本
+	string id                   = 2;                        // 请求节点ID
+	uint64 height               = 3;                        // 本地块高度
+	string hash                 = 4;                        // 本地最高块hash
+	string base58addr           = 5;                        // 本地默认账户的base58地址
 }
+
+
+

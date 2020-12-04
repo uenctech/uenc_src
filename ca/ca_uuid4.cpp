@@ -20,7 +20,7 @@ static uint64_t seed[2];
 
 
 static uint64_t xorshift128plus(uint64_t *s) {
-  
+  /* http://xorshift.di.unimi.it/xorshift128plus.c */
   uint64_t s1 = s[0];
   const uint64_t s0 = s[1];
   s[0] = s0;
@@ -70,10 +70,10 @@ void uuid4_generate(char *dst) {
   union { unsigned char b[16]; uint64_t word[2]; } s;
   const char *p;
   int i, n;
-  
+  /* get random */
   s.word[0] = xorshift128plus(seed);
   s.word[1] = xorshift128plus(seed);
-  
+  /* build string */
   p = ptemplate;
   i = 0;
   while (*p) {

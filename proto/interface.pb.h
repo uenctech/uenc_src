@@ -48,7 +48,7 @@ struct TableStruct_interface_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[73]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[81]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -100,9 +100,21 @@ extern CreateTxMsgAckDefaultTypeInternal _CreateTxMsgAck_default_instance_;
 class CreateTxMsgReq;
 class CreateTxMsgReqDefaultTypeInternal;
 extern CreateTxMsgReqDefaultTypeInternal _CreateTxMsgReq_default_instance_;
+class DataTransReq;
+class DataTransReqDefaultTypeInternal;
+extern DataTransReqDefaultTypeInternal _DataTransReq_default_instance_;
 class DevPrivateKeyInfo;
 class DevPrivateKeyInfoDefaultTypeInternal;
 extern DevPrivateKeyInfoDefaultTypeInternal _DevPrivateKeyInfo_default_instance_;
+class Device2AllDevReq;
+class Device2AllDevReqDefaultTypeInternal;
+extern Device2AllDevReqDefaultTypeInternal _Device2AllDevReq_default_instance_;
+class Device2PubNetRandomReq;
+class Device2PubNetRandomReqDefaultTypeInternal;
+extern Device2PubNetRandomReqDefaultTypeInternal _Device2PubNetRandomReq_default_instance_;
+class Feedback2DeviceAck;
+class Feedback2DeviceAckDefaultTypeInternal;
+extern Feedback2DeviceAckDefaultTypeInternal _Feedback2DeviceAck_default_instance_;
 class GetAddrInfoAck;
 class GetAddrInfoAckDefaultTypeInternal;
 extern GetAddrInfoAckDefaultTypeInternal _GetAddrInfoAck_default_instance_;
@@ -142,6 +154,12 @@ extern GetClientInfoAckDefaultTypeInternal _GetClientInfoAck_default_instance_;
 class GetClientInfoReq;
 class GetClientInfoReqDefaultTypeInternal;
 extern GetClientInfoReqDefaultTypeInternal _GetClientInfoReq_default_instance_;
+class GetDevInfoListAcK;
+class GetDevInfoListAcKDefaultTypeInternal;
+extern GetDevInfoListAcKDefaultTypeInternal _GetDevInfoListAcK_default_instance_;
+class GetDevInfoListReq;
+class GetDevInfoListReqDefaultTypeInternal;
+extern GetDevInfoListReqDefaultTypeInternal _GetDevInfoListReq_default_instance_;
 class GetDevPasswordAck;
 class GetDevPasswordAckDefaultTypeInternal;
 extern GetDevPasswordAckDefaultTypeInternal _GetDevPasswordAck_default_instance_;
@@ -211,6 +229,9 @@ extern PledgeItemDefaultTypeInternal _PledgeItem_default_instance_;
 class PledgeTxMsgReq;
 class PledgeTxMsgReqDefaultTypeInternal;
 extern PledgeTxMsgReqDefaultTypeInternal _PledgeTxMsgReq_default_instance_;
+class RandomPubNet2DeviceAck;
+class RandomPubNet2DeviceAckDefaultTypeInternal;
+extern RandomPubNet2DeviceAckDefaultTypeInternal _RandomPubNet2DeviceAck_default_instance_;
 class RedeemTxMsgReq;
 class RedeemTxMsgReqDefaultTypeInternal;
 extern RedeemTxMsgReqDefaultTypeInternal _RedeemTxMsgReq_default_instance_;
@@ -250,6 +271,9 @@ extern TestConnectReqDefaultTypeInternal _TestConnectReq_default_instance_;
 class ToAddr;
 class ToAddrDefaultTypeInternal;
 extern ToAddrDefaultTypeInternal _ToAddr_default_instance_;
+class TransData;
+class TransDataDefaultTypeInternal;
+extern TransDataDefaultTypeInternal _TransData_default_instance_;
 class TxInfo;
 class TxInfoDefaultTypeInternal;
 extern TxInfoDefaultTypeInternal _TxInfo_default_instance_;
@@ -290,7 +314,11 @@ template<> ::CreateRedeemTxMsgAck* Arena::CreateMaybeMessage<::CreateRedeemTxMsg
 template<> ::CreateRedeemTxMsgReq* Arena::CreateMaybeMessage<::CreateRedeemTxMsgReq>(Arena*);
 template<> ::CreateTxMsgAck* Arena::CreateMaybeMessage<::CreateTxMsgAck>(Arena*);
 template<> ::CreateTxMsgReq* Arena::CreateMaybeMessage<::CreateTxMsgReq>(Arena*);
+template<> ::DataTransReq* Arena::CreateMaybeMessage<::DataTransReq>(Arena*);
 template<> ::DevPrivateKeyInfo* Arena::CreateMaybeMessage<::DevPrivateKeyInfo>(Arena*);
+template<> ::Device2AllDevReq* Arena::CreateMaybeMessage<::Device2AllDevReq>(Arena*);
+template<> ::Device2PubNetRandomReq* Arena::CreateMaybeMessage<::Device2PubNetRandomReq>(Arena*);
+template<> ::Feedback2DeviceAck* Arena::CreateMaybeMessage<::Feedback2DeviceAck>(Arena*);
 template<> ::GetAddrInfoAck* Arena::CreateMaybeMessage<::GetAddrInfoAck>(Arena*);
 template<> ::GetAddrInfoReq* Arena::CreateMaybeMessage<::GetAddrInfoReq>(Arena*);
 template<> ::GetAmountAck* Arena::CreateMaybeMessage<::GetAmountAck>(Arena*);
@@ -304,6 +332,8 @@ template<> ::GetBlockInfoReq* Arena::CreateMaybeMessage<::GetBlockInfoReq>(Arena
 template<> ::GetBlockTopReq* Arena::CreateMaybeMessage<::GetBlockTopReq>(Arena*);
 template<> ::GetClientInfoAck* Arena::CreateMaybeMessage<::GetClientInfoAck>(Arena*);
 template<> ::GetClientInfoReq* Arena::CreateMaybeMessage<::GetClientInfoReq>(Arena*);
+template<> ::GetDevInfoListAcK* Arena::CreateMaybeMessage<::GetDevInfoListAcK>(Arena*);
+template<> ::GetDevInfoListReq* Arena::CreateMaybeMessage<::GetDevInfoListReq>(Arena*);
 template<> ::GetDevPasswordAck* Arena::CreateMaybeMessage<::GetDevPasswordAck>(Arena*);
 template<> ::GetDevPasswordReq* Arena::CreateMaybeMessage<::GetDevPasswordReq>(Arena*);
 template<> ::GetDevPrivateKeyAck* Arena::CreateMaybeMessage<::GetDevPrivateKeyAck>(Arena*);
@@ -327,6 +357,7 @@ template<> ::NodeInfos* Arena::CreateMaybeMessage<::NodeInfos>(Arena*);
 template<> ::NodeList* Arena::CreateMaybeMessage<::NodeList>(Arena*);
 template<> ::PledgeItem* Arena::CreateMaybeMessage<::PledgeItem>(Arena*);
 template<> ::PledgeTxMsgReq* Arena::CreateMaybeMessage<::PledgeTxMsgReq>(Arena*);
+template<> ::RandomPubNet2DeviceAck* Arena::CreateMaybeMessage<::RandomPubNet2DeviceAck>(Arena*);
 template<> ::RedeemTxMsgReq* Arena::CreateMaybeMessage<::RedeemTxMsgReq>(Arena*);
 template<> ::ServiceFee* Arena::CreateMaybeMessage<::ServiceFee>(Arena*);
 template<> ::SetDevPasswordAck* Arena::CreateMaybeMessage<::SetDevPasswordAck>(Arena*);
@@ -340,6 +371,7 @@ template<> ::TApiGetBlockTopAck* Arena::CreateMaybeMessage<::TApiGetBlockTopAck>
 template<> ::TestConnectAck* Arena::CreateMaybeMessage<::TestConnectAck>(Arena*);
 template<> ::TestConnectReq* Arena::CreateMaybeMessage<::TestConnectReq>(Arena*);
 template<> ::ToAddr* Arena::CreateMaybeMessage<::ToAddr>(Arena*);
+template<> ::TransData* Arena::CreateMaybeMessage<::TransData>(Arena*);
 template<> ::TxInfo* Arena::CreateMaybeMessage<::TxInfo>(Arena*);
 template<> ::TxInfoItem* Arena::CreateMaybeMessage<::TxInfoItem>(Arena*);
 template<> ::TxMsgAck* Arena::CreateMaybeMessage<::TxMsgAck>(Arena*);
@@ -4254,6 +4286,7 @@ class GetServiceInfoReq :
     kPasswordFieldNumber = 2,
     kPublicNetIpFieldNumber = 3,
     kIsShowFieldNumber = 4,
+    kSequenceNumberFieldNumber = 5,
   };
   // string version = 1;
   void clear_version();
@@ -4312,6 +4345,15 @@ class GetServiceInfoReq :
   void _internal_set_is_show(bool value);
   public:
 
+  // uint32 sequence_number = 5;
+  void clear_sequence_number();
+  ::PROTOBUF_NAMESPACE_ID::uint32 sequence_number() const;
+  void set_sequence_number(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_sequence_number() const;
+  void _internal_set_sequence_number(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GetServiceInfoReq)
  private:
   class _Internal;
@@ -4321,6 +4363,7 @@ class GetServiceInfoReq :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr public_net_ip_;
   bool is_show_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 sequence_number_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -4660,6 +4703,8 @@ class GetServiceInfoAck :
     kDeviceVersionFieldNumber = 5,
     kCodeFieldNumber = 2,
     kIsSyncFieldNumber = 7,
+    kHeightFieldNumber = 8,
+    kSequenceFieldNumber = 9,
   };
   // repeated .ServiceFee service_fee_info = 6;
   int service_fee_info_size() const;
@@ -4761,6 +4806,24 @@ class GetServiceInfoAck :
   void _internal_set_is_sync(::GetServiceInfoAck_SyncStatus value);
   public:
 
+  // sint32 height = 8;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::int32 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // uint32 sequence = 9;
+  void clear_sequence();
+  ::PROTOBUF_NAMESPACE_ID::uint32 sequence() const;
+  void set_sequence(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_sequence() const;
+  void _internal_set_sequence(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GetServiceInfoAck)
  private:
   class _Internal;
@@ -4773,6 +4836,8 @@ class GetServiceInfoAck :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr device_version_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
   int is_sync_;
+  ::PROTOBUF_NAMESPACE_ID::int32 height_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 sequence_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -6514,6 +6579,466 @@ class GetNodeServiceFeeAck :
 };
 // -------------------------------------------------------------------
 
+class GetDevInfoListReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetDevInfoListReq) */ {
+ public:
+  GetDevInfoListReq();
+  virtual ~GetDevInfoListReq();
+
+  GetDevInfoListReq(const GetDevInfoListReq& from);
+  GetDevInfoListReq(GetDevInfoListReq&& from) noexcept
+    : GetDevInfoListReq() {
+    *this = ::std::move(from);
+  }
+
+  inline GetDevInfoListReq& operator=(const GetDevInfoListReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetDevInfoListReq& operator=(GetDevInfoListReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetDevInfoListReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetDevInfoListReq* internal_default_instance() {
+    return reinterpret_cast<const GetDevInfoListReq*>(
+               &_GetDevInfoListReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(GetDevInfoListReq& a, GetDevInfoListReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetDevInfoListReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetDevInfoListReq* New() const final {
+    return CreateMaybeMessage<GetDevInfoListReq>(nullptr);
+  }
+
+  GetDevInfoListReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetDevInfoListReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetDevInfoListReq& from);
+  void MergeFrom(const GetDevInfoListReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetDevInfoListReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetDevInfoListReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kPasswordFieldNumber = 2,
+    kDevaddrFieldNumber = 3,
+    kPublicNetIpFieldNumber = 4,
+    kIsShowFieldNumber = 5,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string password = 2;
+  void clear_password();
+  const std::string& password() const;
+  void set_password(const std::string& value);
+  void set_password(std::string&& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  std::string* mutable_password();
+  std::string* release_password();
+  void set_allocated_password(std::string* password);
+  private:
+  const std::string& _internal_password() const;
+  void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
+  public:
+
+  // string devaddr = 3;
+  void clear_devaddr();
+  const std::string& devaddr() const;
+  void set_devaddr(const std::string& value);
+  void set_devaddr(std::string&& value);
+  void set_devaddr(const char* value);
+  void set_devaddr(const char* value, size_t size);
+  std::string* mutable_devaddr();
+  std::string* release_devaddr();
+  void set_allocated_devaddr(std::string* devaddr);
+  private:
+  const std::string& _internal_devaddr() const;
+  void _internal_set_devaddr(const std::string& value);
+  std::string* _internal_mutable_devaddr();
+  public:
+
+  // string public_net_ip = 4;
+  void clear_public_net_ip();
+  const std::string& public_net_ip() const;
+  void set_public_net_ip(const std::string& value);
+  void set_public_net_ip(std::string&& value);
+  void set_public_net_ip(const char* value);
+  void set_public_net_ip(const char* value, size_t size);
+  std::string* mutable_public_net_ip();
+  std::string* release_public_net_ip();
+  void set_allocated_public_net_ip(std::string* public_net_ip);
+  private:
+  const std::string& _internal_public_net_ip() const;
+  void _internal_set_public_net_ip(const std::string& value);
+  std::string* _internal_mutable_public_net_ip();
+  public:
+
+  // bool is_show = 5;
+  void clear_is_show();
+  bool is_show() const;
+  void set_is_show(bool value);
+  private:
+  bool _internal_is_show() const;
+  void _internal_set_is_show(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetDevInfoListReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr devaddr_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr public_net_ip_;
+  bool is_show_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetDevInfoListAcK :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetDevInfoListAcK) */ {
+ public:
+  GetDevInfoListAcK();
+  virtual ~GetDevInfoListAcK();
+
+  GetDevInfoListAcK(const GetDevInfoListAcK& from);
+  GetDevInfoListAcK(GetDevInfoListAcK&& from) noexcept
+    : GetDevInfoListAcK() {
+    *this = ::std::move(from);
+  }
+
+  inline GetDevInfoListAcK& operator=(const GetDevInfoListAcK& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetDevInfoListAcK& operator=(GetDevInfoListAcK&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetDevInfoListAcK& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetDevInfoListAcK* internal_default_instance() {
+    return reinterpret_cast<const GetDevInfoListAcK*>(
+               &_GetDevInfoListAcK_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    34;
+
+  friend void swap(GetDevInfoListAcK& a, GetDevInfoListAcK& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetDevInfoListAcK* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetDevInfoListAcK* New() const final {
+    return CreateMaybeMessage<GetDevInfoListAcK>(nullptr);
+  }
+
+  GetDevInfoListAcK* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetDevInfoListAcK>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetDevInfoListAcK& from);
+  void MergeFrom(const GetDevInfoListAcK& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetDevInfoListAcK* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetDevInfoListAcK";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kServiceFeeInfoFieldNumber = 9,
+    kVersionFieldNumber = 1,
+    kDescriptionFieldNumber = 3,
+    kMacHashFieldNumber = 4,
+    kDeviceaddrFieldNumber = 5,
+    kDeviceVersionFieldNumber = 6,
+    kCodeFieldNumber = 2,
+    kDeviceHeightFieldNumber = 7,
+    kPublicNetHeightFieldNumber = 8,
+  };
+  // repeated .ServiceFee service_fee_info = 9;
+  int service_fee_info_size() const;
+  private:
+  int _internal_service_fee_info_size() const;
+  public:
+  void clear_service_fee_info();
+  ::ServiceFee* mutable_service_fee_info(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee >*
+      mutable_service_fee_info();
+  private:
+  const ::ServiceFee& _internal_service_fee_info(int index) const;
+  ::ServiceFee* _internal_add_service_fee_info();
+  public:
+  const ::ServiceFee& service_fee_info(int index) const;
+  ::ServiceFee* add_service_fee_info();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee >&
+      service_fee_info() const;
+
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string description = 3;
+  void clear_description();
+  const std::string& description() const;
+  void set_description(const std::string& value);
+  void set_description(std::string&& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  std::string* mutable_description();
+  std::string* release_description();
+  void set_allocated_description(std::string* description);
+  private:
+  const std::string& _internal_description() const;
+  void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
+  public:
+
+  // string mac_hash = 4;
+  void clear_mac_hash();
+  const std::string& mac_hash() const;
+  void set_mac_hash(const std::string& value);
+  void set_mac_hash(std::string&& value);
+  void set_mac_hash(const char* value);
+  void set_mac_hash(const char* value, size_t size);
+  std::string* mutable_mac_hash();
+  std::string* release_mac_hash();
+  void set_allocated_mac_hash(std::string* mac_hash);
+  private:
+  const std::string& _internal_mac_hash() const;
+  void _internal_set_mac_hash(const std::string& value);
+  std::string* _internal_mutable_mac_hash();
+  public:
+
+  // string deviceaddr = 5;
+  void clear_deviceaddr();
+  const std::string& deviceaddr() const;
+  void set_deviceaddr(const std::string& value);
+  void set_deviceaddr(std::string&& value);
+  void set_deviceaddr(const char* value);
+  void set_deviceaddr(const char* value, size_t size);
+  std::string* mutable_deviceaddr();
+  std::string* release_deviceaddr();
+  void set_allocated_deviceaddr(std::string* deviceaddr);
+  private:
+  const std::string& _internal_deviceaddr() const;
+  void _internal_set_deviceaddr(const std::string& value);
+  std::string* _internal_mutable_deviceaddr();
+  public:
+
+  // string device_version = 6;
+  void clear_device_version();
+  const std::string& device_version() const;
+  void set_device_version(const std::string& value);
+  void set_device_version(std::string&& value);
+  void set_device_version(const char* value);
+  void set_device_version(const char* value, size_t size);
+  std::string* mutable_device_version();
+  std::string* release_device_version();
+  void set_allocated_device_version(std::string* device_version);
+  private:
+  const std::string& _internal_device_version() const;
+  void _internal_set_device_version(const std::string& value);
+  std::string* _internal_mutable_device_version();
+  public:
+
+  // sint32 code = 2;
+  void clear_code();
+  ::PROTOBUF_NAMESPACE_ID::int32 code() const;
+  void set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_code() const;
+  void _internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // sint32 device_height = 7;
+  void clear_device_height();
+  ::PROTOBUF_NAMESPACE_ID::int32 device_height() const;
+  void set_device_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_device_height() const;
+  void _internal_set_device_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // sint32 public_net_height = 8;
+  void clear_public_net_height();
+  ::PROTOBUF_NAMESPACE_ID::int32 public_net_height() const;
+  void set_public_net_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_public_net_height() const;
+  void _internal_set_public_net_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetDevInfoListAcK)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee > service_fee_info_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr mac_hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceaddr_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr device_version_;
+  ::PROTOBUF_NAMESPACE_ID::int32 code_;
+  ::PROTOBUF_NAMESPACE_ID::int32 device_height_;
+  ::PROTOBUF_NAMESPACE_ID::int32 public_net_height_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
 class GetDevPrivateKeyReq :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetDevPrivateKeyReq) */ {
  public:
@@ -6556,7 +7081,7 @@ class GetDevPrivateKeyReq :
                &_GetDevPrivateKeyReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    35;
 
   friend void swap(GetDevPrivateKeyReq& a, GetDevPrivateKeyReq& b) {
     a.Swap(&b);
@@ -6727,7 +7252,7 @@ class DevPrivateKeyInfo :
                &_DevPrivateKeyInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    36;
 
   friend void swap(DevPrivateKeyInfo& a, DevPrivateKeyInfo& b) {
     a.Swap(&b);
@@ -6898,7 +7423,7 @@ class GetDevPrivateKeyAck :
                &_GetDevPrivateKeyAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    37;
 
   friend void swap(GetDevPrivateKeyAck& a, GetDevPrivateKeyAck& b) {
     a.Swap(&b);
@@ -7082,7 +7607,7 @@ class CreateTxMsgReq :
                &_CreateTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    38;
 
   friend void swap(CreateTxMsgReq& a, CreateTxMsgReq& b) {
     a.Swap(&b);
@@ -7307,7 +7832,7 @@ class CreateTxMsgAck :
                &_CreateTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    39;
 
   friend void swap(CreateTxMsgAck& a, CreateTxMsgAck& b) {
     a.Swap(&b);
@@ -7507,7 +8032,7 @@ class TxMsgReq :
                &_TxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    40;
 
   friend void swap(TxMsgReq& a, TxMsgReq& b) {
     a.Swap(&b);
@@ -7714,7 +8239,7 @@ class TxMsgAck :
                &_TxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    41;
 
   friend void swap(TxMsgAck& a, TxMsgAck& b) {
     a.Swap(&b);
@@ -7896,7 +8421,7 @@ class ToAddr :
                &_ToAddr_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    42;
 
   friend void swap(ToAddr& a, ToAddr& b) {
     a.Swap(&b);
@@ -8049,7 +8574,7 @@ class CreateMultiTxMsgReq :
                &_CreateMultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    43;
 
   friend void swap(CreateMultiTxMsgReq& a, CreateMultiTxMsgReq& b) {
     a.Swap(&b);
@@ -8266,7 +8791,7 @@ class CreateMultiTxMsgAck :
                &_CreateMultiTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    44;
 
   friend void swap(CreateMultiTxMsgAck& a, CreateMultiTxMsgAck& b) {
     a.Swap(&b);
@@ -8466,7 +8991,7 @@ class SignInfo :
                &_SignInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    45;
 
   friend void swap(SignInfo& a, SignInfo& b) {
     a.Swap(&b);
@@ -8619,7 +9144,7 @@ class MultiTxMsgReq :
                &_MultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    46;
 
   friend void swap(MultiTxMsgReq& a, MultiTxMsgReq& b) {
     a.Swap(&b);
@@ -8810,7 +9335,7 @@ class VerifyDevicePasswordReq :
                &_VerifyDevicePasswordReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    47;
 
   friend void swap(VerifyDevicePasswordReq& a, VerifyDevicePasswordReq& b) {
     a.Swap(&b);
@@ -8963,7 +9488,7 @@ class VerifyDevicePasswordAck :
                &_VerifyDevicePasswordAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    48;
 
   friend void swap(VerifyDevicePasswordAck& a, VerifyDevicePasswordAck& b) {
     a.Swap(&b);
@@ -9127,7 +9652,7 @@ class CreateDeviceTxMsgReq :
                &_CreateDeviceTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    49;
 
   friend void swap(CreateDeviceTxMsgReq& a, CreateDeviceTxMsgReq& b) {
     a.Swap(&b);
@@ -9370,7 +9895,7 @@ class CreateDeviceMultiTxMsgReq :
                &_CreateDeviceMultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    50;
 
   friend void swap(CreateDeviceMultiTxMsgReq& a, CreateDeviceMultiTxMsgReq& b) {
     a.Swap(&b);
@@ -9605,7 +10130,7 @@ class CreatePledgeTxMsgReq :
                &_CreatePledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    51;
 
   friend void swap(CreatePledgeTxMsgReq& a, CreatePledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -9812,7 +10337,7 @@ class CreatePledgeTxMsgAck :
                &_CreatePledgeTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    50;
+    52;
 
   friend void swap(CreatePledgeTxMsgAck& a, CreatePledgeTxMsgAck& b) {
     a.Swap(&b);
@@ -10012,7 +10537,7 @@ class PledgeTxMsgReq :
                &_PledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    51;
+    53;
 
   friend void swap(PledgeTxMsgReq& a, PledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -10219,7 +10744,7 @@ class CreateRedeemTxMsgReq :
                &_CreateRedeemTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    52;
+    54;
 
   friend void swap(CreateRedeemTxMsgReq& a, CreateRedeemTxMsgReq& b) {
     a.Swap(&b);
@@ -10444,7 +10969,7 @@ class CreateRedeemTxMsgAck :
                &_CreateRedeemTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    53;
+    55;
 
   friend void swap(CreateRedeemTxMsgAck& a, CreateRedeemTxMsgAck& b) {
     a.Swap(&b);
@@ -10644,7 +11169,7 @@ class RedeemTxMsgReq :
                &_RedeemTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    54;
+    56;
 
   friend void swap(RedeemTxMsgReq& a, RedeemTxMsgReq& b) {
     a.Swap(&b);
@@ -10851,7 +11376,7 @@ class CreateDevicePledgeTxMsgReq :
                &_CreateDevicePledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    55;
+    57;
 
   friend void swap(CreateDevicePledgeTxMsgReq& a, CreateDevicePledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -11076,7 +11601,7 @@ class CreateDeviceRedeemTxReq :
                &_CreateDeviceRedeemTxReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    56;
+    58;
 
   friend void swap(CreateDeviceRedeemTxReq& a, CreateDeviceRedeemTxReq& b) {
     a.Swap(&b);
@@ -11301,7 +11826,7 @@ class GetPledgeListReq :
                &_GetPledgeListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    57;
+    59;
 
   friend void swap(GetPledgeListReq& a, GetPledgeListReq& b) {
     a.Swap(&b);
@@ -11476,7 +12001,7 @@ class PledgeItem :
                &_PledgeItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    58;
+    60;
 
   friend void swap(PledgeItem& a, PledgeItem& b) {
     a.Swap(&b);
@@ -11723,7 +12248,7 @@ class GetPledgeListAck :
                &_GetPledgeListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    59;
+    61;
 
   friend void swap(GetPledgeListAck& a, GetPledgeListAck& b) {
     a.Swap(&b);
@@ -11918,7 +12443,7 @@ class GetTxInfoListReq :
                &_GetTxInfoListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    60;
+    62;
 
   friend void swap(GetTxInfoListReq& a, GetTxInfoListReq& b) {
     a.Swap(&b);
@@ -12093,7 +12618,7 @@ class TxInfoItem :
                &_TxInfoItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    61;
+    63;
 
   friend void swap(TxInfoItem& a, TxInfoItem& b) {
     a.Swap(&b);
@@ -12268,7 +12793,7 @@ class GetTxInfoListAck :
                &_GetTxInfoListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    62;
+    64;
 
   friend void swap(GetTxInfoListAck& a, GetTxInfoListAck& b) {
     a.Swap(&b);
@@ -12474,7 +12999,7 @@ class GetTxInfoDetailReq :
                &_GetTxInfoDetailReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    63;
+    65;
 
   friend void swap(GetTxInfoDetailReq& a, GetTxInfoDetailReq& b) {
     a.Swap(&b);
@@ -12645,7 +13170,7 @@ class GetTxInfoDetailAck :
                &_GetTxInfoDetailAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    64;
+    66;
 
   friend void swap(GetTxInfoDetailAck& a, GetTxInfoDetailAck& b) {
     a.Swap(&b);
@@ -13003,7 +13528,7 @@ class GetBlockInfoListReq :
                &_GetBlockInfoListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    65;
+    67;
 
   friend void swap(GetBlockInfoListReq& a, GetBlockInfoListReq& b) {
     a.Swap(&b);
@@ -13160,7 +13685,7 @@ class BlockInfoItem :
                &_BlockInfoItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    66;
+    68;
 
   friend void swap(BlockInfoItem& a, BlockInfoItem& b) {
     a.Swap(&b);
@@ -13405,7 +13930,7 @@ class GetBlockInfoListAck :
                &_GetBlockInfoListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    67;
+    69;
 
   friend void swap(GetBlockInfoListAck& a, GetBlockInfoListAck& b) {
     a.Swap(&b);
@@ -13611,7 +14136,7 @@ class GetBlockInfoDetailReq :
                &_GetBlockInfoDetailReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    68;
+    70;
 
   friend void swap(GetBlockInfoDetailReq& a, GetBlockInfoDetailReq& b) {
     a.Swap(&b);
@@ -13764,7 +14289,7 @@ class BlockInfoOutAddr :
                &_BlockInfoOutAddr_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    69;
+    71;
 
   friend void swap(BlockInfoOutAddr& a, BlockInfoOutAddr& b) {
     a.Swap(&b);
@@ -13917,7 +14442,7 @@ class GetBlockInfoDetailAck :
                &_GetBlockInfoDetailAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    70;
+    72;
 
   friend void swap(GetBlockInfoDetailAck& a, GetBlockInfoDetailAck& b) {
     a.Swap(&b);
@@ -14221,7 +14746,7 @@ class TestConnectReq :
                &_TestConnectReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    71;
+    73;
 
   friend void swap(TestConnectReq& a, TestConnectReq& b) {
     a.Swap(&b);
@@ -14356,7 +14881,7 @@ class TestConnectAck :
                &_TestConnectAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    72;
+    74;
 
   friend void swap(TestConnectAck& a, TestConnectAck& b) {
     a.Swap(&b);
@@ -14455,6 +14980,996 @@ class TestConnectAck :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Device2PubNetRandomReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Device2PubNetRandomReq) */ {
+ public:
+  Device2PubNetRandomReq();
+  virtual ~Device2PubNetRandomReq();
+
+  Device2PubNetRandomReq(const Device2PubNetRandomReq& from);
+  Device2PubNetRandomReq(Device2PubNetRandomReq&& from) noexcept
+    : Device2PubNetRandomReq() {
+    *this = ::std::move(from);
+  }
+
+  inline Device2PubNetRandomReq& operator=(const Device2PubNetRandomReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Device2PubNetRandomReq& operator=(Device2PubNetRandomReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Device2PubNetRandomReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Device2PubNetRandomReq* internal_default_instance() {
+    return reinterpret_cast<const Device2PubNetRandomReq*>(
+               &_Device2PubNetRandomReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    75;
+
+  friend void swap(Device2PubNetRandomReq& a, Device2PubNetRandomReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Device2PubNetRandomReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Device2PubNetRandomReq* New() const final {
+    return CreateMaybeMessage<Device2PubNetRandomReq>(nullptr);
+  }
+
+  Device2PubNetRandomReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Device2PubNetRandomReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Device2PubNetRandomReq& from);
+  void MergeFrom(const Device2PubNetRandomReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Device2PubNetRandomReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Device2PubNetRandomReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Device2PubNetRandomReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class RandomPubNet2DeviceAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:RandomPubNet2DeviceAck) */ {
+ public:
+  RandomPubNet2DeviceAck();
+  virtual ~RandomPubNet2DeviceAck();
+
+  RandomPubNet2DeviceAck(const RandomPubNet2DeviceAck& from);
+  RandomPubNet2DeviceAck(RandomPubNet2DeviceAck&& from) noexcept
+    : RandomPubNet2DeviceAck() {
+    *this = ::std::move(from);
+  }
+
+  inline RandomPubNet2DeviceAck& operator=(const RandomPubNet2DeviceAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RandomPubNet2DeviceAck& operator=(RandomPubNet2DeviceAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const RandomPubNet2DeviceAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const RandomPubNet2DeviceAck* internal_default_instance() {
+    return reinterpret_cast<const RandomPubNet2DeviceAck*>(
+               &_RandomPubNet2DeviceAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    76;
+
+  friend void swap(RandomPubNet2DeviceAck& a, RandomPubNet2DeviceAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RandomPubNet2DeviceAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RandomPubNet2DeviceAck* New() const final {
+    return CreateMaybeMessage<RandomPubNet2DeviceAck>(nullptr);
+  }
+
+  RandomPubNet2DeviceAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<RandomPubNet2DeviceAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const RandomPubNet2DeviceAck& from);
+  void MergeFrom(const RandomPubNet2DeviceAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RandomPubNet2DeviceAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "RandomPubNet2DeviceAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kDescriptionFieldNumber = 2,
+    kIdFieldNumber = 3,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string description = 2;
+  void clear_description();
+  const std::string& description() const;
+  void set_description(const std::string& value);
+  void set_description(std::string&& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  std::string* mutable_description();
+  std::string* release_description();
+  void set_allocated_description(std::string* description);
+  private:
+  const std::string& _internal_description() const;
+  void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
+  public:
+
+  // string id = 3;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:RandomPubNet2DeviceAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Device2AllDevReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Device2AllDevReq) */ {
+ public:
+  Device2AllDevReq();
+  virtual ~Device2AllDevReq();
+
+  Device2AllDevReq(const Device2AllDevReq& from);
+  Device2AllDevReq(Device2AllDevReq&& from) noexcept
+    : Device2AllDevReq() {
+    *this = ::std::move(from);
+  }
+
+  inline Device2AllDevReq& operator=(const Device2AllDevReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Device2AllDevReq& operator=(Device2AllDevReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Device2AllDevReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Device2AllDevReq* internal_default_instance() {
+    return reinterpret_cast<const Device2AllDevReq*>(
+               &_Device2AllDevReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    77;
+
+  friend void swap(Device2AllDevReq& a, Device2AllDevReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Device2AllDevReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Device2AllDevReq* New() const final {
+    return CreateMaybeMessage<Device2AllDevReq>(nullptr);
+  }
+
+  Device2AllDevReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Device2AllDevReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Device2AllDevReq& from);
+  void MergeFrom(const Device2AllDevReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Device2AllDevReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Device2AllDevReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Device2AllDevReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Feedback2DeviceAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Feedback2DeviceAck) */ {
+ public:
+  Feedback2DeviceAck();
+  virtual ~Feedback2DeviceAck();
+
+  Feedback2DeviceAck(const Feedback2DeviceAck& from);
+  Feedback2DeviceAck(Feedback2DeviceAck&& from) noexcept
+    : Feedback2DeviceAck() {
+    *this = ::std::move(from);
+  }
+
+  inline Feedback2DeviceAck& operator=(const Feedback2DeviceAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Feedback2DeviceAck& operator=(Feedback2DeviceAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Feedback2DeviceAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Feedback2DeviceAck* internal_default_instance() {
+    return reinterpret_cast<const Feedback2DeviceAck*>(
+               &_Feedback2DeviceAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    78;
+
+  friend void swap(Feedback2DeviceAck& a, Feedback2DeviceAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Feedback2DeviceAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Feedback2DeviceAck* New() const final {
+    return CreateMaybeMessage<Feedback2DeviceAck>(nullptr);
+  }
+
+  Feedback2DeviceAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Feedback2DeviceAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Feedback2DeviceAck& from);
+  void MergeFrom(const Feedback2DeviceAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Feedback2DeviceAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Feedback2DeviceAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Feedback2DeviceAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class DataTransReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:DataTransReq) */ {
+ public:
+  DataTransReq();
+  virtual ~DataTransReq();
+
+  DataTransReq(const DataTransReq& from);
+  DataTransReq(DataTransReq&& from) noexcept
+    : DataTransReq() {
+    *this = ::std::move(from);
+  }
+
+  inline DataTransReq& operator=(const DataTransReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DataTransReq& operator=(DataTransReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const DataTransReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const DataTransReq* internal_default_instance() {
+    return reinterpret_cast<const DataTransReq*>(
+               &_DataTransReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    79;
+
+  friend void swap(DataTransReq& a, DataTransReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DataTransReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline DataTransReq* New() const final {
+    return CreateMaybeMessage<DataTransReq>(nullptr);
+  }
+
+  DataTransReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<DataTransReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const DataTransReq& from);
+  void MergeFrom(const DataTransReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DataTransReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "DataTransReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:DataTransReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TransData :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TransData) */ {
+ public:
+  TransData();
+  virtual ~TransData();
+
+  TransData(const TransData& from);
+  TransData(TransData&& from) noexcept
+    : TransData() {
+    *this = ::std::move(from);
+  }
+
+  inline TransData& operator=(const TransData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TransData& operator=(TransData&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TransData& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TransData* internal_default_instance() {
+    return reinterpret_cast<const TransData*>(
+               &_TransData_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    80;
+
+  friend void swap(TransData& a, TransData& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TransData* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TransData* New() const final {
+    return CreateMaybeMessage<TransData>(nullptr);
+  }
+
+  TransData* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TransData>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TransData& from);
+  void MergeFrom(const TransData& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TransData* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "TransData";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kDescriptionFieldNumber = 2,
+    kEncodedataFieldNumber = 3,
+    kOrigindataFieldNumber = 4,
+    kIdFieldNumber = 5,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string description = 2;
+  void clear_description();
+  const std::string& description() const;
+  void set_description(const std::string& value);
+  void set_description(std::string&& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  std::string* mutable_description();
+  std::string* release_description();
+  void set_allocated_description(std::string* description);
+  private:
+  const std::string& _internal_description() const;
+  void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
+  public:
+
+  // bytes encodedata = 3;
+  void clear_encodedata();
+  const std::string& encodedata() const;
+  void set_encodedata(const std::string& value);
+  void set_encodedata(std::string&& value);
+  void set_encodedata(const char* value);
+  void set_encodedata(const void* value, size_t size);
+  std::string* mutable_encodedata();
+  std::string* release_encodedata();
+  void set_allocated_encodedata(std::string* encodedata);
+  private:
+  const std::string& _internal_encodedata() const;
+  void _internal_set_encodedata(const std::string& value);
+  std::string* _internal_mutable_encodedata();
+  public:
+
+  // bytes origindata = 4;
+  void clear_origindata();
+  const std::string& origindata() const;
+  void set_origindata(const std::string& value);
+  void set_origindata(std::string&& value);
+  void set_origindata(const char* value);
+  void set_origindata(const void* value, size_t size);
+  std::string* mutable_origindata();
+  std::string* release_origindata();
+  void set_allocated_origindata(std::string* origindata);
+  private:
+  const std::string& _internal_origindata() const;
+  void _internal_set_origindata(const std::string& value);
+  std::string* _internal_mutable_origindata();
+  public:
+
+  // string id = 5;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // @@protoc_insertion_point(class_scope:TransData)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr encodedata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr origindata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -18656,6 +20171,26 @@ inline void GetServiceInfoReq::set_is_show(bool value) {
   // @@protoc_insertion_point(field_set:GetServiceInfoReq.is_show)
 }
 
+// uint32 sequence_number = 5;
+inline void GetServiceInfoReq::clear_sequence_number() {
+  sequence_number_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetServiceInfoReq::_internal_sequence_number() const {
+  return sequence_number_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetServiceInfoReq::sequence_number() const {
+  // @@protoc_insertion_point(field_get:GetServiceInfoReq.sequence_number)
+  return _internal_sequence_number();
+}
+inline void GetServiceInfoReq::_internal_set_sequence_number(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  sequence_number_ = value;
+}
+inline void GetServiceInfoReq::set_sequence_number(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_sequence_number(value);
+  // @@protoc_insertion_point(field_set:GetServiceInfoReq.sequence_number)
+}
+
 // -------------------------------------------------------------------
 
 // ServiceFee
@@ -19221,6 +20756,46 @@ inline void GetServiceInfoAck::_internal_set_is_sync(::GetServiceInfoAck_SyncSta
 inline void GetServiceInfoAck::set_is_sync(::GetServiceInfoAck_SyncStatus value) {
   _internal_set_is_sync(value);
   // @@protoc_insertion_point(field_set:GetServiceInfoAck.is_sync)
+}
+
+// sint32 height = 8;
+inline void GetServiceInfoAck::clear_height() {
+  height_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetServiceInfoAck::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetServiceInfoAck::height() const {
+  // @@protoc_insertion_point(field_get:GetServiceInfoAck.height)
+  return _internal_height();
+}
+inline void GetServiceInfoAck::_internal_set_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  height_ = value;
+}
+inline void GetServiceInfoAck::set_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:GetServiceInfoAck.height)
+}
+
+// uint32 sequence = 9;
+inline void GetServiceInfoAck::clear_sequence() {
+  sequence_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetServiceInfoAck::_internal_sequence() const {
+  return sequence_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetServiceInfoAck::sequence() const {
+  // @@protoc_insertion_point(field_get:GetServiceInfoAck.sequence)
+  return _internal_sequence();
+}
+inline void GetServiceInfoAck::_internal_set_sequence(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  sequence_ = value;
+}
+inline void GetServiceInfoAck::set_sequence(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_sequence(value);
+  // @@protoc_insertion_point(field_set:GetServiceInfoAck.sequence)
 }
 
 // -------------------------------------------------------------------
@@ -20919,6 +22494,673 @@ inline ::ServiceFee* GetNodeServiceFeeAck::add_service_fee_info() {
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee >&
 GetNodeServiceFeeAck::service_fee_info() const {
   // @@protoc_insertion_point(field_list:GetNodeServiceFeeAck.service_fee_info)
+  return service_fee_info_;
+}
+
+// -------------------------------------------------------------------
+
+// GetDevInfoListReq
+
+// string version = 1;
+inline void GetDevInfoListReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListReq::version() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListReq.version)
+  return _internal_version();
+}
+inline void GetDevInfoListReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListReq.version)
+}
+inline std::string* GetDevInfoListReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& GetDevInfoListReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void GetDevInfoListReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListReq.version)
+}
+inline void GetDevInfoListReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListReq.version)
+}
+inline void GetDevInfoListReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListReq.version)
+}
+inline std::string* GetDevInfoListReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListReq::release_version() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListReq.version)
+}
+
+// string password = 2;
+inline void GetDevInfoListReq::clear_password() {
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListReq::password() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListReq.password)
+  return _internal_password();
+}
+inline void GetDevInfoListReq::set_password(const std::string& value) {
+  _internal_set_password(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListReq.password)
+}
+inline std::string* GetDevInfoListReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& GetDevInfoListReq::_internal_password() const {
+  return password_.GetNoArena();
+}
+inline void GetDevInfoListReq::_internal_set_password(const std::string& value) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListReq::set_password(std::string&& value) {
+  
+  password_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListReq.password)
+}
+inline void GetDevInfoListReq::set_password(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListReq.password)
+}
+inline void GetDevInfoListReq::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListReq.password)
+}
+inline std::string* GetDevInfoListReq::_internal_mutable_password() {
+  
+  return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListReq::release_password() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListReq.password)
+  
+  return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListReq.password)
+}
+
+// string devaddr = 3;
+inline void GetDevInfoListReq::clear_devaddr() {
+  devaddr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListReq::devaddr() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListReq.devaddr)
+  return _internal_devaddr();
+}
+inline void GetDevInfoListReq::set_devaddr(const std::string& value) {
+  _internal_set_devaddr(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListReq.devaddr)
+}
+inline std::string* GetDevInfoListReq::mutable_devaddr() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListReq.devaddr)
+  return _internal_mutable_devaddr();
+}
+inline const std::string& GetDevInfoListReq::_internal_devaddr() const {
+  return devaddr_.GetNoArena();
+}
+inline void GetDevInfoListReq::_internal_set_devaddr(const std::string& value) {
+  
+  devaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListReq::set_devaddr(std::string&& value) {
+  
+  devaddr_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListReq.devaddr)
+}
+inline void GetDevInfoListReq::set_devaddr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  devaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListReq.devaddr)
+}
+inline void GetDevInfoListReq::set_devaddr(const char* value, size_t size) {
+  
+  devaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListReq.devaddr)
+}
+inline std::string* GetDevInfoListReq::_internal_mutable_devaddr() {
+  
+  return devaddr_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListReq::release_devaddr() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListReq.devaddr)
+  
+  return devaddr_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListReq::set_allocated_devaddr(std::string* devaddr) {
+  if (devaddr != nullptr) {
+    
+  } else {
+    
+  }
+  devaddr_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), devaddr);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListReq.devaddr)
+}
+
+// string public_net_ip = 4;
+inline void GetDevInfoListReq::clear_public_net_ip() {
+  public_net_ip_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListReq::public_net_ip() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListReq.public_net_ip)
+  return _internal_public_net_ip();
+}
+inline void GetDevInfoListReq::set_public_net_ip(const std::string& value) {
+  _internal_set_public_net_ip(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListReq.public_net_ip)
+}
+inline std::string* GetDevInfoListReq::mutable_public_net_ip() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListReq.public_net_ip)
+  return _internal_mutable_public_net_ip();
+}
+inline const std::string& GetDevInfoListReq::_internal_public_net_ip() const {
+  return public_net_ip_.GetNoArena();
+}
+inline void GetDevInfoListReq::_internal_set_public_net_ip(const std::string& value) {
+  
+  public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListReq::set_public_net_ip(std::string&& value) {
+  
+  public_net_ip_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListReq.public_net_ip)
+}
+inline void GetDevInfoListReq::set_public_net_ip(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListReq.public_net_ip)
+}
+inline void GetDevInfoListReq::set_public_net_ip(const char* value, size_t size) {
+  
+  public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListReq.public_net_ip)
+}
+inline std::string* GetDevInfoListReq::_internal_mutable_public_net_ip() {
+  
+  return public_net_ip_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListReq::release_public_net_ip() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListReq.public_net_ip)
+  
+  return public_net_ip_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListReq::set_allocated_public_net_ip(std::string* public_net_ip) {
+  if (public_net_ip != nullptr) {
+    
+  } else {
+    
+  }
+  public_net_ip_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), public_net_ip);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListReq.public_net_ip)
+}
+
+// bool is_show = 5;
+inline void GetDevInfoListReq::clear_is_show() {
+  is_show_ = false;
+}
+inline bool GetDevInfoListReq::_internal_is_show() const {
+  return is_show_;
+}
+inline bool GetDevInfoListReq::is_show() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListReq.is_show)
+  return _internal_is_show();
+}
+inline void GetDevInfoListReq::_internal_set_is_show(bool value) {
+  
+  is_show_ = value;
+}
+inline void GetDevInfoListReq::set_is_show(bool value) {
+  _internal_set_is_show(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListReq.is_show)
+}
+
+// -------------------------------------------------------------------
+
+// GetDevInfoListAcK
+
+// string version = 1;
+inline void GetDevInfoListAcK::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListAcK::version() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.version)
+  return _internal_version();
+}
+inline void GetDevInfoListAcK::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.version)
+}
+inline std::string* GetDevInfoListAcK::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.version)
+  return _internal_mutable_version();
+}
+inline const std::string& GetDevInfoListAcK::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void GetDevInfoListAcK::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListAcK::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListAcK.version)
+}
+inline void GetDevInfoListAcK::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListAcK.version)
+}
+inline void GetDevInfoListAcK::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListAcK.version)
+}
+inline std::string* GetDevInfoListAcK::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListAcK::release_version() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListAcK.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListAcK::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListAcK.version)
+}
+
+// sint32 code = 2;
+inline void GetDevInfoListAcK::clear_code() {
+  code_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::_internal_code() const {
+  return code_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::code() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.code)
+  return _internal_code();
+}
+inline void GetDevInfoListAcK::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  code_ = value;
+}
+inline void GetDevInfoListAcK::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.code)
+}
+
+// string description = 3;
+inline void GetDevInfoListAcK::clear_description() {
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListAcK::description() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.description)
+  return _internal_description();
+}
+inline void GetDevInfoListAcK::set_description(const std::string& value) {
+  _internal_set_description(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.description)
+}
+inline std::string* GetDevInfoListAcK::mutable_description() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.description)
+  return _internal_mutable_description();
+}
+inline const std::string& GetDevInfoListAcK::_internal_description() const {
+  return description_.GetNoArena();
+}
+inline void GetDevInfoListAcK::_internal_set_description(const std::string& value) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListAcK::set_description(std::string&& value) {
+  
+  description_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListAcK.description)
+}
+inline void GetDevInfoListAcK::set_description(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListAcK.description)
+}
+inline void GetDevInfoListAcK::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListAcK.description)
+}
+inline std::string* GetDevInfoListAcK::_internal_mutable_description() {
+  
+  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListAcK::release_description() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListAcK.description)
+  
+  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListAcK::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListAcK.description)
+}
+
+// string mac_hash = 4;
+inline void GetDevInfoListAcK::clear_mac_hash() {
+  mac_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListAcK::mac_hash() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.mac_hash)
+  return _internal_mac_hash();
+}
+inline void GetDevInfoListAcK::set_mac_hash(const std::string& value) {
+  _internal_set_mac_hash(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.mac_hash)
+}
+inline std::string* GetDevInfoListAcK::mutable_mac_hash() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.mac_hash)
+  return _internal_mutable_mac_hash();
+}
+inline const std::string& GetDevInfoListAcK::_internal_mac_hash() const {
+  return mac_hash_.GetNoArena();
+}
+inline void GetDevInfoListAcK::_internal_set_mac_hash(const std::string& value) {
+  
+  mac_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListAcK::set_mac_hash(std::string&& value) {
+  
+  mac_hash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListAcK.mac_hash)
+}
+inline void GetDevInfoListAcK::set_mac_hash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  mac_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListAcK.mac_hash)
+}
+inline void GetDevInfoListAcK::set_mac_hash(const char* value, size_t size) {
+  
+  mac_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListAcK.mac_hash)
+}
+inline std::string* GetDevInfoListAcK::_internal_mutable_mac_hash() {
+  
+  return mac_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListAcK::release_mac_hash() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListAcK.mac_hash)
+  
+  return mac_hash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListAcK::set_allocated_mac_hash(std::string* mac_hash) {
+  if (mac_hash != nullptr) {
+    
+  } else {
+    
+  }
+  mac_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), mac_hash);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListAcK.mac_hash)
+}
+
+// string deviceaddr = 5;
+inline void GetDevInfoListAcK::clear_deviceaddr() {
+  deviceaddr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListAcK::deviceaddr() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.deviceaddr)
+  return _internal_deviceaddr();
+}
+inline void GetDevInfoListAcK::set_deviceaddr(const std::string& value) {
+  _internal_set_deviceaddr(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.deviceaddr)
+}
+inline std::string* GetDevInfoListAcK::mutable_deviceaddr() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.deviceaddr)
+  return _internal_mutable_deviceaddr();
+}
+inline const std::string& GetDevInfoListAcK::_internal_deviceaddr() const {
+  return deviceaddr_.GetNoArena();
+}
+inline void GetDevInfoListAcK::_internal_set_deviceaddr(const std::string& value) {
+  
+  deviceaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListAcK::set_deviceaddr(std::string&& value) {
+  
+  deviceaddr_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListAcK.deviceaddr)
+}
+inline void GetDevInfoListAcK::set_deviceaddr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  deviceaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListAcK.deviceaddr)
+}
+inline void GetDevInfoListAcK::set_deviceaddr(const char* value, size_t size) {
+  
+  deviceaddr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListAcK.deviceaddr)
+}
+inline std::string* GetDevInfoListAcK::_internal_mutable_deviceaddr() {
+  
+  return deviceaddr_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListAcK::release_deviceaddr() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListAcK.deviceaddr)
+  
+  return deviceaddr_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListAcK::set_allocated_deviceaddr(std::string* deviceaddr) {
+  if (deviceaddr != nullptr) {
+    
+  } else {
+    
+  }
+  deviceaddr_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceaddr);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListAcK.deviceaddr)
+}
+
+// string device_version = 6;
+inline void GetDevInfoListAcK::clear_device_version() {
+  device_version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetDevInfoListAcK::device_version() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.device_version)
+  return _internal_device_version();
+}
+inline void GetDevInfoListAcK::set_device_version(const std::string& value) {
+  _internal_set_device_version(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.device_version)
+}
+inline std::string* GetDevInfoListAcK::mutable_device_version() {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.device_version)
+  return _internal_mutable_device_version();
+}
+inline const std::string& GetDevInfoListAcK::_internal_device_version() const {
+  return device_version_.GetNoArena();
+}
+inline void GetDevInfoListAcK::_internal_set_device_version(const std::string& value) {
+  
+  device_version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetDevInfoListAcK::set_device_version(std::string&& value) {
+  
+  device_version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetDevInfoListAcK.device_version)
+}
+inline void GetDevInfoListAcK::set_device_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  device_version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetDevInfoListAcK.device_version)
+}
+inline void GetDevInfoListAcK::set_device_version(const char* value, size_t size) {
+  
+  device_version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetDevInfoListAcK.device_version)
+}
+inline std::string* GetDevInfoListAcK::_internal_mutable_device_version() {
+  
+  return device_version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetDevInfoListAcK::release_device_version() {
+  // @@protoc_insertion_point(field_release:GetDevInfoListAcK.device_version)
+  
+  return device_version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetDevInfoListAcK::set_allocated_device_version(std::string* device_version) {
+  if (device_version != nullptr) {
+    
+  } else {
+    
+  }
+  device_version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), device_version);
+  // @@protoc_insertion_point(field_set_allocated:GetDevInfoListAcK.device_version)
+}
+
+// sint32 device_height = 7;
+inline void GetDevInfoListAcK::clear_device_height() {
+  device_height_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::_internal_device_height() const {
+  return device_height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::device_height() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.device_height)
+  return _internal_device_height();
+}
+inline void GetDevInfoListAcK::_internal_set_device_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  device_height_ = value;
+}
+inline void GetDevInfoListAcK::set_device_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_device_height(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.device_height)
+}
+
+// sint32 public_net_height = 8;
+inline void GetDevInfoListAcK::clear_public_net_height() {
+  public_net_height_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::_internal_public_net_height() const {
+  return public_net_height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetDevInfoListAcK::public_net_height() const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.public_net_height)
+  return _internal_public_net_height();
+}
+inline void GetDevInfoListAcK::_internal_set_public_net_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  public_net_height_ = value;
+}
+inline void GetDevInfoListAcK::set_public_net_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_public_net_height(value);
+  // @@protoc_insertion_point(field_set:GetDevInfoListAcK.public_net_height)
+}
+
+// repeated .ServiceFee service_fee_info = 9;
+inline int GetDevInfoListAcK::_internal_service_fee_info_size() const {
+  return service_fee_info_.size();
+}
+inline int GetDevInfoListAcK::service_fee_info_size() const {
+  return _internal_service_fee_info_size();
+}
+inline void GetDevInfoListAcK::clear_service_fee_info() {
+  service_fee_info_.Clear();
+}
+inline ::ServiceFee* GetDevInfoListAcK::mutable_service_fee_info(int index) {
+  // @@protoc_insertion_point(field_mutable:GetDevInfoListAcK.service_fee_info)
+  return service_fee_info_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee >*
+GetDevInfoListAcK::mutable_service_fee_info() {
+  // @@protoc_insertion_point(field_mutable_list:GetDevInfoListAcK.service_fee_info)
+  return &service_fee_info_;
+}
+inline const ::ServiceFee& GetDevInfoListAcK::_internal_service_fee_info(int index) const {
+  return service_fee_info_.Get(index);
+}
+inline const ::ServiceFee& GetDevInfoListAcK::service_fee_info(int index) const {
+  // @@protoc_insertion_point(field_get:GetDevInfoListAcK.service_fee_info)
+  return _internal_service_fee_info(index);
+}
+inline ::ServiceFee* GetDevInfoListAcK::_internal_add_service_fee_info() {
+  return service_fee_info_.Add();
+}
+inline ::ServiceFee* GetDevInfoListAcK::add_service_fee_info() {
+  // @@protoc_insertion_point(field_add:GetDevInfoListAcK.service_fee_info)
+  return _internal_add_service_fee_info();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ServiceFee >&
+GetDevInfoListAcK::service_fee_info() const {
+  // @@protoc_insertion_point(field_list:GetDevInfoListAcK.service_fee_info)
   return service_fee_info_;
 }
 
@@ -31077,9 +33319,1009 @@ inline void TestConnectAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:TestConnectAck.code)
 }
 
+// -------------------------------------------------------------------
+
+// Device2PubNetRandomReq
+
+// string version = 1;
+inline void Device2PubNetRandomReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Device2PubNetRandomReq::version() const {
+  // @@protoc_insertion_point(field_get:Device2PubNetRandomReq.version)
+  return _internal_version();
+}
+inline void Device2PubNetRandomReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:Device2PubNetRandomReq.version)
+}
+inline std::string* Device2PubNetRandomReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:Device2PubNetRandomReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& Device2PubNetRandomReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void Device2PubNetRandomReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Device2PubNetRandomReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Device2PubNetRandomReq.version)
+}
+inline void Device2PubNetRandomReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Device2PubNetRandomReq.version)
+}
+inline void Device2PubNetRandomReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Device2PubNetRandomReq.version)
+}
+inline std::string* Device2PubNetRandomReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Device2PubNetRandomReq::release_version() {
+  // @@protoc_insertion_point(field_release:Device2PubNetRandomReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Device2PubNetRandomReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:Device2PubNetRandomReq.version)
+}
+
+// string id = 2;
+inline void Device2PubNetRandomReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Device2PubNetRandomReq::id() const {
+  // @@protoc_insertion_point(field_get:Device2PubNetRandomReq.id)
+  return _internal_id();
+}
+inline void Device2PubNetRandomReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:Device2PubNetRandomReq.id)
+}
+inline std::string* Device2PubNetRandomReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:Device2PubNetRandomReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& Device2PubNetRandomReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void Device2PubNetRandomReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Device2PubNetRandomReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Device2PubNetRandomReq.id)
+}
+inline void Device2PubNetRandomReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Device2PubNetRandomReq.id)
+}
+inline void Device2PubNetRandomReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Device2PubNetRandomReq.id)
+}
+inline std::string* Device2PubNetRandomReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Device2PubNetRandomReq::release_id() {
+  // @@protoc_insertion_point(field_release:Device2PubNetRandomReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Device2PubNetRandomReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Device2PubNetRandomReq.id)
+}
+
+// -------------------------------------------------------------------
+
+// RandomPubNet2DeviceAck
+
+// string version = 1;
+inline void RandomPubNet2DeviceAck::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& RandomPubNet2DeviceAck::version() const {
+  // @@protoc_insertion_point(field_get:RandomPubNet2DeviceAck.version)
+  return _internal_version();
+}
+inline void RandomPubNet2DeviceAck::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:RandomPubNet2DeviceAck.version)
+}
+inline std::string* RandomPubNet2DeviceAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:RandomPubNet2DeviceAck.version)
+  return _internal_mutable_version();
+}
+inline const std::string& RandomPubNet2DeviceAck::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void RandomPubNet2DeviceAck::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void RandomPubNet2DeviceAck::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:RandomPubNet2DeviceAck.version)
+}
+inline void RandomPubNet2DeviceAck::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:RandomPubNet2DeviceAck.version)
+}
+inline void RandomPubNet2DeviceAck::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:RandomPubNet2DeviceAck.version)
+}
+inline std::string* RandomPubNet2DeviceAck::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* RandomPubNet2DeviceAck::release_version() {
+  // @@protoc_insertion_point(field_release:RandomPubNet2DeviceAck.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void RandomPubNet2DeviceAck::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:RandomPubNet2DeviceAck.version)
+}
+
+// string description = 2;
+inline void RandomPubNet2DeviceAck::clear_description() {
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& RandomPubNet2DeviceAck::description() const {
+  // @@protoc_insertion_point(field_get:RandomPubNet2DeviceAck.description)
+  return _internal_description();
+}
+inline void RandomPubNet2DeviceAck::set_description(const std::string& value) {
+  _internal_set_description(value);
+  // @@protoc_insertion_point(field_set:RandomPubNet2DeviceAck.description)
+}
+inline std::string* RandomPubNet2DeviceAck::mutable_description() {
+  // @@protoc_insertion_point(field_mutable:RandomPubNet2DeviceAck.description)
+  return _internal_mutable_description();
+}
+inline const std::string& RandomPubNet2DeviceAck::_internal_description() const {
+  return description_.GetNoArena();
+}
+inline void RandomPubNet2DeviceAck::_internal_set_description(const std::string& value) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void RandomPubNet2DeviceAck::set_description(std::string&& value) {
+  
+  description_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:RandomPubNet2DeviceAck.description)
+}
+inline void RandomPubNet2DeviceAck::set_description(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:RandomPubNet2DeviceAck.description)
+}
+inline void RandomPubNet2DeviceAck::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:RandomPubNet2DeviceAck.description)
+}
+inline std::string* RandomPubNet2DeviceAck::_internal_mutable_description() {
+  
+  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* RandomPubNet2DeviceAck::release_description() {
+  // @@protoc_insertion_point(field_release:RandomPubNet2DeviceAck.description)
+  
+  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void RandomPubNet2DeviceAck::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:RandomPubNet2DeviceAck.description)
+}
+
+// string id = 3;
+inline void RandomPubNet2DeviceAck::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& RandomPubNet2DeviceAck::id() const {
+  // @@protoc_insertion_point(field_get:RandomPubNet2DeviceAck.id)
+  return _internal_id();
+}
+inline void RandomPubNet2DeviceAck::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:RandomPubNet2DeviceAck.id)
+}
+inline std::string* RandomPubNet2DeviceAck::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:RandomPubNet2DeviceAck.id)
+  return _internal_mutable_id();
+}
+inline const std::string& RandomPubNet2DeviceAck::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void RandomPubNet2DeviceAck::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void RandomPubNet2DeviceAck::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:RandomPubNet2DeviceAck.id)
+}
+inline void RandomPubNet2DeviceAck::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:RandomPubNet2DeviceAck.id)
+}
+inline void RandomPubNet2DeviceAck::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:RandomPubNet2DeviceAck.id)
+}
+inline std::string* RandomPubNet2DeviceAck::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* RandomPubNet2DeviceAck::release_id() {
+  // @@protoc_insertion_point(field_release:RandomPubNet2DeviceAck.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void RandomPubNet2DeviceAck::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:RandomPubNet2DeviceAck.id)
+}
+
+// -------------------------------------------------------------------
+
+// Device2AllDevReq
+
+// string version = 1;
+inline void Device2AllDevReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Device2AllDevReq::version() const {
+  // @@protoc_insertion_point(field_get:Device2AllDevReq.version)
+  return _internal_version();
+}
+inline void Device2AllDevReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:Device2AllDevReq.version)
+}
+inline std::string* Device2AllDevReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:Device2AllDevReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& Device2AllDevReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void Device2AllDevReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Device2AllDevReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Device2AllDevReq.version)
+}
+inline void Device2AllDevReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Device2AllDevReq.version)
+}
+inline void Device2AllDevReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Device2AllDevReq.version)
+}
+inline std::string* Device2AllDevReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Device2AllDevReq::release_version() {
+  // @@protoc_insertion_point(field_release:Device2AllDevReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Device2AllDevReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:Device2AllDevReq.version)
+}
+
+// string id = 2;
+inline void Device2AllDevReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Device2AllDevReq::id() const {
+  // @@protoc_insertion_point(field_get:Device2AllDevReq.id)
+  return _internal_id();
+}
+inline void Device2AllDevReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:Device2AllDevReq.id)
+}
+inline std::string* Device2AllDevReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:Device2AllDevReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& Device2AllDevReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void Device2AllDevReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Device2AllDevReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Device2AllDevReq.id)
+}
+inline void Device2AllDevReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Device2AllDevReq.id)
+}
+inline void Device2AllDevReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Device2AllDevReq.id)
+}
+inline std::string* Device2AllDevReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Device2AllDevReq::release_id() {
+  // @@protoc_insertion_point(field_release:Device2AllDevReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Device2AllDevReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Device2AllDevReq.id)
+}
+
+// -------------------------------------------------------------------
+
+// Feedback2DeviceAck
+
+// string version = 1;
+inline void Feedback2DeviceAck::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Feedback2DeviceAck::version() const {
+  // @@protoc_insertion_point(field_get:Feedback2DeviceAck.version)
+  return _internal_version();
+}
+inline void Feedback2DeviceAck::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:Feedback2DeviceAck.version)
+}
+inline std::string* Feedback2DeviceAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:Feedback2DeviceAck.version)
+  return _internal_mutable_version();
+}
+inline const std::string& Feedback2DeviceAck::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void Feedback2DeviceAck::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Feedback2DeviceAck::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Feedback2DeviceAck.version)
+}
+inline void Feedback2DeviceAck::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Feedback2DeviceAck.version)
+}
+inline void Feedback2DeviceAck::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Feedback2DeviceAck.version)
+}
+inline std::string* Feedback2DeviceAck::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Feedback2DeviceAck::release_version() {
+  // @@protoc_insertion_point(field_release:Feedback2DeviceAck.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Feedback2DeviceAck::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:Feedback2DeviceAck.version)
+}
+
+// string id = 2;
+inline void Feedback2DeviceAck::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Feedback2DeviceAck::id() const {
+  // @@protoc_insertion_point(field_get:Feedback2DeviceAck.id)
+  return _internal_id();
+}
+inline void Feedback2DeviceAck::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:Feedback2DeviceAck.id)
+}
+inline std::string* Feedback2DeviceAck::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:Feedback2DeviceAck.id)
+  return _internal_mutable_id();
+}
+inline const std::string& Feedback2DeviceAck::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void Feedback2DeviceAck::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Feedback2DeviceAck::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Feedback2DeviceAck.id)
+}
+inline void Feedback2DeviceAck::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Feedback2DeviceAck.id)
+}
+inline void Feedback2DeviceAck::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Feedback2DeviceAck.id)
+}
+inline std::string* Feedback2DeviceAck::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Feedback2DeviceAck::release_id() {
+  // @@protoc_insertion_point(field_release:Feedback2DeviceAck.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Feedback2DeviceAck::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Feedback2DeviceAck.id)
+}
+
+// -------------------------------------------------------------------
+
+// DataTransReq
+
+// string version = 1;
+inline void DataTransReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& DataTransReq::version() const {
+  // @@protoc_insertion_point(field_get:DataTransReq.version)
+  return _internal_version();
+}
+inline void DataTransReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:DataTransReq.version)
+}
+inline std::string* DataTransReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:DataTransReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& DataTransReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void DataTransReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void DataTransReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:DataTransReq.version)
+}
+inline void DataTransReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:DataTransReq.version)
+}
+inline void DataTransReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:DataTransReq.version)
+}
+inline std::string* DataTransReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* DataTransReq::release_version() {
+  // @@protoc_insertion_point(field_release:DataTransReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void DataTransReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:DataTransReq.version)
+}
+
+// string id = 2;
+inline void DataTransReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& DataTransReq::id() const {
+  // @@protoc_insertion_point(field_get:DataTransReq.id)
+  return _internal_id();
+}
+inline void DataTransReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:DataTransReq.id)
+}
+inline std::string* DataTransReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:DataTransReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& DataTransReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void DataTransReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void DataTransReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:DataTransReq.id)
+}
+inline void DataTransReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:DataTransReq.id)
+}
+inline void DataTransReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:DataTransReq.id)
+}
+inline std::string* DataTransReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* DataTransReq::release_id() {
+  // @@protoc_insertion_point(field_release:DataTransReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void DataTransReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:DataTransReq.id)
+}
+
+// -------------------------------------------------------------------
+
+// TransData
+
+// string version = 1;
+inline void TransData::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TransData::version() const {
+  // @@protoc_insertion_point(field_get:TransData.version)
+  return _internal_version();
+}
+inline void TransData::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:TransData.version)
+}
+inline std::string* TransData::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:TransData.version)
+  return _internal_mutable_version();
+}
+inline const std::string& TransData::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void TransData::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TransData::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TransData.version)
+}
+inline void TransData::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TransData.version)
+}
+inline void TransData::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TransData.version)
+}
+inline std::string* TransData::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TransData::release_version() {
+  // @@protoc_insertion_point(field_release:TransData.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransData::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:TransData.version)
+}
+
+// string description = 2;
+inline void TransData::clear_description() {
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TransData::description() const {
+  // @@protoc_insertion_point(field_get:TransData.description)
+  return _internal_description();
+}
+inline void TransData::set_description(const std::string& value) {
+  _internal_set_description(value);
+  // @@protoc_insertion_point(field_set:TransData.description)
+}
+inline std::string* TransData::mutable_description() {
+  // @@protoc_insertion_point(field_mutable:TransData.description)
+  return _internal_mutable_description();
+}
+inline const std::string& TransData::_internal_description() const {
+  return description_.GetNoArena();
+}
+inline void TransData::_internal_set_description(const std::string& value) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TransData::set_description(std::string&& value) {
+  
+  description_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TransData.description)
+}
+inline void TransData::set_description(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TransData.description)
+}
+inline void TransData::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TransData.description)
+}
+inline std::string* TransData::_internal_mutable_description() {
+  
+  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TransData::release_description() {
+  // @@protoc_insertion_point(field_release:TransData.description)
+  
+  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransData::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:TransData.description)
+}
+
+// bytes encodedata = 3;
+inline void TransData::clear_encodedata() {
+  encodedata_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TransData::encodedata() const {
+  // @@protoc_insertion_point(field_get:TransData.encodedata)
+  return _internal_encodedata();
+}
+inline void TransData::set_encodedata(const std::string& value) {
+  _internal_set_encodedata(value);
+  // @@protoc_insertion_point(field_set:TransData.encodedata)
+}
+inline std::string* TransData::mutable_encodedata() {
+  // @@protoc_insertion_point(field_mutable:TransData.encodedata)
+  return _internal_mutable_encodedata();
+}
+inline const std::string& TransData::_internal_encodedata() const {
+  return encodedata_.GetNoArena();
+}
+inline void TransData::_internal_set_encodedata(const std::string& value) {
+  
+  encodedata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TransData::set_encodedata(std::string&& value) {
+  
+  encodedata_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TransData.encodedata)
+}
+inline void TransData::set_encodedata(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  encodedata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TransData.encodedata)
+}
+inline void TransData::set_encodedata(const void* value, size_t size) {
+  
+  encodedata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TransData.encodedata)
+}
+inline std::string* TransData::_internal_mutable_encodedata() {
+  
+  return encodedata_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TransData::release_encodedata() {
+  // @@protoc_insertion_point(field_release:TransData.encodedata)
+  
+  return encodedata_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransData::set_allocated_encodedata(std::string* encodedata) {
+  if (encodedata != nullptr) {
+    
+  } else {
+    
+  }
+  encodedata_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), encodedata);
+  // @@protoc_insertion_point(field_set_allocated:TransData.encodedata)
+}
+
+// bytes origindata = 4;
+inline void TransData::clear_origindata() {
+  origindata_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TransData::origindata() const {
+  // @@protoc_insertion_point(field_get:TransData.origindata)
+  return _internal_origindata();
+}
+inline void TransData::set_origindata(const std::string& value) {
+  _internal_set_origindata(value);
+  // @@protoc_insertion_point(field_set:TransData.origindata)
+}
+inline std::string* TransData::mutable_origindata() {
+  // @@protoc_insertion_point(field_mutable:TransData.origindata)
+  return _internal_mutable_origindata();
+}
+inline const std::string& TransData::_internal_origindata() const {
+  return origindata_.GetNoArena();
+}
+inline void TransData::_internal_set_origindata(const std::string& value) {
+  
+  origindata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TransData::set_origindata(std::string&& value) {
+  
+  origindata_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TransData.origindata)
+}
+inline void TransData::set_origindata(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  origindata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TransData.origindata)
+}
+inline void TransData::set_origindata(const void* value, size_t size) {
+  
+  origindata_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TransData.origindata)
+}
+inline std::string* TransData::_internal_mutable_origindata() {
+  
+  return origindata_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TransData::release_origindata() {
+  // @@protoc_insertion_point(field_release:TransData.origindata)
+  
+  return origindata_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransData::set_allocated_origindata(std::string* origindata) {
+  if (origindata != nullptr) {
+    
+  } else {
+    
+  }
+  origindata_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), origindata);
+  // @@protoc_insertion_point(field_set_allocated:TransData.origindata)
+}
+
+// string id = 5;
+inline void TransData::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TransData::id() const {
+  // @@protoc_insertion_point(field_get:TransData.id)
+  return _internal_id();
+}
+inline void TransData::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:TransData.id)
+}
+inline std::string* TransData::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:TransData.id)
+  return _internal_mutable_id();
+}
+inline const std::string& TransData::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void TransData::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TransData::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TransData.id)
+}
+inline void TransData::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TransData.id)
+}
+inline void TransData::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TransData.id)
+}
+inline std::string* TransData::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TransData::release_id() {
+  // @@protoc_insertion_point(field_release:TransData.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransData::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:TransData.id)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

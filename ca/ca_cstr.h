@@ -1,17 +1,17 @@
 #ifndef __CA_CSTR_H__
 #define __CA_CSTR_H__
-#include <stdbool.h>                    
-#include <stddef.h>                     
-#include <sys/types.h>                  
+#include <stdbool.h>                    // for bool
+#include <stddef.h>                     // for size_t
+#include <sys/types.h>                  // for ssize_t
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct cstring {
-    char    *str;       
-    size_t  len;        
-    size_t  alloc;      
+    char    *str;       // string data, incl. NUL
+    size_t  len;        // length of string, not including NUL
+    size_t  alloc;      // total allocated buffer length
 } cstring;
 
 void cstr_free(cstring *s, bool free_buf);

@@ -25,7 +25,7 @@ bool deser_u32(uint32_t *vo, struct const_buffer *buf)
     if (!deser_bytes(&v, buf, sizeof(v)))
         return false; 
 
-
+//    *vo = le32toh(v); 
     *vo = E32toh(v); 
     return true;
 }
@@ -50,7 +50,7 @@ bool deser_varlen(uint32_t *lo, struct const_buffer *buf)
     else if (c == 255) {
         uint64_t v64;
         if (!deser_u64(&v64, buf)) return false;
-        len = (uint32_t) v64;   
+        len = (uint32_t) v64;   /* WARNING: truncate */
     }
     else
         len = c;
@@ -65,7 +65,7 @@ bool deser_u16(uint16_t *vo, struct const_buffer *buf)
     if (!deser_bytes(&v, buf, sizeof(v)))
         return false;
 
- 
+ //   *vo = le16toh(v);
     *vo = E16toh(v);
     return true;
 }
@@ -76,7 +76,7 @@ bool deser_u64(uint64_t *vo, struct const_buffer *buf)
     if (!deser_bytes(&v, buf, sizeof(v)))
         return false;
 
-
+//    *vo = le64toh(v);
     *vo = E64toh(v);
     return true;
 }
@@ -113,7 +113,7 @@ void ser_bytes(cstring *s, const void *p, size_t len)
 
 void ser_u32(cstring *s, uint32_t v_)
 {   
- 
+ //   uint32_t v = htole32(v_);
     uint32_t v = H32toh(v_);
     cstr_append_buf(s, &v, sizeof(v));
 }
@@ -138,11 +138,11 @@ void ser_varlen(cstring *s, uint32_t vlen)
         ser_u32(s, vlen);
     }
 
-    
+    /* u64 case intentionally not implemented */
 }
 void ser_u16(cstring *s, uint16_t v_)
 {
-  
+  //  uint16_t v = htole16(v_);
     uint16_t v = H16toh(v_);
     cstr_append_buf(s, &v, sizeof(v));
 }

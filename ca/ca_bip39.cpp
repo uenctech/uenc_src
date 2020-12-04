@@ -30,7 +30,7 @@
 #include "ca_bip39_english.h"
 #include "../include/logging.h"
 
-
+//#pragma warning(disable:4996)
 
 int mnemonic_from_data(const uint8_t *data, int len, char *out, size_t outLen)
 {
@@ -43,13 +43,13 @@ int mnemonic_from_data(const uint8_t *data, int len, char *out, size_t outLen)
 	memset(out, 0x00, outLen);
 
 	sha256_Raw(data, len, bits);
-	
+	// checksum
 	bits[len] = bits[0];
-	
+	// data
 	memcpy(bits, data, len);
 
 	int mlen = len * 3 / 4;
-	
+	//static char mnemo[24 * 10];
 
 	int i, j, idx;
 	char *p = out;
@@ -86,7 +86,7 @@ int mnemonic_check(const char *mnemonic, char *out, int *outLen)
 		i++;
 	}
 	n++;
-	
+	// check number of words
 	if (n != 12 && n != 18 && n != 24) {
 		return 0;
 	}
@@ -109,10 +109,10 @@ int mnemonic_check(const char *mnemonic, char *out, int *outLen)
 		if (mnemonic[i] != 0) i++;
 		k = 0;
 		for (;;) {
-			if (!wordlist[k]) { 
+			if (!wordlist[k]) { // word not found
 				return 0;
 			}
-			if (strcmp(current_word, wordlist[k]) == 0) { 
+			if (strcmp(current_word, wordlist[k]) == 0) { // word found on index k
 				for (ki = 0; ki < 11; ki++) {
 					if (k & (1 << (10 - ki))) {
 						bits[bi / 8] |= 1 << (7 - (bi % 8));
@@ -134,13 +134,13 @@ int mnemonic_check(const char *mnemonic, char *out, int *outLen)
 	bits[32] = bits[n * 4 / 3];
 	sha256_Raw(bits, n * 4 / 3, bits);
 	if (n == 12) {
-		return (bits[0] & 0xF0) == (bits[32] & 0xF0); 
+		return (bits[0] & 0xF0) == (bits[32] & 0xF0); // compare first 4 bits
 	} else
 	if (n == 18) {
-		return (bits[0] & 0xFC) == (bits[32] & 0xFC); 
+		return (bits[0] & 0xFC) == (bits[32] & 0xFC); // compare first 6 bits
 	} else
 	if (n == 24) {
-		return bits[0] == bits[32]; 
+		return bits[0] == bits[32]; // compare 8 bits
 	}
 	return 0;
 }

@@ -160,6 +160,14 @@ class GetNodeServiceFeeAckDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetNodeServiceFeeAck> _instance;
 } _GetNodeServiceFeeAck_default_instance_;
+class GetDevInfoListReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetDevInfoListReq> _instance;
+} _GetDevInfoListReq_default_instance_;
+class GetDevInfoListAcKDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetDevInfoListAcK> _instance;
+} _GetDevInfoListAcK_default_instance_;
 class GetDevPrivateKeyReqDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetDevPrivateKeyReq> _instance;
@@ -320,6 +328,30 @@ class TestConnectAckDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestConnectAck> _instance;
 } _TestConnectAck_default_instance_;
+class Device2PubNetRandomReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Device2PubNetRandomReq> _instance;
+} _Device2PubNetRandomReq_default_instance_;
+class RandomPubNet2DeviceAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<RandomPubNet2DeviceAck> _instance;
+} _RandomPubNet2DeviceAck_default_instance_;
+class Device2AllDevReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Device2AllDevReq> _instance;
+} _Device2AllDevReq_default_instance_;
+class Feedback2DeviceAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Feedback2DeviceAck> _instance;
+} _Feedback2DeviceAck_default_instance_;
+class DataTransReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<DataTransReq> _instance;
+} _DataTransReq_default_instance_;
+class TransDataDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TransData> _instance;
+} _TransData_default_instance_;
 static void InitDefaultsscc_info_BlockInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -533,6 +565,20 @@ static void InitDefaultsscc_info_CreateTxMsgReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_CreateTxMsgReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_CreateTxMsgReq_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_DataTransReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_DataTransReq_default_instance_;
+    new (ptr) ::DataTransReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::DataTransReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_DataTransReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_DataTransReq_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_DevPrivateKeyInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -546,6 +592,48 @@ static void InitDefaultsscc_info_DevPrivateKeyInfo_interface_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_DevPrivateKeyInfo_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_DevPrivateKeyInfo_interface_2eproto}, {}};
+
+static void InitDefaultsscc_info_Device2AllDevReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_Device2AllDevReq_default_instance_;
+    new (ptr) ::Device2AllDevReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Device2AllDevReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Device2AllDevReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Device2AllDevReq_interface_2eproto}, {}};
+
+static void InitDefaultsscc_info_Device2PubNetRandomReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_Device2PubNetRandomReq_default_instance_;
+    new (ptr) ::Device2PubNetRandomReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Device2PubNetRandomReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Device2PubNetRandomReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Device2PubNetRandomReq_interface_2eproto}, {}};
+
+static void InitDefaultsscc_info_Feedback2DeviceAck_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_Feedback2DeviceAck_default_instance_;
+    new (ptr) ::Feedback2DeviceAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Feedback2DeviceAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Feedback2DeviceAck_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Feedback2DeviceAck_interface_2eproto}, {}};
 
 static void InitDefaultsscc_info_GetAddrInfoAck_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -732,6 +820,35 @@ static void InitDefaultsscc_info_GetClientInfoReq_interface_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetClientInfoReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetClientInfoReq_interface_2eproto}, {}};
+
+static void InitDefaultsscc_info_GetDevInfoListAcK_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetDevInfoListAcK_default_instance_;
+    new (ptr) ::GetDevInfoListAcK();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetDevInfoListAcK::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_GetDevInfoListAcK_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_GetDevInfoListAcK_interface_2eproto}, {
+      &scc_info_ServiceFee_interface_2eproto.base,}};
+
+static void InitDefaultsscc_info_GetDevInfoListReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetDevInfoListReq_default_instance_;
+    new (ptr) ::GetDevInfoListReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetDevInfoListReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetDevInfoListReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetDevInfoListReq_interface_2eproto}, {}};
 
 static void InitDefaultsscc_info_GetDevPasswordAck_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -1064,6 +1181,20 @@ static void InitDefaultsscc_info_PledgeTxMsgReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_PledgeTxMsgReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_PledgeTxMsgReq_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_RandomPubNet2DeviceAck_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_RandomPubNet2DeviceAck_default_instance_;
+    new (ptr) ::RandomPubNet2DeviceAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::RandomPubNet2DeviceAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_RandomPubNet2DeviceAck_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_RandomPubNet2DeviceAck_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_RedeemTxMsgReq_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1246,6 +1377,20 @@ static void InitDefaultsscc_info_ToAddr_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ToAddr_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_ToAddr_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_TransData_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TransData_default_instance_;
+    new (ptr) ::TransData();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TransData::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TransData_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TransData_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_TxInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1360,7 +1505,7 @@ static void InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_VerifyDevicePasswordReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto}, {}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[73];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[81];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_interface_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_interface_2eproto = nullptr;
 
@@ -1556,6 +1701,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoReq, password_),
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoReq, public_net_ip_),
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoReq, is_show_),
+  PROTOBUF_FIELD_OFFSET(::GetServiceInfoReq, sequence_number_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ServiceFee, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1577,6 +1723,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoAck, device_version_),
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoAck, service_fee_info_),
   PROTOBUF_FIELD_OFFSET(::GetServiceInfoAck, is_sync_),
+  PROTOBUF_FIELD_OFFSET(::GetServiceInfoAck, height_),
+  PROTOBUF_FIELD_OFFSET(::GetServiceInfoAck, sequence_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SetServiceFeeReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1663,6 +1811,30 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::GetNodeServiceFeeAck, code_),
   PROTOBUF_FIELD_OFFSET(::GetNodeServiceFeeAck, description_),
   PROTOBUF_FIELD_OFFSET(::GetNodeServiceFeeAck, service_fee_info_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, password_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, devaddr_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, public_net_ip_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListReq, is_show_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, code_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, description_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, mac_hash_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, deviceaddr_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, device_version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, device_height_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, public_net_height_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoListAcK, service_fee_info_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GetDevPrivateKeyReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -2054,6 +2226,52 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::TestConnectAck, version_),
   PROTOBUF_FIELD_OFFSET(::TestConnectAck, code_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Device2PubNetRandomReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::Device2PubNetRandomReq, version_),
+  PROTOBUF_FIELD_OFFSET(::Device2PubNetRandomReq, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::RandomPubNet2DeviceAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::RandomPubNet2DeviceAck, version_),
+  PROTOBUF_FIELD_OFFSET(::RandomPubNet2DeviceAck, description_),
+  PROTOBUF_FIELD_OFFSET(::RandomPubNet2DeviceAck, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Device2AllDevReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::Device2AllDevReq, version_),
+  PROTOBUF_FIELD_OFFSET(::Device2AllDevReq, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Feedback2DeviceAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::Feedback2DeviceAck, version_),
+  PROTOBUF_FIELD_OFFSET(::Feedback2DeviceAck, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::DataTransReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::DataTransReq, version_),
+  PROTOBUF_FIELD_OFFSET(::DataTransReq, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TransData, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TransData, version_),
+  PROTOBUF_FIELD_OFFSET(::TransData, description_),
+  PROTOBUF_FIELD_OFFSET(::TransData, encodedata_),
+  PROTOBUF_FIELD_OFFSET(::TransData, origindata_),
+  PROTOBUF_FIELD_OFFSET(::TransData, id_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::GetAmountReq)},
@@ -2077,58 +2295,66 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 166, -1, sizeof(::NodeList)},
   { 173, -1, sizeof(::GetNodeInfoAck)},
   { 182, -1, sizeof(::GetServiceInfoReq)},
-  { 191, -1, sizeof(::ServiceFee)},
-  { 200, -1, sizeof(::GetServiceInfoAck)},
-  { 212, -1, sizeof(::SetServiceFeeReq)},
-  { 220, -1, sizeof(::SetServiceFeeAck)},
-  { 228, -1, sizeof(::GetPacketFeeReq)},
-  { 236, -1, sizeof(::GetPacketFeeAck)},
-  { 245, -1, sizeof(::SetPacketFeeReq)},
-  { 254, -1, sizeof(::SetPacketFeeAck)},
-  { 262, -1, sizeof(::GetBlockTopReq)},
-  { 271, -1, sizeof(::TApiGetBlockTopAck)},
-  { 283, -1, sizeof(::GetNodeServiceFeeReq)},
-  { 289, -1, sizeof(::GetNodeServiceFeeAck)},
-  { 298, -1, sizeof(::GetDevPrivateKeyReq)},
-  { 306, -1, sizeof(::DevPrivateKeyInfo)},
-  { 314, -1, sizeof(::GetDevPrivateKeyAck)},
-  { 323, -1, sizeof(::CreateTxMsgReq)},
-  { 334, -1, sizeof(::CreateTxMsgAck)},
-  { 344, -1, sizeof(::TxMsgReq)},
-  { 354, -1, sizeof(::TxMsgAck)},
-  { 363, -1, sizeof(::ToAddr)},
-  { 370, -1, sizeof(::CreateMultiTxMsgReq)},
-  { 380, -1, sizeof(::CreateMultiTxMsgAck)},
-  { 390, -1, sizeof(::SignInfo)},
-  { 397, -1, sizeof(::MultiTxMsgReq)},
-  { 406, -1, sizeof(::VerifyDevicePasswordReq)},
-  { 413, -1, sizeof(::VerifyDevicePasswordAck)},
-  { 421, -1, sizeof(::CreateDeviceTxMsgReq)},
-  { 433, -1, sizeof(::CreateDeviceMultiTxMsgReq)},
-  { 444, -1, sizeof(::CreatePledgeTxMsgReq)},
-  { 454, -1, sizeof(::CreatePledgeTxMsgAck)},
-  { 464, -1, sizeof(::PledgeTxMsgReq)},
-  { 474, -1, sizeof(::CreateRedeemTxMsgReq)},
-  { 485, -1, sizeof(::CreateRedeemTxMsgAck)},
-  { 495, -1, sizeof(::RedeemTxMsgReq)},
-  { 505, -1, sizeof(::CreateDevicePledgeTxMsgReq)},
-  { 516, -1, sizeof(::CreateDeviceRedeemTxReq)},
-  { 527, -1, sizeof(::GetPledgeListReq)},
-  { 536, -1, sizeof(::PledgeItem)},
-  { 549, -1, sizeof(::GetPledgeListAck)},
-  { 559, -1, sizeof(::GetTxInfoListReq)},
-  { 568, -1, sizeof(::TxInfoItem)},
-  { 577, -1, sizeof(::GetTxInfoListAck)},
-  { 588, -1, sizeof(::GetTxInfoDetailReq)},
-  { 596, -1, sizeof(::GetTxInfoDetailAck)},
-  { 615, -1, sizeof(::GetBlockInfoListReq)},
-  { 623, -1, sizeof(::BlockInfoItem)},
-  { 635, -1, sizeof(::GetBlockInfoListAck)},
-  { 646, -1, sizeof(::GetBlockInfoDetailReq)},
-  { 653, -1, sizeof(::BlockInfoOutAddr)},
-  { 660, -1, sizeof(::GetBlockInfoDetailAck)},
-  { 676, -1, sizeof(::TestConnectReq)},
-  { 682, -1, sizeof(::TestConnectAck)},
+  { 192, -1, sizeof(::ServiceFee)},
+  { 201, -1, sizeof(::GetServiceInfoAck)},
+  { 215, -1, sizeof(::SetServiceFeeReq)},
+  { 223, -1, sizeof(::SetServiceFeeAck)},
+  { 231, -1, sizeof(::GetPacketFeeReq)},
+  { 239, -1, sizeof(::GetPacketFeeAck)},
+  { 248, -1, sizeof(::SetPacketFeeReq)},
+  { 257, -1, sizeof(::SetPacketFeeAck)},
+  { 265, -1, sizeof(::GetBlockTopReq)},
+  { 274, -1, sizeof(::TApiGetBlockTopAck)},
+  { 286, -1, sizeof(::GetNodeServiceFeeReq)},
+  { 292, -1, sizeof(::GetNodeServiceFeeAck)},
+  { 301, -1, sizeof(::GetDevInfoListReq)},
+  { 311, -1, sizeof(::GetDevInfoListAcK)},
+  { 325, -1, sizeof(::GetDevPrivateKeyReq)},
+  { 333, -1, sizeof(::DevPrivateKeyInfo)},
+  { 341, -1, sizeof(::GetDevPrivateKeyAck)},
+  { 350, -1, sizeof(::CreateTxMsgReq)},
+  { 361, -1, sizeof(::CreateTxMsgAck)},
+  { 371, -1, sizeof(::TxMsgReq)},
+  { 381, -1, sizeof(::TxMsgAck)},
+  { 390, -1, sizeof(::ToAddr)},
+  { 397, -1, sizeof(::CreateMultiTxMsgReq)},
+  { 407, -1, sizeof(::CreateMultiTxMsgAck)},
+  { 417, -1, sizeof(::SignInfo)},
+  { 424, -1, sizeof(::MultiTxMsgReq)},
+  { 433, -1, sizeof(::VerifyDevicePasswordReq)},
+  { 440, -1, sizeof(::VerifyDevicePasswordAck)},
+  { 448, -1, sizeof(::CreateDeviceTxMsgReq)},
+  { 460, -1, sizeof(::CreateDeviceMultiTxMsgReq)},
+  { 471, -1, sizeof(::CreatePledgeTxMsgReq)},
+  { 481, -1, sizeof(::CreatePledgeTxMsgAck)},
+  { 491, -1, sizeof(::PledgeTxMsgReq)},
+  { 501, -1, sizeof(::CreateRedeemTxMsgReq)},
+  { 512, -1, sizeof(::CreateRedeemTxMsgAck)},
+  { 522, -1, sizeof(::RedeemTxMsgReq)},
+  { 532, -1, sizeof(::CreateDevicePledgeTxMsgReq)},
+  { 543, -1, sizeof(::CreateDeviceRedeemTxReq)},
+  { 554, -1, sizeof(::GetPledgeListReq)},
+  { 563, -1, sizeof(::PledgeItem)},
+  { 576, -1, sizeof(::GetPledgeListAck)},
+  { 586, -1, sizeof(::GetTxInfoListReq)},
+  { 595, -1, sizeof(::TxInfoItem)},
+  { 604, -1, sizeof(::GetTxInfoListAck)},
+  { 615, -1, sizeof(::GetTxInfoDetailReq)},
+  { 623, -1, sizeof(::GetTxInfoDetailAck)},
+  { 642, -1, sizeof(::GetBlockInfoListReq)},
+  { 650, -1, sizeof(::BlockInfoItem)},
+  { 662, -1, sizeof(::GetBlockInfoListAck)},
+  { 673, -1, sizeof(::GetBlockInfoDetailReq)},
+  { 680, -1, sizeof(::BlockInfoOutAddr)},
+  { 687, -1, sizeof(::GetBlockInfoDetailAck)},
+  { 703, -1, sizeof(::TestConnectReq)},
+  { 709, -1, sizeof(::TestConnectAck)},
+  { 716, -1, sizeof(::Device2PubNetRandomReq)},
+  { 723, -1, sizeof(::RandomPubNet2DeviceAck)},
+  { 731, -1, sizeof(::Device2AllDevReq)},
+  { 738, -1, sizeof(::Feedback2DeviceAck)},
+  { 745, -1, sizeof(::DataTransReq)},
+  { 752, -1, sizeof(::TransData)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -2165,6 +2391,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TApiGetBlockTopAck_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetNodeServiceFeeReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetNodeServiceFeeAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevInfoListReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevInfoListAcK_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevPrivateKeyReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_DevPrivateKeyInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevPrivateKeyAck_default_instance_),
@@ -2205,6 +2433,12 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetBlockInfoDetailAck_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestConnectReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestConnectAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_Device2PubNetRandomReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_RandomPubNet2DeviceAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_Device2AllDevReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_Feedback2DeviceAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_DataTransReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TransData_default_instance_),
 };
 
 const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -2256,158 +2490,177 @@ const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIAB
   "\022\035\n\tnode_info\030\001 \003(\0132\n.NodeInfos\022\r\n\005local"
   "\030\002 \001(\t\"b\n\016GetNodeInfoAck\022\017\n\007version\030\001 \001("
   "\t\022\014\n\004code\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\022\034\n\t"
-  "node_list\030\004 \003(\0132\t.NodeList\"^\n\021GetService"
+  "node_list\030\004 \003(\0132\t.NodeList\"w\n\021GetService"
   "InfoReq\022\017\n\007version\030\001 \001(\t\022\020\n\010password\030\002 \001"
   "(\t\022\025\n\rpublic_net_ip\030\003 \001(\t\022\017\n\007is_show\030\004 \001"
-  "(\010\"T\n\nServiceFee\022\017\n\007max_fee\030\001 \001(\t\022\017\n\007min"
-  "_fee\030\002 \001(\t\022\023\n\013service_fee\030\003 \001(\t\022\017\n\007avg_f"
-  "ee\030\004 \001(\t\"\376\001\n\021GetServiceInfoAck\022\017\n\007versio"
-  "n\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013description\030\003 \001"
-  "(\t\022\020\n\010mac_hash\030\004 \001(\t\022\026\n\016device_version\030\005"
-  " \001(\t\022%\n\020service_fee_info\030\006 \003(\0132\013.Service"
-  "Fee\022.\n\007is_sync\030\007 \001(\0162\035.GetServiceInfoAck"
-  ".SyncStatus\"4\n\nSyncStatus\022\010\n\004TRUE\020\000\022\t\n\005F"
-  "ALSE\020\001\022\021\n\004FAIL\020\377\377\377\377\377\377\377\377\377\001\"J\n\020SetServiceF"
-  "eeReq\022\017\n\007version\030\001 \001(\t\022\020\n\010password\030\002 \001(\t"
-  "\022\023\n\013service_fee\030\003 \001(\t\"F\n\020SetServiceFeeAc"
-  "k\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013desc"
-  "ription\030\003 \001(\t\"K\n\017GetPacketFeeReq\022\017\n\007vers"
-  "ion\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\022\025\n\rpublic_ne"
-  "t_ip\030\003 \001(\t\"Y\n\017GetPacketFeeAck\022\017\n\007version"
-  "\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013description\030\003 \001("
-  "\t\022\022\n\npacket_fee\030\004 \001(\t\"_\n\017SetPacketFeeReq"
-  "\022\017\n\007version\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\022\025\n\rp"
-  "ublic_net_ip\030\003 \001(\t\022\022\n\npacket_fee\030\004 \001(\t\"E"
-  "\n\017SetPacketFeeAck\022\017\n\007version\030\001 \001(\t\022\014\n\004co"
-  "de\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\"G\n\016GetBloc"
-  "kTopReq\022\017\n\007version\030\001 \001(\t\022\n\n\002fd\030\002 \001(\r\022\014\n\004"
-  "port\030\003 \001(\r\022\n\n\002ip\030\004 \001(\r\"{\n\022TApiGetBlockTo"
-  "pAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013d"
-  "escription\030\003 \001(\t\022\013\n\003top\030\004 \001(\r\022\n\n\002fd\030\005 \001("
-  "\r\022\014\n\004port\030\006 \001(\r\022\n\n\002ip\030\007 \001(\r\"\'\n\024GetNodeSe"
-  "rviceFeeReq\022\017\n\007version\030\001 \001(\t\"q\n\024GetNodeS"
-  "erviceFeeAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 "
-  "\001(\021\022\023\n\013description\030\003 \001(\t\022%\n\020service_fee_"
-  "info\030\004 \003(\0132\013.ServiceFee\"J\n\023GetDevPrivate"
-  "KeyReq\022\017\n\007version\030\001 \001(\t\022\020\n\010password\030\002 \001("
-  "\t\022\020\n\010bs58addr\030\003 \001(\t\"K\n\021DevPrivateKeyInfo"
-  "\022\022\n\nbase58addr\030\001 \001(\t\022\020\n\010keystore\030\002 \001(\t\022\020"
-  "\n\010mnemonic\030\003 \001(\t\"x\n\023GetDevPrivateKeyAck\022"
-  "\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descri"
-  "ption\030\003 \001(\t\022-\n\021devprivatekeyinfo\030\004 \003(\0132\022"
-  ".DevPrivateKeyInfo\"{\n\016CreateTxMsgReq\022\017\n\007"
-  "version\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001(\t\022"
-  "\013\n\003amt\030\004 \001(\t\022\021\n\tminerFees\030\005 \001(\t\022\036\n\026needV"
-  "erifyPreHashCount\030\006 \001(\t\"f\n\016CreateTxMsgAc"
-  "k\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\017\n\007mess"
-  "age\030\003 \001(\t\022\016\n\006txData\030\004 \001(\t\022\024\n\014txEncodeHas"
-  "h\030\005 \001(\t\"f\n\010TxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005"
-  "serTx\030\002 \001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006str"
-  "Pub\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"J\n\010TxMsg"
-  "Ack\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\017\n\007me"
-  "ssage\030\003 \001(\t\022\016\n\006txHash\030\004 \001(\t\"%\n\006ToAddr\022\016\n"
-  "\006toAddr\030\001 \001(\t\022\013\n\003amt\030\002 \001(\t\"|\n\023CreateMult"
-  "iTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \003(\t"
-  "\022\023\n\002to\030\003 \003(\0132\007.ToAddr\022\021\n\tminerFees\030\005 \001(\t"
-  "\022\036\n\026needVerifyPreHashCount\030\006 \001(\t\"k\n\023Crea"
-  "teMultiTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code"
-  "\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\022\016\n\006txData\030\004 \001(\t\022"
-  "\024\n\014txEncodeHash\030\005 \001(\t\"+\n\010SignInfo\022\017\n\007sig"
-  "nStr\030\001 \001(\t\022\016\n\006pubStr\030\002 \001(\t\"b\n\rMultiTxMsg"
-  "Req\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001(\t\022\033\n\010s"
-  "ignInfo\030\003 \003(\0132\t.SignInfo\022\024\n\014txEncodeHash"
-  "\030\004 \001(\t\"<\n\027VerifyDevicePasswordReq\022\017\n\007ver"
-  "sion\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"I\n\027VerifyDe"
-  "vicePasswordAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code"
-  "\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"\223\001\n\024CreateDevice"
-  "TxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022"
-  "\n\n\002to\030\003 \001(\t\022\013\n\003amt\030\004 \001(\t\022\021\n\tminerFees\030\005 "
-  "\001(\t\022\036\n\026needVerifyPreHashCount\030\006 \001(\t\022\020\n\010p"
-  "assword\030\007 \001(\t\"\222\001\n\031CreateDeviceMultiTxMsg"
-  "Req\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \003(\t\022\023\n\002to"
-  "\030\003 \003(\0132\007.ToAddr\022\017\n\007gasFees\030\004 \001(\t\022\036\n\026need"
-  "VerifyPreHashCount\030\005 \001(\t\022\020\n\010password\030\006 \001"
-  "(\t\"s\n\024CreatePledgeTxMsgReq\022\017\n\007version\030\001 "
-  "\001(\t\022\014\n\004addr\030\002 \001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVe"
-  "rifyPreHashCount\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\""
-  "p\n\024CreatePledgeTxMsgAck\022\017\n\007version\030\001 \001(\t"
-  "\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006t"
-  "xData\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016Ple"
-  "dgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 "
-  "\001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001("
-  "\t\022\024\n\014txEncodeHash\030\005 \001(\t\"\203\001\n\024CreateRedeem"
-  "TxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022"
-  "\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCount\030\004"
-  " \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\016\n\006txHash\030\006 \001(\t\"p\n"
-  "\024CreateRedeemTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014"
-  "\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006txD"
-  "ata\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016Redee"
-  "mTxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001("
-  "\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001(\t\022"
-  "\024\n\014txEncodeHash\030\005 \001(\t\"\213\001\n\032CreateDevicePl"
-  "edgeTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 "
-  "\001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCou"
-  "nt\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\020\n\010password\030\006 "
-  "\001(\t\"\211\001\n\027CreateDeviceRedeemTxReq\022\017\n\007versi"
-  "on\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\036\n\026needVerifyPreH"
-  "ashCount\030\003 \001(\t\022\017\n\007gasFees\030\004 \001(\t\022\014\n\004utxo\030"
-  "\005 \001(\t\022\020\n\010password\030\006 \001(\t\"O\n\020GetPledgeList"
-  "Req\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005in"
-  "dex\030\003 \001(\r\022\r\n\005count\030\004 \001(\r\"\222\001\n\nPledgeItem\022"
-  "\021\n\tblockhash\030\001 \001(\t\022\023\n\013blockheight\030\002 \001(\r\022"
-  "\014\n\004utxo\030\003 \001(\t\022\016\n\006amount\030\004 \001(\t\022\014\n\004time\030\005 "
-  "\001(\004\022\020\n\010fromaddr\030\006 \001(\t\022\016\n\006toaddr\030\007 \001(\t\022\016\n"
-  "\006detail\030\010 \001(\t\"p\n\020GetPledgeListAck\022\017\n\007ver"
+  "(\010\022\027\n\017sequence_number\030\005 \001(\r\"T\n\nServiceFe"
+  "e\022\017\n\007max_fee\030\001 \001(\t\022\017\n\007min_fee\030\002 \001(\t\022\023\n\013s"
+  "ervice_fee\030\003 \001(\t\022\017\n\007avg_fee\030\004 \001(\t\"\240\002\n\021Ge"
+  "tServiceInfoAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code"
+  "\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\022\020\n\010mac_hash\030"
+  "\004 \001(\t\022\026\n\016device_version\030\005 \001(\t\022%\n\020service"
+  "_fee_info\030\006 \003(\0132\013.ServiceFee\022.\n\007is_sync\030"
+  "\007 \001(\0162\035.GetServiceInfoAck.SyncStatus\022\016\n\006"
+  "height\030\010 \001(\021\022\020\n\010sequence\030\t \001(\r\"4\n\nSyncSt"
+  "atus\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\021\n\004FAIL\020\377\377\377\377\377\377"
+  "\377\377\377\001\"J\n\020SetServiceFeeReq\022\017\n\007version\030\001 \001("
+  "\t\022\020\n\010password\030\002 \001(\t\022\023\n\013service_fee\030\003 \001(\t"
+  "\"F\n\020SetServiceFeeAck\022\017\n\007version\030\001 \001(\t\022\014\n"
+  "\004code\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\"K\n\017GetP"
+  "acketFeeReq\022\017\n\007version\030\001 \001(\t\022\020\n\010password"
+  "\030\002 \001(\t\022\025\n\rpublic_net_ip\030\003 \001(\t\"Y\n\017GetPack"
+  "etFeeAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022"
+  "\023\n\013description\030\003 \001(\t\022\022\n\npacket_fee\030\004 \001(\t"
+  "\"_\n\017SetPacketFeeReq\022\017\n\007version\030\001 \001(\t\022\020\n\010"
+  "password\030\002 \001(\t\022\025\n\rpublic_net_ip\030\003 \001(\t\022\022\n"
+  "\npacket_fee\030\004 \001(\t\"E\n\017SetPacketFeeAck\022\017\n\007"
+  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013descripti"
+  "on\030\003 \001(\t\"G\n\016GetBlockTopReq\022\017\n\007version\030\001 "
+  "\001(\t\022\n\n\002fd\030\002 \001(\r\022\014\n\004port\030\003 \001(\r\022\n\n\002ip\030\004 \001("
+  "\r\"{\n\022TApiGetBlockTopAck\022\017\n\007version\030\001 \001(\t"
+  "\022\014\n\004code\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\022\013\n\003t"
+  "op\030\004 \001(\r\022\n\n\002fd\030\005 \001(\r\022\014\n\004port\030\006 \001(\r\022\n\n\002ip"
+  "\030\007 \001(\r\"\'\n\024GetNodeServiceFeeReq\022\017\n\007versio"
+  "n\030\001 \001(\t\"q\n\024GetNodeServiceFeeAck\022\017\n\007versi"
+  "on\030\001 \001(\t\022\014\n\004code\030\002 \001(\021\022\023\n\013description\030\003 "
+  "\001(\t\022%\n\020service_fee_info\030\004 \003(\0132\013.ServiceF"
+  "ee\"o\n\021GetDevInfoListReq\022\017\n\007version\030\001 \001(\t"
+  "\022\020\n\010password\030\002 \001(\t\022\017\n\007devaddr\030\003 \001(\t\022\025\n\rp"
+  "ublic_net_ip\030\004 \001(\t\022\017\n\007is_show\030\005 \001(\010\"\336\001\n\021"
+  "GetDevInfoListAcK\022\017\n\007version\030\001 \001(\t\022\014\n\004co"
+  "de\030\002 \001(\021\022\023\n\013description\030\003 \001(\t\022\020\n\010mac_has"
+  "h\030\004 \001(\t\022\022\n\ndeviceaddr\030\005 \001(\t\022\026\n\016device_ve"
+  "rsion\030\006 \001(\t\022\025\n\rdevice_height\030\007 \001(\021\022\031\n\021pu"
+  "blic_net_height\030\010 \001(\021\022%\n\020service_fee_inf"
+  "o\030\t \003(\0132\013.ServiceFee\"J\n\023GetDevPrivateKey"
+  "Req\022\017\n\007version\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\022\020"
+  "\n\010bs58addr\030\003 \001(\t\"K\n\021DevPrivateKeyInfo\022\022\n"
+  "\nbase58addr\030\001 \001(\t\022\020\n\010keystore\030\002 \001(\t\022\020\n\010m"
+  "nemonic\030\003 \001(\t\"x\n\023GetDevPrivateKeyAck\022\017\n\007"
+  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descripti"
+  "on\030\003 \001(\t\022-\n\021devprivatekeyinfo\030\004 \003(\0132\022.De"
+  "vPrivateKeyInfo\"{\n\016CreateTxMsgReq\022\017\n\007ver"
+  "sion\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001(\t\022\013\n\003"
+  "amt\030\004 \001(\t\022\021\n\tminerFees\030\005 \001(\t\022\036\n\026needVeri"
+  "fyPreHashCount\030\006 \001(\t\"f\n\016CreateTxMsgAck\022\017"
+  "\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\017\n\007message"
+  "\030\003 \001(\t\022\016\n\006txData\030\004 \001(\t\022\024\n\014txEncodeHash\030\005"
+  " \001(\t\"f\n\010TxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005ser"
+  "Tx\030\002 \001(\t\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub"
+  "\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"J\n\010TxMsgAck"
+  "\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\017\n\007messa"
+  "ge\030\003 \001(\t\022\016\n\006txHash\030\004 \001(\t\"%\n\006ToAddr\022\016\n\006to"
+  "Addr\030\001 \001(\t\022\013\n\003amt\030\002 \001(\t\"|\n\023CreateMultiTx"
+  "MsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \003(\t\022\023\n"
+  "\002to\030\003 \003(\0132\007.ToAddr\022\021\n\tminerFees\030\005 \001(\t\022\036\n"
+  "\026needVerifyPreHashCount\030\006 \001(\t\"k\n\023CreateM"
+  "ultiTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 "
+  "\001(\005\022\017\n\007message\030\003 \001(\t\022\016\n\006txData\030\004 \001(\t\022\024\n\014"
+  "txEncodeHash\030\005 \001(\t\"+\n\010SignInfo\022\017\n\007signSt"
+  "r\030\001 \001(\t\022\016\n\006pubStr\030\002 \001(\t\"b\n\rMultiTxMsgReq"
+  "\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001(\t\022\033\n\010sign"
+  "Info\030\003 \003(\0132\t.SignInfo\022\024\n\014txEncodeHash\030\004 "
+  "\001(\t\"<\n\027VerifyDevicePasswordReq\022\017\n\007versio"
+  "n\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"I\n\027VerifyDevic"
+  "ePasswordAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 "
+  "\001(\005\022\017\n\007message\030\003 \001(\t\"\223\001\n\024CreateDeviceTxM"
+  "sgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n\002"
+  "to\030\003 \001(\t\022\013\n\003amt\030\004 \001(\t\022\021\n\tminerFees\030\005 \001(\t"
+  "\022\036\n\026needVerifyPreHashCount\030\006 \001(\t\022\020\n\010pass"
+  "word\030\007 \001(\t\"\222\001\n\031CreateDeviceMultiTxMsgReq"
+  "\022\017\n\007version\030\001 \001(\t\022\014\n\004from\030\002 \003(\t\022\023\n\002to\030\003 "
+  "\003(\0132\007.ToAddr\022\017\n\007gasFees\030\004 \001(\t\022\036\n\026needVer"
+  "ifyPreHashCount\030\005 \001(\t\022\020\n\010password\030\006 \001(\t\""
+  "s\n\024CreatePledgeTxMsgReq\022\017\n\007version\030\001 \001(\t"
+  "\022\014\n\004addr\030\002 \001(\t\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVerif"
+  "yPreHashCount\030\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\"p\n\024"
+  "CreatePledgeTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014\n"
+  "\004code\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006txDa"
+  "ta\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016Pledge"
+  "TxMsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001(\t"
+  "\022\024\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001(\t\022\024"
+  "\n\014txEncodeHash\030\005 \001(\t\"\203\001\n\024CreateRedeemTxM"
+  "sgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\013\n\003"
+  "amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCount\030\004 \001("
+  "\t\022\017\n\007gasFees\030\005 \001(\t\022\016\n\006txHash\030\006 \001(\t\"p\n\024Cr"
+  "eateRedeemTxMsgAck\022\017\n\007version\030\001 \001(\t\022\014\n\004c"
+  "ode\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\016\n\006txData"
+  "\030\004 \001(\t\022\024\n\014txEncodeHash\030\005 \001(\t\"l\n\016RedeemTx"
+  "MsgReq\022\017\n\007version\030\001 \001(\t\022\r\n\005serTx\030\002 \001(\t\022\024"
+  "\n\014strSignature\030\003 \001(\t\022\016\n\006strPub\030\004 \001(\t\022\024\n\014"
+  "txEncodeHash\030\005 \001(\t\"\213\001\n\032CreateDevicePledg"
+  "eTxMsgReq\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t"
+  "\022\013\n\003amt\030\003 \001(\t\022\036\n\026needVerifyPreHashCount\030"
+  "\004 \001(\t\022\017\n\007gasFees\030\005 \001(\t\022\020\n\010password\030\006 \001(\t"
+  "\"\211\001\n\027CreateDeviceRedeemTxReq\022\017\n\007version\030"
+  "\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\036\n\026needVerifyPreHash"
+  "Count\030\003 \001(\t\022\017\n\007gasFees\030\004 \001(\t\022\014\n\004utxo\030\005 \001"
+  "(\t\022\020\n\010password\030\006 \001(\t\"O\n\020GetPledgeListReq"
+  "\022\017\n\007version\030\001 \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005index"
+  "\030\003 \001(\r\022\r\n\005count\030\004 \001(\r\"\222\001\n\nPledgeItem\022\021\n\t"
+  "blockhash\030\001 \001(\t\022\023\n\013blockheight\030\002 \001(\r\022\014\n\004"
+  "utxo\030\003 \001(\t\022\016\n\006amount\030\004 \001(\t\022\014\n\004time\030\005 \001(\004"
+  "\022\020\n\010fromaddr\030\006 \001(\t\022\016\n\006toaddr\030\007 \001(\t\022\016\n\006de"
+  "tail\030\010 \001(\t\"p\n\020GetPledgeListAck\022\017\n\007versio"
+  "n\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003 \001"
+  "(\t\022\031\n\004list\030\004 \003(\0132\013.PledgeItem\022\r\n\005total\030\005"
+  " \001(\r\"O\n\020GetTxInfoListReq\022\017\n\007version\030\001 \001("
+  "\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005index\030\003 \001(\r\022\r\n\005count\030"
+  "\004 \001(\r\"U\n\nTxInfoItem\022\031\n\004type\030\001 \001(\0162\013.TxIn"
+  "foType\022\016\n\006txhash\030\002 \001(\t\022\014\n\004time\030\003 \001(\004\022\016\n\006"
+  "amount\030\004 \001(\t\"\177\n\020GetTxInfoListAck\022\017\n\007vers"
+  "ion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030\003"
+  " \001(\t\022\031\n\004list\030\004 \003(\0132\013.TxInfoItem\022\r\n\005total"
+  "\030\005 \001(\r\022\r\n\005index\030\006 \001(\r\"C\n\022GetTxInfoDetail"
+  "Req\022\017\n\007version\030\001 \001(\t\022\016\n\006txhash\030\002 \001(\t\022\014\n\004"
+  "addr\030\003 \001(\t\"\214\002\n\022GetTxInfoDetailAck\022\017\n\007ver"
   "sion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030"
-  "\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.PledgeItem\022\r\n\005tota"
-  "l\030\005 \001(\r\"O\n\020GetTxInfoListReq\022\017\n\007version\030\001"
-  " \001(\t\022\014\n\004addr\030\002 \001(\t\022\r\n\005index\030\003 \001(\r\022\r\n\005cou"
-  "nt\030\004 \001(\r\"U\n\nTxInfoItem\022\031\n\004type\030\001 \001(\0162\013.T"
-  "xInfoType\022\016\n\006txhash\030\002 \001(\t\022\014\n\004time\030\003 \001(\004\022"
-  "\016\n\006amount\030\004 \001(\t\"\177\n\020GetTxInfoListAck\022\017\n\007v"
-  "ersion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descriptio"
-  "n\030\003 \001(\t\022\031\n\004list\030\004 \003(\0132\013.TxInfoItem\022\r\n\005to"
-  "tal\030\005 \001(\r\022\r\n\005index\030\006 \001(\r\"C\n\022GetTxInfoDet"
-  "ailReq\022\017\n\007version\030\001 \001(\t\022\016\n\006txhash\030\002 \001(\t\022"
-  "\014\n\004addr\030\003 \001(\t\"\214\002\n\022GetTxInfoDetailAck\022\017\n\007"
-  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descripti"
-  "on\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013blockheig"
-  "ht\030\005 \001(\r\022\016\n\006txhash\030\006 \001(\t\022\014\n\004time\030\007 \001(\004\022\020"
-  "\n\010fromaddr\030\010 \003(\t\022\027\n\006toaddr\030\t \003(\0132\007.ToAdd"
-  "r\022\013\n\003gas\030\n \001(\t\022\016\n\006amount\030\013 \001(\t\022\r\n\005award\030"
-  "\014 \001(\t\022\020\n\010awardGas\030\r \001(\t\022\023\n\013awardAmount\030\016"
-  " \001(\t\"D\n\023GetBlockInfoListReq\022\017\n\007version\030\001"
-  " \001(\t\022\r\n\005index\030\002 \001(\r\022\r\n\005count\030\003 \001(\r\"\207\001\n\rB"
-  "lockInfoItem\022\021\n\tblockhash\030\001 \001(\t\022\023\n\013block"
-  "height\030\002 \001(\r\022\014\n\004time\030\003 \001(\004\022\016\n\006txHash\030\004 \001"
-  "(\t\022\020\n\010fromAddr\030\005 \003(\t\022\016\n\006toAddr\030\006 \003(\t\022\016\n\006"
-  "amount\030\007 \001(\t\"\205\001\n\023GetBlockInfoListAck\022\017\n\007"
-  "version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013descripti"
-  "on\030\003 \001(\t\022\013\n\003top\030\004 \001(\r\022\017\n\007txcount\030\005 \001(\r\022\034"
-  "\n\004list\030\006 \003(\0132\016.BlockInfoItem\";\n\025GetBlock"
-  "InfoDetailReq\022\017\n\007version\030\001 \001(\t\022\021\n\tblockh"
-  "ash\030\002 \001(\t\"0\n\020BlockInfoOutAddr\022\014\n\004addr\030\001 "
-  "\001(\t\022\016\n\006amount\030\002 \001(\t\"\371\001\n\025GetBlockInfoDeta"
-  "ilAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013"
-  "description\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013"
-  "blockheight\030\005 \001(\r\022\022\n\nmerkleRoot\030\006 \001(\t\022\020\n"
-  "\010prevHash\030\007 \001(\t\022\014\n\004time\030\010 \001(\004\022\023\n\013tatalAm"
-  "ount\030\t \001(\t\022\016\n\006signer\030\n \003(\t\022+\n\020blockInfoO"
-  "utAddr\030\013 \003(\0132\021.BlockInfoOutAddr\"!\n\016TestC"
-  "onnectReq\022\017\n\007version\030\001 \001(\t\"/\n\016TestConnec"
-  "tAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005**\n\nD"
-  "eviceType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Android\020\002*"
-  "\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020\001*\323\001\n\n"
-  "TxInfoType\022\026\n\022TxInfoType_Unknown\020\000\022\031\n\025Tx"
-  "InfoType_Originator\020\001\022\027\n\023TxInfoType_Rece"
-  "iver\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxInfoType"
-  "_Award\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n\021TxInf"
-  "oType_Redeem\020\006\022!\n\035TxInfoType_PledgedAndR"
-  "edeemed\020\007b\006proto3"
+  "\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013blockheight\030"
+  "\005 \001(\r\022\016\n\006txhash\030\006 \001(\t\022\014\n\004time\030\007 \001(\004\022\020\n\010f"
+  "romaddr\030\010 \003(\t\022\027\n\006toaddr\030\t \003(\0132\007.ToAddr\022\013"
+  "\n\003gas\030\n \001(\t\022\016\n\006amount\030\013 \001(\t\022\r\n\005award\030\014 \001"
+  "(\t\022\020\n\010awardGas\030\r \001(\t\022\023\n\013awardAmount\030\016 \001("
+  "\t\"D\n\023GetBlockInfoListReq\022\017\n\007version\030\001 \001("
+  "\t\022\r\n\005index\030\002 \001(\r\022\r\n\005count\030\003 \001(\r\"\207\001\n\rBloc"
+  "kInfoItem\022\021\n\tblockhash\030\001 \001(\t\022\023\n\013blockhei"
+  "ght\030\002 \001(\r\022\014\n\004time\030\003 \001(\004\022\016\n\006txHash\030\004 \001(\t\022"
+  "\020\n\010fromAddr\030\005 \003(\t\022\016\n\006toAddr\030\006 \003(\t\022\016\n\006amo"
+  "unt\030\007 \001(\t\"\205\001\n\023GetBlockInfoListAck\022\017\n\007ver"
+  "sion\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013description\030"
+  "\003 \001(\t\022\013\n\003top\030\004 \001(\r\022\017\n\007txcount\030\005 \001(\r\022\034\n\004l"
+  "ist\030\006 \003(\0132\016.BlockInfoItem\";\n\025GetBlockInf"
+  "oDetailReq\022\017\n\007version\030\001 \001(\t\022\021\n\tblockhash"
+  "\030\002 \001(\t\"0\n\020BlockInfoOutAddr\022\014\n\004addr\030\001 \001(\t"
+  "\022\016\n\006amount\030\002 \001(\t\"\371\001\n\025GetBlockInfoDetailA"
+  "ck\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\022\023\n\013des"
+  "cription\030\003 \001(\t\022\021\n\tblockhash\030\004 \001(\t\022\023\n\013blo"
+  "ckheight\030\005 \001(\r\022\022\n\nmerkleRoot\030\006 \001(\t\022\020\n\010pr"
+  "evHash\030\007 \001(\t\022\014\n\004time\030\010 \001(\004\022\023\n\013tatalAmoun"
+  "t\030\t \001(\t\022\016\n\006signer\030\n \003(\t\022+\n\020blockInfoOutA"
+  "ddr\030\013 \003(\0132\021.BlockInfoOutAddr\"!\n\016TestConn"
+  "ectReq\022\017\n\007version\030\001 \001(\t\"/\n\016TestConnectAc"
+  "k\022\017\n\007version\030\001 \001(\t\022\014\n\004code\030\002 \001(\005\"5\n\026Devi"
+  "ce2PubNetRandomReq\022\017\n\007version\030\001 \001(\t\022\n\n\002i"
+  "d\030\002 \001(\t\"J\n\026RandomPubNet2DeviceAck\022\017\n\007ver"
+  "sion\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\n\n\002id\030\003 "
+  "\001(\t\"/\n\020Device2AllDevReq\022\017\n\007version\030\001 \001(\t"
+  "\022\n\n\002id\030\002 \001(\t\"1\n\022Feedback2DeviceAck\022\017\n\007ve"
+  "rsion\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"+\n\014DataTransReq\022"
+  "\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"e\n\tTransDat"
+  "a\022\017\n\007version\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022"
+  "\022\n\nencodedata\030\003 \001(\014\022\022\n\norigindata\030\004 \001(\014\022"
+  "\n\n\002id\030\005 \001(\t**\n\nDeviceType\022\006\n\002PC\020\000\022\007\n\003iOS"
+  "\020\001\022\013\n\007Android\020\002*\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000"
+  "\022\t\n\005EN_US\020\001*\323\001\n\nTxInfoType\022\026\n\022TxInfoType"
+  "_Unknown\020\000\022\031\n\025TxInfoType_Originator\020\001\022\027\n"
+  "\023TxInfoType_Receiver\020\002\022\022\n\016TxInfoType_Gas"
+  "\020\003\022\024\n\020TxInfoType_Award\020\004\022\025\n\021TxInfoType_P"
+  "ledge\020\005\022\025\n\021TxInfoType_Redeem\020\006\022!\n\035TxInfo"
+  "Type_PledgedAndRedeemed\020\007b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_interface_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[73] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[81] = {
   &scc_info_BlockInfo_interface_2eproto.base,
   &scc_info_BlockInfoItem_interface_2eproto.base,
   &scc_info_BlockInfoOutAddr_interface_2eproto.base,
@@ -2423,7 +2676,11 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_CreateRedeemTxMsgReq_interface_2eproto.base,
   &scc_info_CreateTxMsgAck_interface_2eproto.base,
   &scc_info_CreateTxMsgReq_interface_2eproto.base,
+  &scc_info_DataTransReq_interface_2eproto.base,
   &scc_info_DevPrivateKeyInfo_interface_2eproto.base,
+  &scc_info_Device2AllDevReq_interface_2eproto.base,
+  &scc_info_Device2PubNetRandomReq_interface_2eproto.base,
+  &scc_info_Feedback2DeviceAck_interface_2eproto.base,
   &scc_info_GetAddrInfoAck_interface_2eproto.base,
   &scc_info_GetAddrInfoReq_interface_2eproto.base,
   &scc_info_GetAmountAck_interface_2eproto.base,
@@ -2437,6 +2694,8 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_GetBlockTopReq_interface_2eproto.base,
   &scc_info_GetClientInfoAck_interface_2eproto.base,
   &scc_info_GetClientInfoReq_interface_2eproto.base,
+  &scc_info_GetDevInfoListAcK_interface_2eproto.base,
+  &scc_info_GetDevInfoListReq_interface_2eproto.base,
   &scc_info_GetDevPasswordAck_interface_2eproto.base,
   &scc_info_GetDevPasswordReq_interface_2eproto.base,
   &scc_info_GetDevPrivateKeyAck_interface_2eproto.base,
@@ -2460,6 +2719,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_NodeList_interface_2eproto.base,
   &scc_info_PledgeItem_interface_2eproto.base,
   &scc_info_PledgeTxMsgReq_interface_2eproto.base,
+  &scc_info_RandomPubNet2DeviceAck_interface_2eproto.base,
   &scc_info_RedeemTxMsgReq_interface_2eproto.base,
   &scc_info_ServiceFee_interface_2eproto.base,
   &scc_info_SetDevPasswordAck_interface_2eproto.base,
@@ -2473,6 +2733,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_TestConnectAck_interface_2eproto.base,
   &scc_info_TestConnectReq_interface_2eproto.base,
   &scc_info_ToAddr_interface_2eproto.base,
+  &scc_info_TransData_interface_2eproto.base,
   &scc_info_TxInfo_interface_2eproto.base,
   &scc_info_TxInfoItem_interface_2eproto.base,
   &scc_info_TxMsgAck_interface_2eproto.base,
@@ -2485,10 +2746,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_interface_2eproto_once;
 static bool descriptor_table_interface_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_interface_2eproto = {
-  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 7817,
-  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 73, 0,
+  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 8593,
+  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 81, 0,
   schemas, file_default_instances, TableStruct_interface_2eproto::offsets,
-  file_level_metadata_interface_2eproto, 73, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
+  file_level_metadata_interface_2eproto, 81, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -8687,7 +8948,9 @@ GetServiceInfoReq::GetServiceInfoReq(const GetServiceInfoReq& from)
   if (!from._internal_public_net_ip().empty()) {
     public_net_ip_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.public_net_ip_);
   }
-  is_show_ = from.is_show_;
+  ::memcpy(&is_show_, &from.is_show_,
+    static_cast<size_t>(reinterpret_cast<char*>(&sequence_number_) -
+    reinterpret_cast<char*>(&is_show_)) + sizeof(sequence_number_));
   // @@protoc_insertion_point(copy_constructor:GetServiceInfoReq)
 }
 
@@ -8696,7 +8959,9 @@ void GetServiceInfoReq::SharedCtor() {
   version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   public_net_ip_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  is_show_ = false;
+  ::memset(&is_show_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&sequence_number_) -
+      reinterpret_cast<char*>(&is_show_)) + sizeof(sequence_number_));
 }
 
 GetServiceInfoReq::~GetServiceInfoReq() {
@@ -8728,7 +8993,9 @@ void GetServiceInfoReq::Clear() {
   version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   public_net_ip_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  is_show_ = false;
+  ::memset(&is_show_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&sequence_number_) -
+      reinterpret_cast<char*>(&is_show_)) + sizeof(sequence_number_));
   _internal_metadata_.Clear();
 }
 
@@ -8770,6 +9037,13 @@ const char* GetServiceInfoReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
           is_show_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 sequence_number = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          sequence_number_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -8835,6 +9109,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_is_show(), target);
   }
 
+  // uint32 sequence_number = 5;
+  if (this->sequence_number() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->_internal_sequence_number(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -8875,6 +9155,13 @@ size_t GetServiceInfoReq::ByteSizeLong() const {
   // bool is_show = 4;
   if (this->is_show() != 0) {
     total_size += 1 + 1;
+  }
+
+  // uint32 sequence_number = 5;
+  if (this->sequence_number() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_sequence_number());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -8923,6 +9210,9 @@ void GetServiceInfoReq::MergeFrom(const GetServiceInfoReq& from) {
   if (from.is_show() != 0) {
     _internal_set_is_show(from._internal_is_show());
   }
+  if (from.sequence_number() != 0) {
+    _internal_set_sequence_number(from._internal_sequence_number());
+  }
 }
 
 void GetServiceInfoReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -8953,6 +9243,7 @@ void GetServiceInfoReq::InternalSwap(GetServiceInfoReq* other) {
   public_net_ip_.Swap(&other->public_net_ip_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(is_show_, other->is_show_);
+  swap(sequence_number_, other->sequence_number_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetServiceInfoReq::GetMetadata() const {
@@ -9311,8 +9602,8 @@ GetServiceInfoAck::GetServiceInfoAck(const GetServiceInfoAck& from)
     device_version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.device_version_);
   }
   ::memcpy(&code_, &from.code_,
-    static_cast<size_t>(reinterpret_cast<char*>(&is_sync_) -
-    reinterpret_cast<char*>(&code_)) + sizeof(is_sync_));
+    static_cast<size_t>(reinterpret_cast<char*>(&sequence_) -
+    reinterpret_cast<char*>(&code_)) + sizeof(sequence_));
   // @@protoc_insertion_point(copy_constructor:GetServiceInfoAck)
 }
 
@@ -9323,8 +9614,8 @@ void GetServiceInfoAck::SharedCtor() {
   mac_hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   device_version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&code_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&is_sync_) -
-      reinterpret_cast<char*>(&code_)) + sizeof(is_sync_));
+      reinterpret_cast<char*>(&sequence_) -
+      reinterpret_cast<char*>(&code_)) + sizeof(sequence_));
 }
 
 GetServiceInfoAck::~GetServiceInfoAck() {
@@ -9360,8 +9651,8 @@ void GetServiceInfoAck::Clear() {
   mac_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   device_version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&code_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&is_sync_) -
-      reinterpret_cast<char*>(&code_)) + sizeof(is_sync_));
+      reinterpret_cast<char*>(&sequence_) -
+      reinterpret_cast<char*>(&code_)) + sizeof(sequence_));
   _internal_metadata_.Clear();
 }
 
@@ -9433,6 +9724,20 @@ const char* GetServiceInfoAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
           _internal_set_is_sync(static_cast<::GetServiceInfoAck_SyncStatus>(val));
+        } else goto handle_unusual;
+        continue;
+      // sint32 height = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          height_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 sequence = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+          sequence_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
         } else goto handle_unusual;
         continue;
       default: {
@@ -9522,6 +9827,18 @@ failure:
       7, this->_internal_is_sync(), target);
   }
 
+  // sint32 height = 8;
+  if (this->height() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt32ToArray(8, this->_internal_height(), target);
+  }
+
+  // uint32 sequence = 9;
+  if (this->sequence() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(9, this->_internal_sequence(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -9586,6 +9903,20 @@ size_t GetServiceInfoAck::ByteSizeLong() const {
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_is_sync());
   }
 
+  // sint32 height = 8;
+  if (this->height() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SInt32Size(
+        this->_internal_height());
+  }
+
+  // uint32 sequence = 9;
+  if (this->sequence() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_sequence());
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -9640,6 +9971,12 @@ void GetServiceInfoAck::MergeFrom(const GetServiceInfoAck& from) {
   if (from.is_sync() != 0) {
     _internal_set_is_sync(from._internal_is_sync());
   }
+  if (from.height() != 0) {
+    _internal_set_height(from._internal_height());
+  }
+  if (from.sequence() != 0) {
+    _internal_set_sequence(from._internal_sequence());
+  }
 }
 
 void GetServiceInfoAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -9674,6 +10011,8 @@ void GetServiceInfoAck::InternalSwap(GetServiceInfoAck* other) {
     GetArenaNoVirtual());
   swap(code_, other->code_);
   swap(is_sync_, other->is_sync_);
+  swap(height_, other->height_);
+  swap(sequence_, other->sequence_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetServiceInfoAck::GetMetadata() const {
@@ -12523,6 +12862,814 @@ void GetNodeServiceFeeAck::InternalSwap(GetNodeServiceFeeAck* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetNodeServiceFeeAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void GetDevInfoListReq::InitAsDefaultInstance() {
+}
+class GetDevInfoListReq::_Internal {
+ public:
+};
+
+GetDevInfoListReq::GetDevInfoListReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:GetDevInfoListReq)
+}
+GetDevInfoListReq::GetDevInfoListReq(const GetDevInfoListReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
+  devaddr_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_devaddr().empty()) {
+    devaddr_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.devaddr_);
+  }
+  public_net_ip_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_public_net_ip().empty()) {
+    public_net_ip_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.public_net_ip_);
+  }
+  is_show_ = from.is_show_;
+  // @@protoc_insertion_point(copy_constructor:GetDevInfoListReq)
+}
+
+void GetDevInfoListReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetDevInfoListReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  devaddr_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  public_net_ip_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  is_show_ = false;
+}
+
+GetDevInfoListReq::~GetDevInfoListReq() {
+  // @@protoc_insertion_point(destructor:GetDevInfoListReq)
+  SharedDtor();
+}
+
+void GetDevInfoListReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  devaddr_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  public_net_ip_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void GetDevInfoListReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const GetDevInfoListReq& GetDevInfoListReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetDevInfoListReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void GetDevInfoListReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetDevInfoListReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  devaddr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  public_net_ip_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  is_show_ = false;
+  _internal_metadata_.Clear();
+}
+
+const char* GetDevInfoListReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string password = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListReq.password"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string devaddr = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_devaddr();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListReq.devaddr"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string public_net_ip = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_public_net_ip();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListReq.public_net_ip"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bool is_show = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          is_show_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GetDevInfoListReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GetDevInfoListReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string password = 2;
+  if (this->password().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListReq.password");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_password(), target);
+  }
+
+  // string devaddr = 3;
+  if (this->devaddr().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_devaddr().data(), static_cast<int>(this->_internal_devaddr().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListReq.devaddr");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_devaddr(), target);
+  }
+
+  // string public_net_ip = 4;
+  if (this->public_net_ip().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_public_net_ip().data(), static_cast<int>(this->_internal_public_net_ip().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListReq.public_net_ip");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_public_net_ip(), target);
+  }
+
+  // bool is_show = 5;
+  if (this->is_show() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_is_show(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GetDevInfoListReq)
+  return target;
+}
+
+size_t GetDevInfoListReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetDevInfoListReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string password = 2;
+  if (this->password().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
+
+  // string devaddr = 3;
+  if (this->devaddr().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_devaddr());
+  }
+
+  // string public_net_ip = 4;
+  if (this->public_net_ip().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_public_net_ip());
+  }
+
+  // bool is_show = 5;
+  if (this->is_show() != 0) {
+    total_size += 1 + 1;
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GetDevInfoListReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetDevInfoListReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GetDevInfoListReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetDevInfoListReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetDevInfoListReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetDevInfoListReq)
+    MergeFrom(*source);
+  }
+}
+
+void GetDevInfoListReq::MergeFrom(const GetDevInfoListReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetDevInfoListReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.password().size() > 0) {
+
+    password_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.password_);
+  }
+  if (from.devaddr().size() > 0) {
+
+    devaddr_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.devaddr_);
+  }
+  if (from.public_net_ip().size() > 0) {
+
+    public_net_ip_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.public_net_ip_);
+  }
+  if (from.is_show() != 0) {
+    _internal_set_is_show(from._internal_is_show());
+  }
+}
+
+void GetDevInfoListReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetDevInfoListReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GetDevInfoListReq::CopyFrom(const GetDevInfoListReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetDevInfoListReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetDevInfoListReq::IsInitialized() const {
+  return true;
+}
+
+void GetDevInfoListReq::InternalSwap(GetDevInfoListReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  devaddr_.Swap(&other->devaddr_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  public_net_ip_.Swap(&other->public_net_ip_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(is_show_, other->is_show_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetDevInfoListReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void GetDevInfoListAcK::InitAsDefaultInstance() {
+}
+class GetDevInfoListAcK::_Internal {
+ public:
+};
+
+GetDevInfoListAcK::GetDevInfoListAcK()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:GetDevInfoListAcK)
+}
+GetDevInfoListAcK::GetDevInfoListAcK(const GetDevInfoListAcK& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      service_fee_info_(from.service_fee_info_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_description().empty()) {
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  mac_hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_mac_hash().empty()) {
+    mac_hash_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mac_hash_);
+  }
+  deviceaddr_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_deviceaddr().empty()) {
+    deviceaddr_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.deviceaddr_);
+  }
+  device_version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_device_version().empty()) {
+    device_version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.device_version_);
+  }
+  ::memcpy(&code_, &from.code_,
+    static_cast<size_t>(reinterpret_cast<char*>(&public_net_height_) -
+    reinterpret_cast<char*>(&code_)) + sizeof(public_net_height_));
+  // @@protoc_insertion_point(copy_constructor:GetDevInfoListAcK)
+}
+
+void GetDevInfoListAcK::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetDevInfoListAcK_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mac_hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  deviceaddr_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  device_version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&code_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&public_net_height_) -
+      reinterpret_cast<char*>(&code_)) + sizeof(public_net_height_));
+}
+
+GetDevInfoListAcK::~GetDevInfoListAcK() {
+  // @@protoc_insertion_point(destructor:GetDevInfoListAcK)
+  SharedDtor();
+}
+
+void GetDevInfoListAcK::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mac_hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  deviceaddr_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  device_version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void GetDevInfoListAcK::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const GetDevInfoListAcK& GetDevInfoListAcK::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetDevInfoListAcK_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void GetDevInfoListAcK::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetDevInfoListAcK)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  service_fee_info_.Clear();
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mac_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  deviceaddr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  device_version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&code_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&public_net_height_) -
+      reinterpret_cast<char*>(&code_)) + sizeof(public_net_height_));
+  _internal_metadata_.Clear();
+}
+
+const char* GetDevInfoListAcK::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListAcK.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // sint32 code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          code_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string description = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_description();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListAcK.description"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string mac_hash = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_mac_hash();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListAcK.mac_hash"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string deviceaddr = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_deviceaddr();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListAcK.deviceaddr"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string device_version = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_device_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoListAcK.device_version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // sint32 device_height = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
+          device_height_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // sint32 public_net_height = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          public_net_height_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .ServiceFee service_fee_info = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 74)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_service_fee_info(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GetDevInfoListAcK::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GetDevInfoListAcK)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListAcK.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // sint32 code = 2;
+  if (this->code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt32ToArray(2, this->_internal_code(), target);
+  }
+
+  // string description = 3;
+  if (this->description().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListAcK.description");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_description(), target);
+  }
+
+  // string mac_hash = 4;
+  if (this->mac_hash().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_mac_hash().data(), static_cast<int>(this->_internal_mac_hash().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListAcK.mac_hash");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_mac_hash(), target);
+  }
+
+  // string deviceaddr = 5;
+  if (this->deviceaddr().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_deviceaddr().data(), static_cast<int>(this->_internal_deviceaddr().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListAcK.deviceaddr");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_deviceaddr(), target);
+  }
+
+  // string device_version = 6;
+  if (this->device_version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_device_version().data(), static_cast<int>(this->_internal_device_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetDevInfoListAcK.device_version");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_device_version(), target);
+  }
+
+  // sint32 device_height = 7;
+  if (this->device_height() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt32ToArray(7, this->_internal_device_height(), target);
+  }
+
+  // sint32 public_net_height = 8;
+  if (this->public_net_height() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt32ToArray(8, this->_internal_public_net_height(), target);
+  }
+
+  // repeated .ServiceFee service_fee_info = 9;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_service_fee_info_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(9, this->_internal_service_fee_info(i), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GetDevInfoListAcK)
+  return target;
+}
+
+size_t GetDevInfoListAcK::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetDevInfoListAcK)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .ServiceFee service_fee_info = 9;
+  total_size += 1UL * this->_internal_service_fee_info_size();
+  for (const auto& msg : this->service_fee_info_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string description = 3;
+  if (this->description().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // string mac_hash = 4;
+  if (this->mac_hash().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_mac_hash());
+  }
+
+  // string deviceaddr = 5;
+  if (this->deviceaddr().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_deviceaddr());
+  }
+
+  // string device_version = 6;
+  if (this->device_version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_device_version());
+  }
+
+  // sint32 code = 2;
+  if (this->code() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SInt32Size(
+        this->_internal_code());
+  }
+
+  // sint32 device_height = 7;
+  if (this->device_height() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SInt32Size(
+        this->_internal_device_height());
+  }
+
+  // sint32 public_net_height = 8;
+  if (this->public_net_height() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SInt32Size(
+        this->_internal_public_net_height());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GetDevInfoListAcK::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetDevInfoListAcK)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GetDevInfoListAcK* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetDevInfoListAcK>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetDevInfoListAcK)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetDevInfoListAcK)
+    MergeFrom(*source);
+  }
+}
+
+void GetDevInfoListAcK::MergeFrom(const GetDevInfoListAcK& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetDevInfoListAcK)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  service_fee_info_.MergeFrom(from.service_fee_info_);
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.description().size() > 0) {
+
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  if (from.mac_hash().size() > 0) {
+
+    mac_hash_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mac_hash_);
+  }
+  if (from.deviceaddr().size() > 0) {
+
+    deviceaddr_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.deviceaddr_);
+  }
+  if (from.device_version().size() > 0) {
+
+    device_version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.device_version_);
+  }
+  if (from.code() != 0) {
+    _internal_set_code(from._internal_code());
+  }
+  if (from.device_height() != 0) {
+    _internal_set_device_height(from._internal_device_height());
+  }
+  if (from.public_net_height() != 0) {
+    _internal_set_public_net_height(from._internal_public_net_height());
+  }
+}
+
+void GetDevInfoListAcK::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetDevInfoListAcK)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GetDevInfoListAcK::CopyFrom(const GetDevInfoListAcK& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetDevInfoListAcK)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetDevInfoListAcK::IsInitialized() const {
+  return true;
+}
+
+void GetDevInfoListAcK::InternalSwap(GetDevInfoListAcK* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  service_fee_info_.InternalSwap(&other->service_fee_info_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  description_.Swap(&other->description_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  mac_hash_.Swap(&other->mac_hash_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  deviceaddr_.Swap(&other->deviceaddr_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  device_version_.Swap(&other->device_version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(code_, other->code_);
+  swap(device_height_, other->device_height_);
+  swap(public_net_height_, other->public_net_height_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetDevInfoListAcK::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -25900,6 +27047,1580 @@ void TestConnectAck::InternalSwap(TestConnectAck* other) {
 }
 
 
+// ===================================================================
+
+void Device2PubNetRandomReq::InitAsDefaultInstance() {
+}
+class Device2PubNetRandomReq::_Internal {
+ public:
+};
+
+Device2PubNetRandomReq::Device2PubNetRandomReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Device2PubNetRandomReq)
+}
+Device2PubNetRandomReq::Device2PubNetRandomReq(const Device2PubNetRandomReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Device2PubNetRandomReq)
+}
+
+void Device2PubNetRandomReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Device2PubNetRandomReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+Device2PubNetRandomReq::~Device2PubNetRandomReq() {
+  // @@protoc_insertion_point(destructor:Device2PubNetRandomReq)
+  SharedDtor();
+}
+
+void Device2PubNetRandomReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void Device2PubNetRandomReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Device2PubNetRandomReq& Device2PubNetRandomReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Device2PubNetRandomReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Device2PubNetRandomReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:Device2PubNetRandomReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* Device2PubNetRandomReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Device2PubNetRandomReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Device2PubNetRandomReq.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* Device2PubNetRandomReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Device2PubNetRandomReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Device2PubNetRandomReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Device2PubNetRandomReq.id");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Device2PubNetRandomReq)
+  return target;
+}
+
+size_t Device2PubNetRandomReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Device2PubNetRandomReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Device2PubNetRandomReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Device2PubNetRandomReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Device2PubNetRandomReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Device2PubNetRandomReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Device2PubNetRandomReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Device2PubNetRandomReq)
+    MergeFrom(*source);
+  }
+}
+
+void Device2PubNetRandomReq::MergeFrom(const Device2PubNetRandomReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Device2PubNetRandomReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void Device2PubNetRandomReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Device2PubNetRandomReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Device2PubNetRandomReq::CopyFrom(const Device2PubNetRandomReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Device2PubNetRandomReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Device2PubNetRandomReq::IsInitialized() const {
+  return true;
+}
+
+void Device2PubNetRandomReq::InternalSwap(Device2PubNetRandomReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata Device2PubNetRandomReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void RandomPubNet2DeviceAck::InitAsDefaultInstance() {
+}
+class RandomPubNet2DeviceAck::_Internal {
+ public:
+};
+
+RandomPubNet2DeviceAck::RandomPubNet2DeviceAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:RandomPubNet2DeviceAck)
+}
+RandomPubNet2DeviceAck::RandomPubNet2DeviceAck(const RandomPubNet2DeviceAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_description().empty()) {
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:RandomPubNet2DeviceAck)
+}
+
+void RandomPubNet2DeviceAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_RandomPubNet2DeviceAck_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+RandomPubNet2DeviceAck::~RandomPubNet2DeviceAck() {
+  // @@protoc_insertion_point(destructor:RandomPubNet2DeviceAck)
+  SharedDtor();
+}
+
+void RandomPubNet2DeviceAck::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void RandomPubNet2DeviceAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const RandomPubNet2DeviceAck& RandomPubNet2DeviceAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_RandomPubNet2DeviceAck_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void RandomPubNet2DeviceAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:RandomPubNet2DeviceAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* RandomPubNet2DeviceAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "RandomPubNet2DeviceAck.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string description = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_description();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "RandomPubNet2DeviceAck.description"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "RandomPubNet2DeviceAck.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* RandomPubNet2DeviceAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:RandomPubNet2DeviceAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "RandomPubNet2DeviceAck.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string description = 2;
+  if (this->description().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "RandomPubNet2DeviceAck.description");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_description(), target);
+  }
+
+  // string id = 3;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "RandomPubNet2DeviceAck.id");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:RandomPubNet2DeviceAck)
+  return target;
+}
+
+size_t RandomPubNet2DeviceAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:RandomPubNet2DeviceAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string description = 2;
+  if (this->description().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // string id = 3;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void RandomPubNet2DeviceAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:RandomPubNet2DeviceAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const RandomPubNet2DeviceAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<RandomPubNet2DeviceAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:RandomPubNet2DeviceAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:RandomPubNet2DeviceAck)
+    MergeFrom(*source);
+  }
+}
+
+void RandomPubNet2DeviceAck::MergeFrom(const RandomPubNet2DeviceAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:RandomPubNet2DeviceAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.description().size() > 0) {
+
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void RandomPubNet2DeviceAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:RandomPubNet2DeviceAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RandomPubNet2DeviceAck::CopyFrom(const RandomPubNet2DeviceAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:RandomPubNet2DeviceAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RandomPubNet2DeviceAck::IsInitialized() const {
+  return true;
+}
+
+void RandomPubNet2DeviceAck::InternalSwap(RandomPubNet2DeviceAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  description_.Swap(&other->description_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RandomPubNet2DeviceAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void Device2AllDevReq::InitAsDefaultInstance() {
+}
+class Device2AllDevReq::_Internal {
+ public:
+};
+
+Device2AllDevReq::Device2AllDevReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Device2AllDevReq)
+}
+Device2AllDevReq::Device2AllDevReq(const Device2AllDevReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Device2AllDevReq)
+}
+
+void Device2AllDevReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Device2AllDevReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+Device2AllDevReq::~Device2AllDevReq() {
+  // @@protoc_insertion_point(destructor:Device2AllDevReq)
+  SharedDtor();
+}
+
+void Device2AllDevReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void Device2AllDevReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Device2AllDevReq& Device2AllDevReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Device2AllDevReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Device2AllDevReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:Device2AllDevReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* Device2AllDevReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Device2AllDevReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Device2AllDevReq.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* Device2AllDevReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Device2AllDevReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Device2AllDevReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Device2AllDevReq.id");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Device2AllDevReq)
+  return target;
+}
+
+size_t Device2AllDevReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Device2AllDevReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Device2AllDevReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Device2AllDevReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Device2AllDevReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Device2AllDevReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Device2AllDevReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Device2AllDevReq)
+    MergeFrom(*source);
+  }
+}
+
+void Device2AllDevReq::MergeFrom(const Device2AllDevReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Device2AllDevReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void Device2AllDevReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Device2AllDevReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Device2AllDevReq::CopyFrom(const Device2AllDevReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Device2AllDevReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Device2AllDevReq::IsInitialized() const {
+  return true;
+}
+
+void Device2AllDevReq::InternalSwap(Device2AllDevReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata Device2AllDevReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void Feedback2DeviceAck::InitAsDefaultInstance() {
+}
+class Feedback2DeviceAck::_Internal {
+ public:
+};
+
+Feedback2DeviceAck::Feedback2DeviceAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Feedback2DeviceAck)
+}
+Feedback2DeviceAck::Feedback2DeviceAck(const Feedback2DeviceAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Feedback2DeviceAck)
+}
+
+void Feedback2DeviceAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Feedback2DeviceAck_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+Feedback2DeviceAck::~Feedback2DeviceAck() {
+  // @@protoc_insertion_point(destructor:Feedback2DeviceAck)
+  SharedDtor();
+}
+
+void Feedback2DeviceAck::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void Feedback2DeviceAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Feedback2DeviceAck& Feedback2DeviceAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Feedback2DeviceAck_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Feedback2DeviceAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:Feedback2DeviceAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* Feedback2DeviceAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Feedback2DeviceAck.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Feedback2DeviceAck.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* Feedback2DeviceAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Feedback2DeviceAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Feedback2DeviceAck.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Feedback2DeviceAck.id");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Feedback2DeviceAck)
+  return target;
+}
+
+size_t Feedback2DeviceAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Feedback2DeviceAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Feedback2DeviceAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Feedback2DeviceAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Feedback2DeviceAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Feedback2DeviceAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Feedback2DeviceAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Feedback2DeviceAck)
+    MergeFrom(*source);
+  }
+}
+
+void Feedback2DeviceAck::MergeFrom(const Feedback2DeviceAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Feedback2DeviceAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void Feedback2DeviceAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Feedback2DeviceAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Feedback2DeviceAck::CopyFrom(const Feedback2DeviceAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Feedback2DeviceAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Feedback2DeviceAck::IsInitialized() const {
+  return true;
+}
+
+void Feedback2DeviceAck::InternalSwap(Feedback2DeviceAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata Feedback2DeviceAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void DataTransReq::InitAsDefaultInstance() {
+}
+class DataTransReq::_Internal {
+ public:
+};
+
+DataTransReq::DataTransReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:DataTransReq)
+}
+DataTransReq::DataTransReq(const DataTransReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:DataTransReq)
+}
+
+void DataTransReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_DataTransReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+DataTransReq::~DataTransReq() {
+  // @@protoc_insertion_point(destructor:DataTransReq)
+  SharedDtor();
+}
+
+void DataTransReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void DataTransReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const DataTransReq& DataTransReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_DataTransReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void DataTransReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:DataTransReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* DataTransReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "DataTransReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "DataTransReq.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DataTransReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:DataTransReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "DataTransReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "DataTransReq.id");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:DataTransReq)
+  return target;
+}
+
+size_t DataTransReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:DataTransReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string id = 2;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void DataTransReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:DataTransReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const DataTransReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<DataTransReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:DataTransReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:DataTransReq)
+    MergeFrom(*source);
+  }
+}
+
+void DataTransReq::MergeFrom(const DataTransReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:DataTransReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void DataTransReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:DataTransReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void DataTransReq::CopyFrom(const DataTransReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:DataTransReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DataTransReq::IsInitialized() const {
+  return true;
+}
+
+void DataTransReq::InternalSwap(DataTransReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DataTransReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void TransData::InitAsDefaultInstance() {
+}
+class TransData::_Internal {
+ public:
+};
+
+TransData::TransData()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:TransData)
+}
+TransData::TransData(const TransData& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_description().empty()) {
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  encodedata_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_encodedata().empty()) {
+    encodedata_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.encodedata_);
+  }
+  origindata_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_origindata().empty()) {
+    origindata_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.origindata_);
+  }
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+  // @@protoc_insertion_point(copy_constructor:TransData)
+}
+
+void TransData::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TransData_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  encodedata_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  origindata_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+TransData::~TransData() {
+  // @@protoc_insertion_point(destructor:TransData)
+  SharedDtor();
+}
+
+void TransData::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  encodedata_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  origindata_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TransData::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TransData& TransData::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TransData_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TransData::Clear() {
+// @@protoc_insertion_point(message_clear_start:TransData)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  encodedata_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  origindata_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* TransData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TransData.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string description = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_description();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TransData.description"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bytes encodedata = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_encodedata();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bytes origindata = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_origindata();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string id = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TransData.id"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TransData::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TransData)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TransData.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // string description = 2;
+  if (this->description().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TransData.description");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_description(), target);
+  }
+
+  // bytes encodedata = 3;
+  if (this->encodedata().size() > 0) {
+    target = stream->WriteBytesMaybeAliased(
+        3, this->_internal_encodedata(), target);
+  }
+
+  // bytes origindata = 4;
+  if (this->origindata().size() > 0) {
+    target = stream->WriteBytesMaybeAliased(
+        4, this->_internal_origindata(), target);
+  }
+
+  // string id = 5;
+  if (this->id().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TransData.id");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TransData)
+  return target;
+}
+
+size_t TransData::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TransData)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string description = 2;
+  if (this->description().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // bytes encodedata = 3;
+  if (this->encodedata().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_encodedata());
+  }
+
+  // bytes origindata = 4;
+  if (this->origindata().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_origindata());
+  }
+
+  // string id = 5;
+  if (this->id().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TransData::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TransData)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TransData* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TransData>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TransData)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TransData)
+    MergeFrom(*source);
+  }
+}
+
+void TransData::MergeFrom(const TransData& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TransData)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.description().size() > 0) {
+
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  if (from.encodedata().size() > 0) {
+
+    encodedata_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.encodedata_);
+  }
+  if (from.origindata().size() > 0) {
+
+    origindata_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.origindata_);
+  }
+  if (from.id().size() > 0) {
+
+    id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
+  }
+}
+
+void TransData::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TransData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TransData::CopyFrom(const TransData& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TransData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TransData::IsInitialized() const {
+  return true;
+}
+
+void TransData::InternalSwap(TransData* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  description_.Swap(&other->description_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  encodedata_.Swap(&other->encodedata_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  origindata_.Swap(&other->origindata_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  id_.Swap(&other->id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TransData::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::GetAmountReq* Arena::CreateMaybeMessage< ::GetAmountReq >(Arena* arena) {
@@ -26000,6 +28721,12 @@ template<> PROTOBUF_NOINLINE ::GetNodeServiceFeeReq* Arena::CreateMaybeMessage< 
 }
 template<> PROTOBUF_NOINLINE ::GetNodeServiceFeeAck* Arena::CreateMaybeMessage< ::GetNodeServiceFeeAck >(Arena* arena) {
   return Arena::CreateInternal< ::GetNodeServiceFeeAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GetDevInfoListReq* Arena::CreateMaybeMessage< ::GetDevInfoListReq >(Arena* arena) {
+  return Arena::CreateInternal< ::GetDevInfoListReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GetDevInfoListAcK* Arena::CreateMaybeMessage< ::GetDevInfoListAcK >(Arena* arena) {
+  return Arena::CreateInternal< ::GetDevInfoListAcK >(arena);
 }
 template<> PROTOBUF_NOINLINE ::GetDevPrivateKeyReq* Arena::CreateMaybeMessage< ::GetDevPrivateKeyReq >(Arena* arena) {
   return Arena::CreateInternal< ::GetDevPrivateKeyReq >(arena);
@@ -26120,6 +28847,24 @@ template<> PROTOBUF_NOINLINE ::TestConnectReq* Arena::CreateMaybeMessage< ::Test
 }
 template<> PROTOBUF_NOINLINE ::TestConnectAck* Arena::CreateMaybeMessage< ::TestConnectAck >(Arena* arena) {
   return Arena::CreateInternal< ::TestConnectAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Device2PubNetRandomReq* Arena::CreateMaybeMessage< ::Device2PubNetRandomReq >(Arena* arena) {
+  return Arena::CreateInternal< ::Device2PubNetRandomReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::RandomPubNet2DeviceAck* Arena::CreateMaybeMessage< ::RandomPubNet2DeviceAck >(Arena* arena) {
+  return Arena::CreateInternal< ::RandomPubNet2DeviceAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Device2AllDevReq* Arena::CreateMaybeMessage< ::Device2AllDevReq >(Arena* arena) {
+  return Arena::CreateInternal< ::Device2AllDevReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Feedback2DeviceAck* Arena::CreateMaybeMessage< ::Feedback2DeviceAck >(Arena* arena) {
+  return Arena::CreateInternal< ::Feedback2DeviceAck >(arena);
+}
+template<> PROTOBUF_NOINLINE ::DataTransReq* Arena::CreateMaybeMessage< ::DataTransReq >(Arena* arena) {
+  return Arena::CreateInternal< ::DataTransReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TransData* Arena::CreateMaybeMessage< ::TransData >(Arena* arena) {
+  return Arena::CreateInternal< ::TransData >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

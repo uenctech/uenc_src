@@ -27,7 +27,7 @@
 #include <WS2tcpip.h>
 #include <windows.h>
 #include <time.h>
-#else 
+#else // !_MSC_VER
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -38,13 +38,13 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
-#endif 
+#endif // _MSC_VER
 
 #include <string>
 #include <vector>
 
-
-
+////////////////////////////////////////////////////////////////////////////////
+// 定义测试信息输出接口的操作宏
 
 #if NTP_OUTPUT
 
@@ -90,7 +90,7 @@ static inline x_void_t bv_output(x_cstring_t xszt_name, x_uint64_t xut_time)
 #define TV_OUTPUT(xszt_name, xtm_value)   tv_output((xszt_name), (xtm_value))
 #define BV_OUTPUT(xszt_name, xut_time )   bv_output((xszt_name), (xut_time ))
 
-#else 
+#else // !NTP_OUTPUT
 
 #define XOUTLINE(szformat, ...)
 #define TS_OUTPUT(xszt_name, xtm_ctxt )
@@ -98,12 +98,12 @@ static inline x_void_t bv_output(x_cstring_t xszt_name, x_uint64_t xut_time)
 #define TV_OUTPUT(xszt_name, xtm_value)
 #define BV_OUTPUT(xszt_name, xut_time )
 
-#endif 
+#endif // NTP_OUTPUT
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-#define JAN_1970     0x83AA7E80             
-#define NS100_1970   116444736000000000LL   
+#define JAN_1970     0x83AA7E80             ///< 1900 ~ 1970 年之间的时间 秒数
+#define NS100_1970   116444736000000000LL   ///< 1601 ~ 1970 年之间的时间 百纳秒数
 
 /**
  * @enum  em_ntp_mode_t
@@ -111,14 +111,14 @@ static inline x_void_t bv_output(x_cstring_t xszt_name, x_uint64_t xut_time)
  */
 typedef enum em_ntp_mode_t
 {
-    ntp_mode_unknow     = 0,  
-    ntp_mode_initiative = 1,  
-    ntp_mode_passive    = 2,  
-    ntp_mode_client     = 3,  
-    ntp_mode_server     = 4,  
-    ntp_mode_broadcast  = 5,  
-    ntp_mode_control    = 6,  
-    ntp_mode_reserved   = 7,  
+    ntp_mode_unknow     = 0,  ///< 未定义
+    ntp_mode_initiative = 1,  ///< 主动对等体模式
+    ntp_mode_passive    = 2,  ///< 被动对等体模式
+    ntp_mode_client     = 3,  ///< 客户端模式
+    ntp_mode_server     = 4,  ///< 服务器模式
+    ntp_mode_broadcast  = 5,  ///< 广播模式或组播模式
+    ntp_mode_control    = 6,  ///< 报文为 NTP 控制报文
+    ntp_mode_reserved   = 7,  ///< 预留给内部使用
 } em_ntp_mode_t;
 
 /**
@@ -127,42 +127,42 @@ typedef enum em_ntp_mode_t
  */
 typedef struct x_ntp_packet_t
 {
-    x_uchar_t         xct_li_ver_mode;      
-    x_uchar_t         xct_stratum    ;      
-    x_uchar_t         xct_poll       ;      
-    x_uchar_t         xct_percision  ;      
+    x_uchar_t         xct_li_ver_mode;      ///< 2 bits，飞跃指示器；3 bits，版本号；3 bits，NTP工作模式（参看 em_ntp_mode_t 相关枚举值）
+    x_uchar_t         xct_stratum    ;      ///< 系统时钟的层数，取值范围为1~16，它定义了时钟的准确度。层数为1的时钟准确度最高，准确度从1到16依次递减，层数为16的时钟处于未同步状态，不能作为参考时钟
+    x_uchar_t         xct_poll       ;      ///< 轮询时间，即两个连续NTP报文之间的时间间隔
+    x_uchar_t         xct_percision  ;      ///< 系统时钟的精度
 
-    x_uint32_t        xut_root_delay     ;  
-    x_uint32_t        xut_root_dispersion;  
-    x_uint32_t        xut_ref_indentifier;  
+    x_uint32_t        xut_root_delay     ;  ///< 本地到主参考时钟源的往返时间
+    x_uint32_t        xut_root_dispersion;  ///< 系统时钟相对于主参考时钟的最大误差
+    x_uint32_t        xut_ref_indentifier;  ///< 参考时钟源的标识
 
-    x_ntp_timestamp_t xtmst_reference;      
-    x_ntp_timestamp_t xtmst_originate;      
-    x_ntp_timestamp_t xtmst_receive  ;      
-    x_ntp_timestamp_t xtmst_transmit ;      
+    x_ntp_timestamp_t xtmst_reference;      ///< 系统时钟最后一次被设定或更新的时间（应答完成后，用于存储 T1）
+    x_ntp_timestamp_t xtmst_originate;      ///< NTP请求报文离开发送端时发送端的本地时间（应答完成后，用于存储 T4）
+    x_ntp_timestamp_t xtmst_receive  ;      ///< NTP请求报文到达接收端时接收端的本地时间（应答完成后，用于存储 T2）
+    x_ntp_timestamp_t xtmst_transmit ;      ///< NTP应答报文离开应答者时应答者的本地时间（应答完成后，用于存储 T3）
 } x_ntp_packet_t;
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timeval_t 转换为 x_ntp_timestamp_t 。
  */
 static inline x_void_t ntp_timeval_to_timestamp(x_ntp_timestamp_t * xtm_timestamp, const x_ntp_timeval_t * const xtm_timeval)
 {
-    const x_lfloat_t xlft_frac_per_ms = 4.294967296E6;  
+    const x_lfloat_t xlft_frac_per_ms = 4.294967296E6;  // 2^32 / 1000
 
     xtm_timestamp->xut_seconds  = (x_uint32_t)(xtm_timeval->tv_sec  + JAN_1970);
     xtm_timestamp->xut_fraction = (x_uint32_t)(xtm_timeval->tv_usec / 1000.0 * xlft_frac_per_ms);
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timeval_t 转换为 x_ntp_timestamp_t 。
  */
 static inline x_void_t ntp_timestamp_to_timeval(x_ntp_timeval_t * xtm_timeval, const x_ntp_timestamp_t * const xtm_timestamp)
 {
-    const x_lfloat_t xlft_frac_per_ms = 4.294967296E6;  
+    const x_lfloat_t xlft_frac_per_ms = 4.294967296E6;  // 2^32 / 1000
 
     if (xtm_timestamp->xut_seconds >= JAN_1970)
     {
@@ -176,7 +176,7 @@ static inline x_void_t ntp_timestamp_to_timeval(x_ntp_timeval_t * xtm_timeval, c
     }
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timeval_t 转换成 100纳秒为单位的值。
  */
@@ -185,7 +185,7 @@ static inline x_uint64_t ntp_timeval_ns100(const x_ntp_timeval_t * const xtm_tim
     return (10000000ULL * xtm_timeval->tv_sec + 10ULL * xtm_timeval->tv_usec);
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timeval_t 转换成 毫秒值。
  */
@@ -194,7 +194,7 @@ static inline x_uint64_t ntp_timeval_ms(const x_ntp_timeval_t * const xtm_timeva
     return (1000ULL * xtm_timeval->tv_sec + (x_uint64_t)(xtm_timeval->tv_usec / 1000.0 + 0.5));
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timestamp_t 转换成 100纳秒为单位的值。
  */
@@ -205,7 +205,7 @@ static inline x_uint64_t ntp_timestamp_ns100(const x_ntp_timestamp_t * const xtm
     return ntp_timeval_ns100(&xmt_timeval);
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_timestamp_t 转换成 毫秒值。
  */
@@ -216,9 +216,9 @@ static inline x_uint64_t ntp_timestamp_ms(const x_ntp_timestamp_t * const xtm_ti
     return ntp_timeval_ms(&xmt_timeval);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-
+/**********************************************************/
 /**
  * @brief 获取当前系统的 时间值（以 100纳秒 为单位，1970年1月1日到现在的时间）。
  */
@@ -233,15 +233,15 @@ x_uint64_t ntp_gettimevalue(void)
     xtime_value.HighPart = xtime_file.dwHighDateTime;
 
     return (x_uint64_t)(xtime_value.QuadPart - NS100_1970);
-#else 
+#else // !_MSC_VER
     struct timeval tmval;
     gettimeofday(&tmval, X_NULL);
 
     return (10000000ULL * tmval.tv_sec + 10ULL * tmval.tv_usec);
-#endif 
+#endif // _MSC_VER
 }
 
-
+/**********************************************************/
 /**
  * @brief 获取当前系统的 timeval 值（1970年1月1日到现在的时间）。
  */
@@ -255,18 +255,18 @@ x_void_t ntp_gettimeofday(x_ntp_timeval_t * xtm_value)
     xtime_value.LowPart  = xtime_file.dwLowDateTime;
     xtime_value.HighPart = xtime_file.dwHighDateTime;
 
-    xtm_value->tv_sec  = (x_long_t)((xtime_value.QuadPart - NS100_1970) / 10000000LL); 
-    xtm_value->tv_usec = (x_long_t)((xtime_value.QuadPart / 10LL      ) % 1000000LL ); 
-#else 
+    xtm_value->tv_sec  = (x_long_t)((xtime_value.QuadPart - NS100_1970) / 10000000LL); // 1970年以来的秒数
+    xtm_value->tv_usec = (x_long_t)((xtime_value.QuadPart / 10LL      ) % 1000000LL ); // 微秒
+#else // !_MSC_VER
     struct timeval tmval;
     gettimeofday(&tmval, X_NULL);
 
     xtm_value->tv_sec  = tmval.tv_sec ;
     xtm_value->tv_usec = tmval.tv_usec;
-#endif 
+#endif // _MSC_VER
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_time_context_t 转换为 以 100纳秒
  *        为单位的时间值（1970年1月1日到现在的时间）。
@@ -312,7 +312,7 @@ x_uint64_t ntp_time_value(x_ntp_time_context_t * xtm_context)
             xut_time = xtime_value.QuadPart - NS100_1970;
         }
     }
-#else 
+#else // !_MSC_VER
     struct tm       xtm_system;
     x_ntp_timeval_t xtm_value;
 
@@ -332,12 +332,12 @@ x_uint64_t ntp_time_value(x_ntp_time_context_t * xtm_context)
     {
         xut_time = ntp_timeval_ns100(&xtm_value);
     }
-#endif 
+#endif // _MSC_VER
 
     return xut_time;
 }
 
-
+/**********************************************************/
 /**
  * @brief 转换（以 100纳秒 为单位的）时间值（1970年1月1日到现在的时间）
  *        为具体的时间描述信息（即 x_ntp_time_context_t）。
@@ -383,7 +383,7 @@ x_bool_t ntp_tmctxt_bv(x_uint64_t xut_time, x_ntp_time_context_t * xtm_context)
     xtm_context->xut_minute = xtime_system.wMinute      ;
     xtm_context->xut_second = xtime_system.wSecond      ;
     xtm_context->xut_msec   = xtime_system.wMilliseconds;
-#else 
+#else // !_MSC_VER
     struct tm xtm_system;
     time_t xtm_time = (time_t)(xut_time / 10000000ULL);
     localtime_r(&xtm_time, &xtm_system);
@@ -396,12 +396,12 @@ x_bool_t ntp_tmctxt_bv(x_uint64_t xut_time, x_ntp_time_context_t * xtm_context)
     xtm_context->xut_minute = xtm_system.tm_min        ;
     xtm_context->xut_second = xtm_system.tm_sec        ;
     xtm_context->xut_msec   = (x_uint32_t)((xut_time % 10000000ULL) / 10000L);
-#endif 
+#endif // _MSC_VER
 
     return X_TRUE;
 }
 
-
+/**********************************************************/
 /**
  * @brief 转换（x_ntp_timeval_t 类型的）时间值
  *        为具体的时间描述信息（即 x_ntp_time_context_t）。
@@ -418,7 +418,7 @@ x_bool_t ntp_tmctxt_tv(const x_ntp_timeval_t * const xtm_value, x_ntp_time_conte
     return ntp_tmctxt_bv(ntp_timeval_ns100(xtm_value), xtm_context);
 }
 
-
+/**********************************************************/
 /**
  * @brief 转换（x_ntp_timeval_t 类型的）时间值
  *        为具体的时间描述信息（即 x_ntp_time_context_t）。
@@ -435,9 +435,9 @@ x_bool_t ntp_tmctxt_ts(const x_ntp_timestamp_t * const xtm_timestamp, x_ntp_time
     return ntp_tmctxt_bv(ntp_timestamp_ns100(xtm_timestamp), xtm_context);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
-
-
+/**********************************************************/
 /**
  * @brief 判断字符串是否为有效的 4 段式 IP 地址格式。
  *
@@ -499,7 +499,7 @@ static x_bool_t ntp_ipv4_valid(x_cstring_t xszt_vptr, x_uint32_t * xut_value)
     return xbt_okv;
 }
 
-
+/**********************************************************/
 /**
  * @brief 获取 域名下的 IP 地址表（取代系统的 gethostbyname() API 调用）。
  *
@@ -523,7 +523,7 @@ static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family,
 
     do
     {
-        
+        //======================================
 
         if (X_NULL == xszt_dname)
         {
@@ -540,7 +540,7 @@ static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family,
             break;
         }
 
-        
+        //======================================
 
         for (xai_iptr = xai_rptr; X_NULL != xai_iptr; xai_iptr = xai_iptr->ai_next)
         {
@@ -558,7 +558,7 @@ static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family,
             xvec_host.push_back(std::string(xszt_iphost));
         }
 
-        
+        //======================================
 
         xit_err = (xvec_host.size() > 0) ? 0 : -3;
     } while (0);
@@ -572,7 +572,7 @@ static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family,
     return xit_err;
 }
 
-
+/**********************************************************/
 /**
  * @brief 返回套接字当前操作失败的错误码。
  */
@@ -580,12 +580,12 @@ static x_int32_t ntp_sockfd_lasterror()
 {
 #ifdef _MSC_VER
     return (x_int32_t)WSAGetLastError();
-#else 
+#else // !_MSC_VER
     return errno;
-#endif 
+#endif // _MSC_VER
 }
 
-
+/**********************************************************/
 /**
  * @brief 关闭套接字。
  */
@@ -593,12 +593,12 @@ static x_int32_t ntp_sockfd_close(x_sockfd_t xfdt_sockfd)
 {
 #ifdef _MSC_VER
     return closesocket(xfdt_sockfd);
-#else 
+#else // !_MSC_VER
     return close(xfdt_sockfd);
-#endif 
+#endif // _MSC_VER
 }
 
-
+/**********************************************************/
 /**
  * @brief 初始化 NTP 的请求数据包。
  */
@@ -627,7 +627,7 @@ static x_void_t ntp_init_request_packet(x_ntp_packet_t * xnpt_dptr)
     xnpt_dptr->xtmst_transmit .xut_fraction = 0;
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_packet_t 中的 网络字节序 字段转换为 主机字节序。
  */
@@ -652,7 +652,7 @@ static x_void_t ntp_ntoh_packet(x_ntp_packet_t * xnpt_nptr)
     xnpt_nptr->xtmst_transmit .xut_fraction = ntohl(xnpt_nptr->xtmst_transmit .xut_fraction);
 }
 
-
+/**********************************************************/
 /**
  * @brief 将 x_ntp_packet_t 中的 主机字节序 字段转换为 网络字节序。
  */
@@ -677,7 +677,7 @@ static x_void_t ntp_hton_packet(x_ntp_packet_t * xnpt_nptr)
     xnpt_nptr->xtmst_transmit .xut_fraction = htonl(xnpt_nptr->xtmst_transmit .xut_fraction);
 }
 
-
+/**********************************************************/
 /**
  * @brief 向 NTP 服务器发送 NTP 请求，获取相关计算所需的时间戳（T1、T2、T3、T4如下所诉）。
  * <pre>
@@ -709,14 +709,14 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
 
     do 
     {
-        
+        //======================================
 
         if ((X_NULL == xszt_host) || (xut_tmout <= 0) || (X_NULL == xit_tmlst))
         {
             break;
         }
 
-        
+        //======================================
 
         xfdt_sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (X_INVALID_SOCKFD == xfdt_sockfd)
@@ -724,39 +724,39 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
             break;
         }
 
-        
+        // 设置 发送/接收 超时时间
 #ifdef _MSC_VER
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_SNDTIMEO, (x_char_t *)&xut_tmout, sizeof(x_uint32_t));
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_RCVTIMEO, (x_char_t *)&xut_tmout, sizeof(x_uint32_t));
-#else 
+#else // !_MSC_VER
         xtm_value.tv_sec  = (x_long_t)((xut_tmout / 1000));
         xtm_value.tv_usec = (x_long_t)((xut_tmout % 1000) * 1000);
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_SNDTIMEO, (x_char_t *)&xtm_value, sizeof(x_ntp_timeval_t));
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_RCVTIMEO, (x_char_t *)&xtm_value, sizeof(x_ntp_timeval_t));
-#endif 
+#endif // _MSC_VER
 
-        
+        // 服务端主机地址
         memset(&skaddr_host, 0, sizeof(struct sockaddr_in));
         skaddr_host.sin_family = AF_INET;
         skaddr_host.sin_port   = htons(xut_port);
         inet_pton(AF_INET, xszt_host, &skaddr_host.sin_addr.s_addr);
 
-        
+        //======================================
 
-        
+        // 初始化请求数据包
         ntp_init_request_packet(&xnpt_buffer);
 
-        
+        // NTP请求报文离开发送端时发送端的本地时间
         ntp_gettimeofday(&xtm_value);
         ntp_timeval_to_timestamp(&xnpt_buffer.xtmst_originate, &xtm_value);
 
-        
+        // T1
         xit_tmlst[0] = (x_int64_t)ntp_timeval_ns100(&xtm_value);
 
-        
+        // 转成网络字节序
         ntp_hton_packet(&xnpt_buffer);
 
-        
+        // 投递请求
         xit_err = sendto(xfdt_sockfd,
                          (x_char_t *)&xnpt_buffer,
                          sizeof(x_ntp_packet_t),
@@ -769,11 +769,11 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
             continue;
         }
 
-        
+        //======================================
 
         memset(&xnpt_buffer, 0, sizeof(x_ntp_packet_t));
 
-        
+        // 接收应答
         xit_err = recvfrom(xfdt_sockfd,
                            (x_char_t *)&xnpt_buffer,
                            sizeof(x_ntp_packet_t),
@@ -792,16 +792,16 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
             break;
         }
 
-        
+        // T4
         xit_tmlst[3] = (x_int64_t)ntp_gettimevalue();
 
-        
+        // 转成主机字节序
         ntp_ntoh_packet(&xnpt_buffer);
 
-        xit_tmlst[1] = (x_int64_t)ntp_timestamp_ns100(&xnpt_buffer.xtmst_receive ); 
-        xit_tmlst[2] = (x_int64_t)ntp_timestamp_ns100(&xnpt_buffer.xtmst_transmit); 
+        xit_tmlst[1] = (x_int64_t)ntp_timestamp_ns100(&xnpt_buffer.xtmst_receive ); // T2
+        xit_tmlst[2] = (x_int64_t)ntp_timestamp_ns100(&xnpt_buffer.xtmst_transmit); // T3
 
-        
+        //======================================
         xit_err = 0;
     } while (0);
 
@@ -814,7 +814,7 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
     return xit_err;
 }
 
-
+/**********************************************************/
 /**
  * @brief 向 NTP 服务器发送 NTP 请求，获取服务器时间戳。
  * 
@@ -834,16 +834,16 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
 
     x_int64_t xit_tmlst[4] = { 0 };
 
-    
-    
+    //======================================
+    // 参数验证
 
     if ((X_NULL == xszt_host) || (xut_tmout <= 0) || (X_NULL == xut_timev))
     {
         return -1;
     }
 
-    
-    
+    //======================================
+    // 获取 IP 地址列表
 
     if (ntp_ipv4_valid(xszt_host, X_NULL))
     {
@@ -869,7 +869,7 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
         xit_err = ntp_get_time_values(itvec->c_str(), xut_port, xut_tmout, xit_tmlst);
         if (0 == xit_err)
         {
-            
+            // T = T4 + ((T2 - T1) + (T3 - T4)) / 2;
             *xut_timev = xit_tmlst[3] + ((xit_tmlst[1] - xit_tmlst[0]) + (xit_tmlst[2] - xit_tmlst[3])) / 2;
             break;
         }
@@ -878,7 +878,7 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
 }
 
 
-
+/**********************************************************/
 /**
  * @brief 向 NTP 服务器发送 NTP 请求，获取服务器时间戳，用于测试。
  * 
@@ -898,16 +898,16 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
 
     x_int64_t xit_tmlst[4] = { 0 };
 
-    
-    
+    //======================================
+    // 参数验证
 
     if ((X_NULL == xszt_host) || (xut_tmout <= 0) || (X_NULL == xut_timev))
     {
         return -1;
     }
 
-    
-    
+    //======================================
+    // 获取 IP 地址列表
 
     if (ntp_ipv4_valid(xszt_host, X_NULL))
     {
@@ -927,7 +927,7 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
         return -1;
     }
 
-    
+    //======================================
 
     for (std::vector< std::string >::iterator itvec = xvec_host.begin(); itvec != xvec_host.end(); ++itvec)
     {
@@ -937,7 +937,7 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
         {
             XOUTLINE("========================================");
             XOUTLINE("  %s -> %s\n", xszt_host, itvec->c_str());
-            
+            // T = T4 + ((T2 - T1) + (T3 - T4)) / 2;
             *xut_timev = xit_tmlst[3] + ((xit_tmlst[1] - xit_tmlst[0]) + (xit_tmlst[2] - xit_tmlst[3])) / 2;
 
             BV_OUTPUT("time1", xit_tmlst[0]);
@@ -946,14 +946,14 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
             BV_OUTPUT("time4", xit_tmlst[3]);
             BV_OUTPUT("timev", *xut_timev);
             BV_OUTPUT("timec", ntp_gettimevalue());
-            
+            // 延时时间（T4-T1）-（T3-T2）
             printf("\tdelay : %lldms\n", (xit_tmlst[3] - xit_tmlst[0] - (xit_tmlst[2] - xit_tmlst[1]))/10000 );
 
             break;
         }
     }
 
-    
+    //======================================
 
     return xit_err;
 }

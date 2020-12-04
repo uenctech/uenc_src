@@ -49,7 +49,7 @@ public:
      * -4，获取交易信息失败
      * -5，余额不足
      */
-    static int CreateTxMessage(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees, CTransaction & outTx);
+    static int CreateTxMessage(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees, CTransaction & outTx, bool is_local = true);
     static void DoCreateTx(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees);
     static uint64_t GetUtxoAmount(std::string tx_hash, std::string address);
     static std::vector<std::string> GetUtxosByAddresses(std::vector<std::string> addresses);

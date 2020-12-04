@@ -1,6 +1,6 @@
 syntax                  = "proto3";
 
-
+/**********通用消息体********/
 
 message CommonMsg {
   string version         = 1;
