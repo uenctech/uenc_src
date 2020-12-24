@@ -22,12 +22,14 @@
 #include <sstream>
 #include "ca_MultipleApi.h"
 #include "ca_jcAPI.h"
+#include "ca_txvincache.h"
 
 void ca_register_http_callbacks()
 {
     HttpServer::registerCallback("/", api_jsonrpc);
     HttpServer::registerCallback("/block", api_print_block);
     HttpServer::registerCallback("/info", api_info);
+    HttpServer::registerCallback("/info_queue", api_info_queue);
     HttpServer::registerCallback("/get_block", api_get_block);
     HttpServer::registerCallback("/get_block_hash", api_get_block_hash);
     HttpServer::registerCallback("/get_block_by_hash", api_get_block_by_hash);
@@ -49,7 +51,7 @@ void ca_register_http_callbacks()
     HttpServer::registerJsonRpcCallback("generate_wallet",jsonrpc_generate_wallet);
     HttpServer::registerJsonRpcCallback("generate_sign",jsonrpc_generate_sign);
     HttpServer::registerJsonRpcCallback("send_multi_tx",jsonrpc_send_multi_tx);
-
+    HttpServer::registerJsonRpcCallback("get_pending_transaction", jsonrpc_get_pending_transaction);
 }
 
 
@@ -126,6 +128,22 @@ void api_print_block(const Request & req, Response & res)
 
     std::string str = printBlocks(num);
     res.set_content(str, "text/plain");
+}
+
+void api_info_queue(const Request & req, Response & res)
+{
+    std::ostringstream local;
+    auto cout_buff = std::cout.rdbuf(); // save pointer to std::cout buffer
+    std::cout.rdbuf(local.rdbuf()); // substitute internal std::cout buffer with buffer of 'local' object
+
+    std::cout << "queue----------:" << std::endl;
+    std::cout << "queue_read:" << global::queue_read.msg_list_.size() << std::endl; 
+    std::cout << "queue_work:" << global::queue_work.msg_list_.size() << std::endl; 
+    std::cout << "queue_write:" << global::queue_write.msg_list_.size() << std::endl; 
+    std::cout << "\n" << std::endl;
+
+    std::cout.rdbuf(cout_buff);
+    res.set_content(local.str(), "text/plain");
 }
 
 void api_info(const Request & req, Response & res)
@@ -953,9 +971,16 @@ nlohmann::json jsonrpc_send_multi_tx(const nlohmann::json & param)
 
 nlohmann::json jsonrpc_get_avg_fee(const nlohmann::json & param)
 {
-    uint64_t avg_fee_tmp = m_api::getAvgFee();
-
-    double avg_fee = (double) avg_fee_tmp / DECIMAL_NUM; 
+    int64_t avg_fee_tmp = m_api::getAvgFee();
+    double avg_fee = 0;
+    if(avg_fee_tmp < 0)
+    {
+        avg_fee =  0;
+    }
+    else
+    {
+        avg_fee = (double) avg_fee_tmp / DECIMAL_NUM; 
+    }
 
     nlohmann::json ret;
     ret["result"]["avg_fee"] = std::to_string(avg_fee); 
@@ -1037,6 +1062,61 @@ nlohmann::json jsonrpc_generate_sign(const nlohmann::json & param)
         ret["error"]["code"] = -32602;
         ret["error"]["message"] = "Invalid params";
         return ret;
+    }
+
+    return ret;
+}
+
+nlohmann::json jsonrpc_get_pending_transaction(const nlohmann::json & param)
+{
+    nlohmann::json ret;
+
+    std::string address;
+    if (param.find("address") != param.end())
+    {
+        address = param["address"].get<std::string>();
+    }
+
+    std::vector<TxVinCache::Tx> vectTxs;
+    if (address.empty())
+    {
+        MagicSingleton<TxVinCache>::GetInstance()->GetAllTx(vectTxs);
+    }
+    else
+    {
+        MagicSingleton<TxVinCache>::GetInstance()->Find(address, vectTxs);
+    }
+
+    ret["result"]["total"] = vectTxs.size();
+
+    int row = 0;
+    for (auto iter = vectTxs.begin(); iter != vectTxs.end(); ++iter)
+    {
+        nlohmann::json tx;
+        tx["hash"] = iter->txHash;
+
+        int pos = 0;
+        for (const auto& in : iter->vins)
+        {
+            tx["vin"][pos++] = in;
+        }
+
+        pos = 0;
+        for (const auto& from : iter->from)
+        {
+            tx["from"][pos++] = from;
+        }
+
+        pos = 0;
+        for (const auto& to : iter->to)
+        {
+            tx["to"][pos++] = to;
+        }
+
+        tx["amount"] = std::to_string(iter->amount);
+        tx["timestamp"] = iter->timestamp;
+
+        ret["result"]["transaction"][row++] = tx;
     }
 
     return ret;

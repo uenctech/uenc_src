@@ -7,7 +7,7 @@
 #include "ca_transaction.h"
 #include "MagicSingleton.h"
 #include "ca_device.h"
-
+#include "ca_pwdattackchecker.h"
 #include "../net/msg_queue.h"
 #include "../proto/ca_protomsg.pb.h"
 #include "../proto/transaction.pb.h"
@@ -309,7 +309,8 @@ void HandlePreMultiTxRaw( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgDa
 	};
 
 	unsigned int top = 0;
-	pRocksDb->GetBlockTop(txn, top);	
+	pRocksDb->GetBlockTop(txn, top);
+    	
 	phoneToTxMsg.set_top(top);
 
 	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
@@ -334,6 +335,48 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+   
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        txMsgAck.set_code(-31);
+        txMsgAck.set_message(minutescountStr);
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"密码输入错误"<<endl;
+            txMsgAck.set_code(PHONE_TX_PASSWORD_ERROR);
+            txMsgAck.set_message("密码输入错误");
+            net_send_message<TxMsgAck>(msgdata, txMsgAck);
+            return;
+       } 
+       else
+       {
+            txMsgAck.set_code(-30);
+            txMsgAck.set_message("第三次输入密码错误");
+            net_send_message<TxMsgAck>(msgdata, txMsgAck);
+            return;
+       }
+    }
+    else 
+    {
+        cout<<"密码输入正确重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        txMsgAck.set_code(0);
+        txMsgAck.set_message("密码输入正确");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+    }
+   
     if (hashOriPass != targetPassword) 
     {
         txMsgAck.set_code(PHONE_TX_PASSWORD_ERROR);

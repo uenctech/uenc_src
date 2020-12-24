@@ -16,7 +16,7 @@
 #include "./dispatcher.h"
 #include "net.pb.h"
 #include "common.pb.h"
-#include "../../utils/time_task.h"
+#include "../utils/time_task.h"
 #include "../utils/singleton.h"
 #include "./socket_buf.h"
 #include "./work_thread.h"
@@ -642,7 +642,7 @@ bool net_com::net_init()
 	Singleton<PeerNode>::get_instance()->nodelist_refresh_thread_init();
 
 	
-	global::g_timer.StartTimer(HEART_INTVL * 1000, net_com::DealHeart);
+	global::g_timer.Start(HEART_INTVL * 1000, net_com::DealHeart);
 
 
 	
@@ -982,7 +982,9 @@ void net_com::DealHeart()
 			node.heart_probes -= 1;
 			if(node.heart_probes <= 0)
 			{
-				node.print();
+				// std::cout << "DealHeart delete node==========" << endl;
+				// node.print();
+
 				Singleton<PeerNode>::get_instance()->delete_node(node.id);
 			}else
 			{

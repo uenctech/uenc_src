@@ -32,7 +32,7 @@ void EpollMode::work(EpollMode *epmd)
     epmd->init_listen();
     global::listen_thread_inited = true;
     global::cond_listen_thread.notify_all();
-    
+    // std::cout << "cond_listen_thread:notify_all" << std::endl;
     epmd->epoll_loop();
 }
 
@@ -77,7 +77,7 @@ int EpollMode::epoll_loop()
         {
             if (events[n].events & EPOLLERR)
             {
-                error("EPOLLERR=================");
+                // error("EPOLLERR=================");
                 int status, err;
                 socklen_t len;
                 err = 0;

@@ -6,6 +6,7 @@
 #include "peer_node.h"
 #include "../include/net_interface.h"
 #include "./global.h"
+#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "common.pb.h"
 #include "dispatcher.h"

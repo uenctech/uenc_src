@@ -3,7 +3,7 @@
 
 name="ebpc_"
 gitversion=$(git rev-parse --short HEAD)
-version=$(sed -n "/static string version = /p" ./ca/ca_global.cpp |awk -F '[\"]' '{print $2}')
+version=$(sed -n "/std::string g_LinuxCompatible = /p" ./ca/ca_global.cpp |awk -F '[\"]' '{print $2}')
 
 finalname=${name}""${version}
 

@@ -22,7 +22,7 @@ void ProtobufDispatcher:: handle(const MsgData& data ) {
     }
 
     std::string type = common_msg.type();
-    info("ProtobufDispatcher:: handle--%s",type.c_str());
+    // info("ProtobufDispatcher:: handle--%s",type.c_str());
     if(type.size() == 0)
     {
         error("handle type is empty");
@@ -65,17 +65,17 @@ void ProtobufDispatcher:: handle(const MsgData& data ) {
     std::string name = sub_msg->GetDescriptor()->name();
     auto p = protocbs_.find(name);
     if (p != protocbs_.end()) {
-        
+        // std::cout << "receive msg:" << name << std::endl;
         Node node;
         auto find = Singleton<PeerNode>::get_instance()->find_node_by_fd(data.fd, node);
         if (find){
-            
+            // std::cout << "msg come,ResetHeart fd:" << data.fd << std::endl;
             node.ResetHeart();
             Singleton<PeerNode>::get_instance()->update(node);
         }
         p->second( sub_msg, data );
     } else {
-        
+        // error("unknown message type %s", sub_msg->GetDescriptor()->name().c_str());
         return;
     }
 }

@@ -542,36 +542,91 @@ public:
     int SetAwardCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 获取总的额外奖励
+ # @description: 获取总签名次数
  # @param txn  : Rocksdb当中的事务
  # @param count  : 总的额外奖励
  # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
  ==================================================================================== */
     int GetAwardCount(Transaction* txn, uint64_t &count);
 
+    
+
 
     // 新增获得矿费和奖励总值接口，待完善
-    int GetGasTotal(Transaction* txn, uint64_t & gasTotal);
+    int GetGasTotal(Transaction* txn, uint64_t & gasTotal);   // 未调用
     int SetGasTotal(Transaction* txn, const uint64_t & gasTotal);
     int GetAwardTotal(Transaction* txn, uint64_t &awardTotal);
     int SetAwardTotal(Transaction* txn, const uint64_t &awardTotal);
+    
+    /* ==================================================================================== 
+     # @description: 通过base58地址获取已获得的总手续费
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param gasTotal : 出参，总手续费
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int GetGasTotalByAddress(Transaction* txn, const std::string & addr, uint64_t & gasTotal);
 
+    /* ==================================================================================== 
+     # @description: 通过base58地址设置已获得的总手续费
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param gasTotal : 总手续费
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int SetGasTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t & gasTotal);
 
-/* ====================================================================================  
- # @description: 设置数据库程序版本
- # @param txn  : Rocksdb当中的事务
- # @param version  : 程序版本
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
- ==================================================================================== */
+    /* ==================================================================================== 
+     # @description: 通过base58地址获取已获得的总奖励
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param awardTotal : 出参，总奖励
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int GetAwardTotalByAddress(Transaction* txn, const std::string & addr, uint64_t &awardTotal);
+
+    /* ==================================================================================== 
+     # @description: 通过base58地址设置已获得的总奖励
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param awardTotal : 总奖励
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int SetAwardTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t &awardTotal);
+
+    /* ==================================================================================== 
+     # @description: 通过base58地址获取已获得的总签名次数
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param awardTotal : 出参，总签名次数
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int GetSignNumByAddress(Transaction* txn, const std::string & addr, uint64_t &SignNum);
+
+    /* ==================================================================================== 
+     # @description: 通过base58地址设置已获得的总签名次数
+     # @param txn  : 创建事务生成的指针
+     # @param addr : base58地址
+     # @param awardTotal : 总签名次数
+     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     ==================================================================================== */
+    int SetSignNumByAddress(Transaction* txn, const std::string & addr, const uint64_t &SignNum);
+
+    /* ====================================================================================  
+    # @description: 设置数据库程序版本
+    # @param txn  : Rocksdb当中的事务
+    # @param version  : 程序版本
+    # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+    ==================================================================================== */
     // 记录初始化数据库的程序版本
     int SetInitVer(Transaction* txn, const std::string & version);
 
-/* ====================================================================================  
- # @description: 设置数据库程序版本
- # @param txn  : Rocksdb当中的事务
- # @param version  : 程序版本
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
- ==================================================================================== */
+    /* ====================================================================================  
+    # @description: 设置数据库程序版本
+    # @param txn  : Rocksdb当中的事务
+    # @param version  : 程序版本
+    # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+    ==================================================================================== */
    int GetInitVer(Transaction* txn, std::string & version);
     
     std::string getKey(const std::string &key);
@@ -642,6 +697,9 @@ private:
     const std::string kAwardCountKey = "awardcount"; // awardcount
     const std::string kGasTotalKey = "gastotal"; // gastotal
     const std::string kAwardTotalKey = "awardtotal"; // awardtotal
+    const std::string kAddrToGasTotalKey = "addr2gastotal"; // addr2gastotal
+    const std::string kAddrToAwardTotalKey = "addr2awardtotal"; // addr2awardtotal
+    const std::string kAddrToSignNumKey = "addr2signnum"; // addr2signnum
 
     const std::string kInitVersionKey = "initVer"; // initVer
     

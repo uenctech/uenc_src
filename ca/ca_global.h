@@ -17,6 +17,8 @@ extern std::string g_WindowsCompatible;
 extern std::string g_IOSCompatible;
 extern std::string g_AndroidCompatible;
 
+extern const int64_t g_compatMinHeight;
+
 typedef enum CAVERSION
 {
     kUnknown = 0,
@@ -34,7 +36,7 @@ extern bool g_phone;
 extern char g_ip[NETWORKID_LEN];
 extern const int g_MinNeedVerifyPreHashCount;
 extern Sync* g_synch;
-extern std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
+extern std::vector<GetDevInfoAck> g_nodeinfo;
 
 
 extern const char * build_time;
@@ -169,4 +171,7 @@ string getEbpcVersion();
  # 系统号：1为linux，2为windows，3为iOS，4为Android
  ==================================================================================== */
 Version getSystem();
+
+
+
 #endif

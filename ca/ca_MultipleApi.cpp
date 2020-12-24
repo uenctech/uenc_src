@@ -2,6 +2,9 @@
 #include "ca_txhelper.h"
 #include "ca_phonetx.h"
 #include "ca.h"
+#include  "ca_timefuc.h"
+#include  "ca_pwdattackchecker.h"
+#include "ca_txvincache.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -13,9 +16,15 @@ int is_version = -1;
 
 void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req, GetNodeServiceFeeAck &node_fee_ack)
 {
+    int db_status = 0; //数据库返回状态 0为成功
     uint64_t max_fee = 0, min_fee = 0, service_fee = 0;
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
-    rdb_ptr->GetDeviceSignatureFee(service_fee);
+    db_status = rdb_ptr->GetDeviceSignatureFee(service_fee);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return;
+    }
     auto node_fee = net_get_node_ids_and_fees();
     if (node_fee.size() > 1) 
     {
@@ -35,15 +44,15 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         sort(node_fee_list.begin(), node_fee_list.end());
         uint32_t fee_list_count = static_cast<uint32_t>(node_fee_list.size());
 
-        std::cout << "fee_list_count 0-->" << node_fee_list[0] << std::endl;
-        std::cout << "fee_list_count e-->" << node_fee_list[fee_list_count-1] << std::endl;
-        std::cout << "fee_list_count--->" << fee_list_count << std::endl;
+        // std::cout << "fee_list_count 0-->" << node_fee_list[0] << std::endl;
+        // std::cout << "fee_list_count e-->" << node_fee_list[fee_list_count-1] << std::endl;
+        // std::cout << "fee_list_count--->" << fee_list_count << std::endl;
         //0.31 - 1
         uint32_t list_begin = fee_list_count * 0.51;
         uint32_t list_end = fee_list_count;
 
-        std::cout << "list_begin =" << list_begin << std::endl;
-        std::cout << "list_end =" << list_end << std::endl;
+        // std::cout << "list_begin =" << list_begin << std::endl;
+        // std::cout << "list_end =" << list_end << std::endl;
 
         list_begin = list_begin == 0 ? 1 : list_begin;
         list_end = list_end == 0 ? 1 : list_end;
@@ -57,9 +66,9 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         }
         max_fee = node_fee_list[list_end - 1];
         service_fee = (max_fee + min_fee)/2;
-        cout<<"min_fee = " << min_fee <<endl;
-        cout<<"max_fee = " << max_fee <<endl;
-        cout<<"service_fee = "<< service_fee <<endl;
+        // cout<<"min_fee = " << min_fee <<endl;
+        // cout<<"max_fee = " << max_fee <<endl;
+        // cout<<"service_fee = "<< service_fee <<endl;
         if(min_fee == 0)
         {
             min_fee = 1000;
@@ -68,12 +77,12 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         {
             node_fee_ack.set_code(-1);
             node_fee_ack.set_description("单节点签名费错误");
-            cout<<"min_fee and  max_fee show "<<endl;
+            // cout<<"min_fee and  max_fee show "<<endl;
             return ;
         }
-        std::cout << "min_fee=" << min_fee << std::endl;
-        std::cout << "max_fee=" << max_fee << std::endl;
-        std::cout << "service_fee=" << service_fee << std::endl;
+        // std::cout << "min_fee=" << min_fee << std::endl;
+        // std::cout << "max_fee=" << max_fee << std::endl;
+        // std::cout << "service_fee=" << service_fee << std::endl;
     }
 
     std::cout << "node_fee.size() =" << node_fee.size() << std::endl;
@@ -97,12 +106,51 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
     std::string dev_pass = fee_req->password();
     std::string hashOriPass = generateDeviceHashPassword(dev_pass);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        cout<<"第四次以上输入错误返回时间"<<endl;
+        std::string minutescountStr = std::to_string(minutescount);
+        fee_ack.set_code(-31);
+        fee_ack.set_description(minutescountStr);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return;
+    }
+    if(hashOriPass.compare(targetPassword))
+    {
+       cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"前两次输入密码错误"<<endl;
+            fee_ack.set_code(-6);
+            fee_ack.set_description("密码输入错误");
+            return;
+       } 
+       else 
+       {
+            cout<<"第三次输入密码错误返回倒计时时间"<<endl;
+            fee_ack.set_code(-30);
+            fee_ack.set_description("第三次输入密码错误");
+            return;
+       }
+    }
+    else 
+    {
+        cout<<"密码输入正确重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        fee_ack.set_code(0);
+        fee_ack.set_description("密码输入正确");
+    }
+
     if (hashOriPass != targetPassword) 
     {
         fee_ack.set_code(-6);
         fee_ack.set_description("密码错误");
         return;
     }
+
     cout << "fee_req->service_fee() =" << fee_req->service_fee() << endl;
     double nodesignfee = stod(fee_req->service_fee());
     if(nodesignfee < 0.001 || nodesignfee > 0.1)
@@ -139,6 +187,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     if (txn == NULL) 
     {
         std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        return;
     }
 
     ON_SCOPE_EXIT 
@@ -147,7 +196,12 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     };
 
     unsigned int top = 0;
-    rdb_ptr->GetBlockTop(txn, top);
+    db_status =  rdb_ptr->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return;
+    }
     unsigned int height = top;
 
     //查询前100块数据
@@ -156,6 +210,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        return;
     }
     std::string block_hash = hash[0];
 
@@ -178,12 +233,18 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
             if (db_status) 
             {
                 std::cout << __LINE__ << std::endl;
+                return;
             }
             block.ParseFromString(serialize_block);
 
             //解析块头
             string serialize_header;
-            rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
+            db_status =  rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
+            if (db_status) 
+            {
+                std::cout << __LINE__ << std::endl;
+                return;
+            }
             CBlock cblock;
             cblock.ParseFromString(serialize_header);
 
@@ -198,13 +259,13 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
                         if (txout.value() > 0) 
                         {
                             temp_fee = txout.value();
-                            cout << "temp_fee++ " << temp_fee << endl;
+                            // cout << "temp_fee++ " << temp_fee << endl;
                             break;
                         }
                     }
                 }
             }
-            cout<<"temp_fee--"<<temp_fee<<endl;
+            // cout<<"temp_fee--"<<temp_fee<<endl;
             if (i == (int32_t)top) 
             {
                 max_fee = temp_fee;
@@ -230,6 +291,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        return;
     }
 
     if (!show_service_fee) 
@@ -241,17 +303,17 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     {
         def_fee = show_service_fee;
     }
-    cout << "max_fee =" << max_fee << endl;
-    cout << "min_fee =" << min_fee << endl;
-    cout <<"show_service_fee =" << show_service_fee <<endl;
+    // cout << "max_fee =" << max_fee << endl;
+    // cout << "min_fee =" << min_fee << endl;
+    // cout <<"show_service_fee =" << show_service_fee <<endl;
     if (top == 100) 
     {
-        cout << "top == 100 " << count << endl;
+        // cout << "top == 100 " << count << endl;
         avg_fee = count/100;
     } 
     else 
     {
-        cout << "top != 100 " << top << endl;
+        // cout << "top != 100 " << top << endl;
         avg_fee = (max_fee + min_fee)/2;
     }
 
@@ -274,15 +336,15 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     service_fee->set_service_fee(to_string(((double)def_fee)/DECIMAL_NUM));
     service_fee->set_avg_fee(to_string(((double)avg_fee)/DECIMAL_NUM));
 
-    std::cout << "max_fee = " << to_string(((double)max_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "min_fee =" << to_string(((double)min_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "def_fee =" << to_string(((double)def_fee)/DECIMAL_NUM) << std::endl;
-    std::cout << "avg_fee =" << to_string(((double)avg_fee)/DECIMAL_NUM) << std::endl;
+    // std::cout << "max_fee = " << to_string(((double)max_fee)/DECIMAL_NUM) << std::endl;
+    // std::cout << "min_fee =" << to_string(((double)min_fee)/DECIMAL_NUM) << std::endl;
+    // std::cout << "def_fee =" << to_string(((double)def_fee)/DECIMAL_NUM) << std::endl;
+    // std::cout << "avg_fee =" << to_string(((double)avg_fee)/DECIMAL_NUM) << std::endl;
 
     return;
 }
 
-uint64_t getAvgFee()
+int64_t getAvgFee()
 {
     int db_status = 0; //数据库返回状态 0为成功
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
@@ -290,6 +352,7 @@ uint64_t getAvgFee()
     if (txn == NULL) 
     {
         std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        return -1;
     }
 
     ON_SCOPE_EXIT 
@@ -298,14 +361,19 @@ uint64_t getAvgFee()
     };
 
     unsigned top = 0;
-    rdb_ptr->GetBlockTop(txn, top);
-
+    db_status = rdb_ptr->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return -2;
+    }
     //查询前100块数据
     std::vector<std::string> hash;
     db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hash);
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        return -3;
     }
     std::string block_hash = hash[0];
 
@@ -327,12 +395,18 @@ uint64_t getAvgFee()
         if (db_status)
         {
             std::cout << __LINE__ << std::endl;
+            return -4;
         }
         block.ParseFromString(serialize_block);
 
         //解析块头
         string serialize_header;
-        rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
+        db_status = rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
+        if (db_status)
+        {
+            std::cout << __LINE__ << std::endl;
+            return -5;
+        }
         CBlock cblock;
         cblock.ParseFromString(serialize_header);
 
@@ -374,8 +448,12 @@ uint64_t getAvgFee()
 
     uint64_t show_service_fee = 0;
 
-    rdb_ptr->GetDeviceSignatureFee(show_service_fee);
-
+    db_status = rdb_ptr->GetDeviceSignatureFee(show_service_fee);
+    if (db_status)
+    {
+        std::cout << __LINE__ << std::endl;
+        return -6;
+    }
     if (!show_service_fee)
     {
         //def_fee = (max_fee + min_fee)/2;
@@ -432,6 +510,7 @@ void GetPacketFee(const std::shared_ptr<GetPacketFeeReq> &packet_req, GetPacketF
     if (txn == NULL) 
     {
         std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        return;
     }
 
     ON_SCOPE_EXIT {
@@ -464,6 +543,7 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
     if (txn == NULL) 
     {
         std::cout << "(AddBlockInfo) TransactionInit failed !" << std::endl;
+        return;
     }
 
     bool bRollback = false;
@@ -565,6 +645,7 @@ uint64_t GetBalanceByAddress(const std::string & address)
     if (!txn) 
     {
         std::cout << "(CheckBalanceFromRocksDb) TransactionInit failed ! " << __LINE__ << std::endl;
+        return 0;
     }
 
     ON_SCOPE_EXIT
@@ -609,7 +690,7 @@ void GetAmount(const std::shared_ptr<GetAmountReq> &amount_req, GetAmountAck &am
     return;
 }
 
-void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlockInfoAck &block_info_ack) 
+int BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlockInfoAck &block_info_ack) 
 {
     using std::cout;
     using std::endl;
@@ -625,6 +706,10 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     if (txn == NULL) 
     {
         std::cout << "(GetBlockInfoAck) TransactionInit failed !" <<  __LINE__ << std::endl;
+        block_info_ack.set_version(getVersion());
+        block_info_ack.set_code(-1);
+        block_info_ack.set_description("TransactionInit failed ");
+        return -1;
     }
 
     ON_SCOPE_EXIT {
@@ -641,7 +726,10 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     if (bestChainHash.size() == 0) 
     { 
         //使用默认值
-        return;
+        block_info_ack.set_version(getVersion());
+        block_info_ack.set_code(-2);
+        block_info_ack.set_description("GetBestChainHash failed ");
+        return -2;
     }
     //FIXME [END]
 
@@ -650,6 +738,10 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        block_info_ack.set_version(getVersion());
+        block_info_ack.set_code(-3);
+        block_info_ack.set_description("GetBlockTop failed ");
+        return -3;
     }
 
     //如为负 则为最高高度和所有块数
@@ -664,10 +756,6 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
     //查找count范围内所有块
     CBlockHeader block;
     std::string serialize_block;
-    block_info_ack.set_version(getVersion());
-    block_info_ack.set_code(0);
-    block_info_ack.set_description("success");
-    block_info_ack.set_top(top);
 
     for (int64_t i = count, j = 0; i >= 0; --i, ++j) 
     {
@@ -675,14 +763,22 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
         if (db_status) 
         {
             std::cout << __LINE__ << std::endl;
+            block_info_ack.set_version(getVersion());
+            block_info_ack.set_code(-4);
+            block_info_ack.set_description("GetBlockHashsByBlockHeight failed ");
+            return -4;
         }
         cout << "count-- " << hash.size() << endl;
-        for (auto hs : hash)
+        for (auto &hs : hash)
         {
             db_status = rdb_ptr->GetBlockHeaderByBlockHash(txn, hs, serialize_block);
             if (db_status) 
             {
                 std::cout << __LINE__ << std::endl;
+                block_info_ack.set_version(getVersion());
+                block_info_ack.set_code(-5);
+                block_info_ack.set_description("GetBlockHeaderByBlockHash failed ");
+                return -5;
             }
             block.ParseFromString(serialize_block);
             //add block_infos
@@ -695,49 +791,18 @@ void BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBlo
             break;
         }
     }
+    
+    block_info_ack.set_version(getVersion());
+    block_info_ack.set_code(0);
+    block_info_ack.set_description("success");
+    block_info_ack.set_top(top);
 
     cout << block_info_ack.version() << endl;
     cout << block_info_ack.code() << endl;
     cout << block_info_ack.description() << endl;
     cout << block_info_ack.top() << endl;
     cout << endl;
-    // for (auto i = 0; i < block_info_ack.block_info_list().size(); ++i) {
-    //     auto block_info = block_info_ack.block_info_list(i);
-    //     cout << "height: " << block_info.height() << endl;
-    //     cout << "hash_merkle_root: " << block_info.hash_merkle_root() << endl;
-    //     cout << "hash_prev_block: " << block_info.hash_prev_block() << endl;
-    //     cout << "block_hash: " << block_info.block_hash() << endl;
-    //     cout << "ntime: " << block_info.ntime() << endl;
-    //     cout << "tx_info-------" << endl;
-
-    //     for (auto i_i = 0; i_i < block_info.tx_info_list().size(); ++i_i) {
-    //         auto tx_info = block_info.tx_info_list(i_i);
-    //         cout << "tx_hash: " << tx_info.tx_hash() << endl;
-    //         cout << "signer-------" << endl;
-    //         for (auto i_signer = 0; i_signer < tx_info.transaction_signer().size(); ++i_signer) {
-    //             cout << "transaction_signer: " << tx_info.transaction_signer(i_signer) << endl;
-    //         }
-
-    //         cout << "vin_list-------" << endl;
-    //         for (auto i_vin = 0; i_vin < tx_info.vin_list().size(); ++i_vin) {
-    //             cout << "script_sig: " << tx_info.vin_list(i_vin).script_sig() << endl;
-    //             cout << "pre_vout_hash: " << tx_info.vin_list(i_vin).pre_vout_hash() << endl;
-    //             cout << "pre_vout_index: " << tx_info.vin_list(i_vin).pre_vout_index() << endl;
-    //         }
-
-    //         cout << "vout_list-------" << endl;
-    //         for (auto i_vout = 0; i_vout < tx_info.vout_list().size(); ++i_vout) {
-    //             cout << "script_pubkey: " << tx_info.vout_list(i_vout).script_pubkey() << endl;
-    //             cout << "amount: " << tx_info.vout_list(i_vout).amount() << endl;
-    //         }
-    //         cout << "nlock_time: " << tx_info.nlock_time() << endl;
-    //         cout << "stx_owner: " << tx_info.stx_owner() << endl;
-    //         cout << "stx_owner_index:" << tx_info.stx_owner_index() << endl;
-    //         cout << "version: " << tx_info.version() << endl;
-    //     }
-    // }
-
-    return;
+    return 0;
 }
 
 void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetDevPasswordAck &pass_ack)
@@ -751,6 +816,47 @@ void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetD
     Singleton<StringUtil>::get_instance()->Trim(password, true, true);
     std::string originPass = generateDeviceHashPassword(password);
     std::string targetPass = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+   
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        pass_ack.set_version(getVersion());
+        pass_ack.set_code(-31);
+        pass_ack.set_description(minutescountStr);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return;
+    }
+
+    if(originPass.compare(targetPass))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"输入密码错误"<<endl;
+            pass_ack.set_version(getVersion());
+            pass_ack.set_code(-2);
+            pass_ack.set_description("密码输入错误");
+            return;
+       }
+       else
+       {
+            pass_ack.set_version(getVersion());
+            pass_ack.set_code(-30);
+            pass_ack.set_description("第三次输入密码错误");
+            return;
+       } 
+    }
+    else 
+    {
+        cout<<"密码输入正确重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        pass_ack.set_version(getVersion());
+        pass_ack.set_code(0);
+        pass_ack.set_description("密码输入正确");
+    }
 
     if (originPass != targetPass) 
     {
@@ -811,6 +917,45 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
 
     std::string hashOriPass = generateDeviceHashPassword(old_pass);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+   
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        pass_ack.set_code(-31);
+        pass_ack.set_description(minutescountStr);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"密码输入错误"<<endl;
+            pass_ack.set_code(-6);
+            pass_ack.set_description("密码输入错误");
+            return;
+       }
+       else
+       {
+            pass_ack.set_code(-30);
+            pass_ack.set_description("第三次输入密码错误");
+            return;
+       }
+    }
+    else 
+    {
+        cout<<"重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        pass_ack.set_code(0);
+        pass_ack.set_description("密码输入正确");
+    }
+
+
     if (hashOriPass != targetPassword) 
     {
         pass_ack.set_code(-6);
@@ -827,7 +972,7 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
     else 
     {
         pass_ack.set_code(0);
-        pass_ack.set_description("success");
+        pass_ack.set_description(" success");
     }
 
     return;
@@ -845,6 +990,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     if(!txn) 
     {
         std::cout << "(GetTransactionInfo) TransactionInit failed !" << std::endl;
+        return;
     }
 
     std::string retString;
@@ -857,6 +1003,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        return;
     }
 
     addr_ack.set_version(getVersion());
@@ -870,21 +1017,23 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
 
     std::vector<std::string> vTxHashs;
     db_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs);
-    if (!db_status) 
+    if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        return;
     }
 
     std::reverse(vTxHashs.begin(), vTxHashs.end());
 
     std::vector<std::string> vBlockHashs;
-    for (auto strTxHash : vTxHashs) 
+    for (auto &strTxHash : vTxHashs) 
     {
         std::string blockHash;
         db_status = pRocksDb->GetBlockHashByTransactionHash(txn, strTxHash, blockHash);
-        if (!db_status) 
+        if (db_status) 
         {
             std::cout << __LINE__ << std::endl;
+            return;
         }
         vBlockHashs.push_back(blockHash);
     }
@@ -913,6 +1062,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
         if (db_status) 
         {
             std::cout << __LINE__ << std::endl;
+            return;
         }
         CBlockHeader block;
         block.ParseFromString(serBlock);
@@ -1021,6 +1171,11 @@ void GetNodInfo(GetNodeInfoAck& node_ack)
                 {
                     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
                     Transaction* txn = pRocksDb->TransactionInit();
+                    if(!txn) 
+                    {
+                        std::cout << "(GetTransactionInfo) TransactionInit failed !" << std::endl;
+                        return;
+                    }
 
                     ON_SCOPE_EXIT{
                         pRocksDb->TransactionDelete(txn, true);
@@ -1145,6 +1300,44 @@ void HandleGetDevPrivateKeyReq(const std::shared_ptr<GetDevPrivateKeyReq>& msg, 
 
     std::string hashOriPass = generateDeviceHashPassword(passwd);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+   
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        devprikey_ack.set_code(-31);
+        devprikey_ack.set_description(minutescountStr);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"密码输入错误"<<endl;
+            devprikey_ack.set_code(-3);
+            devprikey_ack.set_description("密码输入错误");
+            return;
+       }
+       else
+       {
+            devprikey_ack.set_code(-30);
+            devprikey_ack.set_description("第三次输入密码错误");
+            return;
+       }  
+    }
+    else 
+    {
+        cout<<"重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        devprikey_ack.set_code(0);
+        devprikey_ack.set_description("密码输入正确");
+    }
+    
     if (hashOriPass != targetPassword) 
     {
         devprikey_ack.set_version(getVersion());
@@ -1364,7 +1557,12 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
 	};
 
 	unsigned int top = 0;
-	pRocksDb->GetBlockTop(txn, top);	
+	int db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return;
+    }	
 	phoneToTxMsg.set_top(top);
 
 	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
@@ -1390,7 +1588,7 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
     
     string fromAddr = msg->addr();
     uint64_t gasFee = std::stod(msg->gasfees().c_str()) * DECIMAL_NUM;
-    uint64_t amount = std::stoi(msg->amt().c_str()) * DECIMAL_NUM;
+    uint64_t amount = std::stod(msg->amt().c_str()) * DECIMAL_NUM;
     uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
     string txhash = msg->txhash();
    
@@ -1501,6 +1699,20 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
         error("(HandleCreateRedeemTxMsgReq) blockHeaderStr error !");
 		return ;   
     }
+
+    //{{ Check redeem time, it must be more than 30 days, 20201209
+    int result = IsMoreThan30DaysForRedeem(utxoStr);
+    if (result != 0)
+    {
+        createRedeemTxMsgAck.set_version(getVersion());
+        createRedeemTxMsgAck.set_code(-20);
+		createRedeemTxMsgAck.set_description("Redeem time is less than 30 days, error!");
+        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
+        cout<<"Redeem time is less than 30 days, error!"<<endl;
+        error("Redeem time is less than 30 days, error!");
+        return ;
+    }
+    //}}
 
     std::vector<string> utxos;
     db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
@@ -1649,6 +1861,7 @@ void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgD
 	if( txn == NULL )
 	{
 		std::cout << "(HandleRedeemTxMsgReq) TransactionInit failed !" << std::endl;
+        return;
 	}
 
 	bool bRollback = true;
@@ -1657,7 +1870,12 @@ void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgD
 	};
 
 	unsigned int top = 0;
-	pRocksDb->GetBlockTop(txn, top);	
+	int db_status = pRocksDb->GetBlockTop(txn, top);	
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return;
+    }
 	phoneToTxMsg.set_top(top);
 
 	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
@@ -1821,6 +2039,11 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = pRocksDb->TransactionInit();
+    if(txn == NULL)
+    {
+        std::cout << "(HandleGetTxInfoListReq) TransactionInit failed !" <<  __LINE__ << std::endl;
+        return;
+    }
     ON_SCOPE_EXIT 
     {
         pRocksDb->TransactionDelete(txn, true);
@@ -2284,7 +2507,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
         }
 
         std::vector<CBlock> blocks;
-        for (auto blkHash : blockHashs)
+        for (auto &blkHash : blockHashs)
         {
             std::string blockStr;
             if (0 != pRocksDb->GetBlockByBlockHash(txn, blkHash, blockStr) )
@@ -2332,7 +2555,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
             pBlockInfoItem->set_txhash(tx.hash());
 
             std::vector<std::string> owners = TxHelper::GetTxOwner(tx);
-            for (auto txOwner : owners)
+            for (auto &txOwner : owners)
             {
                 pBlockInfoItem->add_fromaddr(txOwner);
             }
@@ -2607,6 +2830,11 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = pRocksDb->TransactionInit();
+    if(txn == NULL )
+    {
+        std::cout << "(HandleGetTxInfoDetailReq) TransactionInit failed !" <<  __LINE__ << std::endl;
+        return;
+    }
     ON_SCOPE_EXIT 
     {
         pRocksDb->TransactionDelete(txn, true);
@@ -2847,7 +3075,7 @@ void HandleCreateDeviceRedeemTxReq(const std::shared_ptr<CreateDeviceRedeemTxReq
 
 void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const std::string msg_name) 
 {
-    cout << "msg_name " << msg_name << endl;
+    // cout << "msg_name " << msg_name << endl;
 
     if (msg_name == "GetNodeServiceFeeReq") 
     {
@@ -3188,44 +3416,14 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         ack.set_code(0);
         net_send_message<TestConnectAck>(msgdata, ack);
     }
-    //======================================
-    else if (msg_name == "Device2PubNetRandomReq")
+    else if (msg_name == "GetTxPendingListReq")
     {
-        const std::shared_ptr<Device2PubNetRandomReq> req = dynamic_pointer_cast<Device2PubNetRandomReq>(msg);
-       
-        HandleUpdateProgramEcho(req);
+        const std::shared_ptr<GetTxPendingListReq> req = dynamic_pointer_cast<GetTxPendingListReq>(msg);
+
+        HandleGetTxPendingListReq(req, msgdata);
     }
-    else if (msg_name == "RandomPubNet2DeviceAck")
-    {
-        const std::shared_ptr<RandomPubNet2DeviceAck> ack = dynamic_pointer_cast<RandomPubNet2DeviceAck>(msg);
-       
-        HandleUpdateProgramTransmitPublicOrNormal(ack, msgdata);
-    }
-    else if (msg_name == "Device2AllDevReq")
-    {
-        const std::shared_ptr<Device2AllDevReq> req = dynamic_pointer_cast<Device2AllDevReq>(msg);
-       
-        HandleUpdateProgramNodeBroadcast( req, msgdata);
-    }
-    else if (msg_name == "Feedback2DeviceAck")
-    {
-        const std::shared_ptr<Feedback2DeviceAck> ack = dynamic_pointer_cast<Feedback2DeviceAck>(msg);
-       
-        HandleUpdateProgramNodeId(ack);
-    }
-    else if (msg_name == "DataTransReq")
-    {
-        const std::shared_ptr<DataTransReq> req = dynamic_pointer_cast<DataTransReq>(msg);
-        
-        HandleUpdateProgramdata( req, msgdata);
-       
-    }
-    else if (msg_name == "TransData")
-    {
-        const std::shared_ptr<TransData> ack = dynamic_pointer_cast<TransData>(msg);
-       
-        HandleUpdateProgramRecoveryFile(ack);
-    }
+    // TODO
+
 }
 
 //version 4-3.0.14
@@ -3235,15 +3433,15 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
     const google::protobuf::Descriptor *descriptor = msg->GetDescriptor();
     const google::protobuf::Reflection *reflection = msg->GetReflection();
 
-    cout << "descriptor->field_count()" << descriptor->name() << endl;
+    // cout << "descriptor->field_count()" << descriptor->name() << endl;
 
     const google::protobuf::FieldDescriptor* field = descriptor->field(0);
 
     std::string version = reflection->GetString(*msg, field);
-    cout << "version=" << version << endl;
+    // cout << "version=" << version << endl;
 
     is_version = IsVersionCompatible(version);
-    cout << "is version=" << is_version << endl;
+    // cout << "is version=" << is_version << endl;
 
     assign(msg, msgdata, descriptor->name());
 }
@@ -3253,39 +3451,6 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
 
 void MuiltipleApi() 
 {
-
-    // net_register_callback<Device2PubNetRandomReq>([](const std::shared_ptr<Device2PubNetRandomReq>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
-
-    // net_register_callback<RandomPubNet2DeviceAck>([](const std::shared_ptr<RandomPubNet2DeviceAck>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
-
-    // net_register_callback<Device2AllDevReq>([](const std::shared_ptr<Device2AllDevReq>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
-    // net_register_callback<Feedback2DeviceAck>([](const std::shared_ptr<Feedback2DeviceAck>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
-    // net_register_callback<DataTransReq>([](const std::shared_ptr<DataTransReq>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
-    // net_register_callback<TransData>([](const std::shared_ptr<TransData>& msg, 
-    // const MsgData& msgdata) 
-    // {
-    //     m_api::verify(msg, msgdata);
-    // });
     /** new s **/
     //获取全网节点矿费 std::map<std::string, uint64_t> net_get_node_ids_and_fees()
     net_register_callback<GetNodeServiceFeeReq>([](const std::shared_ptr<GetNodeServiceFeeReq> &msg, 
@@ -3469,549 +3634,63 @@ void MuiltipleApi()
     {
         m_api::verify(msg, msgdata);
     });
+
+    net_register_callback<GetTxPendingListReq>([](const std::shared_ptr<GetTxPendingListReq>& msg, 
+    const MsgData& msgdata) 
+    {
+        m_api::verify(msg, msgdata);
+    });
 }
 
-
-int  get_exec_name(char *name,int name_size)
+static void InsertTxPendingToAckList(std::vector<TxVinCache::Tx>& vectTxs, GetTxPendingListAck& ack)
 {
-	char path[1024]={0};
-	int ret = readlink("/proc/self/exe",path,sizeof(path)-1);
-	if(ret == -1)
-	{
-		printf("---- get exec name fail!!\n");
-		return -1;
-	}
-	path[ret]= '\0';
-	char *ptr = strrchr(path,'/');
-	memset(name,0,name_size); //清空缓存区
-	strncpy(name,ptr+1,name_size-1);
-	return 0;
-}
-
-
-
-void HandleUpdateProgramRequst()
-{
-    cout<<"start"<<endl;
-    cout<<"self version ="<< getVersion()<<endl;
-
-    if (access("/opt/ebpc/bin/sn", F_OK) ) 
+    for (auto iter = vectTxs.begin(); iter != vectTxs.end(); ++iter)
     {
-        cout<<" /opt/ebpc/bin/sn is not exist"<<endl;
-        return;
-    }
-
-    if (Singleton<Config>::get_instance()->GetIsPublicNode())
-    {
-        std::string localIp = Singleton<Config>::get_instance()->GetLocalIP();
-        if (isPublicIp(localIp))
+        TxPendingItem* txItem = ack.add_list();
+        txItem->set_txhash(iter->txHash);
+        for (const auto& in : iter->vins)
         {
-            cout<<"localIp ="<<localIp <<endl;
-            return;
+            txItem->add_vins(in);
         }
-        else
+        for (const auto& from : iter->from)
         {
-            cout << "Self node is not public ip = " << localIp << endl;
+            txItem->add_fromaddr(from);
         }
-    }
-
-    Device2PubNetRandomReq device2PubNetRandomReq;
-    string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
-    device2PubNetRandomReq.set_version(getVersion());
-    device2PubNetRandomReq.set_id(self_id);
-
-    std::vector<Node> nodes = net_get_public_node();
-    std::vector<Node> publicNodes;
-
-    // Verify publicNodes pledge and fees
-    for (auto &node : nodes)
-    {
-        if (node.public_ip == node.local_ip && isPublicIp(IpPort::ipsz(node.public_ip)))
+        for (const auto& to : iter->to)
         {
-            uint64_t amount = 0;
-            if (SearchPledge(node.base58address, amount) != 0)
-            {
-                cout << "查询质押金额失败" << endl;
-                continue ;
-            }
-
-            if (amount < g_TxNeedPledgeAmt)
-            {
-                // 质押金额不足
-                cout << "Less amount of pledge =" << IpPort::ipsz(node.public_ip) << endl;
-                continue ;
-            }
-
-            if (amount >= g_TxNeedPledgeAmt && node.fee > 0)
-            {
-                publicNodes.push_back(node);
-                //std::sort(publicNodes.begin(), publicNodes.end());
-                publicNodes.erase(unique(publicNodes.begin(), publicNodes.end()), publicNodes.end());
-                cout << " public node = " << IpPort::ipsz(node.public_ip) << endl;
-            }
+            txItem->add_toaddr(to);
         }
-        else
-        {
-            cout << "Not public ip = " << IpPort::ipsz(node.local_ip) << endl;
-        }
+        txItem->set_amount(to_string(iter->amount));
+        txItem->set_time(iter->timestamp);
+        txItem->set_detail("");
     }
-
-    if(publicNodes.size() > 0)
-    {
-        srand(time(NULL));
-        cout<<"random public nodelist.size() = "<< publicNodes.size() <<endl;
-        int i = rand() % publicNodes.size();
-        cout<<"random publicNodes i ="<<i<<endl;
-        cout<< "random publicNodes id = "<<publicNodes[i].id<<endl;
-        cout<<"in the function internal"<<endl;
-        g_random_public_node.push_back(publicNodes[i].id);
-        net_send_message<Device2PubNetRandomReq>(g_random_public_node[0], device2PubNetRandomReq);
-    }
-    cout<<"end"<<endl;
-    return;
 }
 
-
-void  HandleUpdateProgramEcho(const std::shared_ptr<Device2PubNetRandomReq>& req)
+void HandleGetTxPendingListReq(const std::shared_ptr<GetTxPendingListReq>& req, const MsgData& msgdata)
 {
-    RandomPubNet2DeviceAck randomPubNet2DeviceAck;
-    cout<<"PubNet2DeviceAck"<<endl;
-    randomPubNet2DeviceAck.set_version(getVersion());
-    randomPubNet2DeviceAck.set_description("传输版本给请求节点");
-    string id = req->id();
-    cout<<"PubNet2DeviceAck id = "<<  id <<endl;
-    net_send_message<RandomPubNet2DeviceAck>(id, randomPubNet2DeviceAck);
-    cout<<"公网回复请求节点完毕"<<endl;
-    return;
-}
+    GetTxPendingListAck ack;
+    ack.set_version(getVersion());
+    ack.set_code(0);
+    ack.set_description("TxPending");
 
-
-void  HandleUpdateProgramTransmitPublicOrNormal(const std::shared_ptr<RandomPubNet2DeviceAck>& ack, const MsgData& msgdata)
-{
-    cout<<"HandlePushUpdateInfo"<<endl;
-    string version = ack->version();
-    if(version.empty()) 
-    { 
-        cout<<"echo version is empty!"<<endl;
-        return; 
-    }
-    cout<<"echo version ="<<version <<endl;
-
-    std::vector<std::string> SelfVersionNum;
-	SplitString(getVersion(), SelfVersionNum, "_");
-    if(SelfVersionNum.size() == 0) 
+    if (req->addr_size() == 0)
     {
-        cout<<"SelfVersionNum size is zero"<<endl;
-        return;
-    }
-    std::vector<std::string> SplitVersionNum;
-    SplitString(SelfVersionNum[1], SplitVersionNum, ".");
-    cout<<"Split Self Version Num size = "<<SplitVersionNum.size()<<endl;
-    for(auto &self :SplitVersionNum)
-    {
-        cout<<"SplitSelfVersionNum="<< self<<endl;
-    }
-
-    std::vector<std::string> RecvVersion;
-    SplitString(version, RecvVersion, "_");
-    std::vector<std::string> SplitRecvVersionNum;
-    if(RecvVersion.size() == 0) 
-    {
-        cout<<"RecvVersion size is zero"<<endl;
-        return;
-    } 
-    SplitString(RecvVersion[1], SplitRecvVersionNum, ".");
-    cout<<"Split echo Version Num size = "<<SplitRecvVersionNum.size()<<endl;
-    for(auto &echo :SplitRecvVersionNum)
-    {
-        cout<<"SplitechoVersionNum="<< echo<<endl;
-    }
-
-    if(SplitVersionNum.size() >2 ||SplitRecvVersionNum.size() >2)
-    {
-        return;
-    }
-
-    if (atoi(SplitVersionNum[0].c_str()) == atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) == atoi(SplitRecvVersionNum[1].c_str()))
-    {
-        cout<<"自身版本和哈希与公网相同不用更换版本"<<endl;
-        return;
-    }
-    
-    if (atoi(SplitVersionNum[0].c_str()) < atoi(SplitRecvVersionNum[0].c_str()))
-    {
-        cout<<"Self version less than echo version to broadcast"<<endl;
-        string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
-        Device2AllDevReq  device2AllDevReq;
-        device2AllDevReq.set_version(version);
-        device2AllDevReq.set_id(self_id);
-        
-        // 全网广播3次
-        std::vector<std::string> sendid = RandomNodeId(2);
-        cout <<"sendid size()=" <<sendid.size() << endl;
-        for(unsigned int i =0;i<sendid.size();i++)
-        {
-            cout<<"send id ="<<sendid[i]<<endl;
-            net_send_message<Device2AllDevReq>(sendid[i], device2AllDevReq);
-        }  
-        cout<<"Self version less than echo version the broadcasted end! "<<endl;
-    }
-    else if (atoi(SplitVersionNum[0].c_str()) == atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) < atoi(SplitRecvVersionNum[1].c_str()))
-    {
-        cout<<"Self version one equal echo version but another is less than echo version to broadcast"<<endl;
-        string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
-        Device2AllDevReq  device2AllDevReq;
-        device2AllDevReq.set_version(version);
-        device2AllDevReq.set_id(self_id);
-        
-        // 全网广播3次
-        std::vector<std::string> sendid = RandomNodeId(2);
-        cout <<"sendid size()=" <<sendid.size() << endl;
-        
-        for(unsigned int i =0;i<sendid.size();i++)
-        {
-            cout<<"send id ="<<sendid[i]<<endl;
-            net_send_message<Device2AllDevReq>(sendid[i], device2AllDevReq);
-        } 
-        cout<<"Self version one equal echo version but another is less than echo version the broadcasted end! "<<endl;
-    }
-    else if (atoi(SplitVersionNum[0].c_str()) > atoi(SplitRecvVersionNum[0].c_str())|| ((atoi(SplitVersionNum[0].c_str()) == atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) > atoi(SplitRecvVersionNum[1].c_str()))))
-    {
-        cout<<"Self version more than echo version do not update"<<endl;
-        if( g_random_public_node.size() > 0 )
-        {
-            g_random_public_node.clear();
-            cout<<"After g_random_public_node clear size()="<<g_random_public_node.size()<<endl;
-        }  
-        return;
-    } 
-
-    sleep(8);
-    if (atoi(SplitVersionNum[0].c_str()) == atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) == atoi(SplitRecvVersionNum[1].c_str()))
-    {
-        cout<<"自身版本和哈希与公网相同不用更换版本"<<endl;
-        return;
-    }
-    cout<< "Handle-------recv------------" <<endl;
-    DataTransReq req;
-    req.set_version(getVersion());
-    string local_id = Singleton<Config>::get_instance()->GetKID().c_str();
-    req.set_id(local_id);
-    cout<<"g_random_normal_node.size()="<<g_random_normal_node.size()<<endl;
-    if(g_random_normal_node.size() >0)
-    {
-        srand(time(NULL));
-        int i = rand() % g_random_normal_node.size();
-        cout<<"random i ="<< i <<endl;
-        cout<<"g_random_normal_node[i] ="<<g_random_normal_node[i]<<endl;
-        cout<<"有普通节点与公网节点版本与哈希相同向普通节点请求"<<endl;
-        net_send_message<DataTransReq>(g_random_normal_node[i], req);
-        if( g_random_normal_node.size() > 0 )
-        {
-            g_random_normal_node.clear();
-            cout<<"After g_random_normal_node clear size()="<<g_random_normal_node.size()<<endl;
-        }  
-    }
-    else 
-    { 
-        cout<<"自身版本和哈希与公网不同时向公网节点请求"<<endl;
-        net_send_message<DataTransReq>(g_random_public_node[0], req);
-        if( g_random_public_node.size() > 0 )
-        {
-            g_random_public_node.clear();
-            cout<<"After g_random_public_node clear size()="<<g_random_public_node.size()<<endl;
-        }      
-    }
-    return;
-}
-
-//回应广播
-void  HandleUpdateProgramNodeBroadcast(const std::shared_ptr<Device2AllDevReq>& req, const MsgData& msgdata)
-{
-    cout<<"OneNode2DeviceBroadcast"<<endl;
-    Feedback2DeviceAck feedback2DeviecAck;
-    string version = req->version();
-    string id = req->id();
-    cout<<"recv id ="<<id<<endl;
-    if(version.empty()) 
-    {
-        cout<<"Broadcast response version is empty"<<endl;
-        return;
-    }
-
-    string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
-    cout << "passive accept the broadcast node self_id =" << self_id <<endl;
-
-    std::vector<std::string> SelfVersionNum;
-	SplitString(getVersion(), SelfVersionNum, "_");
-    if(SelfVersionNum.size()==0) 
-    {
-        cout<<"Broadcast response SelfVersionNum size is zero"<<endl;
-        return;
-    }
-    std::vector<std::string> SplitVersionNum;
-    SplitString(SelfVersionNum[1], SplitVersionNum, ".");
-
-    // cout<<"Split Self Version Num size = "<<SplitVersionNum.size()<<endl;
-    // for(auto &self :SplitVersionNum)
-    // {
-    //     cout<<"SplitSelfVersionNum="<< self<<endl;
-    // }
-
-    std::vector<std::string> RecvVersion;
-    SplitString(version, RecvVersion, "_");
-    if(RecvVersion.size() == 0 )
-    {
-        cout<<"Broadcast RecvVersion size is zero"<<endl;
-        return;
-    }
-    std::vector<std::string> SplitRecvVersionNum;
-    SplitString(RecvVersion[1], SplitRecvVersionNum, ".");
-    // cout<<"Split echo Version Num size = "<<SplitRecvVersionNum.size()<<endl;
-    // for(auto &echo :SplitRecvVersionNum)
-    // {
-    //     cout<<"SplitechoVersionNum="<< echo<<endl;
-    // }
-
-	cout<<"one random response start "<<endl;
-    feedback2DeviecAck.set_version(getVersion());
-	if (atoi(SplitVersionNum[0].c_str()) == atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) == atoi(SplitRecvVersionNum[1].c_str()))
-    {
-        feedback2DeviecAck.set_id(self_id); 
-    }
-    else if (atoi(SplitVersionNum[0].c_str()) != atoi(SplitRecvVersionNum[0].c_str()) && atoi(SplitVersionNum[1].c_str()) != atoi(SplitRecvVersionNum[1].c_str()))
-    {
-        cout<<"one response i have not  the version "<<endl;
-    }
-    net_send_message<Feedback2DeviceAck>(id, feedback2DeviecAck);
-    cout<<"feedback2DeviceAck over!"<<endl;
-    return;
-}
-
-
-void HandleUpdateProgramNodeId(const std::shared_ptr<Feedback2DeviceAck>& ack)
-{
-    cout<<"HandleSelectEchoNodeId"<<endl;
-    std::lock_guard<std::mutex> lck(mu_return);
-    string normal_id = ack->id();
-    if(normal_id.empty())
-    {
-        cout<<"normal_id.empty()"<<endl;
-        return;
+        std::vector<TxVinCache::Tx> vectTxs;
+        MagicSingleton<TxVinCache>::GetInstance()->GetAllTx(vectTxs);
+        InsertTxPendingToAckList(vectTxs, ack);
     }
     else
     {
-        cout<<"SelectEchoNodeid normal_id= " << normal_id<<endl;
-        g_random_normal_node.push_back(normal_id);
-        std::sort(g_random_normal_node.begin(), g_random_normal_node.end());
-        g_random_normal_node.erase(unique(g_random_normal_node.begin(), g_random_normal_node.end()), g_random_normal_node.end());
-        cout<<"HandleSelectEchoNodeId  g_random_normal_node.size() = "<<g_random_normal_node.size()<<endl; 
-        return;  
-    }
-}
-
-
-void  HandleUpdateProgramdata(const std::shared_ptr<DataTransReq>& req, const MsgData& msgdata)
-{
-    TransData ack;
-    string id = req->id();
-    cout<<"id ="<<id<<endl;
-    ack.set_version(getVersion());
-    ack.set_id(id);
-    cout<<"--------HandleStart-------"<<endl;
-    char path[256]= {0};
-    get_exec_name(path,sizeof(path)); 
-
-    FILE * fp = fopen(path, "rb");
-   
-    if(fp == NULL)    
-    {
-        ack.set_description("文件打开失败");
-        cout<<"--------文件打开失败-------"<<endl;
-        net_send_message<TransData>(msgdata, ack);
-    }
-
-    fseek(fp, 0, SEEK_END);
-    long len = ftell(fp);
-    rewind(fp);
-
-    if (len == 0)
-    {
-        ack.set_description("文件有误");
-        cout<<"--------文件有误-------"<<endl;
-        net_send_message<TransData>(id, ack);
-    }
-
-    char * buf = new char[len + 1];
-    memset(buf, 0, len + 1);
-    int ret = fread(buf, 1, len + 1, fp);
-    cout<<"ret ="   <<ret  <<endl;
-    string out = std::string(buf, len);
-    
-    string datastr = getsha256hash(out);
-    ack.set_origindata(out);
-    ack.set_encodedata(datastr);
-    ack.set_description("传输数据");
-    cout<<"--------开始传输数据-------"<<endl;
-    net_send_message<TransData>(id, ack);
-    cout<<"--------传输数据结束-------"<<endl;
-    fflush(fp);
-    fclose(fp);
-    free(buf);
-    return;
-}
-
-void removefile(char *name)//remove file and empty dir
-{
-	DIR *d;
-	if ((d = opendir(name)) == NULL)
-	{
-		printf("file:%s is moved!\n", name);
-		unlink(name);
-	}
-	else if ((rmdir(name)) == 0)
-    {
-        printf("dir:%s is moved!\n", name);
-    }		
-	else
-	{
-        printf("dir name:%s\n", name);
-        removedir(name);
-	}
-}
- 
-void removedir(char* dir)//check the dir
-{
-	struct dirent *dp;
-	DIR *d;
-	char bb[100] = "";
-	d = opendir(dir);
-	getcwd(bb, 100);
-	while((dp = readdir(d)) != NULL)
-	{
-		if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0)
-		continue;
-		chdir(dir);
-		//printf("\nfind :%s\n", dp->d_name);
-        cout<<"find :"<< dp->d_name<<endl;
-		removefile(dp->d_name);
-	}
-	closedir(d);
-	chdir(bb);
-	removefile(dir);
-	printf("%s is moved!\n", dir);
-}
-
-
-void HandleUpdateProgramRecoveryFile(const std::shared_ptr<TransData>& req)
-{
-    cout<<"-----Recoveryfile--start-----"<<endl;
-
-    string data  = req->origindata();
-    string recv_datastr = getsha256hash(data);
-   
-    cout<<"recv_datastr = "<< recv_datastr <<endl;
-    if(!recv_datastr.compare(req->encodedata()))
-    {
-        string version = req->version();
-        string oldname = "ebpc_"  + version ;
-        string newname = "ebpc_wm" ;
-        FILE * fp = fopen(oldname.c_str(), "wb+");
-        chmod(oldname.c_str(),S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
-        fwrite(data.c_str(), sizeof(char), data.size(), fp);
-        rename(oldname.c_str(),newname.c_str());
-        chmod(newname.c_str(),S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IXOTH);
-        fflush(fp);
-        fclose(fp);
-    }
-
-    cout<<"-----Recoveryfile--end---"<<endl;
-    char szBuf[128];
-    char szPath[128];
-    
-    memset(szBuf, 0x00, sizeof( szBuf));    
-    memset( szPath, 0x00, sizeof(szPath));
-    cout<<"start------ delete  executive  file"<<endl;
-    getcwd(szBuf, sizeof(szBuf)-1);
-    cout<<"buf="<<szBuf <<endl;
-    int ret =  readlink("/proc/self/exe", szPath, sizeof(szPath)-1 );
-    cout<<"ret ="<< ret <<endl;
-    cout<<"path="<< szPath <<endl;
-   
-	removefile(szPath);
-    kill(getpid(), SIGKILL);
-    cout<<"delete  executive  file -----end"<<endl;
-    return ;
-}
-
-
-std::vector<std::string> RandomNodeId(unsigned int n)
-{
-    unsigned int nodeSize = n;
-	std::vector<std::string> sendid;
-
-    std::vector<Node> nodeinfo;
-    std::vector<std::string> id;
-    auto nodelist = Singleton<PeerNode>::get_instance()->get_nodelist();
-
-    for(auto& node:nodelist)
-    {
-        if(node.fee >0 )
+        for (int i = 0; i < req->addr_size(); i++)
         {
-            nodeinfo.push_back(node);
+            string fromAddr = req->addr(i);
+            std::vector<TxVinCache::Tx> vectTxs;
+            MagicSingleton<TxVinCache>::GetInstance()->Find(fromAddr, vectTxs);
+            InsertTxPendingToAckList(vectTxs, ack);
+
+            ack.add_addr(fromAddr);
         }
     }
-    
-    for(auto & nodemessage:nodeinfo)
-    {
-        if (nodemessage.public_ip == nodemessage.local_ip && isPublicIp(IpPort::ipsz(nodemessage.public_ip)))
-        {
-            cout<<"nodemessage.public_ip="<<nodemessage.public_ip<<endl;
-            continue;
-        }
-        uint64_t amount = 0;
-        if (SearchPledge(nodemessage.base58address, amount) != 0)
-        {
-            cout<<"随机选几点的时候质押查询出错"<<endl;
-            continue ;
-        }
 
-        if (amount < g_TxNeedPledgeAmt)
-        {
-            // 质押金额不足
-            cout << "Less amount of pledge " << endl;
-            continue ;
-        }
-
-        if(amount >= g_TxNeedPledgeAmt)
-        {
-            id.push_back(nodemessage.id);
-            std::sort(id.begin(), id.end());
-            id.erase(unique(id.begin(), id.end()), id.end());
-        }
-    }
-    
-    if ((unsigned int)id.size() < nodeSize)
-	{
-		debug("not enough node to send");
-		return sendid;
-	}
-
-	srand(time(NULL));
-    while (1)
-    {
-        cout<<"start random "<<endl;
-        int i = rand() % id.size();
-        sendid.push_back(id[i]);
-        cout<<"sendid.push id"<<id[i]<<endl;
-        std::sort(sendid.begin(), sendid.end());
-        sendid.erase(unique(sendid.begin(), sendid.end()), sendid.end());
-        if (sendid.size() == nodeSize)
-        {
-            break;
-        }
-        cout<<"random end "<<endl;
-    }
-	return sendid;
+    net_send_message<GetTxPendingListAck>(msgdata, ack);
 }
-

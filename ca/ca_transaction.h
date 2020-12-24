@@ -37,7 +37,7 @@ void GetDefault58Addr(char *buf, size_t len);
 // std::string ser_reqblkinfo(int64_t height);
 unsigned get_extra_award_height(); //根据高度获取额外奖励
 
-void new_add_ouput_by_signer(CTransaction &tx, bool isExtra = false, const std::shared_ptr<TxMsg>& msg = nullptr);
+int new_add_ouput_by_signer(CTransaction &tx, bool isExtra = false, const std::shared_ptr<TxMsg>& msg = nullptr);
 
 
 /**
@@ -77,7 +77,6 @@ std::vector<std::string> randomNode(unsigned int n);
 CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg = nullptr);
 CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward = false, const std::shared_ptr<TxMsg>& msg = nullptr); //extra_award额外奖励 0否 1是
 
-bool VerifyBlockHeader(const CBlock & cblock);
 bool AddBlock(const CBlock & cblock, bool isSync = false);
 
 typedef enum emTransactionType{
@@ -198,6 +197,8 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 
 void CalcBlockMerkle(CBlock & cblock);
 
+bool checkTransaction(const CTransaction & tx);
+
 
 /* ====================================================================================  
  # @description:  手机端连接矿机交易之前，验证矿机密码
@@ -215,9 +216,6 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& msg, const MsgData& msgdata );
 //获取在线时长
 void GetOnLineTime();
-//打印显示在线时长
-int PrintOnLineTime();
-int TestSetOnLineTime();
 
 void test_rocksdb();
 

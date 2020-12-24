@@ -1100,3 +1100,109 @@ int Rocksdb::GetInitVer(Transaction* txn, std::string & version)
     std::string db_key = this->kInitVersionKey + "_";
     return readdata(txn, db_key, version);
 }
+
+
+int Rocksdb::GetGasTotalByAddress(Transaction* txn, const std::string & addr, uint64_t & gasTotal)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToGasTotalKey + "_" + addr;
+    std::string gasTotalStr;
+
+    int ret =  readdata(txn, db_key, gasTotalStr);
+    if (ret != ROCKSDB_SUC)
+    {
+        return ret;
+    }
+    else
+    {
+        gasTotal = std::stoll(gasTotalStr);
+    }
+    return ROCKSDB_SUC; 
+}
+
+
+int Rocksdb::SetGasTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t & gasTotal)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToGasTotalKey + "_" + addr;
+    return writedata(txn, db_key, std::to_string(gasTotal));
+}
+
+
+int Rocksdb::GetAwardTotalByAddress(Transaction* txn, const std::string & addr, uint64_t &awardTotal)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToAwardTotalKey + "_" + addr;
+    
+    std::string awardTotalStr;
+    int ret = readdata(txn, db_key, awardTotalStr);
+    if (ret != ROCKSDB_SUC)
+    {
+        return ret;
+    }
+    else
+    {
+        awardTotal = std::stoull(awardTotalStr);
+    }
+    return ROCKSDB_SUC;
+}
+
+
+int Rocksdb::SetAwardTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t &awardTotal)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToAwardTotalKey + "_" + addr;
+    return writedata(txn, db_key, std::to_string(awardTotal));
+}
+
+
+int Rocksdb::GetSignNumByAddress(Transaction* txn, const std::string & addr, uint64_t &signNum)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToSignNumKey + "_" + addr;
+    std::string signNumStr;
+
+    int ret = readdata(txn, db_key, signNumStr);
+    if (ret != ROCKSDB_SUC)
+    {
+        return ret;
+    }
+    else
+    {
+        signNum = std::stoll(signNumStr);
+    }
+    return ROCKSDB_SUC;
+}
+
+
+int Rocksdb::SetSignNumByAddress(Transaction* txn, const std::string & addr, const uint64_t &signNum)
+{
+    if (txn == NULL || addr.empty())
+    {
+        return ROCKSDB_PARAM_NULL;
+    }
+
+    std::string db_key = this->kAddrToSignNumKey + "_" + addr;
+    return writedata(txn, db_key, std::to_string(signNum));
+    return 0;
+}

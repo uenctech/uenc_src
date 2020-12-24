@@ -10,7 +10,7 @@
 #include "ca_global.h"
 
 const int SYNCNUM = 5;      //同步寻找节点数
-const int CHECKNUM = 5;    //漏块检查的段数
+const int CHECKNUM = 15;    //漏块检查的段数
 const int CHECK_HEIGHT = 100;  //漏块检查的段数每段个数
 const int HASH_LEN = 6;       // hash长度
 const int SYNC_NUM_LIMIT = 500;   // 最多同步多少块

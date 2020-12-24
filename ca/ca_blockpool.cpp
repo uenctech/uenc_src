@@ -13,6 +13,7 @@
 #include "../include/ScopeGuard.h"
 #include "ca_synchronization.h"
 #include "ca_base58.h"
+#include "ca_verify.h"
 
 bool BlockPoll::CheckConflict(const CBlock& block1, const CBlock& block2)
 {

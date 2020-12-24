@@ -170,4 +170,6 @@ int CreateRedeemTransaction(const std::string & fromAddr,
                             std::string password,
                             const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""});
 
+int IsMoreThan30DaysForRedeem(const std::string& utxo);
+
 #endif

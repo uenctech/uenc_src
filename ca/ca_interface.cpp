@@ -35,6 +35,7 @@
 #include "../include/logging.h"
 #include "ca_base64.h"
 #include "../include/ScopeGuard.h"
+#include "ca_pwdattackchecker.h"
 #endif
 
 #include <thread>
@@ -48,6 +49,7 @@
 #include "ca_synchronization.h"
 #include "ca.h"
 #include "ca_txhelper.h"
+#include "../utils/time_util.h"
 
 int senddata(int fdnum);
 
@@ -166,9 +168,8 @@ void RegisterCallback()
     net_register_callback<BuileBlockBroadcastMsg>(HandleBuileBlockBroadcastMsg);
     
     // 测试接口注册
-    net_register_callback<TestSendExitNodeReq>(HandleExitNode);
-    net_register_callback<TestGetNodeHeightHashBase58AddrAck>(handleGetNodeHeightHashBase58AddrAck);
-    net_register_callback<TestGetNodeHeightHashBase58AddrReq>(handleGetNodeHeightHashBase58AddrReq);
+    net_register_callback<GetDevInfoAck>(HandleGetDevInfoAck);
+    net_register_callback<GetDevInfoReq>(HandleGetDevInfoReq);
     
 }
 
@@ -268,6 +269,48 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     // 判断矿机密码是否正确
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+  
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        phoneControlDevicePledgeTxAck.set_code(-31);
+        phoneControlDevicePledgeTxAck.set_message(minutescountStr);
+        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return -1;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"输入密码错误"<<endl;
+            phoneControlDevicePledgeTxAck.set_code(-104);
+            phoneControlDevicePledgeTxAck.set_message("密码输入错误");
+            net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+            return -104;
+       }
+       else
+       {
+            phoneControlDevicePledgeTxAck.set_code(-30);
+            phoneControlDevicePledgeTxAck.set_message("第三次输入密码错误");
+            net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+            return -30;
+       }   
+    }
+    else 
+    {
+        cout<<"输入密码成功重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        phoneControlDevicePledgeTxAck.set_code(0);
+        phoneControlDevicePledgeTxAck.set_message("密码输入成功");
+        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+    }
+
     if (hashOriPass != targetPassword) 
     {
         phoneControlDevicePledgeTxAck.set_code(-104);
@@ -341,7 +384,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         phoneControlDevicePledgeTxAck.set_message("Illegal account !");
         net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
         std::cout << "非法账号" << std::endl;
-        return -104;
+        return -105;
     }
 
 	std::string signature;
@@ -366,7 +409,12 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 	txMsg.set_txencodehash( encodeStrHash );
 
 	unsigned int top = 0;
-	pRocksDb->GetBlockTop(txn, top);	
+	int db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return -106;
+    }	
 	txMsg.set_top(top);
 
 	auto msg = make_shared<TxMsg>(txMsg);
@@ -375,6 +423,42 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 
     return 0;
 }
+
+// Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
+int IsMoreThan30DaysForRedeem(const std::string& utxo)
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		return -1;
+	}
+
+    ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+    std::string strTransaction;
+    int db_status = pRocksDb->GetTransactionByHash(txn, utxo, strTransaction);
+    if (db_status != 0)
+    {
+        return -1;
+    }
+
+    CTransaction utxoPledge;
+    utxoPledge.ParseFromString(strTransaction);
+    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getTimestamp();
+    static const uint64_t DAYS30 = (uint64_t)1000000 * 60 * 60 * 24 * 30;
+    if ((nowTime - utxoPledge.time()) >= DAYS30)
+    {
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, const MsgData &msgdata)
 {
     TxMsgAck txMsgAck;
@@ -394,6 +478,49 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     // 判断矿机密码是否正确
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+  
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        std::string minutescountStr = std::to_string(minutescount);
+        txMsgAck.set_code(-31);
+        txMsgAck.set_message(minutescountStr);
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        return -12;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"输入密码错误"<<endl;
+            txMsgAck.set_code(-9);
+            txMsgAck.set_message("密码输入错误");
+            net_send_message<TxMsgAck>(msgdata, txMsgAck);
+            return -9;
+       } 
+       else
+       {
+            txMsgAck.set_code(-30);
+            txMsgAck.set_message("第三次输入密码错误");
+            net_send_message<TxMsgAck>(msgdata, txMsgAck);
+            return -30;
+       }
+    }
+    else 
+    {
+        cout<<"重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+        txMsgAck.set_code(0);
+        txMsgAck.set_message("密码输入成功");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+    }
+
+    
     if (hashOriPass != targetPassword) 
     {
         txMsgAck.set_code(-9);
@@ -469,6 +596,18 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
         return -7;
     }
 
+    //{{ Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
+    int result = IsMoreThan30DaysForRedeem(utxo);
+    if (result != 0)
+    {
+        txMsgAck.set_code(-21);
+        txMsgAck.set_message("Redeem time must be after 30 days!");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        std::cout << "Redeem time is less than 30 days!" << std::endl;
+        error("Redeem time is less than 30 days!");
+        return -21;
+    }
+    //}}End
 
     CTransaction outTx;
     bool isTrue = FindUtxosFromRocksDb(fromAddr, fromAddr, 0, needVerifyPreHashCount, GasFee, outTx, utxo);
@@ -507,7 +646,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
     {
         std::cout << "非法账号" << std::endl;
-        return -2;
+        return -10;
     }
 
 	std::string signature;
@@ -533,7 +672,12 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 	txMsg.set_txencodehash( encodeStrHash );
 
 	unsigned int top = 0;
-	pRocksDb->GetBlockTop(txn, top);	
+	db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        std::cout << __LINE__ << std::endl;
+        return -11;
+    }
 	txMsg.set_top(top);
 
 	auto msg = make_shared<TxMsg>(txMsg);
@@ -647,7 +791,7 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
         }
 		else 
 		{
-            perror("connect error:");
+            // perror("connect error:");
             //假如连接不成功，则运行select,直到超时
 			FD_ZERO(&rset);
 			FD_ZERO(&wset);

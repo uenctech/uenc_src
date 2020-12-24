@@ -85,18 +85,14 @@ class BuileBlockBroadcastMsgDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<BuileBlockBroadcastMsg> _instance;
 } _BuileBlockBroadcastMsg_default_instance_;
-class TestSendExitNodeReqDefaultTypeInternal {
+class GetDevInfoReqDefaultTypeInternal {
  public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestSendExitNodeReq> _instance;
-} _TestSendExitNodeReq_default_instance_;
-class TestGetNodeHeightHashBase58AddrReqDefaultTypeInternal {
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetDevInfoReq> _instance;
+} _GetDevInfoReq_default_instance_;
+class GetDevInfoAckDefaultTypeInternal {
  public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestGetNodeHeightHashBase58AddrReq> _instance;
-} _TestGetNodeHeightHashBase58AddrReq_default_instance_;
-class TestGetNodeHeightHashBase58AddrAckDefaultTypeInternal {
- public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TestGetNodeHeightHashBase58AddrAck> _instance;
-} _TestGetNodeHeightHashBase58AddrAck_default_instance_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetDevInfoAck> _instance;
+} _GetDevInfoAck_default_instance_;
 static void InitDefaultsscc_info_BuileBlockBroadcastMsg_ca_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -124,6 +120,34 @@ static void InitDefaultsscc_info_CheckHash_ca_5fprotomsg_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_CheckHash_ca_5fprotomsg_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_CheckHash_ca_5fprotomsg_2eproto}, {}};
+
+static void InitDefaultsscc_info_GetDevInfoAck_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetDevInfoAck_default_instance_;
+    new (ptr) ::GetDevInfoAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetDevInfoAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetDevInfoAck_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetDevInfoAck_ca_5fprotomsg_2eproto}, {}};
+
+static void InitDefaultsscc_info_GetDevInfoReq_ca_5fprotomsg_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetDevInfoReq_default_instance_;
+    new (ptr) ::GetDevInfoReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetDevInfoReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetDevInfoReq_ca_5fprotomsg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetDevInfoReq_ca_5fprotomsg_2eproto}, {}};
 
 static void InitDefaultsscc_info_SignNodeMsg_ca_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -303,48 +327,6 @@ static void InitDefaultsscc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto()
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto}, {
       &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
 
-static void InitDefaultsscc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::_TestGetNodeHeightHashBase58AddrAck_default_instance_;
-    new (ptr) ::TestGetNodeHeightHashBase58AddrAck();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::TestGetNodeHeightHashBase58AddrAck::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto}, {}};
-
-static void InitDefaultsscc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::_TestGetNodeHeightHashBase58AddrReq_default_instance_;
-    new (ptr) ::TestGetNodeHeightHashBase58AddrReq();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::TestGetNodeHeightHashBase58AddrReq::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto}, {}};
-
-static void InitDefaultsscc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::_TestSendExitNodeReq_default_instance_;
-    new (ptr) ::TestSendExitNodeReq();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::TestSendExitNodeReq::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto}, {}};
-
 static void InitDefaultsscc_info_TxMsg_ca_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -390,7 +372,7 @@ static void InitDefaultsscc_info_VerifyReliableNodeReq_ca_5fprotomsg_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_VerifyReliableNodeReq_ca_5fprotomsg_2eproto}, {
       &scc_info_SyncHeaderMsg_ca_5fprotomsg_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_ca_5fprotomsg_2eproto[20];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_ca_5fprotomsg_2eproto[19];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_ca_5fprotomsg_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_ca_5fprotomsg_2eproto = nullptr;
 
@@ -508,6 +490,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ca_5fprotomsg_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::SignNodeMsg, signpubkey_),
   PROTOBUF_FIELD_OFFSET(::SignNodeMsg, gasfee_),
   PROTOBUF_FIELD_OFFSET(::SignNodeMsg, onlinetime_),
+  PROTOBUF_FIELD_OFFSET(::SignNodeMsg, awardtotal_),
+  PROTOBUF_FIELD_OFFSET(::SignNodeMsg, signsum_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::TxMsg, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -527,28 +511,22 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ca_5fprotomsg_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::BuileBlockBroadcastMsg, version_),
   PROTOBUF_FIELD_OFFSET(::BuileBlockBroadcastMsg, blockraw_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::TestSendExitNodeReq, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::TestSendExitNodeReq, version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoReq, version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoReq, id_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrReq, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrReq, version_),
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrReq, id_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, version_),
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, id_),
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, height_),
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, hash_),
-  PROTOBUF_FIELD_OFFSET(::TestGetNodeHeightHashBase58AddrAck, base58addr_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, version_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, id_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, height_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, hash_),
+  PROTOBUF_FIELD_OFFSET(::GetDevInfoAck, base58addr_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::SyncHeaderMsg)},
@@ -566,11 +544,10 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 88, -1, sizeof(::SyncLoseBlockReq)},
   { 97, -1, sizeof(::SyncLoseBlockAck)},
   { 104, -1, sizeof(::SignNodeMsg)},
-  { 113, -1, sizeof(::TxMsg)},
-  { 124, -1, sizeof(::BuileBlockBroadcastMsg)},
-  { 131, -1, sizeof(::TestSendExitNodeReq)},
-  { 137, -1, sizeof(::TestGetNodeHeightHashBase58AddrReq)},
-  { 144, -1, sizeof(::TestGetNodeHeightHashBase58AddrAck)},
+  { 115, -1, sizeof(::TxMsg)},
+  { 126, -1, sizeof(::BuileBlockBroadcastMsg)},
+  { 133, -1, sizeof(::GetDevInfoReq)},
+  { 140, -1, sizeof(::GetDevInfoAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -591,9 +568,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_SignNodeMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TxMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_BuileBlockBroadcastMsg_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestSendExitNodeReq_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestGetNodeHeightHashBase58AddrReq_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TestGetNodeHeightHashBase58AddrAck_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevInfoReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetDevInfoAck_default_instance_),
 };
 
 const char descriptor_table_protodef_ca_5fprotomsg_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -624,26 +600,27 @@ const char descriptor_table_protodef_ca_5fprotomsg_2eproto[] PROTOBUF_SECTION_VA
   "yncHeaderMsg\030\001 \001(\0132\016.SyncHeaderMsg\022\r\n\005be"
   "gin\030\002 \001(\004\022\013\n\003end\030\003 \001(\004\022\020\n\010all_hash\030\004 \001(\t"
   "\"I\n\020SyncLoseBlockAck\022%\n\rsyncHeaderMsg\030\001 "
-  "\001(\0132\016.SyncHeaderMsg\022\016\n\006blocks\030\002 \001(\014\"V\n\013S"
+  "\001(\0132\016.SyncHeaderMsg\022\016\n\006blocks\030\002 \001(\014\"{\n\013S"
   "ignNodeMsg\022\017\n\007signMsg\030\001 \001(\014\022\022\n\nsignPubKe"
   "y\030\002 \001(\014\022\016\n\006gasFee\030\003 \001(\t\022\022\n\nonlineTime\030\004 "
-  "\001(\001\"v\n\005TxMsg\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001("
-  "\014\022\n\n\002Tx\030\003 \001(\014\022\024\n\014txEncodeHash\030\004 \001(\t\022!\n\013s"
-  "ignNodeMsg\030\005 \003(\0132\014.SignNodeMsg\022\013\n\003top\030\006 "
-  "\001(\004\";\n\026BuileBlockBroadcastMsg\022\017\n\007version"
-  "\030\001 \001(\t\022\020\n\010blockRaw\030\002 \001(\014\"&\n\023TestSendExit"
-  "NodeReq\022\017\n\007version\030\001 \001(\t\"A\n\"TestGetNodeH"
-  "eightHashBase58AddrReq\022\017\n\007version\030\001 \001(\t\022"
-  "\n\n\002id\030\002 \001(\t\"s\n\"TestGetNodeHeightHashBase"
-  "58AddrAck\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\022\016"
-  "\n\006height\030\003 \001(\004\022\014\n\004hash\030\004 \001(\t\022\022\n\nbase58ad"
-  "dr\030\005 \001(\tb\006proto3"
+  "\001(\001\022\022\n\nawardTotal\030\005 \001(\004\022\017\n\007signSum\030\006 \001(\004"
+  "\"v\n\005TxMsg\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\014\022\n"
+  "\n\002Tx\030\003 \001(\014\022\024\n\014txEncodeHash\030\004 \001(\t\022!\n\013sign"
+  "NodeMsg\030\005 \003(\0132\014.SignNodeMsg\022\013\n\003top\030\006 \001(\004"
+  "\";\n\026BuileBlockBroadcastMsg\022\017\n\007version\030\001 "
+  "\001(\t\022\020\n\010blockRaw\030\002 \001(\014\",\n\rGetDevInfoReq\022\017"
+  "\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"^\n\rGetDevInf"
+  "oAck\022\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\022\016\n\006hei"
+  "ght\030\003 \001(\004\022\014\n\004hash\030\004 \001(\t\022\022\n\nbase58addr\030\005 "
+  "\001(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_ca_5fprotomsg_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_5fprotomsg_2eproto_sccs[20] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_5fprotomsg_2eproto_sccs[19] = {
   &scc_info_BuileBlockBroadcastMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_CheckHash_ca_5fprotomsg_2eproto.base,
+  &scc_info_GetDevInfoAck_ca_5fprotomsg_2eproto.base,
+  &scc_info_GetDevInfoReq_ca_5fprotomsg_2eproto.base,
   &scc_info_SignNodeMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncBlockInfoAck_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncBlockInfoReq_ca_5fprotomsg_2eproto.base,
@@ -656,9 +633,6 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_
   &scc_info_SyncLoseBlockReq_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncVerifyPledgeNodeAck_ca_5fprotomsg_2eproto.base,
   &scc_info_SyncVerifyPledgeNodeReq_ca_5fprotomsg_2eproto.base,
-  &scc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto.base,
-  &scc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto.base,
-  &scc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto.base,
   &scc_info_TxMsg_ca_5fprotomsg_2eproto.base,
   &scc_info_VerifyReliableNodeAck_ca_5fprotomsg_2eproto.base,
   &scc_info_VerifyReliableNodeReq_ca_5fprotomsg_2eproto.base,
@@ -666,10 +640,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ca_
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_ca_5fprotomsg_2eproto_once;
 static bool descriptor_table_ca_5fprotomsg_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ca_5fprotomsg_2eproto = {
-  &descriptor_table_ca_5fprotomsg_2eproto_initialized, descriptor_table_protodef_ca_5fprotomsg_2eproto, "ca_protomsg.proto", 1616,
-  &descriptor_table_ca_5fprotomsg_2eproto_once, descriptor_table_ca_5fprotomsg_2eproto_sccs, descriptor_table_ca_5fprotomsg_2eproto_deps, 20, 0,
+  &descriptor_table_ca_5fprotomsg_2eproto_initialized, descriptor_table_protodef_ca_5fprotomsg_2eproto, "ca_protomsg.proto", 1571,
+  &descriptor_table_ca_5fprotomsg_2eproto_once, descriptor_table_ca_5fprotomsg_2eproto_sccs, descriptor_table_ca_5fprotomsg_2eproto_deps, 19, 0,
   schemas, file_default_instances, TableStruct_ca_5fprotomsg_2eproto::offsets,
-  file_level_metadata_ca_5fprotomsg_2eproto, 20, file_level_enum_descriptors_ca_5fprotomsg_2eproto, file_level_service_descriptors_ca_5fprotomsg_2eproto,
+  file_level_metadata_ca_5fprotomsg_2eproto, 19, file_level_enum_descriptors_ca_5fprotomsg_2eproto, file_level_service_descriptors_ca_5fprotomsg_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -4162,7 +4136,9 @@ SignNodeMsg::SignNodeMsg(const SignNodeMsg& from)
   if (!from._internal_gasfee().empty()) {
     gasfee_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.gasfee_);
   }
-  onlinetime_ = from.onlinetime_;
+  ::memcpy(&onlinetime_, &from.onlinetime_,
+    static_cast<size_t>(reinterpret_cast<char*>(&signsum_) -
+    reinterpret_cast<char*>(&onlinetime_)) + sizeof(signsum_));
   // @@protoc_insertion_point(copy_constructor:SignNodeMsg)
 }
 
@@ -4171,7 +4147,9 @@ void SignNodeMsg::SharedCtor() {
   signmsg_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   signpubkey_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfee_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  onlinetime_ = 0;
+  ::memset(&onlinetime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&signsum_) -
+      reinterpret_cast<char*>(&onlinetime_)) + sizeof(signsum_));
 }
 
 SignNodeMsg::~SignNodeMsg() {
@@ -4203,7 +4181,9 @@ void SignNodeMsg::Clear() {
   signmsg_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   signpubkey_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   gasfee_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  onlinetime_ = 0;
+  ::memset(&onlinetime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&signsum_) -
+      reinterpret_cast<char*>(&onlinetime_)) + sizeof(signsum_));
   _internal_metadata_.Clear();
 }
 
@@ -4244,6 +4224,20 @@ const char* SignNodeMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 33)) {
           onlinetime_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
+        } else goto handle_unusual;
+        continue;
+      // uint64 awardTotal = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          awardtotal_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint64 signSum = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          signsum_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
         } else goto handle_unusual;
         continue;
       default: {
@@ -4300,6 +4294,18 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(4, this->_internal_onlinetime(), target);
   }
 
+  // uint64 awardTotal = 5;
+  if (this->awardtotal() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(5, this->_internal_awardtotal(), target);
+  }
+
+  // uint64 signSum = 6;
+  if (this->signsum() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(6, this->_internal_signsum(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -4340,6 +4346,20 @@ size_t SignNodeMsg::ByteSizeLong() const {
   // double onlineTime = 4;
   if (!(this->onlinetime() <= 0 && this->onlinetime() >= 0)) {
     total_size += 1 + 8;
+  }
+
+  // uint64 awardTotal = 5;
+  if (this->awardtotal() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_awardtotal());
+  }
+
+  // uint64 signSum = 6;
+  if (this->signsum() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_signsum());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -4388,6 +4408,12 @@ void SignNodeMsg::MergeFrom(const SignNodeMsg& from) {
   if (!(from.onlinetime() <= 0 && from.onlinetime() >= 0)) {
     _internal_set_onlinetime(from._internal_onlinetime());
   }
+  if (from.awardtotal() != 0) {
+    _internal_set_awardtotal(from._internal_awardtotal());
+  }
+  if (from.signsum() != 0) {
+    _internal_set_signsum(from._internal_signsum());
+  }
 }
 
 void SignNodeMsg::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -4418,6 +4444,8 @@ void SignNodeMsg::InternalSwap(SignNodeMsg* other) {
   gasfee_.Swap(&other->gasfee_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(onlinetime_, other->onlinetime_);
+  swap(awardtotal_, other->awardtotal_);
+  swap(signsum_, other->signsum_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SignNodeMsg::GetMetadata() const {
@@ -5024,217 +5052,18 @@ void BuileBlockBroadcastMsg::InternalSwap(BuileBlockBroadcastMsg* other) {
 
 // ===================================================================
 
-void TestSendExitNodeReq::InitAsDefaultInstance() {
+void GetDevInfoReq::InitAsDefaultInstance() {
 }
-class TestSendExitNodeReq::_Internal {
+class GetDevInfoReq::_Internal {
  public:
 };
 
-TestSendExitNodeReq::TestSendExitNodeReq()
+GetDevInfoReq::GetDevInfoReq()
   : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:TestSendExitNodeReq)
+  // @@protoc_insertion_point(constructor:GetDevInfoReq)
 }
-TestSendExitNodeReq::TestSendExitNodeReq(const TestSendExitNodeReq& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _internal_metadata_(nullptr) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_version().empty()) {
-    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
-  }
-  // @@protoc_insertion_point(copy_constructor:TestSendExitNodeReq)
-}
-
-void TestSendExitNodeReq::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto.base);
-  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-TestSendExitNodeReq::~TestSendExitNodeReq() {
-  // @@protoc_insertion_point(destructor:TestSendExitNodeReq)
-  SharedDtor();
-}
-
-void TestSendExitNodeReq::SharedDtor() {
-  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-
-void TestSendExitNodeReq::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const TestSendExitNodeReq& TestSendExitNodeReq::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TestSendExitNodeReq_ca_5fprotomsg_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void TestSendExitNodeReq::Clear() {
-// @@protoc_insertion_point(message_clear_start:TestSendExitNodeReq)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  _internal_metadata_.Clear();
-}
-
-const char* TestSendExitNodeReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
-    switch (tag >> 3) {
-      // string version = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
-          auto str = _internal_mutable_version();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestSendExitNodeReq.version"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* TestSendExitNodeReq::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:TestSendExitNodeReq)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string version = 1;
-  if (this->version().size() > 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestSendExitNodeReq.version");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_version(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:TestSendExitNodeReq)
-  return target;
-}
-
-size_t TestSendExitNodeReq::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:TestSendExitNodeReq)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string version = 1;
-  if (this->version().size() > 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_version());
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void TestSendExitNodeReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:TestSendExitNodeReq)
-  GOOGLE_DCHECK_NE(&from, this);
-  const TestSendExitNodeReq* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestSendExitNodeReq>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestSendExitNodeReq)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestSendExitNodeReq)
-    MergeFrom(*source);
-  }
-}
-
-void TestSendExitNodeReq::MergeFrom(const TestSendExitNodeReq& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:TestSendExitNodeReq)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from.version().size() > 0) {
-
-    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
-  }
-}
-
-void TestSendExitNodeReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:TestSendExitNodeReq)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void TestSendExitNodeReq::CopyFrom(const TestSendExitNodeReq& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:TestSendExitNodeReq)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool TestSendExitNodeReq::IsInitialized() const {
-  return true;
-}
-
-void TestSendExitNodeReq::InternalSwap(TestSendExitNodeReq* other) {
-  using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata TestSendExitNodeReq::GetMetadata() const {
-  return GetMetadataStatic();
-}
-
-
-// ===================================================================
-
-void TestGetNodeHeightHashBase58AddrReq::InitAsDefaultInstance() {
-}
-class TestGetNodeHeightHashBase58AddrReq::_Internal {
- public:
-};
-
-TestGetNodeHeightHashBase58AddrReq::TestGetNodeHeightHashBase58AddrReq()
-  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:TestGetNodeHeightHashBase58AddrReq)
-}
-TestGetNodeHeightHashBase58AddrReq::TestGetNodeHeightHashBase58AddrReq(const TestGetNodeHeightHashBase58AddrReq& from)
+GetDevInfoReq::GetDevInfoReq(const GetDevInfoReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
@@ -5246,36 +5075,36 @@ TestGetNodeHeightHashBase58AddrReq::TestGetNodeHeightHashBase58AddrReq(const Tes
   if (!from._internal_id().empty()) {
     id_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
-  // @@protoc_insertion_point(copy_constructor:TestGetNodeHeightHashBase58AddrReq)
+  // @@protoc_insertion_point(copy_constructor:GetDevInfoReq)
 }
 
-void TestGetNodeHeightHashBase58AddrReq::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto.base);
+void GetDevInfoReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetDevInfoReq_ca_5fprotomsg_2eproto.base);
   version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-TestGetNodeHeightHashBase58AddrReq::~TestGetNodeHeightHashBase58AddrReq() {
-  // @@protoc_insertion_point(destructor:TestGetNodeHeightHashBase58AddrReq)
+GetDevInfoReq::~GetDevInfoReq() {
+  // @@protoc_insertion_point(destructor:GetDevInfoReq)
   SharedDtor();
 }
 
-void TestGetNodeHeightHashBase58AddrReq::SharedDtor() {
+void GetDevInfoReq::SharedDtor() {
   version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void TestGetNodeHeightHashBase58AddrReq::SetCachedSize(int size) const {
+void GetDevInfoReq::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const TestGetNodeHeightHashBase58AddrReq& TestGetNodeHeightHashBase58AddrReq::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TestGetNodeHeightHashBase58AddrReq_ca_5fprotomsg_2eproto.base);
+const GetDevInfoReq& GetDevInfoReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetDevInfoReq_ca_5fprotomsg_2eproto.base);
   return *internal_default_instance();
 }
 
 
-void TestGetNodeHeightHashBase58AddrReq::Clear() {
-// @@protoc_insertion_point(message_clear_start:TestGetNodeHeightHashBase58AddrReq)
+void GetDevInfoReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetDevInfoReq)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5285,7 +5114,7 @@ void TestGetNodeHeightHashBase58AddrReq::Clear() {
   _internal_metadata_.Clear();
 }
 
-const char* TestGetNodeHeightHashBase58AddrReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* GetDevInfoReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
@@ -5297,7 +5126,7 @@ const char* TestGetNodeHeightHashBase58AddrReq::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_version();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrReq.version"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoReq.version"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5306,7 +5135,7 @@ const char* TestGetNodeHeightHashBase58AddrReq::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_id();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrReq.id"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoReq.id"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5330,9 +5159,9 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* TestGetNodeHeightHashBase58AddrReq::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* GetDevInfoReq::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:TestGetNodeHeightHashBase58AddrReq)
+  // @@protoc_insertion_point(serialize_to_array_start:GetDevInfoReq)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -5341,7 +5170,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrReq.version");
+      "GetDevInfoReq.version");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_version(), target);
   }
@@ -5351,7 +5180,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrReq.id");
+      "GetDevInfoReq.id");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_id(), target);
   }
@@ -5360,12 +5189,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:TestGetNodeHeightHashBase58AddrReq)
+  // @@protoc_insertion_point(serialize_to_array_end:GetDevInfoReq)
   return target;
 }
 
-size_t TestGetNodeHeightHashBase58AddrReq::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:TestGetNodeHeightHashBase58AddrReq)
+size_t GetDevInfoReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetDevInfoReq)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -5395,23 +5224,23 @@ size_t TestGetNodeHeightHashBase58AddrReq::ByteSizeLong() const {
   return total_size;
 }
 
-void TestGetNodeHeightHashBase58AddrReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:TestGetNodeHeightHashBase58AddrReq)
+void GetDevInfoReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetDevInfoReq)
   GOOGLE_DCHECK_NE(&from, this);
-  const TestGetNodeHeightHashBase58AddrReq* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestGetNodeHeightHashBase58AddrReq>(
+  const GetDevInfoReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetDevInfoReq>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestGetNodeHeightHashBase58AddrReq)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetDevInfoReq)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestGetNodeHeightHashBase58AddrReq)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetDevInfoReq)
     MergeFrom(*source);
   }
 }
 
-void TestGetNodeHeightHashBase58AddrReq::MergeFrom(const TestGetNodeHeightHashBase58AddrReq& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:TestGetNodeHeightHashBase58AddrReq)
+void GetDevInfoReq::MergeFrom(const GetDevInfoReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetDevInfoReq)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -5427,25 +5256,25 @@ void TestGetNodeHeightHashBase58AddrReq::MergeFrom(const TestGetNodeHeightHashBa
   }
 }
 
-void TestGetNodeHeightHashBase58AddrReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:TestGetNodeHeightHashBase58AddrReq)
+void GetDevInfoReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetDevInfoReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void TestGetNodeHeightHashBase58AddrReq::CopyFrom(const TestGetNodeHeightHashBase58AddrReq& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:TestGetNodeHeightHashBase58AddrReq)
+void GetDevInfoReq::CopyFrom(const GetDevInfoReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetDevInfoReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool TestGetNodeHeightHashBase58AddrReq::IsInitialized() const {
+bool GetDevInfoReq::IsInitialized() const {
   return true;
 }
 
-void TestGetNodeHeightHashBase58AddrReq::InternalSwap(TestGetNodeHeightHashBase58AddrReq* other) {
+void GetDevInfoReq::InternalSwap(GetDevInfoReq* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
   version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -5454,25 +5283,25 @@ void TestGetNodeHeightHashBase58AddrReq::InternalSwap(TestGetNodeHeightHashBase5
     GetArenaNoVirtual());
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata TestGetNodeHeightHashBase58AddrReq::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata GetDevInfoReq::GetMetadata() const {
   return GetMetadataStatic();
 }
 
 
 // ===================================================================
 
-void TestGetNodeHeightHashBase58AddrAck::InitAsDefaultInstance() {
+void GetDevInfoAck::InitAsDefaultInstance() {
 }
-class TestGetNodeHeightHashBase58AddrAck::_Internal {
+class GetDevInfoAck::_Internal {
  public:
 };
 
-TestGetNodeHeightHashBase58AddrAck::TestGetNodeHeightHashBase58AddrAck()
+GetDevInfoAck::GetDevInfoAck()
   : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(constructor:GetDevInfoAck)
 }
-TestGetNodeHeightHashBase58AddrAck::TestGetNodeHeightHashBase58AddrAck(const TestGetNodeHeightHashBase58AddrAck& from)
+GetDevInfoAck::GetDevInfoAck(const GetDevInfoAck& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
@@ -5493,11 +5322,11 @@ TestGetNodeHeightHashBase58AddrAck::TestGetNodeHeightHashBase58AddrAck(const Tes
     base58addr_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.base58addr_);
   }
   height_ = from.height_;
-  // @@protoc_insertion_point(copy_constructor:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(copy_constructor:GetDevInfoAck)
 }
 
-void TestGetNodeHeightHashBase58AddrAck::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto.base);
+void GetDevInfoAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetDevInfoAck_ca_5fprotomsg_2eproto.base);
   version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
@@ -5505,29 +5334,29 @@ void TestGetNodeHeightHashBase58AddrAck::SharedCtor() {
   height_ = PROTOBUF_ULONGLONG(0);
 }
 
-TestGetNodeHeightHashBase58AddrAck::~TestGetNodeHeightHashBase58AddrAck() {
-  // @@protoc_insertion_point(destructor:TestGetNodeHeightHashBase58AddrAck)
+GetDevInfoAck::~GetDevInfoAck() {
+  // @@protoc_insertion_point(destructor:GetDevInfoAck)
   SharedDtor();
 }
 
-void TestGetNodeHeightHashBase58AddrAck::SharedDtor() {
+void GetDevInfoAck::SharedDtor() {
   version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   base58addr_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void TestGetNodeHeightHashBase58AddrAck::SetCachedSize(int size) const {
+void GetDevInfoAck::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const TestGetNodeHeightHashBase58AddrAck& TestGetNodeHeightHashBase58AddrAck::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TestGetNodeHeightHashBase58AddrAck_ca_5fprotomsg_2eproto.base);
+const GetDevInfoAck& GetDevInfoAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetDevInfoAck_ca_5fprotomsg_2eproto.base);
   return *internal_default_instance();
 }
 
 
-void TestGetNodeHeightHashBase58AddrAck::Clear() {
-// @@protoc_insertion_point(message_clear_start:TestGetNodeHeightHashBase58AddrAck)
+void GetDevInfoAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetDevInfoAck)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5540,7 +5369,7 @@ void TestGetNodeHeightHashBase58AddrAck::Clear() {
   _internal_metadata_.Clear();
 }
 
-const char* TestGetNodeHeightHashBase58AddrAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* GetDevInfoAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
@@ -5552,7 +5381,7 @@ const char* TestGetNodeHeightHashBase58AddrAck::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_version();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrAck.version"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoAck.version"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5561,7 +5390,7 @@ const char* TestGetNodeHeightHashBase58AddrAck::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_id();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrAck.id"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoAck.id"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5577,7 +5406,7 @@ const char* TestGetNodeHeightHashBase58AddrAck::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           auto str = _internal_mutable_hash();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrAck.hash"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoAck.hash"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5586,7 +5415,7 @@ const char* TestGetNodeHeightHashBase58AddrAck::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
           auto str = _internal_mutable_base58addr();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGetNodeHeightHashBase58AddrAck.base58addr"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetDevInfoAck.base58addr"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -5610,9 +5439,9 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* TestGetNodeHeightHashBase58AddrAck::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* GetDevInfoAck::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(serialize_to_array_start:GetDevInfoAck)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -5621,7 +5450,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrAck.version");
+      "GetDevInfoAck.version");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_version(), target);
   }
@@ -5631,7 +5460,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrAck.id");
+      "GetDevInfoAck.id");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_id(), target);
   }
@@ -5647,7 +5476,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_hash().data(), static_cast<int>(this->_internal_hash().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrAck.hash");
+      "GetDevInfoAck.hash");
     target = stream->WriteStringMaybeAliased(
         4, this->_internal_hash(), target);
   }
@@ -5657,7 +5486,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_base58addr().data(), static_cast<int>(this->_internal_base58addr().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "TestGetNodeHeightHashBase58AddrAck.base58addr");
+      "GetDevInfoAck.base58addr");
     target = stream->WriteStringMaybeAliased(
         5, this->_internal_base58addr(), target);
   }
@@ -5666,12 +5495,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(serialize_to_array_end:GetDevInfoAck)
   return target;
 }
 
-size_t TestGetNodeHeightHashBase58AddrAck::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:TestGetNodeHeightHashBase58AddrAck)
+size_t GetDevInfoAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetDevInfoAck)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -5722,23 +5551,23 @@ size_t TestGetNodeHeightHashBase58AddrAck::ByteSizeLong() const {
   return total_size;
 }
 
-void TestGetNodeHeightHashBase58AddrAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:TestGetNodeHeightHashBase58AddrAck)
+void GetDevInfoAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetDevInfoAck)
   GOOGLE_DCHECK_NE(&from, this);
-  const TestGetNodeHeightHashBase58AddrAck* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestGetNodeHeightHashBase58AddrAck>(
+  const GetDevInfoAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetDevInfoAck>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetDevInfoAck)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestGetNodeHeightHashBase58AddrAck)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetDevInfoAck)
     MergeFrom(*source);
   }
 }
 
-void TestGetNodeHeightHashBase58AddrAck::MergeFrom(const TestGetNodeHeightHashBase58AddrAck& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:TestGetNodeHeightHashBase58AddrAck)
+void GetDevInfoAck::MergeFrom(const GetDevInfoAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetDevInfoAck)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -5765,25 +5594,25 @@ void TestGetNodeHeightHashBase58AddrAck::MergeFrom(const TestGetNodeHeightHashBa
   }
 }
 
-void TestGetNodeHeightHashBase58AddrAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:TestGetNodeHeightHashBase58AddrAck)
+void GetDevInfoAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetDevInfoAck)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void TestGetNodeHeightHashBase58AddrAck::CopyFrom(const TestGetNodeHeightHashBase58AddrAck& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:TestGetNodeHeightHashBase58AddrAck)
+void GetDevInfoAck::CopyFrom(const GetDevInfoAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetDevInfoAck)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool TestGetNodeHeightHashBase58AddrAck::IsInitialized() const {
+bool GetDevInfoAck::IsInitialized() const {
   return true;
 }
 
-void TestGetNodeHeightHashBase58AddrAck::InternalSwap(TestGetNodeHeightHashBase58AddrAck* other) {
+void GetDevInfoAck::InternalSwap(GetDevInfoAck* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
   version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -5797,7 +5626,7 @@ void TestGetNodeHeightHashBase58AddrAck::InternalSwap(TestGetNodeHeightHashBase5
   swap(height_, other->height_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata TestGetNodeHeightHashBase58AddrAck::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata GetDevInfoAck::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -5855,14 +5684,11 @@ template<> PROTOBUF_NOINLINE ::TxMsg* Arena::CreateMaybeMessage< ::TxMsg >(Arena
 template<> PROTOBUF_NOINLINE ::BuileBlockBroadcastMsg* Arena::CreateMaybeMessage< ::BuileBlockBroadcastMsg >(Arena* arena) {
   return Arena::CreateInternal< ::BuileBlockBroadcastMsg >(arena);
 }
-template<> PROTOBUF_NOINLINE ::TestSendExitNodeReq* Arena::CreateMaybeMessage< ::TestSendExitNodeReq >(Arena* arena) {
-  return Arena::CreateInternal< ::TestSendExitNodeReq >(arena);
+template<> PROTOBUF_NOINLINE ::GetDevInfoReq* Arena::CreateMaybeMessage< ::GetDevInfoReq >(Arena* arena) {
+  return Arena::CreateInternal< ::GetDevInfoReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::TestGetNodeHeightHashBase58AddrReq* Arena::CreateMaybeMessage< ::TestGetNodeHeightHashBase58AddrReq >(Arena* arena) {
-  return Arena::CreateInternal< ::TestGetNodeHeightHashBase58AddrReq >(arena);
-}
-template<> PROTOBUF_NOINLINE ::TestGetNodeHeightHashBase58AddrAck* Arena::CreateMaybeMessage< ::TestGetNodeHeightHashBase58AddrAck >(Arena* arena) {
-  return Arena::CreateInternal< ::TestGetNodeHeightHashBase58AddrAck >(arena);
+template<> PROTOBUF_NOINLINE ::GetDevInfoAck* Arena::CreateMaybeMessage< ::GetDevInfoAck >(Arena* arena) {
+  return Arena::CreateInternal< ::GetDevInfoAck >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

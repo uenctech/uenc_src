@@ -61,16 +61,39 @@ void AwardAlgorithm::TestPrint(bool lable) {
 //class s+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //额外奖励 奖励额(e.g 1000万)/365/24/12/in_minutes_deal 交易笔数档位(e.g 0-20 21-40 2的N次方)
 AwardAlgorithm::AwardAlgorithm() : need_verify_count(0), award_pool(0.0), sign_amount(0) {
-    this->now_time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
-    this->now_time = now_time == 0 ? time(0) : now_time / 1000000;
+    // this->now_time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
+    // this->now_time = now_time == 0 ? time(0) : now_time / 1000000;
 }
 
-int AwardAlgorithm::Build(uint need_verify_count, const std::vector<std::string> &vec_addr,
-const std::vector<double> &vec_onlinet) {
+int AwardAlgorithm::Build(uint need_verify_count, 
+                        const std::vector<std::string> &vec_addr,
+                        const std::vector<double> &vec_online, 
+                        const std::vector<uint64_t> &vec_award_total, 
+                        const std::vector<uint64_t> &vec_sign_sum) 
+{
+    
+    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getTimestamp();
+    uint64_t maxOnline = nowTime > firstBlockTime ? nowTime - firstBlockTime : 0;
+    if (maxOnline == 0) 
+    {
+        return -1;
+    }
+
+    for(auto & onlinetime : vec_online)
+    {
+        if (onlinetime > maxOnline)
+        {
+            error("onlinetime error!");
+            return -2;
+        }
+    }
+
     //共识数 签名钱包地址初始化
     this->need_verify_count = need_verify_count;
     this->vec_addr = vec_addr;
-    this->vec_onlinet = vec_onlinet;
+    this->vec_online = vec_online;
+    this->vec_award_total = vec_award_total;
+    this->vec_sign_sum = vec_sign_sum;
 
     //开始建造 得到每笔交易奖励档位金额
     // double award_base = AwardBaseByYear();
@@ -79,7 +102,7 @@ const std::vector<double> &vec_onlinet) {
     if (0 != GetBlockNumInUnitTime(blockNum) )
     {
         error("(Build) GetBlockNumInUnitTime failed !");
-        return -1;
+        return -2;
     }
 
     // 5分钟内若交易少于unitTimeMinBlockNum，则按unitTimeMinBlockNum计算
@@ -91,7 +114,10 @@ const std::vector<double> &vec_onlinet) {
 
     GetAward(blockNum, award_pool);
 
-    AwardList();
+    if ( 0 != AwardList() )
+    {
+        return -3;
+    }
     return 0;
 }
 
@@ -220,9 +246,32 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
         return -2;
     }
 
-    uint64_t blockCount = 0;
+    top = top > 500 ? top - 500 : 0;
 
+    uint64_t blockCount = 0;
     bool bIsBreak = false;  // 判断是否跳出循环
+
+    // 计算奖励起始时间
+    std::vector<std::string> blockHashs;
+    if ( 0 != pRocksDb->GetBlockHashsByBlockHeight(txn, top, blockHashs) )
+    {
+        std::cout << "(GetBlockNumInUnitTime) GetBlockHashsByBlockHeight failed !" <<  __LINE__ << std::endl;
+        error("(GetBlockNumInUnitTime) GetBlockHashsByBlockHeight failed !");
+        return -3;
+    }
+
+    uint64_t startTime = 0;
+    for (auto & blockHash : blockHashs)
+    {
+        uint64_t blockTime = 0;
+        if ( 0 != GetTimeFromBlockHash(blockHash, blockTime) )
+        {
+            std::cout << "(GetBlockNumInUnitTime) GetTimeFromBlock failed !" <<  __LINE__ << std::endl;
+            return -4;
+        }
+        
+        startTime = startTime > blockTime ? startTime : blockTime;
+    }
 
     if (top == 0)
     {
@@ -247,10 +296,10 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
                 {
                     std::cout << "(GetBlockNumInUnitTime) GetTimeFromBlock failed !" <<  __LINE__ << std::endl;
                     error("(GetBlockNumInUnitTime) GetTimeFromBlock failed !");
-                    return -3;
+                    return -4;
                 }
 
-                if (blockTime > this->now_time - unitTime)
+                if (blockTime > startTime - unitTime)
                 {
                     ++blockCount;
                 }
@@ -286,7 +335,7 @@ int AwardAlgorithm::AwardList()
     for (uint32_t i = 1; i < sel_vec_addr.size(); i++) 
     {
         //总在线时长 TODO
-        double online = (this->vec_onlinet)[i];
+        double online = (this->vec_online)[i];
         total_online.push_back(online);
 
         //获取地址总额外奖励金额
@@ -339,7 +388,11 @@ int AwardAlgorithm::AwardList()
     vector<string>temp_swap;
     for (auto v : map_nzero) 
     {
-        uint64_t nr = v.first/sum_rate * temp_award_pool;
+        int nr = v.first/sum_rate * temp_award_pool;
+        if (nr <= 0 || (uint64_t)nr >= temp_award_pool)
+        {
+            return -1;
+        }
         temp_sort_positive.insert({nr, v.second});
     }
 

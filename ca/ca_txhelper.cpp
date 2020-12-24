@@ -23,6 +23,7 @@
 #include "../utils/json.hpp"
 #include "ca_base64.h"
 #include "ca_message.h"
+#include "ca_txvincache.h"
 
 std::vector<std::string> TxHelper::GetTxOwner(const std::string tx_hash)
 {
@@ -212,6 +213,15 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	{
 		return -2;
 	}
+
+	//{{ Check pending transaction in Cache, 20201215
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(fromAddr))
+	{
+		error("Pending transaction is in Cache!");
+		std::cout << "Pending transaction is in Cache!" << std::endl;
+		return -1;
+	}
+	//}}
 
     int db_status = 0;
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();

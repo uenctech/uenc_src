@@ -434,7 +434,8 @@
    	string version 			= 1;
    	string password 		= 2;	
    	string public_net_ip 	= 3;
-       bool is_show 			= 4;
+    bool is_show 			= 4;
+	uint32      sequence_number         = 5;                       
    }
    ```
 
@@ -444,7 +445,7 @@
    |   password    |               手机端密码(暂时不需要传)                |
    | public_net_ip |                      公网节点IP                       |
    |    is_show    | 非直连(通过矿机)公网节点 需要传true(club可忽视此参数) |
-
+   |sequence_number|  请求的序列号 (请求的时候传入什么值就会返回什么值)    |
 2. 响应
 
    ```
@@ -465,6 +466,8 @@
    	}
    
    	SyncStatus   is_sync 					= 7;
+	sint32       height          = 8;                       //矿机高度
+    uint32       sequence        = 9;                        //回应的序列号
    }
    message ServiceFee
    {
@@ -490,8 +493,8 @@
    |   service_fee    |                       矿工设置的矿费                        |
    |     avg_fee      |                     前一百块交易平均值                      |
    |    SyncStatus    | 0 矿机与主网已同步; 1 矿机与主网未同步; -1 获取主网信息失败 |
-
-
+   |     height       |    矿机高度或者公网高度(请求的是矿机就是矿机高度，请求的是公网就是公网高度)|                                                         |
+   | sequence         |      请求端传入的序列号(请求端传入什么数据返回什么数据)|
 
 ##  十一、发起交易接口（CreateTxMsgReq）
 

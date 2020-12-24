@@ -33,7 +33,11 @@ public:
      * @param need_verify 共识数
      * @param vec_hash 钱包地址数组
      */
-    int Build(uint need_verify_count, const std::vector<std::string> &vec_hash, const std::vector<double> &vec_onlinet);
+    int Build(uint need_verify_count, 
+                        const std::vector<std::string> &vec_addr,
+                        const std::vector<double> &vec_online, 
+                        const std::vector<uint64_t> &vec_award_total, 
+                        const std::vector<uint64_t> &vec_sign_num);
 
     /**
      * @brief 计算每个钱包地址分配的额外奖励
@@ -74,8 +78,12 @@ private:
     uint64_t award_pool;
     /* 签名钱包地址数组 */
     std::vector<std::string> vec_addr;
-
-    std::vector<double> vec_onlinet;
+    /* 签名钱包地址获得总奖励值 */
+    std::vector<uint64_t> vec_award_total;
+    /* 签名钱包地址总签名数 */
+    std::vector<uint64_t> vec_sign_sum;
+    /* 签名节点在线时长 */
+    std::vector<double> vec_online;
     /* 奖励分配map */
     std::multimap<uint32_t, std::string> map_addr_award;
 
@@ -94,6 +102,7 @@ private:
     uint64_t unitTimeMinBlockNum = 5;  // unitTime时间内最少区块数，低于5，按5计算
     uint32_t slopeCurve = 70;   // 曲线斜率
     uint64_t awardTotal = (uint64_t)80000000 * DECIMAL_NUM;  // 总奖励值
+    uint64_t firstBlockTime = 1604222598187783;
 };
 
 }

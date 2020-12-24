@@ -5,6 +5,7 @@
 #include "./define.h"
 #include "./msg_queue.h"
 #include "../utils/time_task.h"
+#include "../utils/CTimer.hpp"
 #include <list>
 
 namespace global{
@@ -18,7 +19,7 @@ namespace global{
     extern atomic<int> nodelist_refresh_time;
     extern std::list<int> phone_list;
     extern std::mutex mutex_for_phone_list;
-    extern Timer g_timer;
+    extern CTimer g_timer;
     extern std::mutex mutex_listen_thread;
     extern std::mutex mutex_set_fee;
     extern std::condition_variable_any cond_listen_thread;

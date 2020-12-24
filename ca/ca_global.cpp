@@ -5,12 +5,14 @@
 #include "../utils/time_task.h"
 #include <mutex>
 
-int g_testflag = 0;
+int g_testflag = 1;
 
-std::string g_LinuxCompatible   = "1.0";
+std::string g_LinuxCompatible = "1.2";
 std::string g_WindowsCompatible = "1.0";
 std::string g_IOSCompatible = "4.0.3";
 std::string g_AndroidCompatible = "3.0.17";
+
+const int64_t g_compatMinHeight = 50000;
 
 char BLKDB_DATA_FILE[256];
 char BLKDB_DATA_PATH[256];
@@ -25,7 +27,7 @@ char g_ip[NETWORKID_LEN];
 const int g_MinNeedVerifyPreHashCount = 6;  //最小共识数
 int g_SyncDataCount = 500;
 Sync* g_synch = new Sync();
-std::vector<TestGetNodeHeightHashBase58AddrAck> g_nodeinfo;
+std::vector<GetDevInfoAck> g_nodeinfo;
 
 const uint64_t g_minSignFee = 1000;
 const uint64_t g_maxSignFee = 100000;
@@ -59,7 +61,7 @@ uint64_t g_minPledgeNodeNum = 10;
 
 string getEbpcVersion()
 {
-    static string version = "1.1";
+    static string version = g_LinuxCompatible;
     return version;
 }
 

@@ -48,7 +48,7 @@ struct TableStruct_interface_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[81]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[84]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -214,6 +214,12 @@ extern GetTxInfoListAckDefaultTypeInternal _GetTxInfoListAck_default_instance_;
 class GetTxInfoListReq;
 class GetTxInfoListReqDefaultTypeInternal;
 extern GetTxInfoListReqDefaultTypeInternal _GetTxInfoListReq_default_instance_;
+class GetTxPendingListAck;
+class GetTxPendingListAckDefaultTypeInternal;
+extern GetTxPendingListAckDefaultTypeInternal _GetTxPendingListAck_default_instance_;
+class GetTxPendingListReq;
+class GetTxPendingListReqDefaultTypeInternal;
+extern GetTxPendingListReqDefaultTypeInternal _GetTxPendingListReq_default_instance_;
 class MultiTxMsgReq;
 class MultiTxMsgReqDefaultTypeInternal;
 extern MultiTxMsgReqDefaultTypeInternal _MultiTxMsgReq_default_instance_;
@@ -286,6 +292,9 @@ extern TxMsgAckDefaultTypeInternal _TxMsgAck_default_instance_;
 class TxMsgReq;
 class TxMsgReqDefaultTypeInternal;
 extern TxMsgReqDefaultTypeInternal _TxMsgReq_default_instance_;
+class TxPendingItem;
+class TxPendingItemDefaultTypeInternal;
+extern TxPendingItemDefaultTypeInternal _TxPendingItem_default_instance_;
 class TxVinInfo;
 class TxVinInfoDefaultTypeInternal;
 extern TxVinInfoDefaultTypeInternal _TxVinInfo_default_instance_;
@@ -352,6 +361,8 @@ template<> ::GetTxInfoDetailAck* Arena::CreateMaybeMessage<::GetTxInfoDetailAck>
 template<> ::GetTxInfoDetailReq* Arena::CreateMaybeMessage<::GetTxInfoDetailReq>(Arena*);
 template<> ::GetTxInfoListAck* Arena::CreateMaybeMessage<::GetTxInfoListAck>(Arena*);
 template<> ::GetTxInfoListReq* Arena::CreateMaybeMessage<::GetTxInfoListReq>(Arena*);
+template<> ::GetTxPendingListAck* Arena::CreateMaybeMessage<::GetTxPendingListAck>(Arena*);
+template<> ::GetTxPendingListReq* Arena::CreateMaybeMessage<::GetTxPendingListReq>(Arena*);
 template<> ::MultiTxMsgReq* Arena::CreateMaybeMessage<::MultiTxMsgReq>(Arena*);
 template<> ::NodeInfos* Arena::CreateMaybeMessage<::NodeInfos>(Arena*);
 template<> ::NodeList* Arena::CreateMaybeMessage<::NodeList>(Arena*);
@@ -376,6 +387,7 @@ template<> ::TxInfo* Arena::CreateMaybeMessage<::TxInfo>(Arena*);
 template<> ::TxInfoItem* Arena::CreateMaybeMessage<::TxInfoItem>(Arena*);
 template<> ::TxMsgAck* Arena::CreateMaybeMessage<::TxMsgAck>(Arena*);
 template<> ::TxMsgReq* Arena::CreateMaybeMessage<::TxMsgReq>(Arena*);
+template<> ::TxPendingItem* Arena::CreateMaybeMessage<::TxPendingItem>(Arena*);
 template<> ::TxVinInfo* Arena::CreateMaybeMessage<::TxVinInfo>(Arena*);
 template<> ::TxVoutInfo* Arena::CreateMaybeMessage<::TxVoutInfo>(Arena*);
 template<> ::VerifyDevicePasswordAck* Arena::CreateMaybeMessage<::VerifyDevicePasswordAck>(Arena*);
@@ -15970,6 +15982,637 @@ class TransData :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr encodedata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr origindata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetTxPendingListReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetTxPendingListReq) */ {
+ public:
+  GetTxPendingListReq();
+  virtual ~GetTxPendingListReq();
+
+  GetTxPendingListReq(const GetTxPendingListReq& from);
+  GetTxPendingListReq(GetTxPendingListReq&& from) noexcept
+    : GetTxPendingListReq() {
+    *this = ::std::move(from);
+  }
+
+  inline GetTxPendingListReq& operator=(const GetTxPendingListReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetTxPendingListReq& operator=(GetTxPendingListReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetTxPendingListReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetTxPendingListReq* internal_default_instance() {
+    return reinterpret_cast<const GetTxPendingListReq*>(
+               &_GetTxPendingListReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    81;
+
+  friend void swap(GetTxPendingListReq& a, GetTxPendingListReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetTxPendingListReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetTxPendingListReq* New() const final {
+    return CreateMaybeMessage<GetTxPendingListReq>(nullptr);
+  }
+
+  GetTxPendingListReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetTxPendingListReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetTxPendingListReq& from);
+  void MergeFrom(const GetTxPendingListReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetTxPendingListReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetTxPendingListReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAddrFieldNumber = 2,
+    kVersionFieldNumber = 1,
+  };
+  // repeated string addr = 2;
+  int addr_size() const;
+  private:
+  int _internal_addr_size() const;
+  public:
+  void clear_addr();
+  const std::string& addr(int index) const;
+  std::string* mutable_addr(int index);
+  void set_addr(int index, const std::string& value);
+  void set_addr(int index, std::string&& value);
+  void set_addr(int index, const char* value);
+  void set_addr(int index, const char* value, size_t size);
+  std::string* add_addr();
+  void add_addr(const std::string& value);
+  void add_addr(std::string&& value);
+  void add_addr(const char* value);
+  void add_addr(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& addr() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_addr();
+  private:
+  const std::string& _internal_addr(int index) const;
+  std::string* _internal_add_addr();
+  public:
+
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetTxPendingListReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> addr_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TxPendingItem :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TxPendingItem) */ {
+ public:
+  TxPendingItem();
+  virtual ~TxPendingItem();
+
+  TxPendingItem(const TxPendingItem& from);
+  TxPendingItem(TxPendingItem&& from) noexcept
+    : TxPendingItem() {
+    *this = ::std::move(from);
+  }
+
+  inline TxPendingItem& operator=(const TxPendingItem& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TxPendingItem& operator=(TxPendingItem&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TxPendingItem& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TxPendingItem* internal_default_instance() {
+    return reinterpret_cast<const TxPendingItem*>(
+               &_TxPendingItem_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    82;
+
+  friend void swap(TxPendingItem& a, TxPendingItem& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TxPendingItem* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TxPendingItem* New() const final {
+    return CreateMaybeMessage<TxPendingItem>(nullptr);
+  }
+
+  TxPendingItem* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TxPendingItem>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TxPendingItem& from);
+  void MergeFrom(const TxPendingItem& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TxPendingItem* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "TxPendingItem";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVinsFieldNumber = 2,
+    kFromaddrFieldNumber = 3,
+    kToaddrFieldNumber = 4,
+    kTxHashFieldNumber = 1,
+    kAmountFieldNumber = 5,
+    kDetailFieldNumber = 7,
+    kTimeFieldNumber = 6,
+  };
+  // repeated string vins = 2;
+  int vins_size() const;
+  private:
+  int _internal_vins_size() const;
+  public:
+  void clear_vins();
+  const std::string& vins(int index) const;
+  std::string* mutable_vins(int index);
+  void set_vins(int index, const std::string& value);
+  void set_vins(int index, std::string&& value);
+  void set_vins(int index, const char* value);
+  void set_vins(int index, const char* value, size_t size);
+  std::string* add_vins();
+  void add_vins(const std::string& value);
+  void add_vins(std::string&& value);
+  void add_vins(const char* value);
+  void add_vins(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& vins() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_vins();
+  private:
+  const std::string& _internal_vins(int index) const;
+  std::string* _internal_add_vins();
+  public:
+
+  // repeated string fromaddr = 3;
+  int fromaddr_size() const;
+  private:
+  int _internal_fromaddr_size() const;
+  public:
+  void clear_fromaddr();
+  const std::string& fromaddr(int index) const;
+  std::string* mutable_fromaddr(int index);
+  void set_fromaddr(int index, const std::string& value);
+  void set_fromaddr(int index, std::string&& value);
+  void set_fromaddr(int index, const char* value);
+  void set_fromaddr(int index, const char* value, size_t size);
+  std::string* add_fromaddr();
+  void add_fromaddr(const std::string& value);
+  void add_fromaddr(std::string&& value);
+  void add_fromaddr(const char* value);
+  void add_fromaddr(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& fromaddr() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_fromaddr();
+  private:
+  const std::string& _internal_fromaddr(int index) const;
+  std::string* _internal_add_fromaddr();
+  public:
+
+  // repeated string toaddr = 4;
+  int toaddr_size() const;
+  private:
+  int _internal_toaddr_size() const;
+  public:
+  void clear_toaddr();
+  const std::string& toaddr(int index) const;
+  std::string* mutable_toaddr(int index);
+  void set_toaddr(int index, const std::string& value);
+  void set_toaddr(int index, std::string&& value);
+  void set_toaddr(int index, const char* value);
+  void set_toaddr(int index, const char* value, size_t size);
+  std::string* add_toaddr();
+  void add_toaddr(const std::string& value);
+  void add_toaddr(std::string&& value);
+  void add_toaddr(const char* value);
+  void add_toaddr(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& toaddr() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_toaddr();
+  private:
+  const std::string& _internal_toaddr(int index) const;
+  std::string* _internal_add_toaddr();
+  public:
+
+  // string txHash = 1;
+  void clear_txhash();
+  const std::string& txhash() const;
+  void set_txhash(const std::string& value);
+  void set_txhash(std::string&& value);
+  void set_txhash(const char* value);
+  void set_txhash(const char* value, size_t size);
+  std::string* mutable_txhash();
+  std::string* release_txhash();
+  void set_allocated_txhash(std::string* txhash);
+  private:
+  const std::string& _internal_txhash() const;
+  void _internal_set_txhash(const std::string& value);
+  std::string* _internal_mutable_txhash();
+  public:
+
+  // string amount = 5;
+  void clear_amount();
+  const std::string& amount() const;
+  void set_amount(const std::string& value);
+  void set_amount(std::string&& value);
+  void set_amount(const char* value);
+  void set_amount(const char* value, size_t size);
+  std::string* mutable_amount();
+  std::string* release_amount();
+  void set_allocated_amount(std::string* amount);
+  private:
+  const std::string& _internal_amount() const;
+  void _internal_set_amount(const std::string& value);
+  std::string* _internal_mutable_amount();
+  public:
+
+  // string detail = 7;
+  void clear_detail();
+  const std::string& detail() const;
+  void set_detail(const std::string& value);
+  void set_detail(std::string&& value);
+  void set_detail(const char* value);
+  void set_detail(const char* value, size_t size);
+  std::string* mutable_detail();
+  std::string* release_detail();
+  void set_allocated_detail(std::string* detail);
+  private:
+  const std::string& _internal_detail() const;
+  void _internal_set_detail(const std::string& value);
+  std::string* _internal_mutable_detail();
+  public:
+
+  // uint64 time = 6;
+  void clear_time();
+  ::PROTOBUF_NAMESPACE_ID::uint64 time() const;
+  void set_time(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_time() const;
+  void _internal_set_time(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:TxPendingItem)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> vins_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> fromaddr_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> toaddr_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txhash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr amount_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr detail_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 time_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetTxPendingListAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetTxPendingListAck) */ {
+ public:
+  GetTxPendingListAck();
+  virtual ~GetTxPendingListAck();
+
+  GetTxPendingListAck(const GetTxPendingListAck& from);
+  GetTxPendingListAck(GetTxPendingListAck&& from) noexcept
+    : GetTxPendingListAck() {
+    *this = ::std::move(from);
+  }
+
+  inline GetTxPendingListAck& operator=(const GetTxPendingListAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetTxPendingListAck& operator=(GetTxPendingListAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetTxPendingListAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetTxPendingListAck* internal_default_instance() {
+    return reinterpret_cast<const GetTxPendingListAck*>(
+               &_GetTxPendingListAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    83;
+
+  friend void swap(GetTxPendingListAck& a, GetTxPendingListAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetTxPendingListAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetTxPendingListAck* New() const final {
+    return CreateMaybeMessage<GetTxPendingListAck>(nullptr);
+  }
+
+  GetTxPendingListAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetTxPendingListAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetTxPendingListAck& from);
+  void MergeFrom(const GetTxPendingListAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetTxPendingListAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetTxPendingListAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAddrFieldNumber = 4,
+    kListFieldNumber = 5,
+    kVersionFieldNumber = 1,
+    kDescriptionFieldNumber = 3,
+    kCodeFieldNumber = 2,
+  };
+  // repeated string addr = 4;
+  int addr_size() const;
+  private:
+  int _internal_addr_size() const;
+  public:
+  void clear_addr();
+  const std::string& addr(int index) const;
+  std::string* mutable_addr(int index);
+  void set_addr(int index, const std::string& value);
+  void set_addr(int index, std::string&& value);
+  void set_addr(int index, const char* value);
+  void set_addr(int index, const char* value, size_t size);
+  std::string* add_addr();
+  void add_addr(const std::string& value);
+  void add_addr(std::string&& value);
+  void add_addr(const char* value);
+  void add_addr(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& addr() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_addr();
+  private:
+  const std::string& _internal_addr(int index) const;
+  std::string* _internal_add_addr();
+  public:
+
+  // repeated .TxPendingItem list = 5;
+  int list_size() const;
+  private:
+  int _internal_list_size() const;
+  public:
+  void clear_list();
+  ::TxPendingItem* mutable_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxPendingItem >*
+      mutable_list();
+  private:
+  const ::TxPendingItem& _internal_list(int index) const;
+  ::TxPendingItem* _internal_add_list();
+  public:
+  const ::TxPendingItem& list(int index) const;
+  ::TxPendingItem* add_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxPendingItem >&
+      list() const;
+
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string description = 3;
+  void clear_description();
+  const std::string& description() const;
+  void set_description(const std::string& value);
+  void set_description(std::string&& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  std::string* mutable_description();
+  std::string* release_description();
+  void set_allocated_description(std::string* description);
+  private:
+  const std::string& _internal_description() const;
+  void _internal_set_description(const std::string& value);
+  std::string* _internal_mutable_description();
+  public:
+
+  // int32 code = 2;
+  void clear_code();
+  ::PROTOBUF_NAMESPACE_ID::int32 code() const;
+  void set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_code() const;
+  void _internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetTxPendingListAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> addr_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxPendingItem > list_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::int32 code_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -34303,9 +34946,836 @@ inline void TransData::set_allocated_id(std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:TransData.id)
 }
 
+// -------------------------------------------------------------------
+
+// GetTxPendingListReq
+
+// string version = 1;
+inline void GetTxPendingListReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTxPendingListReq::version() const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListReq.version)
+  return _internal_version();
+}
+inline void GetTxPendingListReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:GetTxPendingListReq.version)
+}
+inline std::string* GetTxPendingListReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& GetTxPendingListReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void GetTxPendingListReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTxPendingListReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxPendingListReq.version)
+}
+inline void GetTxPendingListReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxPendingListReq.version)
+}
+inline void GetTxPendingListReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxPendingListReq.version)
+}
+inline std::string* GetTxPendingListReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxPendingListReq::release_version() {
+  // @@protoc_insertion_point(field_release:GetTxPendingListReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxPendingListReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:GetTxPendingListReq.version)
+}
+
+// repeated string addr = 2;
+inline int GetTxPendingListReq::_internal_addr_size() const {
+  return addr_.size();
+}
+inline int GetTxPendingListReq::addr_size() const {
+  return _internal_addr_size();
+}
+inline void GetTxPendingListReq::clear_addr() {
+  addr_.Clear();
+}
+inline std::string* GetTxPendingListReq::add_addr() {
+  // @@protoc_insertion_point(field_add_mutable:GetTxPendingListReq.addr)
+  return _internal_add_addr();
+}
+inline const std::string& GetTxPendingListReq::_internal_addr(int index) const {
+  return addr_.Get(index);
+}
+inline const std::string& GetTxPendingListReq::addr(int index) const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListReq.addr)
+  return _internal_addr(index);
+}
+inline std::string* GetTxPendingListReq::mutable_addr(int index) {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListReq.addr)
+  return addr_.Mutable(index);
+}
+inline void GetTxPendingListReq::set_addr(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:GetTxPendingListReq.addr)
+  addr_.Mutable(index)->assign(value);
+}
+inline void GetTxPendingListReq::set_addr(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:GetTxPendingListReq.addr)
+  addr_.Mutable(index)->assign(std::move(value));
+}
+inline void GetTxPendingListReq::set_addr(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  addr_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:GetTxPendingListReq.addr)
+}
+inline void GetTxPendingListReq::set_addr(int index, const char* value, size_t size) {
+  addr_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:GetTxPendingListReq.addr)
+}
+inline std::string* GetTxPendingListReq::_internal_add_addr() {
+  return addr_.Add();
+}
+inline void GetTxPendingListReq::add_addr(const std::string& value) {
+  addr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:GetTxPendingListReq.addr)
+}
+inline void GetTxPendingListReq::add_addr(std::string&& value) {
+  addr_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:GetTxPendingListReq.addr)
+}
+inline void GetTxPendingListReq::add_addr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  addr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:GetTxPendingListReq.addr)
+}
+inline void GetTxPendingListReq::add_addr(const char* value, size_t size) {
+  addr_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:GetTxPendingListReq.addr)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+GetTxPendingListReq::addr() const {
+  // @@protoc_insertion_point(field_list:GetTxPendingListReq.addr)
+  return addr_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+GetTxPendingListReq::mutable_addr() {
+  // @@protoc_insertion_point(field_mutable_list:GetTxPendingListReq.addr)
+  return &addr_;
+}
+
+// -------------------------------------------------------------------
+
+// TxPendingItem
+
+// string txHash = 1;
+inline void TxPendingItem::clear_txhash() {
+  txhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxPendingItem::txhash() const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.txHash)
+  return _internal_txhash();
+}
+inline void TxPendingItem::set_txhash(const std::string& value) {
+  _internal_set_txhash(value);
+  // @@protoc_insertion_point(field_set:TxPendingItem.txHash)
+}
+inline std::string* TxPendingItem::mutable_txhash() {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.txHash)
+  return _internal_mutable_txhash();
+}
+inline const std::string& TxPendingItem::_internal_txhash() const {
+  return txhash_.GetNoArena();
+}
+inline void TxPendingItem::_internal_set_txhash(const std::string& value) {
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxPendingItem::set_txhash(std::string&& value) {
+  
+  txhash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxPendingItem.txHash)
+}
+inline void TxPendingItem::set_txhash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.txHash)
+}
+inline void TxPendingItem::set_txhash(const char* value, size_t size) {
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.txHash)
+}
+inline std::string* TxPendingItem::_internal_mutable_txhash() {
+  
+  return txhash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxPendingItem::release_txhash() {
+  // @@protoc_insertion_point(field_release:TxPendingItem.txHash)
+  
+  return txhash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxPendingItem::set_allocated_txhash(std::string* txhash) {
+  if (txhash != nullptr) {
+    
+  } else {
+    
+  }
+  txhash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txhash);
+  // @@protoc_insertion_point(field_set_allocated:TxPendingItem.txHash)
+}
+
+// repeated string vins = 2;
+inline int TxPendingItem::_internal_vins_size() const {
+  return vins_.size();
+}
+inline int TxPendingItem::vins_size() const {
+  return _internal_vins_size();
+}
+inline void TxPendingItem::clear_vins() {
+  vins_.Clear();
+}
+inline std::string* TxPendingItem::add_vins() {
+  // @@protoc_insertion_point(field_add_mutable:TxPendingItem.vins)
+  return _internal_add_vins();
+}
+inline const std::string& TxPendingItem::_internal_vins(int index) const {
+  return vins_.Get(index);
+}
+inline const std::string& TxPendingItem::vins(int index) const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.vins)
+  return _internal_vins(index);
+}
+inline std::string* TxPendingItem::mutable_vins(int index) {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.vins)
+  return vins_.Mutable(index);
+}
+inline void TxPendingItem::set_vins(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.vins)
+  vins_.Mutable(index)->assign(value);
+}
+inline void TxPendingItem::set_vins(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.vins)
+  vins_.Mutable(index)->assign(std::move(value));
+}
+inline void TxPendingItem::set_vins(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  vins_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.vins)
+}
+inline void TxPendingItem::set_vins(int index, const char* value, size_t size) {
+  vins_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.vins)
+}
+inline std::string* TxPendingItem::_internal_add_vins() {
+  return vins_.Add();
+}
+inline void TxPendingItem::add_vins(const std::string& value) {
+  vins_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:TxPendingItem.vins)
+}
+inline void TxPendingItem::add_vins(std::string&& value) {
+  vins_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:TxPendingItem.vins)
+}
+inline void TxPendingItem::add_vins(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  vins_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:TxPendingItem.vins)
+}
+inline void TxPendingItem::add_vins(const char* value, size_t size) {
+  vins_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:TxPendingItem.vins)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+TxPendingItem::vins() const {
+  // @@protoc_insertion_point(field_list:TxPendingItem.vins)
+  return vins_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+TxPendingItem::mutable_vins() {
+  // @@protoc_insertion_point(field_mutable_list:TxPendingItem.vins)
+  return &vins_;
+}
+
+// repeated string fromaddr = 3;
+inline int TxPendingItem::_internal_fromaddr_size() const {
+  return fromaddr_.size();
+}
+inline int TxPendingItem::fromaddr_size() const {
+  return _internal_fromaddr_size();
+}
+inline void TxPendingItem::clear_fromaddr() {
+  fromaddr_.Clear();
+}
+inline std::string* TxPendingItem::add_fromaddr() {
+  // @@protoc_insertion_point(field_add_mutable:TxPendingItem.fromaddr)
+  return _internal_add_fromaddr();
+}
+inline const std::string& TxPendingItem::_internal_fromaddr(int index) const {
+  return fromaddr_.Get(index);
+}
+inline const std::string& TxPendingItem::fromaddr(int index) const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.fromaddr)
+  return _internal_fromaddr(index);
+}
+inline std::string* TxPendingItem::mutable_fromaddr(int index) {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.fromaddr)
+  return fromaddr_.Mutable(index);
+}
+inline void TxPendingItem::set_fromaddr(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.fromaddr)
+  fromaddr_.Mutable(index)->assign(value);
+}
+inline void TxPendingItem::set_fromaddr(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.fromaddr)
+  fromaddr_.Mutable(index)->assign(std::move(value));
+}
+inline void TxPendingItem::set_fromaddr(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  fromaddr_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.fromaddr)
+}
+inline void TxPendingItem::set_fromaddr(int index, const char* value, size_t size) {
+  fromaddr_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.fromaddr)
+}
+inline std::string* TxPendingItem::_internal_add_fromaddr() {
+  return fromaddr_.Add();
+}
+inline void TxPendingItem::add_fromaddr(const std::string& value) {
+  fromaddr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:TxPendingItem.fromaddr)
+}
+inline void TxPendingItem::add_fromaddr(std::string&& value) {
+  fromaddr_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:TxPendingItem.fromaddr)
+}
+inline void TxPendingItem::add_fromaddr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  fromaddr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:TxPendingItem.fromaddr)
+}
+inline void TxPendingItem::add_fromaddr(const char* value, size_t size) {
+  fromaddr_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:TxPendingItem.fromaddr)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+TxPendingItem::fromaddr() const {
+  // @@protoc_insertion_point(field_list:TxPendingItem.fromaddr)
+  return fromaddr_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+TxPendingItem::mutable_fromaddr() {
+  // @@protoc_insertion_point(field_mutable_list:TxPendingItem.fromaddr)
+  return &fromaddr_;
+}
+
+// repeated string toaddr = 4;
+inline int TxPendingItem::_internal_toaddr_size() const {
+  return toaddr_.size();
+}
+inline int TxPendingItem::toaddr_size() const {
+  return _internal_toaddr_size();
+}
+inline void TxPendingItem::clear_toaddr() {
+  toaddr_.Clear();
+}
+inline std::string* TxPendingItem::add_toaddr() {
+  // @@protoc_insertion_point(field_add_mutable:TxPendingItem.toaddr)
+  return _internal_add_toaddr();
+}
+inline const std::string& TxPendingItem::_internal_toaddr(int index) const {
+  return toaddr_.Get(index);
+}
+inline const std::string& TxPendingItem::toaddr(int index) const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.toaddr)
+  return _internal_toaddr(index);
+}
+inline std::string* TxPendingItem::mutable_toaddr(int index) {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.toaddr)
+  return toaddr_.Mutable(index);
+}
+inline void TxPendingItem::set_toaddr(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.toaddr)
+  toaddr_.Mutable(index)->assign(value);
+}
+inline void TxPendingItem::set_toaddr(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:TxPendingItem.toaddr)
+  toaddr_.Mutable(index)->assign(std::move(value));
+}
+inline void TxPendingItem::set_toaddr(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  toaddr_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.toaddr)
+}
+inline void TxPendingItem::set_toaddr(int index, const char* value, size_t size) {
+  toaddr_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.toaddr)
+}
+inline std::string* TxPendingItem::_internal_add_toaddr() {
+  return toaddr_.Add();
+}
+inline void TxPendingItem::add_toaddr(const std::string& value) {
+  toaddr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:TxPendingItem.toaddr)
+}
+inline void TxPendingItem::add_toaddr(std::string&& value) {
+  toaddr_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:TxPendingItem.toaddr)
+}
+inline void TxPendingItem::add_toaddr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  toaddr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:TxPendingItem.toaddr)
+}
+inline void TxPendingItem::add_toaddr(const char* value, size_t size) {
+  toaddr_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:TxPendingItem.toaddr)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+TxPendingItem::toaddr() const {
+  // @@protoc_insertion_point(field_list:TxPendingItem.toaddr)
+  return toaddr_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+TxPendingItem::mutable_toaddr() {
+  // @@protoc_insertion_point(field_mutable_list:TxPendingItem.toaddr)
+  return &toaddr_;
+}
+
+// string amount = 5;
+inline void TxPendingItem::clear_amount() {
+  amount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxPendingItem::amount() const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.amount)
+  return _internal_amount();
+}
+inline void TxPendingItem::set_amount(const std::string& value) {
+  _internal_set_amount(value);
+  // @@protoc_insertion_point(field_set:TxPendingItem.amount)
+}
+inline std::string* TxPendingItem::mutable_amount() {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.amount)
+  return _internal_mutable_amount();
+}
+inline const std::string& TxPendingItem::_internal_amount() const {
+  return amount_.GetNoArena();
+}
+inline void TxPendingItem::_internal_set_amount(const std::string& value) {
+  
+  amount_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxPendingItem::set_amount(std::string&& value) {
+  
+  amount_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxPendingItem.amount)
+}
+inline void TxPendingItem::set_amount(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  amount_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.amount)
+}
+inline void TxPendingItem::set_amount(const char* value, size_t size) {
+  
+  amount_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.amount)
+}
+inline std::string* TxPendingItem::_internal_mutable_amount() {
+  
+  return amount_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxPendingItem::release_amount() {
+  // @@protoc_insertion_point(field_release:TxPendingItem.amount)
+  
+  return amount_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxPendingItem::set_allocated_amount(std::string* amount) {
+  if (amount != nullptr) {
+    
+  } else {
+    
+  }
+  amount_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), amount);
+  // @@protoc_insertion_point(field_set_allocated:TxPendingItem.amount)
+}
+
+// uint64 time = 6;
+inline void TxPendingItem::clear_time() {
+  time_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TxPendingItem::_internal_time() const {
+  return time_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TxPendingItem::time() const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.time)
+  return _internal_time();
+}
+inline void TxPendingItem::_internal_set_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  time_ = value;
+}
+inline void TxPendingItem::set_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:TxPendingItem.time)
+}
+
+// string detail = 7;
+inline void TxPendingItem::clear_detail() {
+  detail_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxPendingItem::detail() const {
+  // @@protoc_insertion_point(field_get:TxPendingItem.detail)
+  return _internal_detail();
+}
+inline void TxPendingItem::set_detail(const std::string& value) {
+  _internal_set_detail(value);
+  // @@protoc_insertion_point(field_set:TxPendingItem.detail)
+}
+inline std::string* TxPendingItem::mutable_detail() {
+  // @@protoc_insertion_point(field_mutable:TxPendingItem.detail)
+  return _internal_mutable_detail();
+}
+inline const std::string& TxPendingItem::_internal_detail() const {
+  return detail_.GetNoArena();
+}
+inline void TxPendingItem::_internal_set_detail(const std::string& value) {
+  
+  detail_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxPendingItem::set_detail(std::string&& value) {
+  
+  detail_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxPendingItem.detail)
+}
+inline void TxPendingItem::set_detail(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  detail_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxPendingItem.detail)
+}
+inline void TxPendingItem::set_detail(const char* value, size_t size) {
+  
+  detail_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxPendingItem.detail)
+}
+inline std::string* TxPendingItem::_internal_mutable_detail() {
+  
+  return detail_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxPendingItem::release_detail() {
+  // @@protoc_insertion_point(field_release:TxPendingItem.detail)
+  
+  return detail_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxPendingItem::set_allocated_detail(std::string* detail) {
+  if (detail != nullptr) {
+    
+  } else {
+    
+  }
+  detail_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), detail);
+  // @@protoc_insertion_point(field_set_allocated:TxPendingItem.detail)
+}
+
+// -------------------------------------------------------------------
+
+// GetTxPendingListAck
+
+// string version = 1;
+inline void GetTxPendingListAck::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTxPendingListAck::version() const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListAck.version)
+  return _internal_version();
+}
+inline void GetTxPendingListAck::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:GetTxPendingListAck.version)
+}
+inline std::string* GetTxPendingListAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListAck.version)
+  return _internal_mutable_version();
+}
+inline const std::string& GetTxPendingListAck::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void GetTxPendingListAck::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTxPendingListAck::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxPendingListAck.version)
+}
+inline void GetTxPendingListAck::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxPendingListAck.version)
+}
+inline void GetTxPendingListAck::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxPendingListAck.version)
+}
+inline std::string* GetTxPendingListAck::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxPendingListAck::release_version() {
+  // @@protoc_insertion_point(field_release:GetTxPendingListAck.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxPendingListAck::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:GetTxPendingListAck.version)
+}
+
+// int32 code = 2;
+inline void GetTxPendingListAck::clear_code() {
+  code_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetTxPendingListAck::_internal_code() const {
+  return code_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetTxPendingListAck::code() const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListAck.code)
+  return _internal_code();
+}
+inline void GetTxPendingListAck::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  code_ = value;
+}
+inline void GetTxPendingListAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:GetTxPendingListAck.code)
+}
+
+// string description = 3;
+inline void GetTxPendingListAck::clear_description() {
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTxPendingListAck::description() const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListAck.description)
+  return _internal_description();
+}
+inline void GetTxPendingListAck::set_description(const std::string& value) {
+  _internal_set_description(value);
+  // @@protoc_insertion_point(field_set:GetTxPendingListAck.description)
+}
+inline std::string* GetTxPendingListAck::mutable_description() {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListAck.description)
+  return _internal_mutable_description();
+}
+inline const std::string& GetTxPendingListAck::_internal_description() const {
+  return description_.GetNoArena();
+}
+inline void GetTxPendingListAck::_internal_set_description(const std::string& value) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTxPendingListAck::set_description(std::string&& value) {
+  
+  description_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxPendingListAck.description)
+}
+inline void GetTxPendingListAck::set_description(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxPendingListAck.description)
+}
+inline void GetTxPendingListAck::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxPendingListAck.description)
+}
+inline std::string* GetTxPendingListAck::_internal_mutable_description() {
+  
+  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxPendingListAck::release_description() {
+  // @@protoc_insertion_point(field_release:GetTxPendingListAck.description)
+  
+  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxPendingListAck::set_allocated_description(std::string* description) {
+  if (description != nullptr) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:GetTxPendingListAck.description)
+}
+
+// repeated string addr = 4;
+inline int GetTxPendingListAck::_internal_addr_size() const {
+  return addr_.size();
+}
+inline int GetTxPendingListAck::addr_size() const {
+  return _internal_addr_size();
+}
+inline void GetTxPendingListAck::clear_addr() {
+  addr_.Clear();
+}
+inline std::string* GetTxPendingListAck::add_addr() {
+  // @@protoc_insertion_point(field_add_mutable:GetTxPendingListAck.addr)
+  return _internal_add_addr();
+}
+inline const std::string& GetTxPendingListAck::_internal_addr(int index) const {
+  return addr_.Get(index);
+}
+inline const std::string& GetTxPendingListAck::addr(int index) const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListAck.addr)
+  return _internal_addr(index);
+}
+inline std::string* GetTxPendingListAck::mutable_addr(int index) {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListAck.addr)
+  return addr_.Mutable(index);
+}
+inline void GetTxPendingListAck::set_addr(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:GetTxPendingListAck.addr)
+  addr_.Mutable(index)->assign(value);
+}
+inline void GetTxPendingListAck::set_addr(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:GetTxPendingListAck.addr)
+  addr_.Mutable(index)->assign(std::move(value));
+}
+inline void GetTxPendingListAck::set_addr(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  addr_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:GetTxPendingListAck.addr)
+}
+inline void GetTxPendingListAck::set_addr(int index, const char* value, size_t size) {
+  addr_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:GetTxPendingListAck.addr)
+}
+inline std::string* GetTxPendingListAck::_internal_add_addr() {
+  return addr_.Add();
+}
+inline void GetTxPendingListAck::add_addr(const std::string& value) {
+  addr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:GetTxPendingListAck.addr)
+}
+inline void GetTxPendingListAck::add_addr(std::string&& value) {
+  addr_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:GetTxPendingListAck.addr)
+}
+inline void GetTxPendingListAck::add_addr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  addr_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:GetTxPendingListAck.addr)
+}
+inline void GetTxPendingListAck::add_addr(const char* value, size_t size) {
+  addr_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:GetTxPendingListAck.addr)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+GetTxPendingListAck::addr() const {
+  // @@protoc_insertion_point(field_list:GetTxPendingListAck.addr)
+  return addr_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+GetTxPendingListAck::mutable_addr() {
+  // @@protoc_insertion_point(field_mutable_list:GetTxPendingListAck.addr)
+  return &addr_;
+}
+
+// repeated .TxPendingItem list = 5;
+inline int GetTxPendingListAck::_internal_list_size() const {
+  return list_.size();
+}
+inline int GetTxPendingListAck::list_size() const {
+  return _internal_list_size();
+}
+inline void GetTxPendingListAck::clear_list() {
+  list_.Clear();
+}
+inline ::TxPendingItem* GetTxPendingListAck::mutable_list(int index) {
+  // @@protoc_insertion_point(field_mutable:GetTxPendingListAck.list)
+  return list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxPendingItem >*
+GetTxPendingListAck::mutable_list() {
+  // @@protoc_insertion_point(field_mutable_list:GetTxPendingListAck.list)
+  return &list_;
+}
+inline const ::TxPendingItem& GetTxPendingListAck::_internal_list(int index) const {
+  return list_.Get(index);
+}
+inline const ::TxPendingItem& GetTxPendingListAck::list(int index) const {
+  // @@protoc_insertion_point(field_get:GetTxPendingListAck.list)
+  return _internal_list(index);
+}
+inline ::TxPendingItem* GetTxPendingListAck::_internal_add_list() {
+  return list_.Add();
+}
+inline ::TxPendingItem* GetTxPendingListAck::add_list() {
+  // @@protoc_insertion_point(field_add:GetTxPendingListAck.list)
+  return _internal_add_list();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxPendingItem >&
+GetTxPendingListAck::list() const {
+  // @@protoc_insertion_point(field_list:GetTxPendingListAck.list)
+  return list_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

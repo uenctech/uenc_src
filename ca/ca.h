@@ -25,12 +25,6 @@ bool ca_init();
  */
 void ca_cleanup();
 
-/**
- * @description: ca 菜单
- * @param 无
- * @return: 无
- */
-void ca_print();
 bool id_isvalid(const std::string &id);
 
 /**
@@ -39,19 +33,6 @@ bool id_isvalid(const std::string &id);
  * @return: 返回字符串格式版本号
  */
 const char * ca_version();
-/**
- * @description: 向指定节点发送退出命令
- * @param id 发送节点的id
- * @return: 无
- */
-void SendExitNode(const std::string id);
-
-/* ====================================================================================  
- # @description: 退出节点处理函数
- # @param msg  : 接收的协议数据
- # @param msgdata : 网络传输所需的数据
- ==================================================================================== */
-void HandleExitNode( const std::shared_ptr<TestSendExitNodeReq>& msg, const MsgData& msgdata );
 
 
 /**
@@ -59,7 +40,7 @@ void HandleExitNode( const std::shared_ptr<TestSendExitNodeReq>& msg, const MsgD
  * @param id 要获取的节点的id
  * @return: 无
  */
-void SendGetNodeHeightHashBase58AddrReq(const std::string id);
+void SendDevInfoReq(const std::string id);
 
 
 /* ====================================================================================  
@@ -67,7 +48,7 @@ void SendGetNodeHeightHashBase58AddrReq(const std::string id);
  # @param msg  : 接收的协议数据
  # @param msgdata : 网络传输所需的数据
  ==================================================================================== */
-void handleGetNodeHeightHashBase58AddrAck( const std::shared_ptr<TestGetNodeHeightHashBase58AddrAck>& msg, const MsgData& msgdata );
+void HandleGetDevInfoAck( const std::shared_ptr<GetDevInfoAck>& msg, const MsgData& msgdata );
 
 
 /* ====================================================================================  
@@ -75,7 +56,7 @@ void handleGetNodeHeightHashBase58AddrAck( const std::shared_ptr<TestGetNodeHeig
  # @param msg  : 接收的协议数据
  # @param msgdata : 网络传输所需的数据
  ==================================================================================== */
-void handleGetNodeHeightHashBase58AddrReq( const std::shared_ptr<TestGetNodeHeightHashBase58AddrReq>& msg, const MsgData& msgdata );
+void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgData& msgdata );
 
 
 /**
@@ -87,9 +68,6 @@ int set_device_signature_fee(uint64_t fee);
 int set_device_package_fee(uint64_t fee);
 int get_device_package_fee(uint64_t& packageFee);
 
-void handle_transaction();
-void handle_pledge();
-void handle_redeem_pledge();
 bool isPublicIp(const string& ip);
 int UpdatePublicNodeToConfigFile();
 

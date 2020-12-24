@@ -26,6 +26,7 @@ extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::inter
 extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ToAddr_interface_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<2> scc_info_TxInfo_interface_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxInfoItem_interface_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxPendingItem_interface_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxVinInfo_interface_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_interface_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxVoutInfo_interface_2eproto;
 class GetAmountReqDefaultTypeInternal {
@@ -352,6 +353,18 @@ class TransDataDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TransData> _instance;
 } _TransData_default_instance_;
+class GetTxPendingListReqDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetTxPendingListReq> _instance;
+} _GetTxPendingListReq_default_instance_;
+class TxPendingItemDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TxPendingItem> _instance;
+} _TxPendingItem_default_instance_;
+class GetTxPendingListAckDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<GetTxPendingListAck> _instance;
+} _GetTxPendingListAck_default_instance_;
 static void InitDefaultsscc_info_BlockInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1109,6 +1122,35 @@ static void InitDefaultsscc_info_GetTxInfoListReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetTxInfoListReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetTxInfoListReq_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_GetTxPendingListAck_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetTxPendingListAck_default_instance_;
+    new (ptr) ::GetTxPendingListAck();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetTxPendingListAck::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_GetTxPendingListAck_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_GetTxPendingListAck_interface_2eproto}, {
+      &scc_info_TxPendingItem_interface_2eproto.base,}};
+
+static void InitDefaultsscc_info_GetTxPendingListReq_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_GetTxPendingListReq_default_instance_;
+    new (ptr) ::GetTxPendingListReq();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::GetTxPendingListReq::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_GetTxPendingListReq_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetTxPendingListReq_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_MultiTxMsgReq_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1449,6 +1491,20 @@ static void InitDefaultsscc_info_TxMsgReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxMsgReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TxMsgReq_interface_2eproto}, {}};
 
+static void InitDefaultsscc_info_TxPendingItem_interface_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TxPendingItem_default_instance_;
+    new (ptr) ::TxPendingItem();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TxPendingItem::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TxPendingItem_interface_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TxPendingItem_interface_2eproto}, {}};
+
 static void InitDefaultsscc_info_TxVinInfo_interface_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -1505,7 +1561,7 @@ static void InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_VerifyDevicePasswordReq_interface_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_VerifyDevicePasswordReq_interface_2eproto}, {}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[81];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_interface_2eproto[84];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_interface_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_interface_2eproto = nullptr;
 
@@ -2272,6 +2328,35 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_interface_2eproto::offsets[] P
   PROTOBUF_FIELD_OFFSET(::TransData, encodedata_),
   PROTOBUF_FIELD_OFFSET(::TransData, origindata_),
   PROTOBUF_FIELD_OFFSET(::TransData, id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListReq, version_),
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListReq, addr_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, txhash_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, vins_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, fromaddr_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, toaddr_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, amount_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, time_),
+  PROTOBUF_FIELD_OFFSET(::TxPendingItem, detail_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, version_),
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, code_),
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, description_),
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, addr_),
+  PROTOBUF_FIELD_OFFSET(::GetTxPendingListAck, list_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::GetAmountReq)},
@@ -2355,6 +2440,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 738, -1, sizeof(::Feedback2DeviceAck)},
   { 745, -1, sizeof(::DataTransReq)},
   { 752, -1, sizeof(::TransData)},
+  { 762, -1, sizeof(::GetTxPendingListReq)},
+  { 769, -1, sizeof(::TxPendingItem)},
+  { 781, -1, sizeof(::GetTxPendingListAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -2439,6 +2527,9 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_Feedback2DeviceAck_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_DataTransReq_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TransData_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetTxPendingListReq_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TxPendingItem_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_GetTxPendingListAck_default_instance_),
 };
 
 const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -2649,18 +2740,26 @@ const char descriptor_table_protodef_interface_2eproto[] PROTOBUF_SECTION_VARIAB
   "\017\n\007version\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"e\n\tTransDat"
   "a\022\017\n\007version\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022"
   "\022\n\nencodedata\030\003 \001(\014\022\022\n\norigindata\030\004 \001(\014\022"
-  "\n\n\002id\030\005 \001(\t**\n\nDeviceType\022\006\n\002PC\020\000\022\007\n\003iOS"
-  "\020\001\022\013\n\007Android\020\002*\"\n\nDeviceLang\022\t\n\005ZH_CN\020\000"
-  "\022\t\n\005EN_US\020\001*\323\001\n\nTxInfoType\022\026\n\022TxInfoType"
-  "_Unknown\020\000\022\031\n\025TxInfoType_Originator\020\001\022\027\n"
-  "\023TxInfoType_Receiver\020\002\022\022\n\016TxInfoType_Gas"
-  "\020\003\022\024\n\020TxInfoType_Award\020\004\022\025\n\021TxInfoType_P"
-  "ledge\020\005\022\025\n\021TxInfoType_Redeem\020\006\022!\n\035TxInfo"
-  "Type_PledgedAndRedeemed\020\007b\006proto3"
+  "\n\n\002id\030\005 \001(\t\"4\n\023GetTxPendingListReq\022\017\n\007ve"
+  "rsion\030\001 \001(\t\022\014\n\004addr\030\002 \003(\t\"}\n\rTxPendingIt"
+  "em\022\016\n\006txHash\030\001 \001(\t\022\014\n\004vins\030\002 \003(\t\022\020\n\010from"
+  "addr\030\003 \003(\t\022\016\n\006toaddr\030\004 \003(\t\022\016\n\006amount\030\005 \001"
+  "(\t\022\014\n\004time\030\006 \001(\004\022\016\n\006detail\030\007 \001(\t\"u\n\023GetT"
+  "xPendingListAck\022\017\n\007version\030\001 \001(\t\022\014\n\004code"
+  "\030\002 \001(\005\022\023\n\013description\030\003 \001(\t\022\014\n\004addr\030\004 \003("
+  "\t\022\034\n\004list\030\005 \003(\0132\016.TxPendingItem**\n\nDevic"
+  "eType\022\006\n\002PC\020\000\022\007\n\003iOS\020\001\022\013\n\007Android\020\002*\"\n\nD"
+  "eviceLang\022\t\n\005ZH_CN\020\000\022\t\n\005EN_US\020\001*\323\001\n\nTxIn"
+  "foType\022\026\n\022TxInfoType_Unknown\020\000\022\031\n\025TxInfo"
+  "Type_Originator\020\001\022\027\n\023TxInfoType_Receiver"
+  "\020\002\022\022\n\016TxInfoType_Gas\020\003\022\024\n\020TxInfoType_Awa"
+  "rd\020\004\022\025\n\021TxInfoType_Pledge\020\005\022\025\n\021TxInfoTyp"
+  "e_Redeem\020\006\022!\n\035TxInfoType_PledgedAndRedee"
+  "med\020\007b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_interface_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[81] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_interface_2eproto_sccs[84] = {
   &scc_info_BlockInfo_interface_2eproto.base,
   &scc_info_BlockInfoItem_interface_2eproto.base,
   &scc_info_BlockInfoOutAddr_interface_2eproto.base,
@@ -2714,6 +2813,8 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_GetTxInfoDetailReq_interface_2eproto.base,
   &scc_info_GetTxInfoListAck_interface_2eproto.base,
   &scc_info_GetTxInfoListReq_interface_2eproto.base,
+  &scc_info_GetTxPendingListAck_interface_2eproto.base,
+  &scc_info_GetTxPendingListReq_interface_2eproto.base,
   &scc_info_MultiTxMsgReq_interface_2eproto.base,
   &scc_info_NodeInfos_interface_2eproto.base,
   &scc_info_NodeList_interface_2eproto.base,
@@ -2738,6 +2839,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
   &scc_info_TxInfoItem_interface_2eproto.base,
   &scc_info_TxMsgAck_interface_2eproto.base,
   &scc_info_TxMsgReq_interface_2eproto.base,
+  &scc_info_TxPendingItem_interface_2eproto.base,
   &scc_info_TxVinInfo_interface_2eproto.base,
   &scc_info_TxVoutInfo_interface_2eproto.base,
   &scc_info_VerifyDevicePasswordAck_interface_2eproto.base,
@@ -2746,10 +2848,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_int
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_interface_2eproto_once;
 static bool descriptor_table_interface_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_interface_2eproto = {
-  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 8593,
-  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 81, 0,
+  &descriptor_table_interface_2eproto_initialized, descriptor_table_protodef_interface_2eproto, "interface.proto", 8893,
+  &descriptor_table_interface_2eproto_once, descriptor_table_interface_2eproto_sccs, descriptor_table_interface_2eproto_deps, 84, 0,
   schemas, file_default_instances, TableStruct_interface_2eproto::offsets,
-  file_level_metadata_interface_2eproto, 81, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
+  file_level_metadata_interface_2eproto, 84, file_level_enum_descriptors_interface_2eproto, file_level_service_descriptors_interface_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -28621,6 +28723,985 @@ void TransData::InternalSwap(TransData* other) {
 }
 
 
+// ===================================================================
+
+void GetTxPendingListReq::InitAsDefaultInstance() {
+}
+class GetTxPendingListReq::_Internal {
+ public:
+};
+
+GetTxPendingListReq::GetTxPendingListReq()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:GetTxPendingListReq)
+}
+GetTxPendingListReq::GetTxPendingListReq(const GetTxPendingListReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      addr_(from.addr_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  // @@protoc_insertion_point(copy_constructor:GetTxPendingListReq)
+}
+
+void GetTxPendingListReq::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetTxPendingListReq_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+GetTxPendingListReq::~GetTxPendingListReq() {
+  // @@protoc_insertion_point(destructor:GetTxPendingListReq)
+  SharedDtor();
+}
+
+void GetTxPendingListReq::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void GetTxPendingListReq::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const GetTxPendingListReq& GetTxPendingListReq::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetTxPendingListReq_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void GetTxPendingListReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetTxPendingListReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  addr_.Clear();
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+const char* GetTxPendingListReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetTxPendingListReq.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated string addr = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_addr();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetTxPendingListReq.addr"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GetTxPendingListReq::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GetTxPendingListReq)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetTxPendingListReq.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // repeated string addr = 2;
+  for (int i = 0, n = this->_internal_addr_size(); i < n; i++) {
+    const auto& s = this->_internal_addr(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetTxPendingListReq.addr");
+    target = stream->WriteString(2, s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GetTxPendingListReq)
+  return target;
+}
+
+size_t GetTxPendingListReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetTxPendingListReq)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string addr = 2;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(addr_.size());
+  for (int i = 0, n = addr_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      addr_.Get(i));
+  }
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GetTxPendingListReq::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetTxPendingListReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GetTxPendingListReq* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetTxPendingListReq>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetTxPendingListReq)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetTxPendingListReq)
+    MergeFrom(*source);
+  }
+}
+
+void GetTxPendingListReq::MergeFrom(const GetTxPendingListReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetTxPendingListReq)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  addr_.MergeFrom(from.addr_);
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+}
+
+void GetTxPendingListReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetTxPendingListReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GetTxPendingListReq::CopyFrom(const GetTxPendingListReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetTxPendingListReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetTxPendingListReq::IsInitialized() const {
+  return true;
+}
+
+void GetTxPendingListReq::InternalSwap(GetTxPendingListReq* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  addr_.InternalSwap(&other->addr_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetTxPendingListReq::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void TxPendingItem::InitAsDefaultInstance() {
+}
+class TxPendingItem::_Internal {
+ public:
+};
+
+TxPendingItem::TxPendingItem()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:TxPendingItem)
+}
+TxPendingItem::TxPendingItem(const TxPendingItem& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      vins_(from.vins_),
+      fromaddr_(from.fromaddr_),
+      toaddr_(from.toaddr_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  txhash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_txhash().empty()) {
+    txhash_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.txhash_);
+  }
+  amount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_amount().empty()) {
+    amount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.amount_);
+  }
+  detail_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_detail().empty()) {
+    detail_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.detail_);
+  }
+  time_ = from.time_;
+  // @@protoc_insertion_point(copy_constructor:TxPendingItem)
+}
+
+void TxPendingItem::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TxPendingItem_interface_2eproto.base);
+  txhash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  amount_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  detail_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  time_ = PROTOBUF_ULONGLONG(0);
+}
+
+TxPendingItem::~TxPendingItem() {
+  // @@protoc_insertion_point(destructor:TxPendingItem)
+  SharedDtor();
+}
+
+void TxPendingItem::SharedDtor() {
+  txhash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  amount_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  detail_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TxPendingItem::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TxPendingItem& TxPendingItem::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TxPendingItem_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TxPendingItem::Clear() {
+// @@protoc_insertion_point(message_clear_start:TxPendingItem)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  vins_.Clear();
+  fromaddr_.Clear();
+  toaddr_.Clear();
+  txhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  amount_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  detail_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  time_ = PROTOBUF_ULONGLONG(0);
+  _internal_metadata_.Clear();
+}
+
+const char* TxPendingItem::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string txHash = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_txhash();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.txHash"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated string vins = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_vins();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.vins"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // repeated string fromaddr = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_fromaddr();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.fromaddr"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // repeated string toaddr = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_toaddr();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.toaddr"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // string amount = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_amount();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.amount"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint64 time = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string detail = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          auto str = _internal_mutable_detail();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TxPendingItem.detail"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TxPendingItem::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TxPendingItem)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string txHash = 1;
+  if (this->txhash().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_txhash().data(), static_cast<int>(this->_internal_txhash().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.txHash");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_txhash(), target);
+  }
+
+  // repeated string vins = 2;
+  for (int i = 0, n = this->_internal_vins_size(); i < n; i++) {
+    const auto& s = this->_internal_vins(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.vins");
+    target = stream->WriteString(2, s, target);
+  }
+
+  // repeated string fromaddr = 3;
+  for (int i = 0, n = this->_internal_fromaddr_size(); i < n; i++) {
+    const auto& s = this->_internal_fromaddr(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.fromaddr");
+    target = stream->WriteString(3, s, target);
+  }
+
+  // repeated string toaddr = 4;
+  for (int i = 0, n = this->_internal_toaddr_size(); i < n; i++) {
+    const auto& s = this->_internal_toaddr(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.toaddr");
+    target = stream->WriteString(4, s, target);
+  }
+
+  // string amount = 5;
+  if (this->amount().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_amount().data(), static_cast<int>(this->_internal_amount().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.amount");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_amount(), target);
+  }
+
+  // uint64 time = 6;
+  if (this->time() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(6, this->_internal_time(), target);
+  }
+
+  // string detail = 7;
+  if (this->detail().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_detail().data(), static_cast<int>(this->_internal_detail().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TxPendingItem.detail");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_detail(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TxPendingItem)
+  return target;
+}
+
+size_t TxPendingItem::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TxPendingItem)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string vins = 2;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(vins_.size());
+  for (int i = 0, n = vins_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      vins_.Get(i));
+  }
+
+  // repeated string fromaddr = 3;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(fromaddr_.size());
+  for (int i = 0, n = fromaddr_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      fromaddr_.Get(i));
+  }
+
+  // repeated string toaddr = 4;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(toaddr_.size());
+  for (int i = 0, n = toaddr_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      toaddr_.Get(i));
+  }
+
+  // string txHash = 1;
+  if (this->txhash().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_txhash());
+  }
+
+  // string amount = 5;
+  if (this->amount().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_amount());
+  }
+
+  // string detail = 7;
+  if (this->detail().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_detail());
+  }
+
+  // uint64 time = 6;
+  if (this->time() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_time());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TxPendingItem::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TxPendingItem)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TxPendingItem* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TxPendingItem>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TxPendingItem)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TxPendingItem)
+    MergeFrom(*source);
+  }
+}
+
+void TxPendingItem::MergeFrom(const TxPendingItem& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TxPendingItem)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  vins_.MergeFrom(from.vins_);
+  fromaddr_.MergeFrom(from.fromaddr_);
+  toaddr_.MergeFrom(from.toaddr_);
+  if (from.txhash().size() > 0) {
+
+    txhash_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.txhash_);
+  }
+  if (from.amount().size() > 0) {
+
+    amount_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.amount_);
+  }
+  if (from.detail().size() > 0) {
+
+    detail_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.detail_);
+  }
+  if (from.time() != 0) {
+    _internal_set_time(from._internal_time());
+  }
+}
+
+void TxPendingItem::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TxPendingItem)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TxPendingItem::CopyFrom(const TxPendingItem& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TxPendingItem)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TxPendingItem::IsInitialized() const {
+  return true;
+}
+
+void TxPendingItem::InternalSwap(TxPendingItem* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  vins_.InternalSwap(&other->vins_);
+  fromaddr_.InternalSwap(&other->fromaddr_);
+  toaddr_.InternalSwap(&other->toaddr_);
+  txhash_.Swap(&other->txhash_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  amount_.Swap(&other->amount_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  detail_.Swap(&other->detail_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(time_, other->time_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TxPendingItem::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void GetTxPendingListAck::InitAsDefaultInstance() {
+}
+class GetTxPendingListAck::_Internal {
+ public:
+};
+
+GetTxPendingListAck::GetTxPendingListAck()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:GetTxPendingListAck)
+}
+GetTxPendingListAck::GetTxPendingListAck(const GetTxPendingListAck& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      addr_(from.addr_),
+      list_(from.list_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_version().empty()) {
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_description().empty()) {
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  code_ = from.code_;
+  // @@protoc_insertion_point(copy_constructor:GetTxPendingListAck)
+}
+
+void GetTxPendingListAck::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetTxPendingListAck_interface_2eproto.base);
+  version_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  code_ = 0;
+}
+
+GetTxPendingListAck::~GetTxPendingListAck() {
+  // @@protoc_insertion_point(destructor:GetTxPendingListAck)
+  SharedDtor();
+}
+
+void GetTxPendingListAck::SharedDtor() {
+  version_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void GetTxPendingListAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const GetTxPendingListAck& GetTxPendingListAck::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_GetTxPendingListAck_interface_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void GetTxPendingListAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:GetTxPendingListAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  addr_.Clear();
+  list_.Clear();
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  code_ = 0;
+  _internal_metadata_.Clear();
+}
+
+const char* GetTxPendingListAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_version();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetTxPendingListAck.version"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          code_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string description = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_description();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetTxPendingListAck.description"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated string addr = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_addr();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "GetTxPendingListAck.addr"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // repeated .TxPendingItem list = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_list(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GetTxPendingListAck::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GetTxPendingListAck)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_version().data(), static_cast<int>(this->_internal_version().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetTxPendingListAck.version");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_version(), target);
+  }
+
+  // int32 code = 2;
+  if (this->code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_code(), target);
+  }
+
+  // string description = 3;
+  if (this->description().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_description().data(), static_cast<int>(this->_internal_description().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetTxPendingListAck.description");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_description(), target);
+  }
+
+  // repeated string addr = 4;
+  for (int i = 0, n = this->_internal_addr_size(); i < n; i++) {
+    const auto& s = this->_internal_addr(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "GetTxPendingListAck.addr");
+    target = stream->WriteString(4, s, target);
+  }
+
+  // repeated .TxPendingItem list = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_list_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(5, this->_internal_list(i), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GetTxPendingListAck)
+  return target;
+}
+
+size_t GetTxPendingListAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GetTxPendingListAck)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string addr = 4;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(addr_.size());
+  for (int i = 0, n = addr_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      addr_.Get(i));
+  }
+
+  // repeated .TxPendingItem list = 5;
+  total_size += 1UL * this->_internal_list_size();
+  for (const auto& msg : this->list_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string version = 1;
+  if (this->version().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_version());
+  }
+
+  // string description = 3;
+  if (this->description().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_description());
+  }
+
+  // int32 code = 2;
+  if (this->code() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_code());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GetTxPendingListAck::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:GetTxPendingListAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GetTxPendingListAck* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<GetTxPendingListAck>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:GetTxPendingListAck)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:GetTxPendingListAck)
+    MergeFrom(*source);
+  }
+}
+
+void GetTxPendingListAck::MergeFrom(const GetTxPendingListAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:GetTxPendingListAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  addr_.MergeFrom(from.addr_);
+  list_.MergeFrom(from.list_);
+  if (from.version().size() > 0) {
+
+    version_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.version_);
+  }
+  if (from.description().size() > 0) {
+
+    description_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.description_);
+  }
+  if (from.code() != 0) {
+    _internal_set_code(from._internal_code());
+  }
+}
+
+void GetTxPendingListAck::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:GetTxPendingListAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GetTxPendingListAck::CopyFrom(const GetTxPendingListAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GetTxPendingListAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetTxPendingListAck::IsInitialized() const {
+  return true;
+}
+
+void GetTxPendingListAck::InternalSwap(GetTxPendingListAck* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  addr_.InternalSwap(&other->addr_);
+  list_.InternalSwap(&other->list_);
+  version_.Swap(&other->version_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  description_.Swap(&other->description_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(code_, other->code_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetTxPendingListAck::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::GetAmountReq* Arena::CreateMaybeMessage< ::GetAmountReq >(Arena* arena) {
@@ -28865,6 +29946,15 @@ template<> PROTOBUF_NOINLINE ::DataTransReq* Arena::CreateMaybeMessage< ::DataTr
 }
 template<> PROTOBUF_NOINLINE ::TransData* Arena::CreateMaybeMessage< ::TransData >(Arena* arena) {
   return Arena::CreateInternal< ::TransData >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GetTxPendingListReq* Arena::CreateMaybeMessage< ::GetTxPendingListReq >(Arena* arena) {
+  return Arena::CreateInternal< ::GetTxPendingListReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TxPendingItem* Arena::CreateMaybeMessage< ::TxPendingItem >(Arena* arena) {
+  return Arena::CreateInternal< ::TxPendingItem >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GetTxPendingListAck* Arena::CreateMaybeMessage< ::GetTxPendingListAck >(Arena* arena) {
+  return Arena::CreateInternal< ::GetTxPendingListAck >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

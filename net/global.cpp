@@ -12,7 +12,7 @@ namespace global{
     
     std::list<int> phone_list;      
     std::mutex mutex_for_phone_list;
-    Timer g_timer; 
+    CTimer g_timer; 
     std::mutex mutex_listen_thread;
     std::mutex mutex_set_fee;
     std::condition_variable_any cond_listen_thread;

@@ -104,6 +104,8 @@ message SignNodeMsg
 	bytes  signPubKey            = 2;                // 签名者公钥
 	string gasFee               = 3;                 // 签名所需燃油费
 	double onlineTime           = 4;                 // 矿机在线时长
+	uint64 awardTotal           = 5;                 // 获得的总奖励
+	uint64 signSum              = 6;                 // 总签名次数
 }
 
 // PC端交易信息体
@@ -126,19 +128,13 @@ message BuileBlockBroadcastMsg
 
 /*************************************测试接口协议*************************************/
 
-// 踢出节点请求
-message TestSendExitNodeReq
-{
-	string version              = 1;                        // 版本
-}
-
-message TestGetNodeHeightHashBase58AddrReq
+message GetDevInfoReq
 {
 	string version              = 1;                        // 版本
 	string id                   = 2;                        // 请求节点ID
 }
 
-message TestGetNodeHeightHashBase58AddrAck
+message GetDevInfoAck
 {
 	string version              = 1;                        // 版本
 	string id                   = 2;                        // 请求节点ID

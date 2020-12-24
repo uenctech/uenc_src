@@ -834,3 +834,32 @@ message TransData
 
 
 
+/*************************************交易处理中相关协议*************************************/
+
+// 获得处理中的交易列表请求 req
+message GetTxPendingListReq 
+{
+    string version = 1; // 版本
+    repeated string addr = 2; // 查询地址，为空时将查询所有地址的处理中交易
+}
+
+// 处理中的交易列表应答ack
+message TxPendingItem
+{
+    string txHash = 1; // 交易哈希
+    repeated string vins = 2; // vins
+    repeated string fromaddr = 3; //  发起地址
+    repeated string toaddr = 4;  // 接收地址
+    string amount = 5; // 质押资产值
+    uint64 time  = 6; // 时间戳
+    string detail = 7;  // 详情描述
+}  
+
+message GetTxPendingListAck
+{
+    string version = 1; // 版本
+    int32 code = 2; // 错误码
+    string description = 3;// 返回错误信息
+    repeated string addr = 4; // 查询地址
+    repeated TxPendingItem list = 5; // 处理中的交易信息列表
+}
