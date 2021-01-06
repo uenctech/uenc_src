@@ -122,7 +122,10 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
         {
             err = PHONE_TX_NO_AMOUNT;
         }
-        
+        else if (ret == -20)
+        {
+            err = PHONE_TX_PENDING;
+        }
         createMultiTxMsgAck.set_code(err);
         createMultiTxMsgAck.set_message("CreateTxMessage error!");
         net_send_message<CreateMultiTxMsgAck>(msgdata, createMultiTxMsgAck);
@@ -321,6 +324,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 {
     TxMsgAck txMsgAck;
     txMsgAck.set_version(getVersion());
+    txMsgAck.set_code(0);
 
     if( 0 != IsVersionCompatible( msg->version() ) )
 	{
@@ -372,9 +376,9 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     {
         cout<<"密码输入正确重置为0"<<endl;
         pCPwdAttackChecker->Right();
-        txMsgAck.set_code(0);
-        txMsgAck.set_message("密码输入正确");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        // txMsgAck.set_code(0);
+        // txMsgAck.set_message("密码输入正确");
+        // net_send_message<TxMsgAck>(msgdata, txMsgAck);
     }
    
     if (hashOriPass != targetPassword) 
@@ -444,8 +448,13 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
         {
             err = PHONE_TX_NO_AMOUNT;
         }
+        else if (ret == -20)
+        {
+            err = PHONE_TX_PENDING;
+        }
 
-        txMsgAck.set_code(err);
+        txMsgAck.set_code(err); 
+        cout<<"CreateTxMessage failed"<<endl;
 		txMsgAck.set_message("CreateTxMessage failed!");
 		net_send_message<TxMsgAck>(msgdata, txMsgAck);
 		error("HandleCreateDeviceMultiTxMsgReq: CreateTxMessage failed!\n");

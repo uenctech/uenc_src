@@ -31,6 +31,7 @@ enum ERRCODE
     PHONE_TX_TXN_ERROR = -7, // 余额不足
     PHONE_TX_GET_PACK_FEE_ERROR = -8, // 余额不足
     PHONE_TX_PASSWORD_ERROR = -9, // 密码错误
+    PHONE_TX_PENDING = -20 //挂起
 };
 
 

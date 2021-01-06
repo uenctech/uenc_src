@@ -3137,7 +3137,7 @@ get_multipart_ranges_data_length(const Request &req, Response &res,
       req, res, boundary, content_type,
       [&](const std::string &token) { data_length += token.size(); },
       [&](const char *token) { data_length += strlen(token); },
-      [&](size_t , size_t length) {
+      [&](size_t /*offset*/, size_t length) {
         data_length += length;
         return true;
       });
@@ -3633,8 +3633,8 @@ inline ssize_t BufferStream::write(const char *ptr, size_t size) {
   return static_cast<ssize_t>(size);
 }
 
-inline void BufferStream::get_remote_ip_and_port(std::string & ,
-                                                 int & ) const {}
+inline void BufferStream::get_remote_ip_and_port(std::string & /*ip*/,
+                                                 int & /*port*/) const {}
 
 inline const std::string &BufferStream::get_buffer() const { return buffer; }
 
@@ -4443,7 +4443,7 @@ inline bool Client::create_and_connect_socket(Socket &socket) {
   return true;
 }
 
-inline void Client::close_socket(Socket &socket, bool ) {
+inline void Client::close_socket(Socket &socket, bool /*process_socket_ret*/) {
   detail::close_socket(socket.sock);
   socket_.sock = INVALID_SOCKET;
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -5277,8 +5277,8 @@ public:
   ~SSLThreadLocks() { CRYPTO_set_locking_callback(nullptr); }
 
 private:
-  static void locking_callback(int mode, int type, const char * ,
-                               int ) {
+  static void locking_callback(int mode, int type, const char * /*file*/,
+                               int /*line*/) {
     auto &lk = (*openSSL_locks_)[static_cast<size_t>(type)];
     if (mode & CRYPTO_LOCK) {
       lk.lock();
@@ -5448,7 +5448,7 @@ inline bool SSLServer::is_valid() const { return ctx_; }
 
 inline bool SSLServer::process_and_close_socket(socket_t sock) {
   auto ssl = detail::ssl_new(sock, ctx_, ctx_mutex_, SSL_accept,
-                             [](SSL * ) { return true; });
+                             [](SSL * /*ssl*/) { return true; });
 
   if (ssl) {
     auto ret = detail::process_server_socket_ssl(

@@ -36,6 +36,7 @@
 #include "ca_base64.h"
 #include "../include/ScopeGuard.h"
 #include "ca_pwdattackchecker.h"
+#include "ca_txvincache.h"
 #endif
 
 #include <thread>
@@ -254,6 +255,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 {
     TxMsgAck phoneControlDevicePledgeTxAck;
     phoneControlDevicePledgeTxAck.set_version(getVersion());
+    phoneControlDevicePledgeTxAck.set_code(0);
 
     uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
     uint64_t amount = std::stod(amount_str) * DECIMAL_NUM;
@@ -306,9 +308,9 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     {
         cout<<"输入密码成功重置为0"<<endl;
         pCPwdAttackChecker->Right();
-        phoneControlDevicePledgeTxAck.set_code(0);
-        phoneControlDevicePledgeTxAck.set_message("密码输入成功");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+        // phoneControlDevicePledgeTxAck.set_code(0);
+        // phoneControlDevicePledgeTxAck.set_message("密码输入成功");
+        // net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
     }
 
     if (hashOriPass != targetPassword) 
@@ -319,6 +321,20 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         error("password error!");
         return -104;
     }
+
+
+    vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		cout<<"CreatePledgeTransaction"<<endl;
+		phoneControlDevicePledgeTxAck.set_code(-20);
+		phoneControlDevicePledgeTxAck.set_message("The addr has being pengding Is Conflict!");
+		net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
+		
+		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
+		return -107;
+	}
 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
@@ -413,6 +429,9 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        phoneControlDevicePledgeTxAck.set_code(-23);
+        phoneControlDevicePledgeTxAck.set_message("data Error!");
+        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
         return -106;
     }	
 	txMsg.set_top(top);
@@ -463,6 +482,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 {
     TxMsgAck txMsgAck;
     txMsgAck.set_version(getVersion());
+    txMsgAck.set_code(0);
 
     // 参数判断
     uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
@@ -515,9 +535,9 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     {
         cout<<"重置为0"<<endl;
         pCPwdAttackChecker->Right();
-        txMsgAck.set_code(0);
-        txMsgAck.set_message("密码输入成功");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        // txMsgAck.set_code(0);
+        // txMsgAck.set_message("密码输入成功");
+        // net_send_message<TxMsgAck>(msgdata, txMsgAck);
     }
 
     
@@ -529,6 +549,19 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
         error("password error!");
         return -9;
     }
+
+    vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		cout<<"IsConflict CreateRedeemTransaction"<<endl;
+		txMsgAck.set_code(-20);
+		txMsgAck.set_message("The addr has being pengding!");
+		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		
+		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
+		return -13;
+	}
 
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
@@ -646,6 +679,9 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
     {
         std::cout << "非法账号" << std::endl;
+        txMsgAck.set_code(-22);
+        txMsgAck.set_message("Illegal account !");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
         return -10;
     }
 
@@ -676,6 +712,9 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     if (db_status) 
     {
         std::cout << __LINE__ << std::endl;
+        txMsgAck.set_code(-23);
+        txMsgAck.set_message("data Error!");
+        net_send_message<TxMsgAck>(msgdata, txMsgAck);
         return -11;
     }
 	txMsg.set_top(top);

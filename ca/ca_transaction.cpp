@@ -1095,10 +1095,12 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 		nlohmann::json extra = nlohmann::json::parse(tx.extra());
 		std::string txType = extra["TransactionType"];
 		std::string redempUtxoStr;
+		uint64_t packageFee = 0;
 		if (txType == TXTYPE_REDEEM)
 		{
 			nlohmann::json txInfo = extra["TransactionInfo"].get<nlohmann::json>();
 			redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
+			packageFee = extra["PackageFee"].get<uint64_t>();
 		}
 
 		std::vector<CTxin> txVins;
@@ -1159,7 +1161,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 					// 本交易使用了质押utxo的正常部分
 					bIsUsed = true;
 				}
-				else if (voutAmountTotal == vinAmountTotal + redeemAmount)
+				else if (voutAmountTotal == vinAmountTotal + redeemAmount + packageFee)
 				{
 					bIsUsed = false;
 				}
@@ -3106,9 +3108,12 @@ int VerifyBuildBlock(const CBlock & cblock)
 
 					if (txOwnerVec.end() == find(txOwnerVec.begin(), txOwnerVec.end(), txout.scriptpubkey()))
 					{
-						std::cout << "sign addr Abnormal !" << std::endl;
-						error("sign addr Abnormal !");
-						return -2;
+						if (txout.value() != 0)
+						{
+							std::cout << "sign addr Abnormal !" << std::endl;
+							error("sign addr Abnormal !");
+							return -2;
+						}
 					}
 				}
 			}
@@ -3798,6 +3803,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 
 					uint64_t amount = 0;
 					std::vector<std::string> toId;
+					std::vector<std::string> toAmount;
 					for (int i = 0; i < tx.vout_size(); i++)
 					{
 						CTxout out = tx.vout(i);
@@ -3805,12 +3811,58 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 						if (found == txOwnerVec.end())
 						{
 							toId.push_back(out.scriptpubkey());
+							toAmount.push_back(to_string(((double)out.value()) / DECIMAL_NUM));
 							amount += out.value();
 						}
 					}					
-					newTx.amount = amount;
+					newTx.amount = to_string(((double)amount) / DECIMAL_NUM);
 					newTx.to = toId;
-					newTx.timestamp = time(NULL);
+					newTx.toAmount = toAmount;
+					newTx.timestamp = Singleton<TimeUtil>::get_instance()->getTimestamp();
+
+					nlohmann::json extra = nlohmann::json::parse(tx.extra());
+					uint64_t signFee = extra["SignFee"].get<uint64_t>();               
+					uint64_t needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<uint64_t>();
+					uint64_t packageFee = extra["PackageFee"].get<uint64_t>();
+					uint64_t gas = signFee * (needVerifyPreHashCount - 1) + packageFee;
+					newTx.gas = to_string(((double)gas)/DECIMAL_NUM);
+
+					uint32_t type = 0;
+					string txType = extra["TransactionType"].get<std::string>();
+					if (txType == TXTYPE_TX)
+						type = 0;
+					else if (txType == TXTYPE_PLEDGE)
+						type = 1;
+					else if (txType == TXTYPE_REDEEM)
+						type = 2;
+					newTx.type = type;
+
+					if (txType == TXTYPE_REDEEM)
+					{
+						nlohmann::json txInfo = extra["TransactionInfo"].get<nlohmann::json>();
+						std::string utxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
+						std::string strTxRaw;
+						if (pRocksDb->GetTransactionByHash(txn, utxoStr, strTxRaw) == 0)
+						{
+							CTransaction utxoTx;
+							utxoTx.ParseFromString(strTxRaw);
+							for (int i = 0; i < utxoTx.vout_size(); i++)
+							{
+								CTxout txout = utxoTx.vout(i);
+								if (txout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
+								{
+									uint64_t outAmount = txout.value();
+									newTx.amount = to_string(((double)outAmount) / DECIMAL_NUM);
+									newTx.to = newTx.from;
+									std::vector<std::string> currentToAmount = { newTx.amount };
+									newTx.toAmount = currentToAmount;
+									break ;
+								}
+							}
+							
+						}
+					}
+
 					MagicSingleton<TxVinCache>::GetInstance()->Add(newTx);
 					std::cout << "Transaction add to Cache ^^^^^VVVVV " << TxVinCache::TxToString(newTx) << std::endl;
 				}
@@ -4262,7 +4314,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	const uint64_t heightRange = 500;  // 检查异常的高度范围
+	const uint64_t heightRange = 1000;  // 检查异常的高度范围
 	std::map<std::string, uint64_t> addrAwards;  // 存放账号和前500高度总奖励
 	std::map<std::string, uint64_t> addrSignNum;  // 存放账号和前500高度总签名数
 
@@ -4322,7 +4374,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 						auto signNumIter = addrSignNum.find(txout.scriptpubkey());
 						if (addrSignNum.end() != signNumIter)
 						{
-							addrSignNum[txout.scriptpubkey()] = signNumIter->second++;
+							addrSignNum[txout.scriptpubkey()] = (++signNumIter->second);
 						}
 						else
 						{
@@ -4501,217 +4553,54 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 		}
 	}
 
+	std::vector<std::pair<std::string, uint64_t>> vecIdsInfos;
+	for (auto & info : idsInfo)
+	{
+		vecIdsInfos.push_back(info);
+	}
+
+	// 当前数据块高度为0时，GetPledgeAddress会返回错误，故不做返回判断
 	std::vector<string> addresses;
 	pRocksDb->GetPledgeAddress(txn, addresses);
 
-	// uint64_t pledgeNodeCount = 0;  // 全网质押节点计数
-	std::vector<std::string> pledgeNodes;
-
-	// 计算全网有多少节点已经质押且达到指定金额
-	for (auto idBase58 : idBase58s)
+	// 随机取节点
+	random_device rd;
+	while (nextNode.size() != (uint64_t)nextNodeNumber && vecIdsInfos.size() != 0)
 	{
-		if (addresses.end() != find(addresses.begin(), addresses.end(), idBase58.second))
-		{
-			uint64_t amount = 0;
-			if (SearchPledge(idBase58.second, amount) != 0)
-			{
-				continue;
-			}
-			if (amount >= g_TxNeedPledgeAmt)
-			{
-				// ++pledgeNodeCount;
-				pledgeNodes.push_back(idBase58.first);
-			}
-		}
-	}
+		default_random_engine rng {rd()};
+		uniform_int_distribution<int> dist {0, (int)vecIdsInfos.size() - 1};
+		int randNum = dist(rng);
 
-	// 选出手续费低于给定值的节点
-	std::vector< std::pair<std::string, uint64_t> > idsSortInfo;
-	for(auto i : idsInfo)
-	{
-		// 判断签名费是否满足
-		if(i.second <= minerFee && i.second > 0)
+		if (vecIdsInfos[randNum].second <= minerFee)
 		{
-			auto iter = idBase58s.find(i.first);
-			if (iter != idBase58s.end())
+			std::string id = vecIdsInfos[randNum].first;
+			auto idBase58Iter = idBase58s.find(id);
+			if (idBase58s.end() != idBase58Iter)
 			{
-				// 质押交易和初始账号交易无需做签名限制
-				if ( (isPledge && pledgeNodes.size() < g_minPledgeNodeNum) || isInitAccount)
+				if ( (isPledge && addresses.size() < g_minPledgeNodeNum) || isInitAccount)
 				{
-					idsSortInfo.push_back( std::pair<std::string, uint64_t>(i.first, i.second) );
-					// continue;
+					nextNode.push_back(idBase58Iter->first);
 				}
 				else
 				{
-					// 在已经质押的账号列表中找可以签名的节点
-					if( pledgeNodes.end() == find(pledgeNodes.begin(), pledgeNodes.end(), iter->first) )
+					uint64_t pledgeAmount = 0;
+					if ( 0 != SearchPledge(idBase58Iter->second, pledgeAmount) )
 					{
+						vecIdsInfos.erase(vecIdsInfos.begin() + randNum);
 						continue;
 					}
 
-					// 符合签名标准的节点加入备选
-					idsSortInfo.push_back( std::pair<std::string, uint64_t>(i.first, i.second) );	
+					if (pledgeAmount >= g_TxNeedPledgeAmt)
+					{
+						nextNode.push_back(idBase58Iter->first);
+					}
 				}
 			}
 		}
-	}
-
-	// 根据费用高低做排序
-	std::sort(idsSortInfo.begin(), idsSortInfo.end(), [](std::pair<std::string, uint64_t> a, std::pair<std::string, uint64_t> b){
-		return a.second < b.second;
-	});
-
-	if(idsSortInfo.size() < 1)
-	{
-		std::cout << "No found node!" << std::endl;
-		return -4;
-	}
-
-	int totalRemaining = idsSortInfo.size();
-
-	// 计算平均值
-	uint64_t total = 0;
-	for(auto i : idsSortInfo)
-	{
-		total += i.second;
-	}
-
-	// 平均值
-	double average = (double)total / (double)totalRemaining;
-
-	// 概率
-	int  greaterThanAverageCount = 0;
-	int  lessThanAverageCount = 0;
-	for(auto i : idsSortInfo)
-	{
-		if(i.second > average)
-		{
-			++greaterThanAverageCount;
-		}
-		else
-		{
-			++lessThanAverageCount;
-		}
-	}
-
-	// 概率
-	double greaterThanAverageProbability = ( (double)greaterThanAverageCount / totalRemaining ) * 100;
-	double lessThanAverageProbability = ( (double)lessThanAverageCount / totalRemaining ) * 100;
-
-	struct timespec nsectime;
-    clock_gettime(CLOCK_REALTIME, &nsectime);
-	
-	// 种子发生器
-	random_device rd;
-
-	int nextNodeSum = totalRemaining > nextNodeNumber ? nextNodeNumber : totalRemaining;
-	while(nextNode.size() < (uint64_t)nextNodeSum)
-	{
-		if(idsSortInfo.size() > 0)
-		{
-			//定义随机数序列生成器rng，传入无符号整型作为种子，rd()会返回一个随机值
-			default_random_engine rng {rd()};
-			// 指定随机范围
-			uniform_int_distribution<int> dist {0, (int)idsSortInfo.size() - 1};
-			int randTmp = dist(rng);
-			
-			auto pairTmp = idsSortInfo[randTmp];
-			double probability = 0;
-			probability = pairTmp.second > average ? greaterThanAverageProbability : lessThanAverageProbability;
-			
-			default_random_engine randNumRng {rd()};
-			uniform_int_distribution<int> randNumDist {0, 100};
-			int randNum = randNumDist(randNumRng);
-
-			if(randNum < probability)
-			{
-				auto nextNodeIter = find(nextNode.begin(), nextNode.end(), pairTmp.first);
-				if(nextNodeIter == nextNode.end())
-				{
-					nextNode.push_back( pairTmp.first );
-					auto idsSortInfoIter = find(idsSortInfo.begin(), idsSortInfo.end(), pairTmp);
-					idsSortInfo.erase(idsSortInfoIter);
-				}
-			}
-		}
-		else
-		{
-			break;
-		}
+		vecIdsInfos.erase(vecIdsInfos.begin() + randNum);
 	}
 	return 0;
 }
-
-// void GetOnLineTime()
-// {
-// 	static time_t inittime;
-// 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-// 	Transaction* txn = pRocksDb->TransactionInit();
-// 	if(!txn) 
-// 	{
-// 		std::cout << " TransactionInit failed !" << std::endl;
-// 		std::cout << __LINE__ << std::endl;
-// 		return ;
-// 	}
-
-// 	ON_SCOPE_EXIT{
-// 		pRocksDb->TransactionDelete(txn, true);
-// 	};
-
-// 	std::vector<std::string> vTxHashs;
-// 	std::string addr = g_AccountInfo.DefaultKeyBs58Addr;
-// 	int db_get_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs); 	
-// 	if (db_get_status != 0) 
-// 	{
-// 		std::cout << __LINE__ << std::endl;
-// 	}
-
-// 	std::vector<Node> vnode = net_get_public_node();
-// 	if(vTxHashs.size() >= 1 && vnode.size() >= 1 )
-// 	{
-// 		if(inittime == 0)
-// 		{
-// 			time_t start;
-// 			start = time(NULL); 
-// 			inittime = start;
-// 			double day = inittime/(1*60*60*24);    	
-// 			if ( 0 != pRocksDb->SetDeviceOnlineTime(0.f) )
-// 			{
-// 				error("(GetOnLineTime) SetDeviceOnlineTime failed!");
-// 				return ;
-// 			}
-// 		}	
-// 		else if(inittime > 0 )
-// 		{
-// 			time_t end = time(NULL);
-// 			time_t dur = end - inittime;
-
-// 			double minertime = 0.0;
-// 			int db_status = pRocksDb->GetDeviceOnLineTime(minertime);
-// 			std::cout << "=========在线时长:  " << minertime << std::endl;
-// 			if(db_status != 0)
-// 			{
-// 				error("(GetOnLineTime) GetDeviceOnLineTime failed!");
-// 				return ;
-// 			}
-
-// 			time_t accumatetime = dur + minertime;   
-// 			double day =  accumatetime/(1*60*60*24);    	
-// 			pRocksDb->SetDeviceOnlineTime(day);	
-// 			inittime = end;
-// 		}
-// 	}
-// 	else
-// 	{
-// 		inittime = 0;     
-// 	}
-
-// 	if ( 0 != pRocksDb->TransactionCommit(txn) )
-// 	{
-// 		error("(GetOnLineTime) TransactionCommit failed!");
-// 		return ;
-// 	}
-// }
 
 void GetOnLineTime()
 {
@@ -4887,7 +4776,7 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
     }
     else 
     {
-        cout<<"密码输入正确重置为0"<<endl;
+        cout<<"HandleVerifyDevicePassword密码输入正确重置为0"<<endl;
         pCPwdAttackChecker->Right();
 		verifyDevicePasswordAck.set_code(0);
         verifyDevicePasswordAck.set_message("密码输入正确");
@@ -4959,6 +4848,7 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 /** 手机端连接矿机发起交易 */
 void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& msg, const MsgData& msgdata )
 {
+	cout<<"HandleCreateDeviceTxMsgReq"<<endl;
 	// 手机端回执消息
 	TxMsgAck txMsgAck;
 	txMsgAck.set_version(getVersion());
@@ -5012,11 +4902,11 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
     }
     else 
     {
-        cout<<"密码输入正确重置为0"<<endl;
+        cout<<"HandleCreateDeviceTxMsgReq密码输入正确重置为0"<<endl;
         pCPwdAttackChecker->Right();
-		txMsgAck.set_code(0);
-        txMsgAck.set_message("密码输入正确");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		// txMsgAck.set_code(0);
+        // txMsgAck.set_message("密码输入正确");
+		// net_send_message<TxMsgAck>(msgdata, txMsgAck);
     }
 
     if (hashOriPass != targetPassword) 
@@ -5047,6 +4937,19 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 		net_send_message<TxMsgAck>(msgdata, txMsgAck);
 
 		error("HandleCreateDeviceTxMsgReq parameter error!");
+		return ;
+	}
+
+	vector<string> Addr;
+	Addr.push_back(msg->from());
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		cout<<"IsConflict HandleCreateDeviceTxMsgReq"<<endl;
+		txMsgAck.set_code(-20);
+		txMsgAck.set_message("The addr has being pengding!");
+		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		cout<<"HandleCreateDeviceTxMsgReq CreateTx failed!!"<<endl;
+		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
 		return ;
 	}
 

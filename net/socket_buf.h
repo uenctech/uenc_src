@@ -21,7 +21,7 @@ extern std::unordered_map<int, std::unique_ptr<std::mutex>> fds_mutex;
 std::mutex& get_fd_mutex(int fd);
 
 
-
+/*消息长度为消息的前4个字节，且不包含这4个字节*/
 class SocketBuf
 {
 public:
@@ -53,7 +53,7 @@ public:
         if(!this->send_cache.empty())
             debug("send_cache: %s", this->send_cache.c_str());
     };
-
+/*API*/
     bool add_data_to_read_buf(char *data, size_t len);
     void printf_cache();
     std::string get_send_msg();
@@ -63,8 +63,8 @@ public:
 	bool is_sending_msg();
 	void set_sending_msg(bool is_sending);
 
-    void verify_cache(size_t curr_msg_len);      
-    void correct_cache();                       
+    void verify_cache(size_t curr_msg_len);      //验证缓冲区，如果有错则修正
+    void correct_cache();                       //修正缓冲区
 };
 
 
@@ -114,9 +114,9 @@ public:
 
     bool is_cache_empty(uint32_t ip, uint16_t port);
 
-    
+    /*test api*/
     void print_bufferes();
-    
+    // void print_cache_size();
 };
 
 

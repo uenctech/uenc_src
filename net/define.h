@@ -6,31 +6,31 @@
 #include <string>
 
 #define RESET "\033[0m"
-#define BLACK "\033[30m"	
-#define RED "\033[31m"		
-#define GREEN "\033[32m"	
-#define YELLOW "\033[33m"	
-#define BLUE "\033[34m"		
+#define BLACK "\033[30m"	/* Black */
+#define RED "\033[31m"		/* Red */
+#define GREEN "\033[32m"	/* Green */
+#define YELLOW "\033[33m"	/* Yellow */
+#define BLUE "\033[34m"		/* Blue */
 
-
-
+//常量定义 
+//---------------------------------------------------------
 constexpr int END_FLAG              = 7777777;             
-constexpr int IP_LEN				= 16;	
+constexpr int IP_LEN				= 16;	//IP 长度
 			  
 constexpr int MAXEPOLLSIZE			= 100000;
 constexpr int MAXLINE				= 10240l;
 			   
-constexpr int K_ID_LEN				= 160;	
+constexpr int K_ID_LEN				= 160;	//I D长度
 constexpr int K_REFRESH_TIME		= 5*10;
 
-constexpr int HEART_TIME      =  30;  
-constexpr int HEART_INTVL     =  100;   
-constexpr int HEART_PROBES    =  6;   
+constexpr int HEART_TIME      =  30;  // 距离上次传送数据多少时间未收到新报文判断为开始检测，
+constexpr int HEART_INTVL     =  100;   // 检测开始每多少时间发送心跳包，
+constexpr int HEART_PROBES    =  6;   // 发送几次心跳包对方未响应则close连接，
 
 
 
-
-
+//别名定义
+//---------------------------------------------------------
 typedef int int32;
 typedef unsigned int uint32;
 typedef unsigned char uint8;
@@ -45,10 +45,10 @@ using i64 = std::int64_t;
 
 using nll = long long;
 using ull = unsigned long long;
+//---------------------------------------------------------
 
 
-
-
+//网络包体
 typedef struct net_pack
 {
 	uint32_t	len				= 0;

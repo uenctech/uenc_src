@@ -16,7 +16,7 @@
 #include "./dispatcher.h"
 #include "net.pb.h"
 #include "common.pb.h"
-#include "../utils/time_task.h"
+#include "../../utils/time_task.h"
 #include "../utils/singleton.h"
 #include "./socket_buf.h"
 #include "./work_thread.h"
@@ -66,12 +66,12 @@ int net_tcp::Bind(int fd, const struct sockaddr *sa, socklen_t salen)
 int net_tcp::Connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
 	int n;
-	
+	/////////////////////////////////////////////////////////////////////
 	int nBufLen;
 	int nOptLen = sizeof(nBufLen);
 	getsockopt(fd, SOL_SOCKET, SO_RCVBUF, (void *)&nBufLen, (socklen_t *)&nOptLen);
-	
-	info("socket recv buff default size %d !", nBufLen);
+	//Getsockopt(fd, SOL_SOCKET, SO_RCVBUF, (const void*)& nBufLen, nOptLen);
+	// info("socket recv buff default size %d !", nBufLen);
 
 	int nRecvBuf = 1 * 1024 * 1024;
 	Setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (const void *)&nRecvBuf, sizeof(int));
@@ -79,12 +79,20 @@ int net_tcp::Connect(int fd, const struct sockaddr *sa, socklen_t salen)
 	Setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (const void *)&nSndBuf, sizeof(int));
 
 	getsockopt(fd, SOL_SOCKET, SO_RCVBUF, (void *)&nBufLen, (socklen_t *)&nOptLen);
-	
-	info("modify socket recv buff size %d !", nBufLen);
-	
+	//Getsockopt(fd, SOL_SOCKET, SO_RCVBUF, (const void*)& nBufLen, nOptLen);
+	// info("modify socket recv buff size %d !", nBufLen);
+	/////////////////////////////////////////////////////////////////////
+
+	// //关闭所有信号
+	// int value = 1;
+	// setsockopt(fd,SOL_SOCKET,MSG_NOSIGNAL,&value,sizeof(value));
+
+	// sockaddr_in *si = (sockaddr_in *)sa;
+	// char addr[20] = {0};
 	if ((n = connect(fd, sa, salen)) < 0)
 	{
-		debug(RED "Connect fun  %d" RESET, n);
+		// debug(RED "Connect fun  %d" RESET, n);
+		// printf("to %s/%d connect error : %s\n", inet_ntop(AF_INET, &si->sin_addr.s_addr, addr, sizeof(addr)), ntohs(si->sin_port), strerror(errno));
 	}
 
 	return n;
@@ -103,6 +111,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 {
 	if (sockfd < 0)
 	{
+		std::cout << "Send func: file description err..." << std::endl;
 		debug("Send 文件描述符错误...");
 		return -1;
 	}
@@ -114,7 +123,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 	while (bytes_left > 0)
 	{
 		written_bytes = write(sockfd, ptr, bytes_left);
-		if (written_bytes <= 0) 
+		if (written_bytes <= 0) /* 出错了*/
 		{
 			if (written_bytes == 0)
 			{
@@ -124,7 +133,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 			{
 				continue;
 			}
-			else if (errno == EAGAIN) 
+			else if (errno == EAGAIN) /* EAGAIN : Resource temporarily unavailable*/
 			{
 
 				return len - bytes_left;
@@ -138,7 +147,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 		}
 
 		bytes_left -= written_bytes;
-		ptr += written_bytes; 
+		ptr += written_bytes; /* 从剩下的地方继续写?? */
 	}
 	return len;
 }
@@ -161,7 +170,7 @@ int net_tcp::listen_server_init(int port, int listen_num)
 
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); // any addr
 	servaddr.sin_port = htons(port);
 
 	Setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (const void *)&opt,
@@ -205,7 +214,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	flags = 1;
 	Setsockopt(confd, SOL_SOCKET, SO_REUSEPORT, &flags, sizeof(int));
 
-	
+	// 绑定端口
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(SERVERMAINPORT);
@@ -214,7 +223,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	if (ret < 0)
 		perror("bind hold port");
 
-	
+	//连接对方
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(u16_port);
@@ -222,7 +231,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	memcpy(&addr, &u32_ip, sizeof(u32_ip));
 	inet_pton(AF_INET, inet_ntoa(addr), &servaddr.sin_addr);
 
-	
+	/*阻塞情况下linux系统默认超时时间为75s*/
 	if (set_fd_noblocking(confd) < 0)
 	{
 		debug("setnonblock error");
@@ -278,14 +287,14 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 				return -1;
 			}
 
-			if (retVal == 0)  
+			if (retVal == 0)  //成功
 			{
 				close(epollFD);
 				return confd;
 			} 
 			else
 			{
-				error("getsockopt SO_ERROR retVal error : %s", strerror(retVal));
+				// error("getsockopt SO_ERROR retVal error : %s", strerror(retVal));
 				close(epollFD);
 				close(confd);
 				return -1;
@@ -293,7 +302,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 		}
 		else
 		{
-			error("not EINPROGRESS: %s", strerror(errno));
+			// error("not EINPROGRESS: %s", strerror(errno));
 			close(confd);
 			return -1;			
 		}
@@ -329,8 +338,8 @@ bool net_com::send_one_message(const Node &to, const std::string &msg)
 	}
 
 	Singleton<BufferCrol>::get_instance()->add_buffer(send_data.ip, send_data.port, send_data.fd);
+	
 	Singleton<BufferCrol>::get_instance()->add_write_pack(send_data.ip, send_data.port, msg);
-
 	bool bRet = global::queue_write.push(send_data);
 	return bRet;
 }
@@ -346,7 +355,6 @@ bool net_com::send_one_message(const MsgData& to, const net_pack &pack)
 	auto msg = Pack::packag_to_str(pack);	
 	Singleton<BufferCrol>::get_instance()->add_buffer(send_data.ip, send_data.port, send_data.fd);
 	Singleton<BufferCrol>::get_instance()->add_write_pack(send_data.ip, send_data.port, msg);
-
 	bool bRet = global::queue_write.push(send_data);
 	return bRet;
 }
@@ -406,7 +414,7 @@ int net_data::get_mac_info(vector<string> &vec)
 		interfaceNum = ifc.ifc_len / sizeof(struct ifreq);
 		while (interfaceNum-- > 0)
 		{
-			
+			//printf("ndevice name: %s\n", buf[interfaceNum].ifr_name);
 			if (string(buf[interfaceNum].ifr_name) == "lo")
 			{
 				continue;
@@ -422,7 +430,7 @@ int net_data::get_mac_info(vector<string> &vec)
 						 (unsigned char)buf[interfaceNum].ifr_hwaddr.sa_data[3],
 						 (unsigned char)buf[interfaceNum].ifr_hwaddr.sa_data[4],
 						 (unsigned char)buf[interfaceNum].ifr_hwaddr.sa_data[5]);
-				
+				// allmac[i++] = mac;
 				std::string s = mac;
 				vec.push_back(s);
 			}
@@ -452,9 +460,11 @@ std::string net_data::get_mac_md5()
 	net_data::get_mac_info(vec);
 	for (auto it = vec.begin(); it != vec.end(); ++it)
 	{
+		std::cout << "mac: " << *it << std::endl;
 		data += *it;
 	}
 	string md5 = getMD5hash(data);
+	std::cout << "md5:" << md5 << std::endl;
 
 	return md5;
 }
@@ -468,11 +478,11 @@ int net_com::parse_conn_kind(Node &to)
 	{
 		if (to.is_public_node == true)
 		{
-			to.conn_kind = DRTO2O; 
+			to.conn_kind = DRTO2O; //外外直连
 		}
 		else if (to.is_public_node == false)
 		{
-			to.conn_kind = DRTO2I; 
+			to.conn_kind = DRTO2I; //外转内直连
 		}
 		else
 		{
@@ -485,17 +495,17 @@ int net_com::parse_conn_kind(Node &to)
 	{
 		if (to.is_public_node == true)
 		{
-			to.conn_kind = DRTI2O; 
+			to.conn_kind = DRTI2O; //内外直连
 		}
-		
+		//在同一个局域网
 		else if ((self.public_ip == to.public_ip && self.local_ip != to.local_ip) || (strncmp(IpPort::ipsz(self.public_ip), "192", 3) == 0 && strncmp(IpPort::ipsz(to.public_ip), "192", 3) == 0 && self.local_ip != to.local_ip) ||
 				 (strncmp(IpPort::ipsz(to.public_ip), "192", 3) == 0 && self.local_ip != to.local_ip))
 		{
-			to.conn_kind = DRTI2I; 
+			to.conn_kind = DRTI2I; //内内直连
 		}
 		else if (to.is_public_node == false)
 		{
-			to.conn_kind = BYSERV; 
+			to.conn_kind = BYSERV; //内内打洞
 		}
 		else
 		{
@@ -519,7 +529,7 @@ int net_com::parse_conn_kind(Node &to)
 
 
 
-
+// 读取id文件
 bool read_id_file()
 {
 	debug(YELLOW "read_id_file start" RESET);
@@ -542,47 +552,49 @@ bool read_id_file()
 
 void handle_pipe(int sig)
 {
-	
+	//啥也不做
 }
 
 bool net_com::net_init()
 {
-	
+	//获取当前CPU核心数
 	global::cpu_nums = sysconf(_SC_NPROCESSORS_ONLN);
-	
+	std::cout << "当前cpu核心数：" << global::cpu_nums << std::endl;
+
+	//设置随机数种子
 	uint32_t seed[1] = {0};
 	srand((unsigned long)seed);
 
-	
+	//捕捉SIGPIPE信号，防止程序意外退出
 	struct sigaction sa;
 	sa.sa_handler = handle_pipe;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGPIPE, &sa, NULL);
 
-	
+	//阻塞SIGPIPE信号
 	sigset_t set;
 	sigemptyset(&set);
 	sigaddset(&set, SIGPIPE);
 	sigprocmask(SIG_BLOCK, &set, NULL);
 
-	
+	//忽略SIGPIPE信号
 	signal(SIGPIPE, SIG_IGN);
 
-	
+	//获取本机所有mac地址的MD5值
 	global::mac_md5 = net_data::get_mac_md5();
 	Singleton<PeerNode>::get_instance()->set_self_mac_md5(global::mac_md5);
 
-	
+	//打开防火墙端口
 	char buf[1024] = {0};
 	sprintf(buf, "firewall-cmd --add-port=%hu/tcp", SERVERMAINPORT);
 	system(buf);
 
 
-	
+	//注册回调函数
 	Singleton<ProtobufDispatcher>::get_instance()->registerAll();
 
-	
+	// 得到K桶刷新时间
 	global::nodelist_refresh_time = Singleton<Config>::get_instance()->GetVarInt("k_refresh_time");
 	global::local_ip = Singleton<Config>::get_instance()->GetVarString("local_ip");
 
@@ -591,17 +603,17 @@ bool net_com::net_init()
 		global::nodelist_refresh_time = K_REFRESH_TIME;
 	}
 
-	
+	// 自己 ID
 	if (false == read_id_file())
 	{
 		debug("创建或者读取自己ID失败");
 		return false;
 	}
 
-	
+	// 获取本机内网IP
 	if (global::local_ip == "")
 	{
-		
+		// info("内网IP为空,开始查找内网IP:");
 		if (false == IpPort::get_localhost_ip())
 		{
 			debug("获取本机内网ip失败");
@@ -628,24 +640,24 @@ bool net_com::net_init()
 			Singleton<PeerNode>::get_instance()->set_self_port_p(SERVERMAINPORT);
 		}
 	}
-	
+	//设置本机是否为公网节点
 	Singleton<PeerNode>::get_instance()->set_self_public_node(Singleton<Config>::get_instance()->GetIsPublicNode());
 
 
-	
+	// 工作线程池启动
 	Singleton<WorkThreads>::get_instance()->start();
 
-	
+	// 创建监听线程
 	Singleton<EpollMode>::get_instance()->start();
 	
-	
+	//启动获取nodelist线程
 	Singleton<PeerNode>::get_instance()->nodelist_refresh_thread_init();
 
-	
-	global::g_timer.Start(HEART_INTVL * 1000, net_com::DealHeart);
+	// 启动心跳
+	global::g_timer.AsyncLoop(HEART_INTVL * 1000, net_com::DealHeart);
 
 
-	
+	//启动http服务	
 	HttpServer::start();
 
 
@@ -654,7 +666,7 @@ bool net_com::net_init()
 
 
 
-
+// 测试单发信息
 int net_com::input_send_one_message()
 {
 
@@ -665,7 +677,7 @@ int net_com::input_send_one_message()
 
 	while (true)
 	{
-		
+		//验证id是否合法
 		bool result = Singleton<PeerNode>::get_instance()->is_id_valid(id);
 		if (false == result)
 		{
@@ -711,7 +723,7 @@ int net_com::input_send_one_message()
 	return bl ? 0 : -1;
 }
 
-
+// 测试广播信息
 int net_com::test_broadcast_message()
 {
 	string str_buf = "Hello Canon!!!";
@@ -756,13 +768,13 @@ bool net_com::test_send_big_data()
 	cin >> txtnum;
 	for (int i = 0; i < txtnum; i++)
 	{
-		char x, s;									  
-		s = (char)rand() % 2;						  
-		if (s == 1)									  
-			x = (char)rand() % ('Z' - 'A' + 1) + 'A'; 
+		char x, s;									  //x表示这个字符的ascii码 ，s表示这个字符的大小写
+		s = (char)rand() % 2;						  //随机使s为1或0，为1就是大写，为0就是小写
+		if (s == 1)									  //如果s=1
+			x = (char)rand() % ('Z' - 'A' + 1) + 'A'; //将x赋为大写字母的ascii码
 		else
-			x = (char)rand() % ('z' - 'a' + 1) + 'a'; 
-		tmp_data.push_back(x);						  
+			x = (char)rand() % ('z' - 'a' + 1) + 'a'; //如果s=0，x赋为小写字母的ascii码
+		tmp_data.push_back(x);						  //将x转换为字符输出
 	}
 	tmp_data.push_back('z');
 	tmp_data.push_back('z');
@@ -801,9 +813,11 @@ void net_com::InitRegisterNode()
 	bool get_nodelist_flag = true;
 	for (auto &node : nodelist)
 	{	
+		cout << "配置文件公网节点信息： " << IpPort::ipsz(node.public_ip) << endl;
 		if (node.is_public_node)
 		{
 			bool res = net_com::SendRegisterNodeReq(node, get_nodelist_flag);
+			return;
 			if(res){
 				get_nodelist_flag = false;
 			}
@@ -858,11 +872,7 @@ bool net_com::SendRegisterNodeReq(Node& dest, bool get_nodelist)
 		dest.fd = cfd;
 		Singleton<BufferCrol>::get_instance()->add_buffer(dest_ip, port, cfd);
 		Singleton<EpollMode>::get_instance()->add_epoll_event(cfd, EPOLLIN | EPOLLET);
-		if(get_nodelist) {
-			net_com::parse_conn_kind(dest);
-			Singleton<PeerNode>::get_instance()->add(dest);
-		}
-		
+
 		net_com::send_message(dest, getNodes);
 	}
 
@@ -877,8 +887,8 @@ void net_com::SendConnectNodeReq(Node& dest)
 	NodeInfo* mynode = connectNodeReq.mutable_mynode();
 	mynode->set_local_ip( Singleton<PeerNode>::get_instance()->get_self_node().local_ip);
 	mynode->set_local_port( Singleton<PeerNode>::get_instance()->get_self_node().local_port);
-	
-	
+	// mynode->set_public_ip( Singleton<PeerNode>::get_instance()->get_self_node().public_ip);
+	// mynode->set_public_port( Singleton<PeerNode>::get_instance()->get_self_node().public_port);
 	mynode->set_is_public_node(Singleton<Config>::get_instance()->GetIsPublicNode());
 	mynode->set_mac_md5(global::mac_md5);
 	mynode->set_conn_kind(dest.conn_kind);

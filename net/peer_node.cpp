@@ -37,13 +37,15 @@ std::string parse_kind(int kind)
 
 bool PeerNode::add(const Node& _node)
 {
-
 	std::lock_guard<std::mutex> lck(mutex_for_nodes_);
-
+	if(_node.id.size() == 0)
+	{
+		return false;
+	} 
 	auto itr = node_map_.find(_node.id);
 	if (itr != node_map_.end())
 	{
-		error("the node is exist!!!! node_id : %s", _node.id.c_str());
+		// error("the node is exist!!!! node_id : %s", _node.id.c_str());
 		return false;
 	}
 	this->node_map_[_node.id] = _node;
@@ -59,7 +61,7 @@ bool PeerNode::update(const Node & _node)
 		auto itr = this->node_map_.find(_node.id);
 		if (itr == this->node_map_.end())
 		{
-			
+			// error("node_id is not exist please add it node_id : %s", _node.id.c_str());
 			return false;
 		}
 		this->node_map_[_node.id] = _node;
@@ -190,7 +192,7 @@ bool PeerNode::find_node_by_fd(int fd, Node &node_)
 }
 
 
-
+//check id exists
 bool PeerNode::is_id_exists(id_type const &id)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_nodes_);
@@ -200,7 +202,7 @@ bool PeerNode::is_id_exists(id_type const &id)
 }
 
 
-
+// find node
 bool PeerNode::find_node(id_type const &id, Node &x)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_nodes_);
@@ -232,7 +234,7 @@ vector<Node> PeerNode::get_nodelist(NodeType type)
 }
 
 
-
+// 刷新线程
 extern atomic<int> nodelist_refresh_time;
 bool PeerNode::nodelist_refresh_thread_init()
 {
@@ -241,28 +243,28 @@ bool PeerNode::nodelist_refresh_thread_init()
 	return true;
 }
 
-
+// 线程函数
 void PeerNode::nodelist_refresh_thread_fun()
 {
 	std::lock_guard<std::mutex> lck(global::mutex_listen_thread);
 	while(!global::listen_thread_inited)
 	{
-		
+		// std::cout << "cond_listen_thread:wait" << std::endl;   
 		global::cond_listen_thread.wait(global::mutex_listen_thread);
 	}
-	
+	// std::cout << "cond_listen_thread:ok!!" << std::endl;   
 
 	std::lock_guard<std::mutex> lck1(global::mutex_set_fee);
 	while(global::fee_inited < 2)
 	{
-		
+		// std::cout << "fee_inited:wait" << std::endl;   
 		global::cond_fee_is_set.wait(global::mutex_set_fee);
 	}
 
-	
+	//初始化获取节点
 	net_com::InitRegisterNode();
 
-	
+	//同步获取节点
 	vector<Node> nodelist;
 	do
 	{
@@ -271,16 +273,12 @@ void PeerNode::nodelist_refresh_thread_fun()
 		if (nodelist.size() > 0)
 		{
 			std::random_shuffle(nodelist.begin(), nodelist.end());
-			bool res = net_com::SendSyncNodeReq(nodelist[0]);
-			if(!res)
-			{
-				net_com::InitRegisterNode();
-			}
+			net_com::SendSyncNodeReq(nodelist[0]);
 		}else
 		{	
 			net_com::InitRegisterNode();
 		}
-
+		
 	} while (true);
 }
 
@@ -295,33 +293,33 @@ void PeerNode::conect_nodelist()
 			uint32_t u32_ip;
 			uint16_t port;
 	
-			if(node.conn_kind == DRTI2I)  
+			if(node.conn_kind == DRTI2I)  //去内内直连
 			{
 				u32_ip = node.local_ip;
 				port = node.local_port;
 				node.public_ip = u32_ip;
 				node.public_port = port;
-			}else if( node.conn_kind == DRTI2O) 
+			}else if( node.conn_kind == DRTI2O) //去内外直连
 			{
 				u32_ip = node.public_ip;
 				port = node.public_port;
 			}
-			else if( node.conn_kind == DRTO2I)  
+			else if( node.conn_kind == DRTO2I)  //外转内
 			{
 				net_com::SendNotifyConnectReq(node);
 				continue;
 			}
-			else if( node.conn_kind == DRTO2O)  
+			else if( node.conn_kind == DRTO2O)  //去外外直连
 			{
 				u32_ip = node.public_ip;
 				port = node.public_port;
 			}
-			else if( node.conn_kind == BYSERV )  
+			else if( node.conn_kind == BYSERV )  //转发
 			{
 				node.fd = -2;
 				node.conn_kind = BYSERV;
 				update(node);
-				
+				// net_com::SendConnectNodeReq(node);
 				continue;   
 			}
 
@@ -339,42 +337,42 @@ void PeerNode::conect_nodelist()
 	}
 }
 
-
+// 获取 ID
 const id_type PeerNode::get_self_id()
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	return curr_node_.id;
 }
 
-
+// 设置 ID
 void PeerNode::set_self_id(const id_type &id)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	curr_node_.id = id;
 }
 
-
+// 设置 IP
 void PeerNode::set_self_ip_p(const u32 public_ip)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	curr_node_.public_ip = public_ip;
 }
 
-
+// 设置 IP
 void PeerNode::set_self_ip_l(const u32 local_ip)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	curr_node_.local_ip = local_ip;
 }
 
-
+// 设置端口
 void PeerNode::set_self_port_p(const u16 port_p)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	curr_node_.public_port = port_p;
 }
 
-
+// 设置端口
 void PeerNode::set_self_port_l(const u16 port_l)
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
@@ -411,14 +409,14 @@ void PeerNode::set_self_base58_address(string address)
 	curr_node_.base58address = address;
 }
 
-
+// 自己节点
 const Node PeerNode::get_self_node()
 {
 	std::lock_guard<std::mutex> lck(mutex_for_curr_);
 	return curr_node_;
 }
 
-
+// 生成 ID
 bool PeerNode::make_rand_id()
 {
 	std::bitset<K_ID_LEN> bit;
@@ -436,7 +434,7 @@ bool PeerNode::make_rand_id()
 	return true;
 }
 
-
+//判断string类型的id是否合法
 bool PeerNode::is_id_valid(const string &id)
 {
 	if (id.size() != K_ID_LEN / 4)

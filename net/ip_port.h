@@ -4,8 +4,8 @@
 
 #include <ifaddrs.h>
 #include <assert.h>
-#include <sys/types.h>		
-#include <arpa/inet.h>		
+#include <sys/types.h>		/* basic system data types */
+#include <arpa/inet.h>		/* inet(3) functions */
 #include <cstdlib>
 #include <string>
 #include <sstream>
@@ -23,7 +23,7 @@ public:
 
 	static bool get_localhost_ip(char* localhost_ip);
 
-	
+	//获取本地Ip
 	static bool get_localhost_ip();
 
 
@@ -56,7 +56,7 @@ public:
 
 	static bool isLAN(std::string const& ipString);
 
-	
+	//获取节点公网ip地址
 	static char* getPublicIP(char *url);
 	static int execute_shell(std::string ip_port);
 };

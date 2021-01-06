@@ -11,7 +11,7 @@
 #define CA_SEND 1
 #define CA_BROADCAST 1
 
-
+//获取自己节点ID 成功返回0
 std::string net_get_self_node_id()
 {
 	return Singleton<PeerNode>::get_instance()->get_self_id();
@@ -22,6 +22,9 @@ Node net_get_self_node() {
 }
 
 
+
+
+//设置矿费
 void net_set_self_fee(uint64_t fee)
 {	
 	Singleton<PeerNode>::get_instance()->set_self_fee(fee);
@@ -29,18 +32,19 @@ void net_set_self_fee(uint64_t fee)
 	if(global::fee_inited >= 2)
 	{
 		global::cond_fee_is_set.notify_all();
+		std::cout << "cond_fee_is_set:notify_all" << std::endl;
 	}
     
 }
 
 
-
+//设置自己的base58地址
 void net_set_self_base58_address(string address)
 {
 	Singleton<PeerNode>::get_instance()->set_self_base58_address(address);
 }
 
-
+//更新矿费并进行全网广播
 void net_update_fee_and_broadcast(uint64_t fee)
 {
 	Singleton<PeerNode>::get_instance()->set_self_fee(fee);
@@ -50,7 +54,7 @@ void net_update_fee_and_broadcast(uint64_t fee)
 	net_com::broadcast_message(updateFeeReq);
 }
 
-
+//设置打包费
 void net_set_self_package_fee(uint64_t package_fee)
 {	
 	Singleton<PeerNode>::get_instance()->set_self_package_fee(package_fee);
@@ -58,11 +62,13 @@ void net_set_self_package_fee(uint64_t package_fee)
     if(global::fee_inited >= 2)
 	{
 		global::cond_fee_is_set.notify_all();
+   		std::cout << "cond_package_fee_is_set:notify_all" << std::endl;
+
 	}
     
 }
 
-
+//更新打包费并进行全网广播
 void net_update_package_fee_and_broadcast(uint64_t package_fee)
 {
 	Singleton<PeerNode>::get_instance()->set_self_package_fee(package_fee);
@@ -72,7 +78,7 @@ void net_update_package_fee_and_broadcast(uint64_t package_fee)
 	net_com::broadcast_message(updatePackageFeeReq);
 }
 
-
+//返回K桶所有ID
 std::vector<std::string> net_get_node_ids()
 {
 	std::vector<std::string> ids;
@@ -99,7 +105,7 @@ double net_get_connected_percent()
 	return total_num == 0 ? 0 : num/total_num;
 }
 
-
+//返回公网节点
 std::vector<Node> net_get_public_node()
 {
 	std::vector<Node> vnodes;
@@ -114,7 +120,7 @@ std::vector<Node> net_get_public_node()
 	return vnodes;
 }
 
-
+//返回所有节点ID和fee
 std::map<std::string, uint64_t> net_get_node_ids_and_fees()
 {
 	std::map<std::string, uint64_t> res;
@@ -126,7 +132,7 @@ std::map<std::string, uint64_t> net_get_node_ids_and_fees()
 	return res;
 }
 
-
+//返回所有节点ID和base58address
 std::map<std::string, string> net_get_node_ids_and_base58address()
 {
 	std::map<std::string, string> res;
@@ -138,7 +144,7 @@ std::map<std::string, string> net_get_node_ids_and_base58address()
 	return res;
 }
 
-
+//通过ip查找ID
 std::string net_get_ID_by_ip(std::string ip)
 {
 	auto nodelist = Singleton<PeerNode>::get_instance()->get_nodelist(NODE_PUBLIC);

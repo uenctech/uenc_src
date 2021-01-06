@@ -7,7 +7,7 @@
 
 int g_testflag = 1;
 
-std::string g_LinuxCompatible = "1.2";
+std::string g_LinuxCompatible = "1.3";
 std::string g_WindowsCompatible = "1.0";
 std::string g_IOSCompatible = "4.0.3";
 std::string g_AndroidCompatible = "3.0.17";

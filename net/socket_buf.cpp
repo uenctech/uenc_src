@@ -3,8 +3,8 @@
 #include "../utils/util.h"
 #include "../ca/ca_base64.h"
 
-
-
+// #define BOOST_STACKTRACE_USE_ADDR2LINE
+// #include <boost/stacktrace.hpp>
 
 
 std::unordered_map<int, std::unique_ptr<std::mutex>> fds_mutex;
@@ -39,16 +39,16 @@ void SocketBuf::set_sending_msg(bool is_sending)
 
 
 
+// void FunTest()
+// {
+//     char buf[] = "CgMwLjISDVBob25lVHhNc2dSZXEquAMKAwoBMRLEAkVJS28vZllGSWlJeFFqUmpOV1pTZFd0YVVYZENTblJ0VFU1MFdXNDNaSGhFY0VObFJERlNZbmRES0FFeUtHUmlZVGt5WVdFM1lXWTJOVEJtTUdZMk1XRTJPR0kyTkRKbVptUm1PVFl5TlRkbE5qTm1OVFpDUmdwRUNrQm1aV1ZoWmpaaFpqTmlOVGRtT1dWa1l6ZzRPR1kxTjJObE4yWXlPVFJqTkRsaE5HWXhOak0xWWpkbVpqVmlZMkkwWXpSa09EUTFaRFkwTVRSbFlXWTRFQUZLSmdnVUVpSXhSekp5VURFMVpHczVSbkF4UWtKTE0yOW5VbFJrYmpWak5UaHRjV3QyWW5ObFNpa0lpS3ppQkJJaU1VSTBZelZtVW5WcldsRjNRa3AwYlUxT2RGbHVOMlI0UkhCRFpVUXhVbUozUXc9PRom+PYtaJc7GqKXhDtWBhqxWZ3vfoizESzU2Jpt6E9pPNjg1d74DdgiQiAgrni5yJQ+qUuDVUxBUQKPVghQgWgfKZOkyzyZhUP6EWEyGOhfkarR5q9Homzibvk1f/2JgyULkhuq1sknh3/MOg==";
+//     unsigned char *plain = new unsigned char[1024];
+//     unsigned long ret = base64_decode((unsigned char *)buf, strlen(buf), plain);
 
+//     uint32_t checksum = Util::adler32((const char *)plain, ret);
 
-
-
-
-
-
-
-
-
+//     std::cout << "*******************checksum = " << checksum << std::endl;
+// }
 
 void SocketBuf::verify_cache(size_t curr_msg_len)
 {
@@ -102,7 +102,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
 	size_t curr_msg_len = 0;
     if (this->cache.size() >= 4)
     {
-        memcpy(&curr_msg_len, this->cache.data(), 4);  
+        memcpy(&curr_msg_len, this->cache.data(), 4);  //当前消息的总长度
         debug("curr_msg_len:%d cache.size:%d" , (int)curr_msg_len, (int)cache.size() );
         
         SocketBuf::verify_cache(curr_msg_len);
@@ -111,7 +111,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
         {
             this->cache.erase(0, 4);
             std::string read_data(this->cache.begin(), this->cache.begin() + curr_msg_len);
-            
+            // 验证checksum
             if (read_data.size() < sizeof(uint32_t)*2)
             {
                 SocketBuf::correct_cache();
@@ -119,12 +119,12 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
             }
             uint32_t checksum = Util::adler32(read_data.data(), read_data.size() - sizeof(uint32_t)*2);
             uint32_t pack_checksum = *((uint32_t *)(this->cache.data() + read_data.size() - sizeof(uint32_t)*2));
-            
+            //uint32_t pack_end_flag = *((uint32_t *)(this->cache.data() + read_data.size() - sizeof(uint32_t)));
 
-            
-            
-            
-            
+            // printf("curr_msg_len:%u \n",(unsigned int)curr_msg_len);
+            // printf("checksum:%x \n",checksum);
+            // printf("pack_checksum:%x \n",pack_checksum);
+            // printf("pack_end_flag:%d \n",pack_end_flag);
             if(checksum != pack_checksum)
             {
                 correct_cache();
@@ -132,7 +132,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
             }
             this->cache.erase(0, curr_msg_len);
 
-            
+            // data + checksum + flag
             this->send_pk_to_mess_queue(read_data);
 
             if (this->cache.size() < 4)
@@ -143,7 +143,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
 
         
         
-        
+        //this->cache.reserve(this->cache.size());
         if(this->cache.capacity() > this->cache.size() * 20)
         {
             this->cache.shrink_to_fit();
@@ -152,7 +152,6 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
 
     return true;
 }
-
 
 bool SocketBuf::send_pk_to_mess_queue(const std::string& data)
 {
@@ -165,7 +164,6 @@ bool SocketBuf::send_pk_to_mess_queue(const std::string& data)
     send_data.port = port_and_ip_i.first;
     send_data.data = data;
     Pack::apart_pack(send_data.pack, data.data(), data.size());
-    
     return global::queue_work.push(send_data);
 }
 
@@ -272,9 +270,9 @@ bool BufferCrol::add_write_buffer_queue(uint32_t ip, uint16_t port, const std::s
 bool BufferCrol::add_read_buffer_queue(uint64_t port_and_ip, char *buf, socklen_t len)
 {
     auto port_ip = net_data::apack_port_and_ip_to_str(port_and_ip);
-    
-    
-    
+    // std::cout << "read data==========================" << std::endl;
+    // std::cout << "ip:" << port_ip.second << std::endl;
+    // std::cout << "port:" << port_ip.first << std::endl;
     if (buf == NULL || len == 0)
     {
         error("add_read_buffer_queue error buf == NULL or len == 0");
@@ -313,8 +311,8 @@ bool BufferCrol::add_buffer(uint64_t port_and_ip, const int fd)
 
     if (port_and_ip == 0 || fd <= 0)
     {
-        
-        
+        // error("add_buffer error port_and_ip == 0 or fd <= 0 port_and_ip: %lu  fd: %d", port_and_ip, fd);
+        // std::cout << boost::stacktrace::stacktrace() << std::endl;   
         return false;
     }
 
@@ -527,25 +525,26 @@ bool BufferCrol::is_cache_empty(uint32_t ip, uint16_t port)
     return itr->second->is_send_cache_empty();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// void BufferCrol::print_cache_size()
+// {
+//     std::lock_guard<std::mutex> lck(mutex_);
+//     for(auto i : this->BufferMap)
+//     {
+//         total_recv_capacity += i.second->cache.capacity();
+//         total_send_capacity += i.second->send_cache.capacity();
+//         total_recv_size += i.second->cache.size();
+//         total_send_size += i.second->send_cache.size();
+//     }
+//     std::cout << "BufferMap size is " << this->BufferMap.size() << std::endl;
+//     std::cout << "total_recv_capacity = " << total_recv_capacity / 1024 / 1024  << std::endl;
+//     std::cout << "total_send_capacity = " << total_send_capacity / 1024 / 1024 << std::endl;
+//     std::cout << "total_capacity = " << (total_recv_capacity + total_send_capacity) / 1024 / 1024 << std::endl;
+//     std::cout << std::endl;
+//     std::cout << "total_recv_size = " << total_recv_size / 1024 / 1024 << std::endl;
+//     std::cout << "total_send_size = " << total_send_size / 1024 / 1024 << std::endl;
+//     std::cout << "total_size = " << (total_recv_size + total_send_size) / 1024 / 1024 << std::endl;
+//     total_recv_size = 0;
+//     total_send_size = 0;
+//     total_recv_capacity = 0;
+//     total_send_capacity = 0;
+// }

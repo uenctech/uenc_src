@@ -22,4 +22,4 @@ public:
 	void main_menu();
 };
 
-#endif
+#endif//_TEST_MENU_H_

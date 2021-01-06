@@ -21,15 +21,15 @@ enum NodeType {NODE_ALL, NODE_PUBLIC};
 
 enum ConnKind
 {
-	NOTYET,		
-	DRTI2I,		
-	DRTI2O,		
-	DRTO2I,		
-	DRTO2O,		
-	HOLING,		
-	BYHOLE,		
-	BYSERV,		
-	PASSIV		
+	NOTYET,		//尚未连接
+	DRTI2I,		//内内直连
+	DRTI2O,		//内外直连
+	DRTO2I,		//外内直连
+	DRTO2O,		//外外直连
+	HOLING,		//内内打洞
+	BYHOLE,		//内内打洞
+	BYSERV,		//服务中转
+	PASSIV		//被动接受连接
 };
 
 
@@ -62,10 +62,18 @@ public:
 	Node(std::string node_id){
 		id = node_id;
 	}
+
 	bool operator ==(const Node & obj) const
 	{
 	    return id == obj.id;
 	}
+
+	bool operator > (const Node &obj)//重载>操作符
+	{
+		return (*this).id > obj.id;
+	}
+
+
 	void ResetHeart()
 	{
 		heart_time  = HEART_TIME;
@@ -91,7 +99,15 @@ public:
 	}
 };
 
+class NodeSort
+{
+public:
+	bool operator()(const Node &s1,const Node &s2)
+	{
+		return s1.id > s2.id;
+	}
 
+};
 class PeerNode
 {
 public:
@@ -115,14 +131,14 @@ public:
 
 
 
-	
+	// 刷新线程
 	bool nodelist_refresh_thread_init();
-	
+	// 线程函数
 	void nodelist_refresh_thread_fun();
 
 	void conect_nodelist();
 
-	
+	// 获取 ID
 	const id_type get_self_id();
 	void set_self_id(const id_type & id);
 	void set_self_ip_p(const u32 public_ip);
@@ -138,9 +154,9 @@ public:
 	bool update_fee_by_id(const string &id, uint64_t fee);
 	bool update_package_fee_by_id(const string &id, uint64_t fee);
 
-	
+	// 生成 ID
 	bool make_rand_id();
-	
+	//判断string类型的id是否合法
 	bool is_id_valid(const string &id);
 
 	

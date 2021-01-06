@@ -5,6 +5,7 @@
 #include  "ca_timefuc.h"
 #include  "ca_pwdattackchecker.h"
 #include "ca_txvincache.h"
+#include "ca_txfailurecache.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -138,7 +139,7 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
     }
     else 
     {
-        cout<<"密码输入正确重置为0"<<endl;
+        cout<<"SetServiceFee密码输入正确重置为0"<<endl;
         pCPwdAttackChecker->Right();
         fee_ack.set_code(0);
         fee_ack.set_description("密码输入正确");
@@ -164,17 +165,18 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
     cout << "fee " << service_fee << endl;
     //设置手续费 SET
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
-
     auto status = rdb_ptr->SetDeviceSignatureFee(service_fee);
     if (!status) 
     {
         cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee4 =" << service_fee << endl;
         net_update_fee_and_broadcast(service_fee);
+        fee_ack.set_code(status);
+        fee_ack.set_description("燃料费设置成功");
+        return;
     }
 
     fee_ack.set_code(status);
-    fee_ack.set_description("设置成功");
-    
+    fee_ack.set_description("燃料费设置失败"); 
     return;
 }
 
@@ -851,7 +853,7 @@ void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetD
     }
     else 
     {
-        cout<<"密码输入正确重置为0"<<endl;
+        cout<<"GainDevPasswordReq密码输入正确重置为0"<<endl;
         pCPwdAttackChecker->Right();
         pass_ack.set_version(getVersion());
         pass_ack.set_code(0);
@@ -1251,12 +1253,12 @@ void GetClientInfo(const std::shared_ptr<GetClientInfoReq> &clnt_req, GetClientI
         std::string sDesc;
         std::string sDownload;
 
-        cout << "clientInfo " << clientInfo << endl;
-        cout << "phone_type " << phone_type << endl;
-        cout << "phone_lang " << phone_lang << endl;
-        cout << "sVersion " << sVersion << endl;
-        cout << "sDesc " << sDesc << endl;
-        cout << "sDownload " << sDownload << endl;
+        // cout << "clientInfo " << clientInfo << endl;
+        // cout << "phone_type " << phone_type << endl;
+        // cout << "phone_lang " << phone_lang << endl;
+        // cout << "sVersion " << sVersion << endl;
+        // cout << "sDesc " << sDesc << endl;
+        // cout << "sDownload " << sDownload << endl;
 
         int r = ca_getUpdateInfo(clientInfo, phone_type, phone_lang, sVersion, sDesc, sDownload);
         if (!r) 
@@ -1438,7 +1440,15 @@ void HandleCreatePledgeTxMsgReq(const std::shared_ptr<CreatePledgeTxMsgReq>& msg
 
     CTransaction outTx;
     int ret = TxHelper::CreateTxMessage(fromAddr, toAddr,needverifyprehashcount , gasFee, outTx);
-
+    if(ret == -20 )
+    {
+        createPledgeTxMsgAck.set_version(getVersion());
+        createPledgeTxMsgAck.set_code(-20);
+		createPledgeTxMsgAck.set_description("IsConflict!");
+        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
+		error("CreateTransaction Error ...\n");
+		return ;
+    }
     for(int i = 0;i <outTx.vin_size();i++)
     {
         CTxin *txin = outTx.mutable_vin(i);
@@ -1592,6 +1602,19 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
     uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
     string txhash = msg->txhash();
    
+    vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		cout<<"IsConflict HandleCreateDeviceTxMsgReq"<<endl;
+		createRedeemTxMsgAck.set_code(-20);
+		createRedeemTxMsgAck.set_description("The addr has being pengding IsConflict !");
+		net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
+        cout<<"HandleCreateRedeemTxMsgReq  failed!!"<<endl;
+		error("HandleCreateRedeemTxMsgReq  failed!!");
+		return ;
+	}
+
     if(fromAddr.size()<= 0 || amount <= 0 || needverifyprehashcount < (uint32_t)g_MinNeedVerifyPreHashCount || gasFee <= 0||txhash.empty())
     {
         createRedeemTxMsgAck.set_version(getVersion());
@@ -3422,6 +3445,20 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
 
         HandleGetTxPendingListReq(req, msgdata);
     }
+    else if (msg_name == "GetTxFailureListReq")
+    {
+        const std::shared_ptr<GetTxFailureListReq> req = dynamic_pointer_cast<GetTxFailureListReq>(msg);
+        GetTxFailureListAck ack;
+        HandleGetTxFailureListReq(req, ack);
+        net_send_message<GetTxFailureListAck>(msgdata, ack);
+    }
+    else if (msg_name == "GetTxByHashReq")
+    {
+        const std::shared_ptr<GetTxByHashReq> req = dynamic_pointer_cast<GetTxByHashReq>(msg);
+
+       HandleGetTxByHashReq(req, msgdata);
+    }
+
     // TODO
 
 }
@@ -3433,7 +3470,8 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
     const google::protobuf::Descriptor *descriptor = msg->GetDescriptor();
     const google::protobuf::Reflection *reflection = msg->GetReflection();
 
-    // cout << "descriptor->field_count()" << descriptor->name() << endl;
+    //cout << "descriptor->field_count()" << descriptor->name() << endl;
+    
 
     const google::protobuf::FieldDescriptor* field = descriptor->field(0);
 
@@ -3640,6 +3678,17 @@ void MuiltipleApi()
     {
         m_api::verify(msg, msgdata);
     });
+
+    net_register_callback<GetTxFailureListReq>([](const std::shared_ptr<GetTxFailureListReq>& msg, 
+    const MsgData& msgdata) 
+    {
+        m_api::verify(msg, msgdata);
+    });
+    net_register_callback<GetTxByHashReq>([](const std::shared_ptr<GetTxByHashReq>& msg, 
+    const MsgData& msgdata) 
+    {
+        m_api::verify(msg, msgdata);
+    });
 }
 
 static void InsertTxPendingToAckList(std::vector<TxVinCache::Tx>& vectTxs, GetTxPendingListAck& ack)
@@ -3660,9 +3709,23 @@ static void InsertTxPendingToAckList(std::vector<TxVinCache::Tx>& vectTxs, GetTx
         {
             txItem->add_toaddr(to);
         }
-        txItem->set_amount(to_string(iter->amount));
+        txItem->set_amount(iter->amount);
         txItem->set_time(iter->timestamp);
         txItem->set_detail("");
+        txItem->set_gas(iter->gas);
+        for (const auto& amount : iter->toAmount)
+        {
+            txItem->add_toamount(amount);
+        }
+
+        if (iter->type == 0)
+            txItem->set_type(TxTypeNormal);
+        else if (iter->type == 1)
+            txItem->set_type(TxTypePledge);
+        else if (iter->type == 2)
+            txItem->set_type(TxTypeRedeem);
+        else
+            txItem->set_type(TxTypeNormal);
     }
 }
 
@@ -3694,3 +3757,296 @@ void HandleGetTxPendingListReq(const std::shared_ptr<GetTxPendingListReq>& req, 
 
     net_send_message<GetTxPendingListAck>(msgdata, ack);
 }
+
+void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, GetTxFailureListAck& ack)
+{
+    ack.set_version(getVersion());
+    ack.set_code(0);
+    ack.set_description("Failure Transaction");
+
+    string addr = req->addr();
+    uint32 index = req->index();
+    uint32 count = req->count();
+    cout << "In HandleGetTxFailureListReq " << addr << " " << index << " " << count << endl;
+
+    if (addr.empty())
+    {
+        ack.set_code(-1);
+        ack.set_description("The addr is empty");
+        return ;
+    }
+    
+    std::vector<TxVinCache::Tx> vectTx;
+    MagicSingleton<TxFailureCache>::GetInstance()->Find(addr, vectTx);
+
+    ack.set_total(vectTx.size());
+    size_t size = vectTx.size();
+    if (size == 0)
+    {
+        ack.set_code(-2);
+        ack.set_description("No failure of the transaction.");
+        return ;
+    }
+
+    if (index > (size - 1))
+    {
+        //index = std::max(size - 1, 0);
+        ack.set_code(-3);
+        ack.set_description("Index out of range.");
+        return ;
+    }
+
+    size_t range = index + count;
+    if (range > size)
+    {
+        range = size;
+    }
+
+    for (size_t i = index; i < range; i++)
+    {
+        TxVinCache::Tx& iter = vectTx[i];
+
+        TxFailureItem* txItem = ack.add_list();
+        txItem->set_txhash(iter.txHash);
+        cout << "In HandleGetTxFailureListReq " << iter.txHash << endl;
+        for (const auto& in : iter.vins)
+        {
+            txItem->add_vins(in);
+        }
+        for (const auto& from : iter.from)
+        {
+            txItem->add_fromaddr(from);
+        }
+        for (const auto& to : iter.to)
+        {
+            txItem->add_toaddr(to);
+        }
+        txItem->set_amount(iter.amount);
+        txItem->set_time(iter.timestamp);
+        txItem->set_detail("");
+        txItem->set_gas(iter.gas);
+        for (const auto& amount : iter.toAmount)
+        {
+            txItem->add_toamount(amount);
+        }
+
+        if (iter.type == 0)
+            txItem->set_type(TxTypeNormal);
+        else if (iter.type == 1)
+            txItem->set_type(TxTypePledge);
+        else if (iter.type == 2)
+            txItem->set_type(TxTypeRedeem);
+        else
+            txItem->set_type(TxTypeNormal);
+    }
+
+}  // TODO add address
+
+void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgData& msgdata)
+{
+    GetTxByHashAck  TxByHashAck;
+	TxByHashAck.set_version(getVersion());
+    int db_status = 0;
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		std::cout << "(HandleGetTxByHashReq) TransactionInit failed !" << std::endl;
+		return ;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    vector<string>TransactionHash;
+    for(int i = 0;i < req->txhash_size(); i++)
+    {
+        TransactionHash.push_back(req->txhash(i));
+        TxByHashAck.add_echotxhash(req->txhash(i));
+        //cout<<"add_echotxhash = "<<req->txhash(i) <<endl;
+    }
+
+    vector<CTransaction>  Tx;
+    bool result =  GetTxByTxHashFromRocksdb(TransactionHash,Tx);
+    if(!result)
+    {
+        std::cout << "(HandleGetTxByHashReq) GetTxByTxHashFromRocksdb failed !" << std::endl;
+        TxByHashAck.set_code(-1);
+        TxByHashAck.set_description("GetTxByTxHashFromRocksdb failed!");
+        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+        return;  
+    }
+    TxItem *pTxItem =  TxByHashAck.add_list();
+    CTransaction  utxoTx;
+    for(unsigned int i = 0;i < Tx.size();i++)
+    {
+        utxoTx = Tx[i];
+        pTxItem->set_txhash(utxoTx.hash());
+        //cout<<"set_txhash = "<<utxoTx.hash()<<endl;
+		pTxItem->set_time(utxoTx.time());
+       // cout<<"set_time = "<<utxoTx.time()<<endl;
+
+        for (int i = 0; i < utxoTx.vin_size(); i++)
+		{
+			CTxin vin = utxoTx.vin(i);
+			std::string  utxo_hash = vin.prevout().hash();
+			std::string  pub = vin.scriptsig().pub();
+			std::string addr = GetBase58Addr(pub); 
+			pTxItem->add_fromaddr(addr);
+           // cout<<"add_fromaddr = "<< addr<<endl;
+		}
+        std::vector<std::string> txOwners;
+    	txOwners = TxHelper::GetTxOwner(utxoTx);
+        std::map<std::string, int64_t> toAddr;
+        int64_t amount = 0;
+		for (int i = 0; i < utxoTx.vout_size(); i++)
+		{
+			CTxout txout = utxoTx.vout(i);	
+            if (txOwners.end() == find (txOwners.begin(), txOwners.end(), txout.scriptpubkey() ) )
+            {
+                toAddr.insert(std::make_pair(txout.scriptpubkey(), txout.value()));
+            }
+		}
+        
+        for (auto & item : toAddr)
+        {
+             amount += item.second;
+            pTxItem->add_toaddr(item.first);;
+            pTxItem->set_amount(std::to_string( (double)amount/DECIMAL_NUM ));
+        }
+        
+		string blockhash;
+		unsigned height;
+		db_status = pRocksDb->GetBlockHashByTransactionHash(txn, utxoTx.hash(), blockhash);
+		if(db_status)
+		{
+			std::cout << "(HandleGetTxByHashReq) GetBlockHashByTransactionHash failed !" << std::endl;
+			TxByHashAck.set_code(db_status);
+			TxByHashAck.set_description("GetBlockHashByTransactionHash failed!");
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+			return ;
+		}
+
+		db_status = pRocksDb->GetBlockHeightByBlockHash(txn, blockhash, height);
+		if(db_status)
+		{
+			std::cout << "(HandleGetTxByHashReq) GetBlockHeightByBlockHash failed !" << std::endl;
+			TxByHashAck.set_code(db_status);
+			TxByHashAck.set_description("GetBlockHeightByBlockHash failed!");
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+			return ;
+		}
+		pTxItem->set_blockhash(blockhash);
+        //cout<<"set_blockhash = "<<blockhash <<endl;
+        
+		pTxItem->set_blockheight(height);
+        //cout<<"set_blockheight ="<< height<<endl;
+
+		std::string blockHeaderStr;
+		db_status =  pRocksDb->GetBlockByBlockHash(txn, blockhash, blockHeaderStr);
+		if(db_status)
+		{
+			std::cout << "(HandleGetTxByHashReq) GetBlockByBlockHash failed !" << std::endl;
+			TxByHashAck.set_code(db_status);
+			TxByHashAck.set_description("GetBlockByBlockHash failed!");
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+			return ;
+		}
+		
+		CBlock cblock;
+    	cblock.ParseFromString(blockHeaderStr);
+
+        CTransaction  tx;
+		CTransaction FeeTx;
+		CTransaction AwardTx;
+		for (auto & t : cblock.txs())
+		{
+			if (t.vin(0).scriptsig().sign() == std::string(FEE_SIGN_STR))
+			{
+				FeeTx = t;
+			}
+			else if (t.vin(0).scriptsig().sign() == std::string(EXTRA_AWARD_SIGN_STR))
+			{
+				AwardTx = t;
+			}
+			else
+			{
+				tx = t;
+			}
+		}
+
+		// std::vector<std::string> txOwners;
+    	// txOwners = TxHelper::GetTxOwner(tx);
+    	for (int j = 0; j < FeeTx.vout_size(); ++j)
+		{
+			CTxout txout = FeeTx.vout(j);
+			//if (txOwners.end() == find (txOwners.begin(), txOwners.end(), txout.scriptpubkey() ) )
+			{
+				pTxItem->add_signer(txout.scriptpubkey());
+                //cout<<"add_signer = "<<txout.scriptpubkey() <<endl;
+			}
+		}
+
+		int64_t totalFee = 0;
+        for (auto & FeeVout : FeeTx.vout())
+        {
+            totalFee += FeeVout.value();
+        }
+		pTxItem->set_totalfee(std::to_string(totalFee));
+        //cout<<"set_totalfee = "<< std::to_string(totalFee)<<endl;
+		int64_t totalAward = 0;
+        for (auto & AwardVout : AwardTx.vout())
+        {
+            totalAward += AwardVout.value();
+        }
+		pTxItem->set_totalaward(std::to_string(totalAward));
+       // cout<<"set_totalaward = "<< std::to_string(totalAward)<<endl;
+        TxByHashAck.set_code(0);
+        TxByHashAck.set_description("Tx info success");
+        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+    }
+    return; 
+}
+
+bool  GetTxByTxHashFromRocksdb(vector<string>txhash,vector<CTransaction> & outTx)
+{
+	if(txhash.size() == 0)
+	{
+		return false;
+	}
+
+	int db_status = 0;
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		std::cout << "(GetTxByTxHashFromRocksdb) TransactionInit failed !" << std::endl;
+		return false;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	for(unsigned int i =0; i < txhash.size(); i++)
+	{
+		std::string strTxRaw;
+		db_status = pRocksDb->GetTransactionByHash(txn, txhash[i], strTxRaw);
+		if(db_status)
+		{
+			std::cout << "(GetTxByTxHashFromRocksdb) GetTransactionByHash failed !" << std::endl;
+			return false;
+		}
+		CTransaction utxoTx;
+		utxoTx.ParseFromString(strTxRaw);
+
+        if(utxoTx.hash().compare(txhash[i]) == 0)
+        {
+            outTx.push_back(utxoTx);
+            return true;
+        }	
+    }
+	return false;
+}
+

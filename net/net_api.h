@@ -19,7 +19,7 @@
 #include <unordered_map>
 #include <random>
 #include <chrono>
-#include <stdexcept>      
+#include <stdexcept>      // std::invalid_argument
 
 #include "./peer_node.h"
 #include "./pack.h"
@@ -106,7 +106,7 @@ bool net_com::send_message(const Node &dest, T& msg, bool iscompress)
 {
 	CommonMsg comm_msg;
 	Pack::InitCommonMsg(comm_msg, msg, 0, iscompress);
-	
+	//std::cout << "send_message=====type:" << comm_msg.type() << std::endl;
 	net_pack pack;
 	Pack::common_msg_to_pack(comm_msg, pack);
 
@@ -137,7 +137,7 @@ bool net_com::send_message(const MsgData& from, T& msg, bool iscompress)
 	}else{
 		CommonMsg comm_msg;
 		Pack::InitCommonMsg(comm_msg, msg, 0, iscompress);
-		
+		// std::cout << "send_message=====type:" << comm_msg.type() << std::endl;
 		net_pack pack;
 		Pack::common_msg_to_pack(comm_msg, pack);		
 		return net_com::send_one_message(from, pack);

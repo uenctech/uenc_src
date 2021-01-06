@@ -219,7 +219,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	{
 		error("Pending transaction is in Cache!");
 		std::cout << "Pending transaction is in Cache!" << std::endl;
-		return -1;
+		return -20;
 	}
 	//}}
 

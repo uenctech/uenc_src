@@ -6,11 +6,11 @@ namespace global{
     std::string mac_md5;
     int    cpu_nums;
     atomic<int> nodelist_refresh_time;
-    MsgQueue queue_read("ReadQueue");   
-    MsgQueue queue_work("WorkQueue");   
-    MsgQueue queue_write("WriteQueue"); 
-    
-    std::list<int> phone_list;      
+    MsgQueue queue_read("ReadQueue");   //读队列
+    MsgQueue queue_work("WorkQueue");   //工作队列，主要来处理read后的调用CA代码的队列
+    MsgQueue queue_write("WriteQueue"); //写队列
+    //todo
+    std::list<int> phone_list;      //存放手机端连接的fd
     std::mutex mutex_for_phone_list;
     CTimer g_timer; 
     std::mutex mutex_listen_thread;

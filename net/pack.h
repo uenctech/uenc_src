@@ -38,8 +38,8 @@ bool Pack::InitCommonMsg(CommonMsg& msg, T& submsg, int32_t encrypt, int32_t com
 	if (compress) {
 		Compress cpr(tmp);
 		msg.set_data(cpr.m_compress_data);
-		
-		
+		// cout << "submsg.SerializeAsString().size() = " << submsg.SerializeAsString().size() << endl;
+		// cout << "cpr.m_compress_data.size() = " << cpr.m_compress_data.size() << endl;
 	}
 	else {
 		msg.set_data(tmp);
@@ -47,4 +47,4 @@ bool Pack::InitCommonMsg(CommonMsg& msg, T& submsg, int32_t encrypt, int32_t com
 	return true;
 }
 
-#endif
+#endif//_PACK_H_

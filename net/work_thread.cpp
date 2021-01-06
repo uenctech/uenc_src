@@ -6,20 +6,21 @@
 #include "utils/time_task.h"
 #include "../include/net_interface.h"
 #include "global.h"
+#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "dispatcher.h"
 #include "./socket_buf.h"
 #include "./epoll_mode.h"
 
 static std::mutex g_mutex_for_vec_;
-static deque<Node> g_deque_node; 
+static deque<Node> g_deque_node; //list_node用于存储邻居节点列表为空的节点
 
 static std::mutex g_mutex_for_map_;
 static std::mutex mutex_for_cpu_index;
 static int cpu_index = 0;
 
 
-
+/// @brief 获取线程tid
 int sys_get_tid()
 {
 	int tid = 0;
@@ -27,8 +28,8 @@ int sys_get_tid()
 	return tid;
 }
 
-
-
+/// @brief 把线程放到指定CPU中运行
+/// @param [in] cpu_index CPU序号，从0开始，0代表第一个CPU
 void sys_thread_set_cpu(unsigned int cpu_index)
 {
 	cpu_set_t mask;
@@ -60,7 +61,7 @@ int get_cpu_index()
 
 	return res;
 }
-
+//绑定cpu
 void bind_cpu()
 {
 	if (global::cpu_nums >= 4)
@@ -74,20 +75,20 @@ void WorkThreads::start()
 {
 	int k = 0;
 
-	for (auto i = 0; i < 1; i++)
+	int WorkNum = Singleton<Config>::get_instance()->GetVarInt("work_thread_num");
+	info("will create %d threads", WorkNum);
+	for (auto i = 0; i < WorkNum; i++)
 	{
 		this->m_threads_read_list.push_back(std::thread(WorkThreads::work_read, i));
 		this->m_threads_read_list[i].detach();
 	}
 
-	for (auto i = 0; i < 1; i++)
+	for (auto i = 0; i < WorkNum; i++)
 	{
 		this->m_threads_trans_list.push_back(std::thread(WorkThreads::work_write, k));
 		this->m_threads_trans_list[i].detach();
 	}
 
-	int WorkNum = Singleton<Config>::get_instance()->GetVarInt("work_thread_num");
-	info("will create %d threads", WorkNum);
 	for (auto i = 0; i < WorkNum; i++)
 	{
 		this->m_threads_work_list.push_back(std::thread(WorkThreads::work, i));
@@ -97,7 +98,6 @@ void WorkThreads::start()
 
 void WorkThreads::work_write(int id)
 {
-	info("write thread create id: %d", id);
 
 	bind_cpu();
 
@@ -110,7 +110,7 @@ void WorkThreads::work_write(int id)
 		switch (data.type)
 		{
 		case E_WRITE:
-			
+			// std::cout << "global::queue_write:" << global::queue_write.msg_list_.size() << std::endl; 
 			WorkThreads::handle_net_write(data);
 			break;
 		default:
@@ -119,9 +119,8 @@ void WorkThreads::work_write(int id)
 		}
 	}
 }
-void WorkThreads::work_read(int id) 
+void WorkThreads::work_read(int id) //读套接字专用线程
 {
-	info("read thread create id: %d", id);
 
 	bind_cpu();
 
@@ -134,7 +133,7 @@ void WorkThreads::work_read(int id)
 		switch (data.type)
 		{
 		case E_READ:
-			
+			// std::cout << "global::queue_read:" << global::queue_read.msg_list_.size() << std::endl; 
 			WorkThreads::handle_net_read(data);
 			break;
 		default:
@@ -146,7 +145,6 @@ void WorkThreads::work_read(int id)
 
 void WorkThreads::work(int id)
 {
-	info("thread create id: %d", id);
 
 	bind_cpu();
 
@@ -159,7 +157,6 @@ void WorkThreads::work(int id)
 		switch (data.type)
 		{
 		case E_WORK:
-			
 
 			WorkThreads::handle_network_event(data);
 			break;
@@ -208,8 +205,8 @@ int WorkThreads::handle_net_read(const MsgData &data)
 				Singleton<EpollMode>::get_instance()->add_epoll_event(data.fd, EPOLLIN | EPOLLOUT | EPOLLET);
 				return 0;
 			}
-			error("errno:%d \n nread:%d \n ip:%s \n fd:%d \n", 
-					errno, nread, IpPort::ipsz(data.ip), data.fd);
+			// error("errno:%d \n nread:%d \n ip:%s \n fd:%d \n", 
+			// 		errno, nread, IpPort::ipsz(data.ip), data.fd);
 			Singleton<PeerNode>::get_instance()->delete_by_fd(data.fd);
 
 			return -1;

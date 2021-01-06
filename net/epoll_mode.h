@@ -15,17 +15,17 @@
 
 class EpollMode
 {
-    
+    /*Inner Var*/
     friend class Singleton<EpollMode>;
 private:
     std::thread* listen_thread;
-    
+    /*Inner Func*/
 public:
-    
+    /*Listen Thread Func*/
     int epoll_loop();
-    
+    /*Pub Func*/
 public:
-    
+    /*Control Epoll Func*/
     bool add_epoll_event(int fd, int state);
     bool delete_epoll_event(int fd);
     bool modify_epoll_event(int fd, int state);

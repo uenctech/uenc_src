@@ -92,4 +92,15 @@ void MuiltipleApi();
  ==================================================================================== */
 void HandleGetTxPendingListReq(const std::shared_ptr<GetTxPendingListReq>& req, const MsgData& msgdata);
 
+/* ==================================================================================== 
+ # @description: 请求获取失败的交易列表
+ # @param req :  GetTxFailureListReq 获取失败交易的协议
+ # @return :NULL
+ ==================================================================================== */
+void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, GetTxFailureListAck& ack);
+
+void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgData& msgdata);
+bool  GetTxByTxHashFromRocksdb(vector<string>txhash,vector<CTransaction> & outTx);
+
+
 #endif // !__CA_MULTIPLEAPI_H__

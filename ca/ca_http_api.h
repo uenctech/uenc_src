@@ -37,6 +37,7 @@ nlohmann::json jsonrpc_get_avg_fee(const nlohmann::json & param);
 nlohmann::json jsonrpc_generate_wallet(const nlohmann::json & param);
 nlohmann::json jsonrpc_generate_sign(const nlohmann::json & param);
 nlohmann::json jsonrpc_get_pending_transaction(const nlohmann::json & param);
+nlohmann::json jsonrpc_get_failure_transaction(const nlohmann::json & param);
 
 
 

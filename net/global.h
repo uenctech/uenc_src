@@ -1,12 +1,12 @@
-
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
 #include "./define.h"
 #include "./msg_queue.h"
 #include "../utils/time_task.h"
-#include "../utils/CTimer.hpp"
 #include <list>
+#include "../utils/CTimer.hpp"
+
 
 namespace global{
     

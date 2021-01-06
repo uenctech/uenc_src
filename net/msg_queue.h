@@ -66,8 +66,8 @@ public:
 		msg_list_.push_back(std::move(data));
 		m_notEmpty.notify_one();
 		++msg_cnt_;
-		
-		
+		// debug("%s ++ msg_cnt_(%ld) ip(%s) port(%u) size(%u)",str_info_.c_str(),
+		//  (i64)msg_cnt_, std::string(IpPort::ipsz(data.ip)).c_str(), data.port, (u32)msg_list_.size());
 		return true;
 
     };
@@ -79,7 +79,7 @@ public:
 		std::lock_guard<std::mutex> lck(mutex_for_list_);
 		while (IsEmpty())
 		{
-			
+			// debug("%s the blocking queue is empty,wating...",str_info_.c_str());
 			m_notEmpty.wait(mutex_for_list_);
 		}
 
@@ -87,8 +87,8 @@ public:
 		msg_list_.pop_front();
 		m_notFull.notify_one();
 		--msg_cnt_;
-		
-		
+		// debug("%s -- msg_cnt_(%ld) ip(%s) port(%u) size(%u)",str_info_.c_str(),
+		// 	(i64)msg_cnt_, std::string(IpPort::ipsz(out.ip)).c_str(), out.port, (u32)msg_list_.size());
 
 		return true;
     };

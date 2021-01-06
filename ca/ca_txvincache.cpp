@@ -8,6 +8,10 @@
  */
 
 #include "ca_txvincache.h"
+#include "ca_txfailurecache.h"
+#include "ca_MultipleApi.h"
+#include "MagicSingleton.h"
+#include "../utils/time_util.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -62,7 +66,7 @@ int TxVinCache::Remove(const TxVinCache::Tx & tx)
     int result = -1;
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
-        if (iter->txHash == tx.txHash && iter->from == tx.from)
+        if (iter->txHash == tx.txHash )
         {
             txs_.erase(iter);
             result = 0;
@@ -82,6 +86,8 @@ int TxVinCache::Remove(const std::string& txHash, const vector<string>& from)
 
 bool TxVinCache::IsExist(const TxVinCache::Tx& tx)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+    
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
         if (iter->txHash == tx.txHash)
@@ -95,6 +101,8 @@ bool TxVinCache::IsExist(const TxVinCache::Tx& tx)
 
 bool TxVinCache::IsExist(const std::string& txHash)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
         if (iter->txHash == txHash)
@@ -108,6 +116,8 @@ bool TxVinCache::IsExist(const std::string& txHash)
 
 bool TxVinCache::IsConflict(const TxVinCache::Tx& tx)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+
     // Check from address
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
@@ -170,6 +180,8 @@ int TxVinCache::Clear()
 // 获得交易
 int TxVinCache::GetAllTx(std::vector<TxVinCache::Tx> & vectTxs)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+    
     for (const auto& iter : txs_ )
     {
         vectTxs.push_back(iter);
@@ -180,6 +192,8 @@ int TxVinCache::GetAllTx(std::vector<TxVinCache::Tx> & vectTxs)
 // 查询交易
 int TxVinCache::Find(const std::string & txHash, TxVinCache::Tx & tx)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+
     int result = -1;
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
@@ -195,6 +209,8 @@ int TxVinCache::Find(const std::string & txHash, TxVinCache::Tx & tx)
 
 int TxVinCache::Find(const std::string & fromAddr, std::vector<TxVinCache::Tx> & vectTxs)
 {
+    std::lock_guard<std::mutex> lck(mutex_);
+
     int result = -1;
     for (auto iter = txs_.begin(); iter != txs_.end(); ++iter)
     {
@@ -214,10 +230,18 @@ void TxVinCache::DoClearExpire()
 
     for (auto iter = txs_.begin(); iter != txs_.end();)
     {
-        time_t nowTime = time(NULL);
-        static const time_t MINUTES5 = 1UL * 60UL * 5UL;
+        uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getTimestamp();
+        static const uint64_t MINUTES5 = 1000000UL * 60UL * 5UL;
         if (nowTime - iter->timestamp >= MINUTES5)
         {
+            vector<string>txhash = { iter->txHash };
+            vector<CTransaction> outTx;
+            bool result =  GetTxByTxHashFromRocksdb(txhash,outTx);
+            if (!result)
+            {
+                MagicSingleton<TxFailureCache>::GetInstance()->Add(*iter);
+            }
+ 
             iter = txs_.erase(iter);
         }
         else

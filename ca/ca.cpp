@@ -45,7 +45,7 @@
 #include "ca_bip39.h"
 #include "../utils/qrcode.h"
 #include "ca_txvincache.h"
-
+#include "ca_txfailurecache.h"
 
 const char *kVersion = "1.0.1";
 std::shared_mutex g_NodeInfoLock;
@@ -1266,7 +1266,7 @@ int UpdatePublicNodeToConfigFile()
 {
     std::vector<Node> nodes = net_get_public_node();
     std::vector<Node> publicNodes;
-
+    NodeSort sortFuc;
     // Add Self if it is public
     if (Singleton<Config>::get_instance()->GetIsPublicNode())
     {
@@ -1314,6 +1314,8 @@ int UpdatePublicNodeToConfigFile()
                 if (iter == publicNodes.end())
                 {
                     publicNodes.push_back(node);
+                    std::sort(publicNodes.begin(), publicNodes.end(),sortFuc);
+		            publicNodes.erase(unique(publicNodes.begin(), publicNodes.end()), publicNodes.end());
                     cout << "New public node ^^^^^VVVVV " << IpPort::ipsz(node.public_ip) << endl;
                 }
                 else

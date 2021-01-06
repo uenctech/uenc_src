@@ -32,8 +32,11 @@ public:
         std::vector<std::string> vins;
         std::vector<std::string> from;
         std::vector<std::string> to;
-        uint64_t amount;
+        std::string amount;
         uint64_t timestamp;
+        string gas;
+        std::vector<std::string> toAmount;
+        uint32_t type;
     };
 
     static string TxToString(const TxVinCache::Tx& tx);

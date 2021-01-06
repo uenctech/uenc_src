@@ -66,7 +66,7 @@ bool Pack::apart_pack( net_pack& pk, const char* pack, int pack_len)
 	}
 
 	pk.len = pack_len;
-	pk.data = std::string(pack , pack_len - sizeof(uint32_t) * 2); 
+	pk.data = std::string(pack , pack_len - sizeof(uint32_t) * 2); //减去checksum 和 flag
 
 	memcpy(&pk.checksum, pack + pk.data.size(),     4);
 	memcpy(&pk.end_flag, pack + pk.data.size() + 4, 4);

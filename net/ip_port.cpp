@@ -19,7 +19,7 @@
 
 char g_localhost_ip[16];
 char g_public_net_ip[16];
-char g_publicIP[30];             
+char g_publicIP[30];             //存储公网IP
 int g_my_port;
 
 
@@ -51,7 +51,7 @@ bool IpPort::get_localhost_ip(char* g_localhost_ip)
 
 
 
-
+//获取本地Ip
 bool IpPort::get_localhost_ip()
 {
 	struct ifaddrs* if_addr_ptr = NULL;
@@ -70,8 +70,8 @@ bool IpPort::get_localhost_ip()
 		if (if_addr_ptr->ifa_addr->sa_family == AF_INET)
 		{
 			tmp_addr_ptr = &((struct sockaddr_in*)if_addr_ptr->ifa_addr)->sin_addr;
-			
-			
+			//最后一个参数32与定义的locla大小不符
+			//inet_ntop(AF_INET, tmp_addr_ptr, locla_ip, 32);
 			inet_ntop(AF_INET, tmp_addr_ptr, locla_ip, IP_LEN);
 			info("获取到本地IP");
 			info("===========%s==============", locla_ip);
@@ -98,7 +98,7 @@ bool IpPort::get_localhost_ip()
 		if_addr_ptr = if_addr_ptr->ifa_next;
 	}
 
-	
+	//释放内存
 	freeifaddrs(if_addr_ptr);
 
 	return false;
@@ -120,7 +120,7 @@ int IpPort::check_localhost_ip(const char* usr_ip)
 }
 
 
-
+// ���� IP
 u32 IpPort::ipnum(const char* sz_ip)
 {
 	u32 num_ip = inet_addr(sz_ip);
@@ -132,7 +132,7 @@ u32 IpPort::ipnum(const string& sz_ip)
 	return num_ip;
 }
 
-
+// �ַ� IP
 const char* IpPort::ipsz(const u32 num_ip)
 {
 	struct in_addr addr = {0};
@@ -141,7 +141,7 @@ const char* IpPort::ipsz(const u32 num_ip)
 	return sz_ip;
 }
 
-
+// IP �Ϸ�
 bool IpPort::is_valid_ip(std::string const& str_ip)
 {
 	try
@@ -158,14 +158,14 @@ bool IpPort::is_valid_ip(std::string const& str_ip)
 	return false;
 }
 
-
+// IP �Ϸ�
 bool IpPort::is_valid_ip(u32 u32_ip)
 {
 	string str_ip = ipsz(u32_ip);
 	return is_valid_ip(str_ip);
 }
 
-
+// ���� IP
 bool IpPort::is_local_ip(std::string const& str_ip)
 {
 	if (false == is_valid_ip(str_ip))
@@ -185,14 +185,14 @@ bool IpPort::is_local_ip(std::string const& str_ip)
 	return false;
 }
 
-
+// ���� IP
 bool IpPort::is_local_ip(u32 u32_ip)
 {
 	string str_ip = ipsz(u32_ip);
 	return is_local_ip(str_ip);
 }
 
-
+// ���� IP
 bool IpPort::is_public_ip(std::string const& str_ip)
 {
 	if (false == is_valid_ip(str_ip))
@@ -201,20 +201,20 @@ bool IpPort::is_public_ip(std::string const& str_ip)
 	return false == is_local_ip(str_ip);
 }
 
-
+// ���� IP
 bool IpPort::is_public_ip(u32 u32_ip)
 {
 	string str_ip = ipsz(u32_ip);
 	return is_public_ip(str_ip);
 }
 
-
+// �˿ںϷ�
 bool IpPort::is_valid_port(u16 u16_port)
 {
 	return u16_port > 0 && u16_port <= 65535;
 }
 
-
+// ��ȡ IP
 char* IpPort::get_peer_ip(int sockconn)
 {
 	struct sockaddr_in sa { 0 };
@@ -227,7 +227,7 @@ char* IpPort::get_peer_ip(int sockconn)
 	return NULL;
 }
 
-
+// ��ȡ IP
 u32 IpPort::get_peer_nip(int sockconn)
 {
 	struct sockaddr_in sa { 0 };
@@ -240,7 +240,7 @@ u32 IpPort::get_peer_nip(int sockconn)
 	return 0;
 }
 
-
+// ��ȡ�˿�
 u16 IpPort::get_peer_port(int sockconn)
 {
 	struct sockaddr_in sa { 0 };
@@ -273,7 +273,7 @@ bool IpPort::isLAN(std::string const& ipString)
 	}
 }
 
-
+/*获取节点公网ip地址*/
 /*char* IpPort::getPublicIP(char *url)
 {
 
@@ -290,7 +290,7 @@ bool IpPort::isLAN(std::string const& ipString)
     char header[240] =  {0};
     char *pHost = 0;
 
-    
+    ///get the host name and the relative address from url name!!!
     strcpy(myurl, url);
     for (pHost = myurl; *pHost != '/' && *pHost != '\0'; ++pHost) ;
     if ((unsigned int)(pHost - myurl) == strlen(myurl))
@@ -300,7 +300,7 @@ bool IpPort::isLAN(std::string const& ipString)
     *pHost = '\0';
     strcpy(host, myurl);
 
-    
+    ///setting socket param
     if ((nlp_host = gethostbyname(host)) == 0)
     {
         perror("error get host\n");
@@ -318,8 +318,8 @@ bool IpPort::isLAN(std::string const& ipString)
         perror("Error opening socket!!!\n");
         return NULL;
     }
-    
-	
+    ///together the request info that will be sent to web server
+	///Note: the blank and enter key byte is necessary,please remember!!!
 	strcat(header, "GET");
 	strcat(header, " ");
 	strcat(header, GET);
@@ -328,12 +328,12 @@ bool IpPort::isLAN(std::string const& ipString)
 	strcat(header, "HOST:");
 	strcat(header, host);
 	strcat(header, "\r\n");*/
-	
-	
+	//strcat(header, "ACCEPT:*/*");
+	//strcat(header, "\r\nConnection: close\r\n\r\n\r\n");
 
 
-    
-	
+    ///connect to the webserver,send the header,and receive the web sourcecode
+	//if (::connect(sd, (void *)&pin, sizeof(pin)) == -1)
 	/*if (::connect(sd, (sockaddr *) &pin, sizeof(pin)) == -1) {
 		::close(sd);
 		printf("error connect to socket\n");
@@ -345,7 +345,7 @@ bool IpPort::isLAN(std::string const& ipString)
 		perror("error in send \n");
 		return NULL;
 	}
-    
+    ///send the message and wait the response!!!
 	len = recv(sd, buf, BUF_SIZE, 0);
 	if (len < 0) {
 		::close(sd);
@@ -353,10 +353,10 @@ bool IpPort::isLAN(std::string const& ipString)
 		return NULL;
 	} else {
 		memset(g_publicIP, 0, sizeof(g_publicIP));
-		
-		
+		//buf中存储的数据并不只是公网IP，还有其它数据，需要将公网IP解析出来
+		//不同的环境中，数据格式可能不同，具体情况具体分析
 		sscanf(strstr(buf, "utf-8") + 9, "%*[^\n]\n%[^\n]", g_publicIP);
-		
+		//printf("ip = %s\n", publicIP);
 		::close(sd);
 		return g_publicIP;
     }

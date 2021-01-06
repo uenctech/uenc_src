@@ -33,6 +33,11 @@ void handlePrintMsgReq(const std::shared_ptr<PrintMsgReq>& printMsgReq, const Ms
 void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq>& registerNode, const MsgData& from)
 {	
     NodeInfo * nodeinfo = registerNode->mutable_mynode();
+    // std::cout << "is_public_node: " << nodeinfo->is_public_node() 
+    // << "\n node_id: " << nodeinfo->node_id()
+    // << "\n local_ip: " << nodeinfo->local_ip()
+    // << "\n local_port: " << nodeinfo->local_port()
+    // << std::endl;
 
 	if (!Singleton<Config>::get_instance()->GetIsPublicNode())
 	{
@@ -68,7 +73,7 @@ void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq>& registerNode,
 		{
 			close(tem_node.fd);
 			Singleton<BufferCrol>::get_instance()->delete_buffer(tem_node.public_ip, tem_node.public_port);
-			Singleton<BufferCrol>::get_instance()->add_buffer(from.fd, from.port, from.fd);
+			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, from.port, from.fd);
 		}
 		Singleton<PeerNode>::get_instance()->update(node);
 	}
@@ -107,6 +112,7 @@ void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq>& registerNode,
 
 void handleRegisterNodeAck(const std::shared_ptr<RegisterNodeAck>& registerNodeAck, const MsgData& from)
 {	
+	// std::cout << "公网 " << IpPort::ipsz(from.ip) << "返回的节点信息：" << endl;
 	for (int i = 0; i < registerNodeAck->nodes_size(); i++) {
 		const NodeInfo& nodeinfo = registerNodeAck->nodes(i);
 		Node node;
@@ -120,22 +126,16 @@ void handleRegisterNodeAck(const std::shared_ptr<RegisterNodeAck>& registerNodeA
 		node.fee			= nodeinfo.fee();
 		node.package_fee	= nodeinfo.package_fee();
 		node.base58address  = nodeinfo.base58addr();
-		
+		// std::cout << "id:" << node.id  << std::endl;
+		// std::cout << "public_ip:" << string(IpPort::ipsz(node.public_ip))  << std::endl;
+		// std::cout << "local_ip:" << string(IpPort::ipsz(node.local_ip))  << std::endl;
+		//处理公网节点的信息
 		if(from.ip == node.public_ip && from.port == node.public_port)
 		{	
 			node.fd = from.fd;
 			net_com::parse_conn_kind(node);
-			Singleton<PeerNode>::get_instance()->update(node);
-			Node tmp;
-			bool find = Singleton<PeerNode>::get_instance()->find_node_by_fd(node.fd, tmp);
-			{
-				if(find && tmp.id == "")
-				{
-					Singleton<PeerNode>::get_instance()->delete_by_fd_not_close(node.fd);
-				}
-			}
 		}
-		if(node.id != Singleton<PeerNode>::get_instance()->get_self_id() && node.id.size() > 0)
+		if(node.id != Singleton<PeerNode>::get_instance()->get_self_id() )
 		{
 			Singleton<PeerNode>::get_instance()->add(node);
 		}
@@ -172,8 +172,8 @@ void handleConnectNodeReq(const std::shared_ptr<ConnectNodeReq>& connectNodeReq,
 	{
 		node.conn_kind      = BYSERV;
 		node.fd = -2;
-		
-		
+		// node.public_ip      = nodeinfo->public_port();
+		// node.public_port    =  nodeinfo->public_port();
 	}
 	
 	Node tem_node;
@@ -184,7 +184,7 @@ void handleConnectNodeReq(const std::shared_ptr<ConnectNodeReq>& connectNodeReq,
 		{
 			close(tem_node.fd);
 			Singleton<BufferCrol>::get_instance()->delete_buffer(tem_node.public_ip, tem_node.public_port);
-			Singleton<BufferCrol>::get_instance()->add_buffer(from.fd, from.port, from.fd);
+			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, from.port, from.fd);
 		}
 		else if(node.conn_kind == BYSERV && tem_node.fd > 0)
 		{
@@ -222,9 +222,9 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq>& transMsgReq, const Ms
 	{
 		net_com::send_one_message(dest, std::move(transMsgReq->data()));	
 	}
-	
-	
-	
+	// }else{
+	// 	std::cout << "not find" << std::endl;
+	// }	
 }
 
 
@@ -322,7 +322,7 @@ void handlePongReq(const std::shared_ptr<PongReq>& pongReq, const MsgData& from)
 
 void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq>& syncNodeReq, const MsgData& from)
 {
-	
+	// std::cout << "handleSyncNodeReq===========" << std::endl;
 	std::unordered_set<std::string> ids;
 	auto size = syncNodeReq->ids_size();
 	auto selfid = Singleton<PeerNode>::get_instance()->get_self_id();
@@ -332,36 +332,39 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq>& syncNodeReq, const Ms
 		if(id != selfid)
 		{
 			ids.insert(std::move(id));
-			
+			// std::cout << "id:" << syncNodeReq->ids(i) << std::endl; 
 		}
 	}
 
 	SyncNodeAck syncNodeAck;
 	vector<Node> nodelist = Singleton<PeerNode>::get_instance()->get_nodelist();
 
-	
+	//公网节点有的,矿机节点没有的
 	std::unordered_set<std::string> my_ids;
 	for(auto& node:nodelist)
 	{
-		auto result = ids.find(node.id); 
-		if(result == ids.end())
+		if(node.fd > 0)
 		{
-			NodeInfo* nodeinfo = syncNodeAck.add_nodes();
-			nodeinfo->set_node_id(node.id);
-			nodeinfo->set_local_ip( node.local_ip);
-			nodeinfo->set_local_port( node.local_port);
-			nodeinfo->set_public_ip( node.public_ip);
-			nodeinfo->set_public_port( node.public_port);			
-			nodeinfo->set_is_public_node(node.is_public_node);
-			nodeinfo->set_mac_md5(std::move(node.mac_md5));
-			nodeinfo->set_fee(node.fee);
-			nodeinfo->set_package_fee(node.package_fee);	
-			nodeinfo->set_base58addr(node.base58address);		
+			auto result = ids.find(node.id); 
+			if(result == ids.end())
+			{
+				NodeInfo* nodeinfo = syncNodeAck.add_nodes();
+				nodeinfo->set_node_id(node.id);
+				nodeinfo->set_local_ip( node.local_ip);
+				nodeinfo->set_local_port( node.local_port);
+				nodeinfo->set_public_ip( node.public_ip);
+				nodeinfo->set_public_port( node.public_port);			
+				nodeinfo->set_is_public_node(node.is_public_node);
+				nodeinfo->set_mac_md5(std::move(node.mac_md5));
+				nodeinfo->set_fee(node.fee);
+				nodeinfo->set_package_fee(node.package_fee);	
+				nodeinfo->set_base58addr(node.base58address);		
+			}
+			my_ids.insert(std::move(node.id));
 		}
-		my_ids.insert(std::move(node.id));
 	}
 
-	
+	// 矿机节点有的，公网节点没有的
 	for(auto& id:ids)
 	{
 		auto result = my_ids.find(id); 
@@ -378,11 +381,12 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq>& syncNodeReq, const Ms
 
 void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck>& syncNodeAck, const MsgData& from)
 {
-	
+	//公网节点没有的
 	if(syncNodeAck->ids_size() < 100)
 	{
 		for(int i = 0; i < syncNodeAck->ids_size(); i++)
 		{
+			// std::cout << "sync delete id===:" << syncNodeAck->ids(i) << std::endl;
 			Singleton<PeerNode>::get_instance()->delete_node(syncNodeAck->ids(i));
 		}	
 	}
@@ -404,7 +408,12 @@ void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck>& syncNodeAck, const Ms
 			node.base58address  = nodeinfo.base58addr();
 
 			if(node.id != Singleton<PeerNode>::get_instance()->get_self_id())
-			{				
+			{
+				// std::cout << "======handleSyncNodeAck add node==========" << std::endl;
+				// std::cout << "id:" << node.id  << std::endl;
+				// std::cout << "public_ip:" << string(IpPort::ipsz(node.public_ip))  << std::endl;
+				// std::cout << "local_ip:" << string(IpPort::ipsz(node.local_ip))  << std::endl;
+				
 				Singleton<PeerNode>::get_instance()->add(node);
 			}
 		}
