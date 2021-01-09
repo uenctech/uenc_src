@@ -2352,12 +2352,6 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
             pItem->set_amount(to_string((double_t)amount / DECIMAL_NUM));
 
-            count++;
-            if (count >= req->count())
-            {
-                break;
-            }
-
             if (isOriginator)
             {
                 // 如果是主账号需要加上已付的手续费
@@ -2377,7 +2371,12 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                     }
                 }
             }
-        }
+            count++;
+            if (count >= req->count())
+            {
+                break;
+            }
+        }   
     }
 
     if (i == size)

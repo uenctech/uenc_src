@@ -1167,8 +1167,11 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 				}
 				else
 				{
-					bRollback = true;
-					return false;
+					if (cblock.height() > g_compatMinHeight)
+					{
+						bRollback = true;
+						return false;
+					}
 				}
 				
 			}
@@ -3611,7 +3614,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 	{
 		std::vector<std::string> v;
 
-		int nodeSize = verify_num * 6;
+		int nodeSize = verify_num * 50;
 		if(verifyPreHashCount > 1)   // 除自己本身签名外，其他节点签名的时候转发节点数为1
 		{
 			nodeSize = 1;
@@ -3698,10 +3701,10 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 		std::vector<string> pledgeUtxos;
 		if (0 != pRocksDb->GetPledgeAddressUtxo(txn, std::string(SignerCstr), pledgeUtxos))
 		{
-			txMsgAck.set_code(-12);
-			txMsgAck.set_message("GetPledgeAddressUtxo failed!");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-			error("HandleTx GetPledgeAddressUtxo failed! ");
+			// txMsgAck.set_code(-12);
+			// txMsgAck.set_message("GetPledgeAddressUtxo failed!");
+			// net_send_message<TxMsgAck>(msgdata, txMsgAck);			
+			// error("HandleTx GetPledgeAddressUtxo failed! ");
 			// return -15;
 		}
 
