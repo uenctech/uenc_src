@@ -2,7 +2,7 @@
 
 ## 一、网络请求规范
 
-1. 所有网络请求需按照协议规范（数据格式）将数据组织好后，使用socket连接方式发送到主网节点，当主网节点收到请求后将按照同样协议规范（数据格式）返回给请求方，请求方需自行解析相关数据获得接口返回信息。
+1. 所有网络请求需按照协议规范（数据格式）将数据组织好后，使用socket连接方式发送到主网节点（端口为11187），当主网节点收到请求后将按照同样协议规范（数据格式）返回给请求方，请求方需自行解析相关数据获得接口返回信息。
 
 2. 请求协议中部分信息是以protobuf方式进行封装，封装后序列化后填充请求协议中进行发送。一般请求协议的名称以Req结尾，发送到主网后，主网后会返回Ack结尾的protobuf数据体进行回应。例如请求获得余额的子协议接口为GetAmountReq，则主网服务器收到该请求后的回应数据体为GetAmountAck。
 
@@ -18,126 +18,234 @@
 
    - 通用协议
 
-     - 通用协议为profobuf格式，原型如下：
+        - 通用协议为profobuf格式，原型如下：
 
-       ```
-       message CommonMsg {
-       	string version        = 1;
-       	string type           = 2;
-       	int32 encrypt         = 3;
-       	int32 compress        = 4;
-       	bytes data            = 5;
-       }
-       ```
+          ```dict
+          message CommonMsg
+          {
+              string version = 1;
+              string type = 2;
+              int32 encrypt = 3;
+              int32 compress = 4;
+              bytes data = 5;
+          }
+          ```
 
-       |   字段   |                             说明                             |
-       | :------: | :----------------------------------------------------------: |
-       | version  |                     版本，目前暂时可为空                     |
-       |   type   | 子协议类型名称，根据实际业务需要填充接口名称，如”GetAmountReq” |
-       | encrypt  |            是否加密，1为加密，0为不加密，默认为0             |
-       | compress |            是否压缩，1为压缩，0为不压缩，默认为0             |
-       |   data   | 子协议接口protobuf数据体序列化后的数据,请求时需要将子协议接口的protobuf类型数据序列化后，填充到data中后进行发送。 |
+          |   字段   |                             说明                             |
+          | :------: | :----------------------------------------------------------: |
+          | version  |                     版本号                                     |
+          |   type   | 子协议类型名称，根据实际业务需要填充接口名称，如”GetAmountReq” |
+          | encrypt  |            是否加密，1为加密，0为不加密，默认为0             |
+          | compress |            是否压缩，1为压缩，0为不压缩，默认为0             |
+          |   data   | 子协议接口protobuf数据体序列化后的数据,请求时需要将子协议接口的protobuf类型数据序列化后，填充到data中后进行发送。 |
 
-   - 校验和
+    - 校验和
 
-     - 校验和长度为4字节，是通用协议序列化后，通过Adler32算法计算出来的校验和信息。
+        - 校验和长度为4字节，是通用协议序列化后，通过Adler32算法计算出来的校验和信息。
 
-   - 结束标志位
+    - 结束标志位
 
-     - 结束标记长度为4字节，其内容为7777777。
+        - 结束标记长度为4字节，其内容为7777777。
 
 4. 将请求协议发送到主网后，主网也按照请求协议格式封装回传信息传送给请求方，请求方收到信息后：
 
-   1. 根据协议总长度获得完整回传信息。
-   2. 根据协议总长度获得通用协议、校验和以及结束标记。
-   3. 根据校验和判断通用协议是否完整。
-   4. 通过反序列化通用协议，获取子协议（接口）名称和子协议（接口）的数据内容。
-   5. 根据通用协议中的压缩和加密字段，确定是否对子协议（接口）的数据内容进行解压缩或解密操作。
-   6. 将子协议的数据内容按照子协议的protobuf格式进行反序列化，获得完整的子协议（接口）请求内容。
+    1. 根据协议总长度获得完整回传信息。
+    2. 根据协议总长度获得通用协议、校验和以及结束标记。
+    3. 根据校验和判断通用协议是否完整。
+    4. 通过反序列化通用协议，获取子协议（接口）名称和子协议（接口）的数据内容。
+    5. 根据通用协议中的压缩和加密字段，确定是否对子协议（接口）的数据内容进行解压缩或解密操作。
+    6. 将子协议的数据内容按照子协议的protobuf格式进行反序列化，获得完整的子协议（接口）请求内容。
 
-
-
-##  二、设置设备密码接口（SetDevPasswordReq）
+## 二、设置设备密码接口（SetDevPasswordReq）
 
 1. 请求
 
-   ```
+   ```dict
    message SetDevPasswordReq 
    {
-       string version 	= 1;
+       string version = 1;
        string old_pass = 2;
        string new_pass = 3;
    }
    ```
-
+   
    |   字段   |         说明         |
    | :------: | :------------------: |
-   | version  | 版本，目前暂时可为空 |
+   | version  |        版本号        |
    | old_pass |        旧密码        |
    | new_pass |        新密码        |
-
+   
 2. 响应
 
-   ```
+   ```dict
    message SetDevPasswordAck 
    {
-       string version 		= 1;
-       sint32 code 		= 2;
-       string description 	= 3;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
    }
    ```
 
    |    字段     |                             说明                             |
    | :---------: | :----------------------------------------------------------: |
-   |   version   |                     版本，目前暂时可为空                     |
+   |   version   |                         版本号                               |
    |    code     | 0成功; -1参数错误; -2 密码不能为空; -3旧密码非法（特殊字符或长度超过8个字节）; -4 新密码非法（特殊字符或长度超过8个字节）; -5 新旧密码不能相同; -6 旧密码验证不正确; -7 未知错误 |
    | description |                       返回值的文字描述                       |
+3. 代码示例
 
+```python
+# 设置设备密码接口（SetDevPasswordReq）
+def SetDevPasswordRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    OLD_PASS = 11111111
+    NEW_PASS = 12345678
 
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.SetDevPasswordReq()
+    addr.version = VERSION
+    addr.old_pass = str(OLD_PASS)
+    addr.new_pass = str(NEW_PASS)
 
-##  三、设置矿工费请求接口（SetServiceFeeReq）
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'SetDevPasswordReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.SetDevPasswordAck()
+
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_SetDevPasswordAck = protobuf_to_dict(target)
+        json_output = json.dumps(message_SetDevPasswordAck, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 三、设置矿工费请求接口（SetServiceFeeReq）
 
 1. 请求
 
-   ```
+   ```dict
    message SetServiceFeeReq
    {
-   	string version 				= 1;			
-   	string password				= 2;					
-   	string service_fee 			= 3;					
+   	string version = 1;			
+   	string password = 2;					
+   	string service_fee = 3;					
    }
    ```
 
-   |    字段     |         说明         |
+   |     字段     |         说明         |
    | :---------: | :------------------: |
-   |   version   | 版本，目前暂时可为空 |
+   |   version   |        版本号         |
    |  password   |       矿机密码       |
    | service_fee |        设定值        |
 
 2. 响应
 
-   ```
+   ```dict
    message SetServiceFeeAck
    {
-   	string version 				= 1;				
-   	sint32  code 				= 2;					
-   	string description 			= 3;					
+   	string version = 1;				
+   	sint32 code = 2;					
+   	string description = 3;					
    }
    ```
 
    |    字段     |                   说明                    |
    | :---------: | :---------------------------------------: |
-   |   version   |           版本，目前暂时可为空            |
+   |   version   |                版本号                   |
    |    code     | 0成功; -6 密码错误; -7 滑动条数值显示错误 |
    | description |             返回值的文字描述              |
+3. 代码示例
 
+```python
+# 设置矿工费请求接口（SetServiceFeeReq）
+def SetServiceFeeRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    PASSWORD = 12345678
+    SERVICE_FEE = 0.01
 
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.SetServiceFeeReq()
+    addr.version = VERSION
+    addr.password = str(PASSWORD)
+    addr.service_fee = str(SERVICE_FEE)
+    data_len_ = len(addr.service_fee)
+    sum_ = (58 + data_len_) - 8
+    data_len_ = ('<i%dsIi' % sum_)
 
-##  四、获取账户余额接口（GetAmountReq）
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'SetServiceFeeReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.SetServiceFeeAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_SetServiceFeeAck = protobuf_to_dict(target)
+        json_output = json.dumps(message_SetServiceFeeAck, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 四、获取账户余额接口（GetAmountReq）
 
 1. 请求
-
-   ```
+   ```dict
    message GetAmountReq 
    {
        string version = 1;
@@ -147,73 +255,176 @@
 
    |  字段   |         说明         |
    | :-----: | :------------------: |
-   | version | 版本，目前暂时可为空 |
+   | version |          版本号        |
    | address |       钱包地址       |
 
 2. 响应
 
-   ```
+   ```dict
    message GetAmountAck 
    {
-       string version 		= 1;
-       sint32 code 		= 2;
-       string description 	= 3;
-   
-       string address 		= 4;
-       string balance 		= 5;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
+       string address = 4;
+       string balance = 5;
    }
    ```
 
    |    字段     |              说明               |
    | :---------: | :-----------------------------: |
-   |   version   |      版本，目前暂时可为空       |
+   |   version   |            版本号             |
    |    code     | 返回0为成功, -1为钱包地址不可用 |
    | description |        返回值的文字描述         |
    |   address   |            钱包地址             |
    |   balance   |              余额               |
+3. 代码示例
 
+```python
+# 获取账户余额接口（GetAmountReq）
+def GetAmountRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    ADDRESS = '13C4UmhB7tKGdXiJrp2GKsJtmCoJeqGJQz'
 
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetAmountReq()
+    addr.version = VERSION
+    addr.address = ADDRESS
 
-##  五、获取特定节点打包费接口（GetPacketFeeReq）
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetAmountReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777  # 结束标志位
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetAmountAck()
+    while True:
+        reply = pd.recv(4)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetAmountAck = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetAmountAck, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 五、获取特定节点打包费接口（GetPacketFeeReq）
 
 1. 请求
 
-   ```
+   ```dict
    message GetPacketFeeReq 
    {
-   	string version				= 1;					
-   	string password				= 2;					
-   	string public_net_ip		= 3;						
+   	string version = 1;					
+   	string password = 2;					
+   	string public_net_ip = 3;						
    }
    ```
 
    |     字段      |         说明         |
    | :-----------: | :------------------: |
-   |    version    | 版本，目前暂时可为空 |
+   |    version    |       版本号         |
    |   password    |       矿机密码       |
    | public_net_ip | 当前连接的的公网的ip |
 
 2. 响应
 
-   ```
+   ```dict
    message GetPacketFeeAck 
    {
-       string version 				= 1;
-       sint32 code 				= 2;
-       string description 			= 3;
-   
-       string packet_fee 			= 4;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
+       string packet_fee = 4;
    }
    ```
 
    |    字段     |         说明         |
    | :---------: | :------------------: |
-   |   version   | 版本，目前暂时可为空 |
+   |   version   |          版本号        |
    |    code     |        0成功         |
    | description |   返回值的文字描述   |
    | packet_fee  |        打包费        |
+3. 代码示例
 
+```python
+# 获取特定节点打包费接口（GetPacketFeeReq）
+def GetPacketFeeRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    PASSWORD = 12345678
+    PUBLIC_NET_IP = '47.108.52.94'
 
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetPacketFeeReq()
+    addr.version = VERSION
+    addr.password = str(PASSWORD)
+    addr.public_net_ip = PUBLIC_NET_IP
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetPacketFeeReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetPacketFeeAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetPacketFeeReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetPacketFeeReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
 
 ##  六、获得全网节点矿费接口（GetNodeServiceFeeReq）
 
@@ -267,40 +478,92 @@
 
 1. 请求
 
-   ```
+   ```dict
    message GetDevPasswordReq 
    {
-       string version 	= 1;
+       string version = 1;
        string password = 2;
    }
    ```
 
    |   字段   |         说明         |
    | :------: | :------------------: |
-   | version  | 版本，目前暂时可为空 |
+   | version  |        版本号         |
    | password |         密码         |
 
 2. 响应
 
-   ```
+   ```dict
    message GetDevPasswordAck 
    {
-       string version 		= 1;
-       sint32 code 		= 2;
-       string description 	= 3;
-   
-       string address 		= 4;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
+       string address = 4;
    }
    ```
 
    |    字段     |         说明         |
    | :---------: | :------------------: |
-   |   version   | 版本，目前暂时可为空 |
+   |   version   |       版本号         |
    |    code     |  0成功; -2 密码错误  |
    | description |   返回值的文字描述   |
    |   address   |       钱包地址       |
 
+3.代码示例
 
+```python
+# 根据密码获取钱包地址接口（GetDevPasswordReq）
+def GetDevPasswordRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    PASSWODR = 12345678
+
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetDevPasswordReq()
+    addr.version = VERSION
+    addr.password = str(PASSWODR)
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetDevPasswordReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetDevPasswordAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetDevPasswordReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetDevPasswordReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
 
 ##  八、从服务器端获得客户端相关信息接口（GetClientInfoReq）
 
@@ -428,59 +691,58 @@
 
 1. 请求
 
-   ```
+   ```dict
    message GetServiceInfoReq
    {
-   	string version 			= 1;
-   	string password 		= 2;	
-   	string public_net_ip 	= 3;
-    bool is_show 			= 4;
-	uint32      sequence_number         = 5;                       
+       string version = 1;
+       string password = 2;	
+       string public_net_ip = 3;
+       bool is_show = 4;
+       uint32 sequence_number = 5;                       
    }
    ```
 
    |     字段      |                         说明                          |
    | :-----------: | :---------------------------------------------------: |
-   |    version    |                 版本，目前暂时可为空                  |
+   |    version    |                 版本号                                |
    |   password    |               手机端密码(暂时不需要传)                |
    | public_net_ip |                      公网节点IP                       |
    |    is_show    | 非直连(通过矿机)公网节点 需要传true(club可忽视此参数) |
    |sequence_number|  请求的序列号 (请求的时候传入什么值就会返回什么值)    |
 2. 响应
 
-   ```
+   ```dict
    message GetServiceInfoAck
    {
-   	string version 							= 1;
-       sint32 code 							= 2;
-       string description 						= 3;
-   	string mac_hash 						= 4;
-   	string device_version 					= 5;
-   	repeated ServiceFee service_fee_info 	= 6;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
+       string mac_hash = 4;
+       string device_version = 5;
+       repeated ServiceFee service_fee_info = 6;
+       enum SyncStatus
+       {
+           TRUE = 0;
+           FALSE = 1;
+           FAIL = -1;	
+       }
    
-   	enum SyncStatus
-   	{
-   		TRUE 	= 0;
-   		FALSE 	= 1;
-   		FAIL 	= -1;	
-   	}
-   
-   	SyncStatus   is_sync 					= 7;
-	sint32       height          = 8;                       //矿机高度
-    uint32       sequence        = 9;                        //回应的序列号
+       SyncStatus is_sync = 7;
+       sint32 height = 8; //矿机高度
+       uint32 sequence = 9; //回应的序列号
    }
    message ServiceFee
    {
-   	string max_fee 		= 1;
-   	string min_fee 		= 2;
-   	string service_fee 	= 3;
-       string avg_fee 		= 4;
+       string max_fee = 1;
+       string min_fee = 2;
+       string service_fee = 3;
+       string avg_fee = 4;
    }
    ```
 
    |       字段       |                            说明                             |
    | :--------------: | :---------------------------------------------------------: |
-   |     version      |                    版本，目前暂时可为空                     |
+   |     version      |                                版本号                        |
    |       code       |   0为成功; -1 版本错误返回值的文字描述; -404 连接公网超时   |
    |   description    |                          返回描述                           |
    |     mac_hash     |                            废弃                             |
@@ -495,6 +757,65 @@
    |    SyncStatus    | 0 矿机与主网已同步; 1 矿机与主网未同步; -1 获取主网信息失败 |
    |     height       |    矿机高度或者公网高度(请求的是矿机就是矿机高度，请求的是公网就是公网高度)|                                                         |
    | sequence         |      请求端传入的序列号(请求端传入什么数据返回什么数据)|
+3. 代码示例
+
+```python
+# 获取平均手续费、同步状态等信息接口（GetServiceInfoReq）
+def GetServiceInfoRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    PASSWORD = 12345678
+    IS_SHOW = True
+    SEQUENCE_NUMBER = 1
+
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetServiceInfoReq()
+    addr.version = VERSION
+    addr.password = str(PASSWORD)
+    addr.public_net_ip = HOST
+    addr.is_show = IS_SHOW
+    addr.sequence_number = SEQUENCE_NUMBER
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetServiceInfoReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetServiceInfoAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetServiceInfoReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetServiceInfoReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
 
 ##  十一、发起交易接口（CreateTxMsgReq）
 
@@ -840,7 +1161,7 @@
 
 1. 请求
 
-   ```
+   ```dict
    message GetBlockInfoReq 
    {
        string version = 1;
@@ -851,61 +1172,61 @@
 
    |  字段   |         说明         |
    | :-----: | :------------------: |
-   | version | 版本，目前暂时可为空 |
+   | version |         版本号       |
    | height  |         高度         |
    |  count  |  一共需要查询的块数  |
 
 2. 响应
 
-   ```
+   ```dict
    message GetBlockInfoAck {
-       string version 						= 1;
-       sint32 code 						= 2;
-       string description 					= 3;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
    
        //data
-       uint64 top 							= 4; 
-       repeated BlockInfo block_info_list 	= 5;
-       uint64 tx_count 					= 6; 
+       uint64 top = 4; 
+       repeated BlockInfo block_info_list = 5;
+       uint64 tx_count = 6; 
    }
    message BlockInfo 
    {
-       sint32 height 						= 1;
-       string hash_merkle_root 			= 2;
-       string hash_prev_block 				= 3;
-       string block_hash 					= 4;
-       uint64 ntime 						= 5;
-       repeated TxInfo tx_info_list 		= 6;
-       string packet_fee 					= 7;
-       string packet_ip 					= 8;
+       sint32 height = 1;
+       string hash_merkle_root = 2;
+       string hash_prev_block = 3;
+       string block_hash = 4;
+       uint64 ntime = 5;
+       repeated TxInfo tx_info_list = 6;
+       string packet_fee = 7;
+       string packet_ip = 8;
    }
    message TxInfo 
    {
-       string tx_hash 						= 1;
-       repeated string transaction_signer 	= 2;
-       repeated TxVinInfo vin_list 		= 3;
-       repeated TxVoutInfo vout_list 		= 4;
-       uint64 nlock_time 					= 5;
-       string stx_owner 					= 6;
-       uint64 stx_owner_index 				= 7;
-       uint32 version 						= 8;
+       string tx_hash = 1;
+       repeated string transaction_signer = 2;
+       repeated TxVinInfo vin_list = 3;
+       repeated TxVoutInfo vout_list = 4;
+       uint64 nlock_time = 5;
+       string stx_owner = 6;
+       uint64 stx_owner_index = 7;
+       uint32 version = 8;
    }
    message TxVinInfo 
    {
-       string script_sig 					= 1;
-       string pre_vout_hash 				= 2;
-       uint64 pre_vout_index 				= 3;
+       string script_sig = 1;
+       string pre_vout_hash = 2;
+       uint64 pre_vout_index = 3;
    }
    message TxVoutInfo 
    {
-       string script_pubkey 				= 1;
-       string amount 						= 2;
+       string script_pubkey = 1;
+       string amount = 2;
    }
    ```
 
    |        字段        |               说明                |
    | :----------------: | :-------------------------------: |
-   |      version       |       版本，目前暂时可为空        |
+   |      version       |              版本号               |
    |        code        |              返回值               |
    |    description     |             返回描述              |
    |        top         |              块高度               |
@@ -933,77 +1254,133 @@
    |   script_pubkey    |             钱包地址              |
    |       amount       |               金额                |
 
+3.代码示例
 
+```python
+# 查询块信息接口（GetBlockInfoReq）
+def GetBlockInfoRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    HEIGHT = 1
+    COUNT = 5
 
-##  十六、根据钱包地址查询交易信息接口（GetAddrInfoReq）
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetBlockInfoReq()
+    addr.version = VERSION
+    addr.height = HEIGHT
+    addr.count = COUNT
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetBlockInfoReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetBlockInfoAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetBlockInfoReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetBlockInfoReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+
+```
+
+## 十六、根据钱包地址查询交易信息接口（GetAddrInfoReq）
 
 1. 请求
 
-   ```
+   ```dict
    message GetAddrInfoReq 
    {
-       string version 	= 1;
-       string address 	= 2;
-       uint32 index 	= 3;
-       uint32 count 	= 4;
+       string version = 1;
+       string address = 2;
+       uint32 index = 3;
+       uint32 count = 4;
    }
    ```
 
    |  字段   |              说明              |
    | :-----: | :----------------------------: |
-   | version |      版本，目前暂时可为空      |
+   | version |            版本号            |
    | address |            钱包地址            |
    |  index  | 查询第一个块的索引(第一次传-1) |
    |  count  |       一共需要查询的块数       |
 
 2. 响应
 
-   ```
+   ```dict
    message GetAddrInfoAck {
-       string version 						= 1;
-       sint32 code 						= 2;
-       string description 					= 3;
-       uint64 total 						= 4;
-       repeated BlockInfo block_info_list 	= 5;
+       string version = 1;
+       sint32 code = 2;
+       string description = 3;
+       uint64 total = 4;
+       repeated BlockInfo block_info_list = 5;
    }
    message BlockInfo 
    {
-       sint32 height 						= 1;
-       string hash_merkle_root 			= 2;
-       string hash_prev_block 				= 3;
-       string block_hash 					= 4;
-       uint64 ntime 						= 5;
-       repeated TxInfo tx_info_list 		= 6;
-       string packet_fee 					= 7;
-       string packet_ip 					= 8;
+       sint32 height = 1;
+       string hash_merkle_root = 2;
+       string hash_prev_block = 3;
+       string block_hash = 4;
+       uint64 ntime = 5;
+       repeated TxInfo tx_info_list = 6;
+       string packet_fee = 7;
+       string packet_ip = 8;
    }
    message TxInfo 
    {
-       string tx_hash 						= 1;
-       repeated string transaction_signer 	= 2;
-       repeated TxVinInfo vin_list 		= 3;
-       repeated TxVoutInfo vout_list 		= 4;
-       uint64 nlock_time 					= 5;
-       string stx_owner 					= 6;
-       uint64 stx_owner_index 				= 7;
-       uint32 version 						= 8;
+       string tx_hash = 1;
+       repeated string transaction_signer = 2;
+       repeated TxVinInfo vin_list = 3;
+       repeated TxVoutInfo vout_list = 4;
+       uint64 nlock_time = 5;
+       string stx_owner = 6;
+       uint64 stx_owner_index = 7;
+       uint32 version = 8;
    }
    message TxVinInfo 
    {
-       string script_sig 					= 1;
-       string pre_vout_hash 				= 2;
-       uint64 pre_vout_index 				= 3;
+       string script_sig = 1;
+       string pre_vout_hash = 2;
+       uint64 pre_vout_index = 3;
    }
    message TxVoutInfo 
    {
-       string script_pubkey 				= 1;
-       string amount 						= 2;
+       string script_pubkey = 1;
+       string amount = 2;
    }
    ```
 
    |        字段        |                           说明                            |
    | :----------------: | :-------------------------------------------------------: |
-   |      version       |                   版本，目前暂时可为空                    |
+   |      version       |                        版本号                            |
    |        code        | 0 为成功; -1 获取失败 没有交易块产生; -2 起始索引超出范围 |
    |    description     |                         返回描述                          |
    |       total        |                         返回总数                          |
@@ -1030,7 +1407,66 @@
    |   script_pubkey    |                         钱包地址                          |
    |       amount       |                           金额                            |
 
+3.代码示例
 
+```python
+# 根据钱包地址查询交易信息接口（GetAddrInfoReq）
+def GetAddrInfoRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    ADDRESS = '13C4UmhB7tKGdXiJrp2GKsJtmCoJeqGJQz'
+    INDEX = 1
+    COUNT = 5
+
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetAddrInfoReq()
+    addr.version = VERSION
+    addr.address = ADDRESS
+    addr.index = INDEX
+    addr.count = COUNT
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetAddrInfoReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    # print('Splicing_String"', Splicing_String)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetAddrInfoAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetAddrInfoReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetAddrInfoReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+
+```
 
 ##  十七、获取矿机公私钥助记词请求（GetDevPrivateKeyReq）
 
@@ -1424,13 +1860,13 @@
 
 1. 请求
 
-   ```
+   ```dict
    message GetTxInfoListReq
    {
-       string version 			= 1; 
-       string addr 			= 2; 
-       uint32 index 			= 3; 
-       uint32 count 			= 4; 
+       string version = 1; 
+       string addr = 2; 
+       uint32 index = 3; 
+       uint32 count = 4; 
    }
    ```
 
@@ -1443,30 +1879,30 @@
 
 2. 响应
 
-   ```
+   ```dict
    message GetTxInfoListAck
    {
-       string version 				= 1;
-       int32 code 					= 2;
-       string description 			= 3;
-       repeated TxInfoItem list 	= 4; 
-       uint32 total 				= 5; 
+       string version = 1;
+       int32 code = 2;
+       string description = 3;
+       repeated TxInfoItem list = 4; 
+       uint32 total = 5; 
    }
    message TxInfoItem
    {
-       TxInfoType type 			= 1;
-       string txhash 				= 2; 
-       uint64 time 				= 3; 
-       string amount 				= 4; 
+       TxInfoType type = 1;
+       string txhash = 2; 
+       uint64 time = 3; 
+       string amount = 4; 
    }
    enum TxInfoType {
-       TxInfoType_Unknown 			= 0;
-       TxInfoType_Originator 		= 1; 
-       TxInfoType_Receiver  		= 2; 
-       TxInfoType_Gas 				= 3;
-       TxInfoType_Award 			= 4; 
-       TxInfoType_Pledge 			= 5;
-       TxInfoType_RedeemPledge 	= 6; 
+       TxInfoType_Unknown = 0;
+       TxInfoType_Originator = 1; 
+       TxInfoType_Receiver = 2; 
+       TxInfoType_Gas = 3;
+       TxInfoType_Award = 4; 
+       TxInfoType_Pledge = 5;
+       TxInfoType_RedeemPledge = 6; 
    }
    ```
 
@@ -1489,18 +1925,75 @@
    |    TxInfoType_Pledge    |                             质押                             |
    | TxInfoType_RedeemPledge |                           解除质押                           |
 
+3.代码示例
 
+```python
+# 获得交易信息列表请求（GetTxInfoListReq）
+def GetTxInfoListRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    ADDRESS = '13C4UmhB7tKGdXiJrp2GKsJtmCoJeqGJQz'
+    INDEX = 1
+    COUNT = 5
 
-##  二十四、获得交易详情接口（GetTxInfoDetailReq）
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetTxInfoListReq()
+    addr.version = VERSION
+    addr.addr = ADDRESS
+    addr.index = INDEX
+    addr.count = COUNT
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetTxInfoListReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetTxInfoListAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetTxInfoListReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetTxInfoListReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 二十四、获得交易详情接口（GetTxInfoDetailReq）
 
 1. 请求
 
-   ```
+   ```dict
    message GetTxInfoDetailReq
    {
-       string version 	= 1; 
-       string txhash 	= 2; 
-       string addr 	= 3; 
+       string version = 1; 
+       string txhash = 2; 
+       string addr = 3; 
    }
    ```
 
@@ -1512,22 +2005,24 @@
 
 2. 响应
 
-   ```
+   ```dict
    message GetTxInfoDetailAck
    {
-       string version 				= 1; 
-       int32 code 					= 2; 
-       string description 			= 3;
-       string blockhash 			= 4; 
-       uint32 blockheight 			= 5; 
-       string txhash 				= 6;
-       uint64 time 				= 7; 
-       repeated string fromaddr 	= 8; 
-       repeated string toaddr 		= 9; 
-       string gas 					= 10; 
-       string amount 				= 11;
-       string awardGas 			= 12; 
-       string awardAmount 			= 13;
+       string version = 1; 
+       int32 code = 2; 
+       string description = 3;
+       string blockhash = 4; 
+       uint32 blockheight = 5; 
+       string txhash = 6;
+       uint64 time = 7; 
+   
+       repeated string fromaddr = 8; 
+       repeated string toaddr = 9; 
+   
+       string gas = 10; 
+       string amount = 11;
+       string awardGas = 12; 
+       string awardAmount = 13;
    }
    ```
 
@@ -1547,18 +2042,73 @@
    |  awardGas   |                         获得奖励Gas                          |
    | awardAmount |                           区块奖励                           |
 
+3.代码示例
 
+```python
+# 获得交易详情接口（GetTxInfoDetailReq）
+def GetTxInfoDetailRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    TXHASH = 'ae32299aebe597985c62dff443f7d73925367ddb52de9c23eefe8ef1736587e0'
+    ADDR = '1Aw58713G6hSAJ9iiiX1JZhRrudbPSCDhK'
 
-##  二十五、获得区块列表接口（GetBlockInfoListReq）
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDRS = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDRS)
+    # 发送数据
+    addr = protobuf_pb2.GetTxInfoDetailReq()
+    addr.version = VERSION
+    addr.txhash = TXHASH
+    addr.addr = ADDR
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetTxInfoDetailReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetTxInfoDetailAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetServiceInfoReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetServiceInfoReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 二十五、获得区块列表接口（GetBlockInfoListReq）
 
 1. 请求
 
-   ```
+   ```dict
    message GetBlockInfoListReq
    {
-       string version 				= 1;
-       uint32 index 				= 2;
-       uint32 count 				= 3;
+       string version = 1;
+       uint32 index = 2;
+       uint32 count = 3;
    }
    ```
 
@@ -1570,26 +2120,26 @@
 
 2. 响应
 
-   ```
+   ```dict
    message GetBlockInfoListAck
    {
-       string version 				= 1; 
-       int32 code 					= 2; 
-       string description 			= 3;
-       uint32 top 					= 4; 
-       uint32 txcount 				= 5; 
+       string version = 1; 
+       int32 code = 2; 
+       string description = 3;
+       uint32 top = 4; 
+       uint32 txcount = 5; 
        repeated BlockInfoItem list = 6; 
    }
    
    message BlockInfoItem
    {
-       string blockhash 			= 1;
-       uint32 blockheight 			= 2;
-       uint64 time 				= 3;
-       string txHash 				= 4;
-       repeated string fromAddr 	= 5;
-       repeated string toAddr 		= 6; 
-       string amount  				= 7; 
+       string blockhash = 1;
+       uint32 blockheight = 2;
+       uint64 time = 3;
+       string txHash = 4;
+       repeated string fromAddr = 5;
+       repeated string toAddr = 6; 
+       string amount = 7; 
    } 
    
    ```
@@ -1610,17 +2160,72 @@
    |   toAddr    |                          接收方地址                          |
    |   amount    |                            交易额                            |
 
+3.代码示例
 
+```python
+# 获得区块列表接口（GetBlockInfoListReq）
+def GetBlockInfoListRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    INDEX = 1
+    COUNT = 5
 
-##  二十六、获得区块详情请求（GetBlockInfoDetailReq）
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetBlockInfoListReq()
+    addr.version = VERSION
+    addr.index = INDEX
+    addr.count = COUNT
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetBlockInfoListReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetBlockInfoListAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetBlockInfoListReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetBlockInfoListReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
+
+## 二十六、获得区块详情请求（GetBlockInfoDetailReq）
 
 1. 请求
 
-   ```
+   ```dict
    message GetBlockInfoDetailReq
    {
-       string version 		= 1;
-       string blockhash 	= 2;
+       string version = 1;
+       string blockhash = 2;
    }
    ```
 
@@ -1631,35 +2236,35 @@
 
 2. 响应
 
-   ```
+   ```dict
    message GetBlockInfoDetailAck
    {
-       string version 								= 1;
-       int32 code 									= 2; 
-       string description 							= 3;
+       string version = 1;
+       int32 code = 2; 
+       string description = 3;
    
-       string blockhash 							= 4;
-       uint32 blockheight 							= 5;
-       string merkleRoot 							= 6; 
-       string prevHash 							= 7; 
-       uint64 time 								= 8;
-       string tatalAmount 							= 9; 
+       string blockhash = 4;
+       uint32 blockheight = 5;
+       string merkleRoot = 6; 
+       string prevHash = 7; 
+       uint64 time = 8;
+       string tatalAmount = 9; 
    
-       repeated string signer 						= 10;
-       repeated BlockInfoOutAddr blockInfoOutAddr	= 11;
+       repeated string signer = 10;
+       repeated BlockInfoOutAddr blockInfoOutAddr = 11;
    }
    
    message BlockInfoOutAddr
    {
-       string addr 								= 1;
-       string amount 								= 2; 
+       string addr = 1;
+       string amount = 2; 
    }
    ```
 
    |       字段       |                             说明                             |
    | :--------------: | :----------------------------------------------------------: |
    |     version      |                            版本号                            |
-   |       code       | 返回错误码  0 成功; -1 版本不兼容; -2 读取数据失败; -3 获得区块失败 |
+   |       code       | 返回错误码 0 成功; -1 版本不兼容; -2 读取数据失败; -3 获得区块失败 |
    |   description    |                         返回错误信息                         |
    |    blockhash     |                           区块哈希                           |
    |   blockheight    |                           区块高度                           |
@@ -1671,3 +2276,59 @@
    | blockInfoOutAddr |                            交易额                            |
    |       addr       |                          接收方地址                          |
    |      amount      |                           接收金额                           |
+
+3.代码示例
+
+```python
+# 获得区块详情请求（GetBlockInfoDetailReq）
+def GetBlockInfoDetailRequest():
+    # 固定参数(参数可修改)
+    HOST = '192.168.1.141'
+    PORT = 11187
+    VERSION = '1_1.3_p'
+    # BLOCKHASH = '035a73e3b4998a6b6655b8226056d96037c2f5e87451fa7d4bfe868f462e4a3b'
+    BLOCKHASH = 'efbb962803348012719f6260c60c30e0a561c31fe0f85737f1aa27a049da9253'
+
+    # 创建socket请求
+    pd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    # 连接服务器
+    pd.connect(ADDR)
+    # 发送数据
+    addr = protobuf_pb2.GetBlockInfoDetailReq()
+    addr.version = VERSION
+    addr.blockhash = BLOCKHASH
+
+    common = protobuf_pb2.CommonMsg()
+    common.version = VERSION
+    common.type = 'GetBlockInfoDetailReq'
+    # 序列化
+    common.data = addr.SerializeToString()
+    sendData = common.SerializeToString()
+    # 获取协议总长度
+    data_len = len(sendData) + 4 + 4
+    data_len_ = ('<i%dsIi' % (data_len - 8))
+    end_flag = 7777777
+
+    # 拼接消息
+    Splicing_String = struct.pack(data_len_, data_len, sendData, adler32(sendData), end_flag)
+    pd.send(Splicing_String)
+    target = protobuf_pb2.GetBlockInfoDetailAck()
+    while True:
+        reply = pd.recv(4)
+        time.sleep(0.1)
+        # 接收前四个字节，解析数据长度
+        test = int.from_bytes(reply, byteorder='little')
+        # 根据数据长度再次接收数据
+        reply2 = pd.recv(test)
+        # 将接收到的数据的最后8字节删除,最后8字节的内容是校验和、end_flag
+        reply3 = reply2[:(test - 8)]
+        # 反序列化reply3
+        common.ParseFromString(reply3)
+        target.ParseFromString(common.data)
+        # 格式化数据，并转为字典格式
+        message_GetBlockInfoDetailReq = protobuf_to_dict(target)
+        json_output = json.dumps(message_GetBlockInfoDetailReq, indent=4, ensure_ascii=False)
+        # 返回json数据
+        return json_output
+```
