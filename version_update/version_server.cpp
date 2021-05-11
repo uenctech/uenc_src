@@ -2,7 +2,7 @@
 
 
 
-
+//判断是否是版本服务器
 bool Version_Server::is_version_server()
 {
     std::ifstream fconf;
@@ -92,7 +92,7 @@ bool Version_Server::write_file(const std::string &filename)
 
 bool Version_Server::NewFile(const string &strFile)
 {
-    
+    // 如果文件存在 创建会覆盖原文件
     ofstream file( strFile.c_str(), fstream::out );
     if( file.fail() )
     {
@@ -125,7 +125,7 @@ bool Version_Server::is_update(const node_version_info &version)
     }    
 }
 
-
+//更新配置文件
 bool Version_Server::update_configFile(const node_version_info &version)
 {
     m_Json[version.mac][version.local_ip] = version.version;
@@ -142,7 +142,7 @@ bool Version_Server::update_configFile(const node_version_info &version)
     }  
 }
 
-
+//如果节点版本不是最新，发送最新版本号和url资源地址,以及hash值(用来验证数据的完整性)
 string Version_Server::get_latest_version_info()
 {
     latest_version_info info;

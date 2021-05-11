@@ -61,8 +61,6 @@ void AwardAlgorithm::TestPrint(bool lable) {
 //class s+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //额外奖励 奖励额(e.g 1000万)/365/24/12/in_minutes_deal 交易笔数档位(e.g 0-20 21-40 2的N次方)
 AwardAlgorithm::AwardAlgorithm() : need_verify_count(0), award_pool(0.0), sign_amount(0) {
-    // this->now_time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
-    // this->now_time = now_time == 0 ? time(0) : now_time / 1000000;
 }
 
 int AwardAlgorithm::Build(uint need_verify_count, 
@@ -72,7 +70,7 @@ int AwardAlgorithm::Build(uint need_verify_count,
                         const std::vector<uint64_t> &vec_sign_sum) 
 {
     
-    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getTimestamp();
+    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
     uint64_t maxOnline = nowTime > firstBlockTime ? nowTime - firstBlockTime : 0;
     if (maxOnline == 0) 
     {

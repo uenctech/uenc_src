@@ -18,6 +18,12 @@ TxFailureCache::TxFailureCache()
 
 bool TxFailureCache::Add(const TxVinCache::Tx& failureTx)
 {
+    static const size_t MAX_BUFF_SIZE = 1000;
+    if (failure_tx_.size() >= MAX_BUFF_SIZE)
+    {
+        failure_tx_.clear();
+    }
+
     failure_tx_.insert(failureTx);
     cout << "Add to failure transaction list ^^^^^VVVVV " << (failureTx.from.size() > 0 ? failureTx.from[0] : "") << endl;
 
@@ -90,7 +96,7 @@ void TxFailureCache::test()
     tx1.to.push_back("1HjrxHbBuuyNQDwKMh4JtqfuGiDCLodEwC");
     tx1.toAmount.push_back("10");
     tx1.amount = "10";
-    tx1.timestamp = Singleton<TimeUtil>::get_instance()->getTimestamp() + 10;
+    tx1.timestamp = Singleton<TimeUtil>::get_instance()->getlocalTimestamp() + 10;
     tx1.gas = "0.05";
     tx1.type = 0;
 
@@ -100,7 +106,7 @@ void TxFailureCache::test()
     tx2.to.push_back("1BZDmxGwik9EAjnu2BzvWrDsQj8gSbmLJc");
     tx2.toAmount.push_back("20");
     tx2.amount = "20";
-    tx2.timestamp = Singleton<TimeUtil>::get_instance()->getTimestamp() + 20;
+    tx2.timestamp = Singleton<TimeUtil>::get_instance()->getlocalTimestamp() + 20;
     tx2.gas = "0.06";
     tx2.type = 1;
 
@@ -110,7 +116,7 @@ void TxFailureCache::test()
     tx3.to.push_back("1MDZgtabZNDSum2tSDxDaFTp2CJnTNvBUR");
     tx3.toAmount.push_back("30");
     tx3.amount = "30";
-    tx3.timestamp = Singleton<TimeUtil>::get_instance()->getTimestamp() + 30;
+    tx3.timestamp = Singleton<TimeUtil>::get_instance()->getlocalTimestamp() + 30;
     tx3.gas = "0.07";
     tx3.type = 2;
 

@@ -38,17 +38,21 @@ message SyncVerifyPledgeNodeAck
 	repeated string ids         = 1;
 }
 
-// 获取节点bestchain信息
+// 获取节点区块信息
 message SyncGetnodeInfoReq
 {
-    SyncHeaderMsg syncHeaderMsg = 1;						
+    SyncHeaderMsg syncHeaderMsg = 1;
+	uint64 height               = 2;    // 请求节点高度
+	uint64 syncNum              = 3;    // 同步数量
 }
-// 返回节点bestchain信息
+// 返回节点区块信息
 message SyncGetnodeInfoAck
 {
     SyncHeaderMsg syncHeaderMsg = 1;
-    uint64 		  height		= 2;
-    bytes 		  hash			= 3;
+    uint64 		  height		= 2;        // top
+    bytes 		  hash			= 3;        // bestchain hash
+	bytes         checkHashForward  = 4;    // top前部分块的分组之后的hash
+	bytes         checkHashBackward = 5;    // top后部分块的分组之后的hash
 }
 
 // 验证节点是否合法
@@ -72,7 +76,9 @@ message SyncBlockInfoReq
     SyncHeaderMsg syncHeaderMsg      = 1;						// 通用同步头
     uint64 		  height		     = 2;						// 本节点bestchain的height
     repeated CheckHash   checkhash   = 3;  
-	uint64         max_num         = 4;
+	uint64        max_num            = 4;                       // 同步块数
+	uint64        max_height         = 5;                       // 同步最高高度
+	string        id                 = 6;                       //请求的节点
 }
 // 接收到的块数据，用于同步加块
 message SyncBlockInfoAck
@@ -100,12 +106,13 @@ message SyncLoseBlockAck
 /*************************************交易相关协议*************************************/
 message SignNodeMsg
 {
-	bytes  signMsg              = 1;                 // 签名节点签名信息
-	bytes  signPubKey            = 2;                // 签名者公钥
-	string gasFee               = 3;                 // 签名所需燃油费
-	double onlineTime           = 4;                 // 矿机在线时长
-	uint64 awardTotal           = 5;                 // 获得的总奖励
-	uint64 signSum              = 6;                 // 总签名次数
+	string id					= 1;				 // 签名节点id
+	bytes signMsg				= 2;                 // 签名节点签名信息
+	bytes signPubKey            = 3;                 // 签名者公钥
+	string gasFee               = 4;                 // 签名所需燃油费
+	double onlineTime           = 5;                 // 矿机在线时长
+	uint64 awardTotal           = 6;                 // 获得的总奖励
+	uint64 signSum              = 7;                 // 总签名次数
 }
 
 // PC端交易信息体
@@ -113,16 +120,24 @@ message TxMsg
 {
 	string       version        = 1;                        // 版本					
 	bytes		 id 			= 2;						// id
-	bytes 		 Tx				= 3;						// 交易信息
+	bytes 		 tx				= 3;						// 交易信息
 	string       txEncodeHash   = 4;                        // 交易信息体base64之后sha256的hash值
 	repeated SignNodeMsg signNodeMsg = 5;                   // 签名账户燃油费矿机在线时间签名节点签名信息
-    uint64 		  top           = 6;
+    uint64 		 top            = 6;                        // 发起交易节点高度值
+	string       prevBlkHash    = 7;                        // 父块hash
+	int32 		 tryCountDown	= 8;						// 尝试次数
 }
 
 message BuileBlockBroadcastMsg
 {
 	string       version        = 1;                        // 版本					
 	bytes 		blockRaw		= 2;						// 块信息
+}
+
+message TxPendingBroadcastMsg
+{
+    string version = 1; // 版本
+    bytes txRaw = 2; // 交易信息
 }
 
 
@@ -143,5 +158,26 @@ message GetDevInfoAck
 	string base58addr           = 5;                        // 本地默认账户的base58地址
 }
 
+/***************************验证交易确认接口*************************************/
+enum ConfirmCacheFlag
+{
+  ConfirmUnknownFlag = 0;
+  ConfirmTxFlag = 1;
+  ConfirmRpcFlag = 2;
+}
 
+message ConfirmTransactionReq {
+  string version = 1;
+  string id = 2;
+  string tx_hash = 3;
+  ConfirmCacheFlag flag = 4;
+}
 
+message ConfirmTransactionAck {
+  string version = 1;
+  string id = 2;
+  string tx_hash = 3;
+  ConfirmCacheFlag flag = 4;
+  bool success = 5;
+  bytes block_raw = 6;
+}

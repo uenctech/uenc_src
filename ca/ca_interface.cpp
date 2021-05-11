@@ -30,15 +30,12 @@
 #include "../include/cJSON.h"
 #include "ca_test.h"
 #include "ca_device.h"
-#ifndef _CA_FILTER_FUN_
 #include "../include/net_interface.h"
 #include "../include/logging.h"
 #include "ca_base64.h"
 #include "../include/ScopeGuard.h"
 #include "ca_pwdattackchecker.h"
 #include "ca_txvincache.h"
-#endif
-
 #include <thread>
 #include "ca_rocksdb.h"
 #include<sstream>
@@ -51,6 +48,7 @@
 #include "ca.h"
 #include "ca_txhelper.h"
 #include "../utils/time_util.h"
+#include "../utils/util.h"
 
 int senddata(int fdnum);
 
@@ -138,75 +136,6 @@ void interface_Init(const char *path)
     InitAccount(&g_AccountInfo, path);
 }
 
-
-void RegisterCallback()
-{
-    net_register_callback<SyncGetnodeInfoReq>(HandleSyncGetnodeInfoReq);
-    net_register_callback<SyncGetnodeInfoAck>(HandleSyncGetnodeInfoAck);
-    net_register_callback<SyncBlockInfoReq>(HandleSyncBlockInfoReq);
-    net_register_callback<SyncBlockInfoAck>(HandleSyncBlockInfoAck);
-    net_register_callback<VerifyReliableNodeReq>(HandleVerifyReliableNodeReq);
-    net_register_callback<VerifyReliableNodeAck>(HandleVerifyReliableNodeAck);
-    net_register_callback<SyncLoseBlockReq>(HandleSyncLoseBlockReq);
-    net_register_callback<SyncLoseBlockAck>(HandleSyncLoseBlockAck);
-    net_register_callback<SyncGetPledgeNodeReq>(HandleSyncGetPledgeNodeReq);
-    net_register_callback<SyncGetPledgeNodeAck>(HandleSyncGetPledgeNodeAck);
-    net_register_callback<SyncVerifyPledgeNodeReq>(HandleSyncVerifyPledgeNodeReq);
-    net_register_callback<SyncVerifyPledgeNodeAck>(HandleSyncVerifyPledgeNodeAck);
-
-    // PC交易
-    net_register_callback<TxMsg>(HandleTx);
-
-    // 手机端交易
-    net_register_callback<TxMsgReq>(HandlePreTxRaw);
-    net_register_callback<CreateTxMsgReq>(HandleCreateTxInfoReq);
-
-
-    // 手机连接矿机交易
-    net_register_callback<VerifyDevicePasswordReq>(HandleVerifyDevicePassword);
-    net_register_callback<CreateDeviceTxMsgReq>(HandleCreateDeviceTxMsgReq);
-
-    net_register_callback<BuileBlockBroadcastMsg>(HandleBuileBlockBroadcastMsg);
-    
-    // 测试接口注册
-    net_register_callback<GetDevInfoAck>(HandleGetDevInfoAck);
-    net_register_callback<GetDevInfoReq>(HandleGetDevInfoReq);
-    
-}
-
-void Init(const char *path)
-{ 
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-
-    uint64_t publicNodePackageFee = 0;
-    if( pRocksDb->GetDevicePackageFee(publicNodePackageFee) != 0 )
-    {
-        assert( pRocksDb->SetDevicePackageFee(publicNodePackageFee) == 0 );
-    }
-    //publicNodePackageFee = 20000;
-    net_set_self_package_fee(publicNodePackageFee);
-    uint64_t minfee = 0;
-	pRocksDb->GetDeviceSignatureFee( minfee );
-    if(minfee == 0)
-    {
-        minfee = 0;
-        pRocksDb->SetDeviceSignatureFee(minfee);
-    }
-    //mineSignatureFee = 10000;
-    net_set_self_fee(minfee); 
-
-    // 向网络层注册主账号地址
-    net_set_self_base58_address(g_AccountInfo.DefaultKeyBs58Addr);
-    ca_console RegisterColor(kConsoleColor_Yellow, kConsoleColor_Black, true);
-    std::cout << RegisterColor.color().c_str() << "RegisterCallback bs58Addr : " << g_AccountInfo.DefaultKeyBs58Addr << RegisterColor.reset().c_str() << std::endl;
-
-    // 向网络层注册接口
-    RegisterCallback();
-
-    g_phone = false;
-}
-
-
 int CreateTx(const char* From, const char * To, const char * amt, const char *ip, uint32_t needVerifyPreHashCount, std::string minerFees)
 {
     info("CreateTx ===== 1");
@@ -250,482 +179,6 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
     TxHelper::DoCreateTx(fromAddr,toAddrAmount, needVerifyPreHashCount, minerFeesConvert);
     return 0;
 }
-
-int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & amount_str, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string password, const MsgData &msgdata, std::string pledgeType)
-{
-    TxMsgAck phoneControlDevicePledgeTxAck;
-    phoneControlDevicePledgeTxAck.set_version(getVersion());
-    phoneControlDevicePledgeTxAck.set_code(0);
-
-    uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
-    uint64_t amount = std::stod(amount_str) * DECIMAL_NUM;
-    if(fromAddr.size() <= 0 || amount <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0)
-    {
-        phoneControlDevicePledgeTxAck.set_code(-101);
-        phoneControlDevicePledgeTxAck.set_message("CreatePledgeFromAddr parameter error!");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        error("CreatePledgeFromAddr parameter error!");
-        return -101;
-    }
-
-    // 判断矿机密码是否正确
-    std::string hashOriPass = generateDeviceHashPassword(password);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
-    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
-  
-    uint32_t minutescount ;
-    bool retval = pCPwdAttackChecker->IsOk(minutescount);
-    if(retval == false)
-    {
-        std::string minutescountStr = std::to_string(minutescount);
-        phoneControlDevicePledgeTxAck.set_code(-31);
-        phoneControlDevicePledgeTxAck.set_message(minutescountStr);
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
-        return -1;
-    }
-
-    if(hashOriPass.compare(targetPassword))
-    {
-        cout<<"输入密码错误开始记录次数"<<endl;
-       if(pCPwdAttackChecker->Wrong())
-       {
-            cout<<"输入密码错误"<<endl;
-            phoneControlDevicePledgeTxAck.set_code(-104);
-            phoneControlDevicePledgeTxAck.set_message("密码输入错误");
-            net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-            return -104;
-       }
-       else
-       {
-            phoneControlDevicePledgeTxAck.set_code(-30);
-            phoneControlDevicePledgeTxAck.set_message("第三次输入密码错误");
-            net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-            return -30;
-       }   
-    }
-    else 
-    {
-        cout<<"输入密码成功重置为0"<<endl;
-        pCPwdAttackChecker->Right();
-        // phoneControlDevicePledgeTxAck.set_code(0);
-        // phoneControlDevicePledgeTxAck.set_message("密码输入成功");
-        // net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-    }
-
-    if (hashOriPass != targetPassword) 
-    {
-        phoneControlDevicePledgeTxAck.set_code(-104);
-        phoneControlDevicePledgeTxAck.set_message("password error!");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        error("password error!");
-        return -104;
-    }
-
-
-    vector<string> Addr;
-	Addr.push_back(fromAddr);
-	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
-	{
-		cout<<"CreatePledgeTransaction"<<endl;
-		phoneControlDevicePledgeTxAck.set_code(-20);
-		phoneControlDevicePledgeTxAck.set_message("The addr has being pengding Is Conflict!");
-		net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-		
-		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
-		return -107;
-	}
-
-    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if ( txn == NULL )
-	{
-        phoneControlDevicePledgeTxAck.set_code(-102);
-        phoneControlDevicePledgeTxAck.set_message("TransactionInit failed !");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-		std::cout << "(CreatePledgeTransaction) TransactionInit failed !" << std::endl;
-		return -102;
-	}
-
-	ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, false);
-	};
-
-    std::vector<string> utxos;
-    pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
-
-    CTransaction outTx;
-    bool isTrue = FindUtxosFromRocksDb(fromAddr, VIRTUAL_ACCOUNT_PLEDGE, amount, needVerifyPreHashCount, GasFee, outTx);
-	if(!isTrue)
-	{
-        phoneControlDevicePledgeTxAck.set_code(-103);
-        phoneControlDevicePledgeTxAck.set_message("CreatePledge Error !");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-		error("CreatePledge Error ...\n");
-		return -103;
-	}
-
-    nlohmann::json txInfo;
-    txInfo["PledgeType"] = pledgeType;
-    txInfo["PledgeAmount"] = amount;
-
-    nlohmann::json extra;
-    extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-    extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
-    extra["TransactionType"] = TXTYPE_PLEDGE;
-    extra["TransactionInfo"] = txInfo;
-
-    outTx.set_extra(extra.dump());
-
-    for (int i = 0; i < outTx.vin_size(); i++)
-	{
-		CTxin * txin = outTx.mutable_vin(i);;
-		txin->clear_scriptsig();
-	}
-
-	std::string serTx = outTx.SerializeAsString();
-
-	size_t encodeLen = serTx.size() * 2 + 1;
-	unsigned char encode[encodeLen] = {0};
-	memset(encode, 0, encodeLen);
-	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
-	std::string encodeStr( (char *)encode, codeLen );
-
-	std::string encodeStrHash = getsha256hash(encodeStr);
-
-    if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
-    {
-        phoneControlDevicePledgeTxAck.set_code(-104);
-        phoneControlDevicePledgeTxAck.set_message("Illegal account !");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        std::cout << "非法账号" << std::endl;
-        return -105;
-    }
-
-	std::string signature;
-	std::string strPub;
-	GetSignString(encodeStrHash, signature, strPub);
-
-	for (int i = 0; i < outTx.vin_size(); i++)
-	{
-		CTxin * txin = outTx.mutable_vin(i);
-		txin->mutable_scriptsig()->set_sign(signature);
-		txin->mutable_scriptsig()->set_pub(strPub);
-	}
-
-	serTx = outTx.SerializeAsString();
-	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
-
-	TxMsg txMsg;
-    txMsg.set_version( getVersion() );
-	txMsg.set_tx( txstrtmp );
-	txMsg.set_txencodehash( encodeStrHash );
-
-	unsigned int top = 0;
-	int db_status = pRocksDb->GetBlockTop(txn, top);
-    if (db_status) 
-    {
-        std::cout << __LINE__ << std::endl;
-        phoneControlDevicePledgeTxAck.set_code(-23);
-        phoneControlDevicePledgeTxAck.set_message("data Error!");
-        net_send_message<TxMsgAck>(msgdata, phoneControlDevicePledgeTxAck);
-        return -106;
-    }	
-	txMsg.set_top(top);
-
-	auto msg = make_shared<TxMsg>(txMsg);
-	HandleTx( msg, msgdata );
-	cstr_free(txstr, true);
-
-    return 0;
-}
-
-// Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
-int IsMoreThan30DaysForRedeem(const std::string& utxo)
-{
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if (txn == NULL)
-	{
-		return -1;
-	}
-
-    ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, false);
-	};
-
-    std::string strTransaction;
-    int db_status = pRocksDb->GetTransactionByHash(txn, utxo, strTransaction);
-    if (db_status != 0)
-    {
-        return -1;
-    }
-
-    CTransaction utxoPledge;
-    utxoPledge.ParseFromString(strTransaction);
-    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getTimestamp();
-    static const uint64_t DAYS30 = (uint64_t)1000000 * 60 * 60 * 24 * 30;
-    if ((nowTime - utxoPledge.time()) >= DAYS30)
-    {
-        return 0;
-    }
-    else
-    {
-        return -1;
-    }
-}
-
-int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, const MsgData &msgdata)
-{
-    TxMsgAck txMsgAck;
-    txMsgAck.set_version(getVersion());
-    txMsgAck.set_code(0);
-
-    // 参数判断
-    uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
-    if(fromAddr.size() <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0 || utxo.empty())
-    {
-        txMsgAck.set_code(-1);
-        txMsgAck.set_message("CreateRedeemTransaction FromAddr parameter error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("CreateRedeemTransaction FromAddr parameter error!");
-        return -1;
-    }
-
-    // 判断矿机密码是否正确
-    std::string hashOriPass = generateDeviceHashPassword(password);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
-    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
-  
-    uint32_t minutescount ;
-    bool retval = pCPwdAttackChecker->IsOk(minutescount);
-    if(retval == false)
-    {
-        std::string minutescountStr = std::to_string(minutescount);
-        txMsgAck.set_code(-31);
-        txMsgAck.set_message(minutescountStr);
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
-        return -12;
-    }
-
-    if(hashOriPass.compare(targetPassword))
-    {
-        cout<<"输入密码错误开始记录次数"<<endl;
-       if(pCPwdAttackChecker->Wrong())
-       {
-            cout<<"输入密码错误"<<endl;
-            txMsgAck.set_code(-9);
-            txMsgAck.set_message("密码输入错误");
-            net_send_message<TxMsgAck>(msgdata, txMsgAck);
-            return -9;
-       } 
-       else
-       {
-            txMsgAck.set_code(-30);
-            txMsgAck.set_message("第三次输入密码错误");
-            net_send_message<TxMsgAck>(msgdata, txMsgAck);
-            return -30;
-       }
-    }
-    else 
-    {
-        cout<<"重置为0"<<endl;
-        pCPwdAttackChecker->Right();
-        // txMsgAck.set_code(0);
-        // txMsgAck.set_message("密码输入成功");
-        // net_send_message<TxMsgAck>(msgdata, txMsgAck);
-    }
-
-    
-    if (hashOriPass != targetPassword) 
-    {
-        txMsgAck.set_code(-9);
-        txMsgAck.set_message("password error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("password error!");
-        return -9;
-    }
-
-    vector<string> Addr;
-	Addr.push_back(fromAddr);
-	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
-	{
-		cout<<"IsConflict CreateRedeemTransaction"<<endl;
-		txMsgAck.set_code(-20);
-		txMsgAck.set_message("The addr has being pengding!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		
-		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
-		return -13;
-	}
-
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if( txn == NULL )
-	{
-        txMsgAck.set_code(-2);
-        txMsgAck.set_message("TransactionInit failed !");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("(FindUtxosFromRocksDb) TransactionInit failed !");
-		return -2;
-	}
-
-    ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, false);
-	};
-
-    // 查询账号是否已经质押资产
-    std::vector<string> addresses;
-    int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
-    if(db_status != 0)
-    {
-        txMsgAck.set_code(-3);
-        txMsgAck.set_message("GetPledgeAddress error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("GetPledgeAddress error!");
-        return -3;
-    }
-    auto iter = find(addresses.begin(), addresses.end(), fromAddr);
-    if( iter == addresses.end() )
-    {
-        txMsgAck.set_code(-4);
-        txMsgAck.set_message("account no Pledge !");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error( "account: %s no Pledge !", fromAddr.c_str() );
-        return -4;
-    }
-
-    if (utxo.empty())
-    {
-        txMsgAck.set_code(-5);
-        txMsgAck.set_message("blockHeaderStr error !");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("utxo error !");
-        return -5;
-    }
-    
-    std::vector<string> utxos;
-    db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
-    if (db_status != 0)
-    {
-        txMsgAck.set_code(-6);
-        txMsgAck.set_message("GetPledgeAddressUtxo error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("GetPledgeAddressUtxo error!");
-        return -6;
-    }
-
-    auto utxoIter = find(utxos.begin(), utxos.end(), utxo);
-    if (utxoIter == utxos.end())
-    {
-        txMsgAck.set_code(-7);
-        txMsgAck.set_message("not found pledge UTXO!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        error("not found pledge UTXO!");
-        return -7;
-    }
-
-    //{{ Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
-    int result = IsMoreThan30DaysForRedeem(utxo);
-    if (result != 0)
-    {
-        txMsgAck.set_code(-21);
-        txMsgAck.set_message("Redeem time must be after 30 days!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        std::cout << "Redeem time is less than 30 days!" << std::endl;
-        error("Redeem time is less than 30 days!");
-        return -21;
-    }
-    //}}End
-
-    CTransaction outTx;
-    bool isTrue = FindUtxosFromRocksDb(fromAddr, fromAddr, 0, needVerifyPreHashCount, GasFee, outTx, utxo);
-	if(!isTrue)
-	{
-        txMsgAck.set_code(-8);
-        txMsgAck.set_message("CreateRedeemTransaction Error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("CreateRedeemTransaction Error ...\n");
-		return -8;
-	}
-
-    nlohmann::json txInfo;
-    txInfo["RedeemptionUTXO"] = utxo;
-
-    nlohmann::json extra;
-    extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
-    extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
-    extra["TransactionType"] = TXTYPE_REDEEM;
-    extra["TransactionInfo"] = txInfo;
-
-	outTx.set_extra(extra.dump());
-
-	std::string serTx = outTx.SerializeAsString();
-
-	size_t encodeLen = serTx.size() * 2 + 1;
-	unsigned char encode[encodeLen] = {0};
-	memset(encode, 0, encodeLen);
-	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
-	std::string encodeStr( (char *)encode, codeLen );
-
-	std::string encodeStrHash = getsha256hash(encodeStr);
-
-    // 设置默认账号为发起账号
-    if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
-    {
-        std::cout << "非法账号" << std::endl;
-        txMsgAck.set_code(-22);
-        txMsgAck.set_message("Illegal account !");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        return -10;
-    }
-
-	std::string signature;
-	std::string strPub;
-	GetSignString(encodeStrHash, signature, strPub);
-
-	for (int i = 0; i < outTx.vin_size(); i++)
-	{
-		CTxin * txin = outTx.mutable_vin(i);
-		txin->mutable_scriptsig()->set_sign(signature);
-		txin->mutable_scriptsig()->set_pub(strPub);
-	}
-
-	serTx = outTx.SerializeAsString();
-	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
-
-	TxMsg txMsg;
-	txMsg.set_version( getVersion() );
-
-	txMsg.set_tx( txstrtmp );
-	txMsg.set_txencodehash( encodeStrHash );
-
-	unsigned int top = 0;
-	db_status = pRocksDb->GetBlockTop(txn, top);
-    if (db_status) 
-    {
-        std::cout << __LINE__ << std::endl;
-        txMsgAck.set_code(-23);
-        txMsgAck.set_message("data Error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-        return -11;
-    }
-	txMsg.set_top(top);
-
-	auto msg = make_shared<TxMsg>(txMsg);
-	HandleTx( msg, msgdata );
-	cstr_free(txstr, true);
-
-    return 0;
-}
-
 
 int free_buf(char **buf)
 {
@@ -983,21 +436,6 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
     return true;
 }
 
-uint32_t adler32(const char *data, size_t len) 
-{
-    const uint32_t MOD_ADLER = 65521;
-    uint32_t a = 1, b = 0;
-    size_t index;
-    
-    // Process each byte of the data in order
-    for (index = 0; index < len; ++index)
-    {
-        a = (a + data[index]) % MOD_ADLER;
-        b = (b + a) % MOD_ADLER;
-    }
-    return (b << 16) | a;
-}
-
 int senddata(int fdnum)
 {
     GetMacReq getMacReq;
@@ -1007,16 +445,19 @@ int senddata(int fdnum)
 	msg.set_data(getMacReq.SerializeAsString());
 
 	std::string data = msg.SerializeAsString();
-	int len = data.size() + sizeof(int) + sizeof(int);
-	int checksum = adler32(data.c_str(), data.size());
+	int len = data.size() + 3 * sizeof(int);
+    
+	int checksum = Util::adler32((unsigned char * )data.c_str(), data.size());
+    int flag = 0;
     int end_flag = 7777777;
 
 	char* buff = new char[len + sizeof(int)];
 	memcpy(buff, &len, 4);
 	memcpy(buff + 4, data.data(), data.size());
 	memcpy(buff + 4 + data.size(), &checksum, 4);
-	memcpy(buff + 4 + data.size() + 4, &end_flag, 4);
-    int s = send(fdnum,buff,len + 4,0);     //打包发送的数据
+    memcpy(buff + 4 + data.size() + 4, &flag, 4);
+	memcpy(buff + 4 + data.size() + 4 + 4, &end_flag, 4);
+    int s = send(fdnum, buff, len + 4, 0);     //打包发送的数据
     cout<<"datas ="<<s<<endl;
     delete buff;
     return s;
@@ -1038,7 +479,7 @@ void interface_testdevice_mac()
     {
         char out_data[10240] = {0};
         size_t data_len = 10240;
-        if(interface_ScanPort("192.168.1.60", "255.255.255.0",11188,out_data,&data_len, pScanPortProcFun,i,addrvalue))   
+        if(interface_ScanPort("192.168.1.60", "255.255.255.0",11185,out_data,&data_len, pScanPortProcFun,i,addrvalue))   
         {
             cout<<"scanport success"<<endl;
             sleep(1);
@@ -1083,10 +524,10 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
     std::cout << "datalen:" << datalen << std::endl;
     if (datalen >0)
     {
-        char splitdata[datalen - 2*sizeof(int)] = {0};
-        memcpy(splitdata, mybuf + 4,datalen -2*sizeof(int));     //内存recv接收过来的数据mac数据
+        char splitdata[datalen - 3 * sizeof(int)] = {0};
+        memcpy(splitdata, mybuf + 4,datalen - 3 * sizeof(int));     //内存recv接收过来的数据mac数据
 
-        std::string read_data(splitdata, datalen - 2*sizeof(int));
+        std::string read_data(splitdata, datalen - 3 * sizeof(int));
 
         CommonMsg common_msg;
         int r = common_msg.ParseFromString(read_data);

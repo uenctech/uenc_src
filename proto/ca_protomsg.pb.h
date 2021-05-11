@@ -31,6 +31,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
@@ -47,7 +48,7 @@ struct TableStruct_ca_5fprotomsg_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[19]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[22]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -60,6 +61,12 @@ extern BuileBlockBroadcastMsgDefaultTypeInternal _BuileBlockBroadcastMsg_default
 class CheckHash;
 class CheckHashDefaultTypeInternal;
 extern CheckHashDefaultTypeInternal _CheckHash_default_instance_;
+class ConfirmTransactionAck;
+class ConfirmTransactionAckDefaultTypeInternal;
+extern ConfirmTransactionAckDefaultTypeInternal _ConfirmTransactionAck_default_instance_;
+class ConfirmTransactionReq;
+class ConfirmTransactionReqDefaultTypeInternal;
+extern ConfirmTransactionReqDefaultTypeInternal _ConfirmTransactionReq_default_instance_;
 class GetDevInfoAck;
 class GetDevInfoAckDefaultTypeInternal;
 extern GetDevInfoAckDefaultTypeInternal _GetDevInfoAck_default_instance_;
@@ -105,6 +112,9 @@ extern SyncVerifyPledgeNodeReqDefaultTypeInternal _SyncVerifyPledgeNodeReq_defau
 class TxMsg;
 class TxMsgDefaultTypeInternal;
 extern TxMsgDefaultTypeInternal _TxMsg_default_instance_;
+class TxPendingBroadcastMsg;
+class TxPendingBroadcastMsgDefaultTypeInternal;
+extern TxPendingBroadcastMsgDefaultTypeInternal _TxPendingBroadcastMsg_default_instance_;
 class VerifyReliableNodeAck;
 class VerifyReliableNodeAckDefaultTypeInternal;
 extern VerifyReliableNodeAckDefaultTypeInternal _VerifyReliableNodeAck_default_instance_;
@@ -114,6 +124,8 @@ extern VerifyReliableNodeReqDefaultTypeInternal _VerifyReliableNodeReq_default_i
 PROTOBUF_NAMESPACE_OPEN
 template<> ::BuileBlockBroadcastMsg* Arena::CreateMaybeMessage<::BuileBlockBroadcastMsg>(Arena*);
 template<> ::CheckHash* Arena::CreateMaybeMessage<::CheckHash>(Arena*);
+template<> ::ConfirmTransactionAck* Arena::CreateMaybeMessage<::ConfirmTransactionAck>(Arena*);
+template<> ::ConfirmTransactionReq* Arena::CreateMaybeMessage<::ConfirmTransactionReq>(Arena*);
 template<> ::GetDevInfoAck* Arena::CreateMaybeMessage<::GetDevInfoAck>(Arena*);
 template<> ::GetDevInfoReq* Arena::CreateMaybeMessage<::GetDevInfoReq>(Arena*);
 template<> ::SignNodeMsg* Arena::CreateMaybeMessage<::SignNodeMsg>(Arena*);
@@ -129,10 +141,37 @@ template<> ::SyncLoseBlockReq* Arena::CreateMaybeMessage<::SyncLoseBlockReq>(Are
 template<> ::SyncVerifyPledgeNodeAck* Arena::CreateMaybeMessage<::SyncVerifyPledgeNodeAck>(Arena*);
 template<> ::SyncVerifyPledgeNodeReq* Arena::CreateMaybeMessage<::SyncVerifyPledgeNodeReq>(Arena*);
 template<> ::TxMsg* Arena::CreateMaybeMessage<::TxMsg>(Arena*);
+template<> ::TxPendingBroadcastMsg* Arena::CreateMaybeMessage<::TxPendingBroadcastMsg>(Arena*);
 template<> ::VerifyReliableNodeAck* Arena::CreateMaybeMessage<::VerifyReliableNodeAck>(Arena*);
 template<> ::VerifyReliableNodeReq* Arena::CreateMaybeMessage<::VerifyReliableNodeReq>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
+enum ConfirmCacheFlag : int {
+  ConfirmUnknownFlag = 0,
+  ConfirmTxFlag = 1,
+  ConfirmRpcFlag = 2,
+  ConfirmCacheFlag_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  ConfirmCacheFlag_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool ConfirmCacheFlag_IsValid(int value);
+constexpr ConfirmCacheFlag ConfirmCacheFlag_MIN = ConfirmUnknownFlag;
+constexpr ConfirmCacheFlag ConfirmCacheFlag_MAX = ConfirmRpcFlag;
+constexpr int ConfirmCacheFlag_ARRAYSIZE = ConfirmCacheFlag_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ConfirmCacheFlag_descriptor();
+template<typename T>
+inline const std::string& ConfirmCacheFlag_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ConfirmCacheFlag>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ConfirmCacheFlag_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ConfirmCacheFlag_descriptor(), enum_t_value);
+}
+inline bool ConfirmCacheFlag_Parse(
+    const std::string& name, ConfirmCacheFlag* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ConfirmCacheFlag>(
+    ConfirmCacheFlag_descriptor(), name, value);
+}
 // ===================================================================
 
 class SyncHeaderMsg :
@@ -1132,6 +1171,8 @@ class SyncGetnodeInfoReq :
 
   enum : int {
     kSyncHeaderMsgFieldNumber = 1,
+    kHeightFieldNumber = 2,
+    kSyncNumFieldNumber = 3,
   };
   // .SyncHeaderMsg syncHeaderMsg = 1;
   bool has_syncheadermsg() const;
@@ -1148,12 +1189,32 @@ class SyncGetnodeInfoReq :
   ::SyncHeaderMsg* _internal_mutable_syncheadermsg();
   public:
 
+  // uint64 height = 2;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::uint64 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 syncNum = 3;
+  void clear_syncnum();
+  ::PROTOBUF_NAMESPACE_ID::uint64 syncnum() const;
+  void set_syncnum(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_syncnum() const;
+  void _internal_set_syncnum(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:SyncGetnodeInfoReq)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::SyncHeaderMsg* syncheadermsg_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 height_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 syncnum_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_ca_5fprotomsg_2eproto;
 };
@@ -1266,6 +1327,8 @@ class SyncGetnodeInfoAck :
 
   enum : int {
     kHashFieldNumber = 3,
+    kCheckHashForwardFieldNumber = 4,
+    kCheckHashBackwardFieldNumber = 5,
     kSyncHeaderMsgFieldNumber = 1,
     kHeightFieldNumber = 2,
   };
@@ -1283,6 +1346,38 @@ class SyncGetnodeInfoAck :
   const std::string& _internal_hash() const;
   void _internal_set_hash(const std::string& value);
   std::string* _internal_mutable_hash();
+  public:
+
+  // bytes checkHashForward = 4;
+  void clear_checkhashforward();
+  const std::string& checkhashforward() const;
+  void set_checkhashforward(const std::string& value);
+  void set_checkhashforward(std::string&& value);
+  void set_checkhashforward(const char* value);
+  void set_checkhashforward(const void* value, size_t size);
+  std::string* mutable_checkhashforward();
+  std::string* release_checkhashforward();
+  void set_allocated_checkhashforward(std::string* checkhashforward);
+  private:
+  const std::string& _internal_checkhashforward() const;
+  void _internal_set_checkhashforward(const std::string& value);
+  std::string* _internal_mutable_checkhashforward();
+  public:
+
+  // bytes checkHashBackward = 5;
+  void clear_checkhashbackward();
+  const std::string& checkhashbackward() const;
+  void set_checkhashbackward(const std::string& value);
+  void set_checkhashbackward(std::string&& value);
+  void set_checkhashbackward(const char* value);
+  void set_checkhashbackward(const void* value, size_t size);
+  std::string* mutable_checkhashbackward();
+  std::string* release_checkhashbackward();
+  void set_allocated_checkhashbackward(std::string* checkhashbackward);
+  private:
+  const std::string& _internal_checkhashbackward() const;
+  void _internal_set_checkhashbackward(const std::string& value);
+  std::string* _internal_mutable_checkhashbackward();
   public:
 
   // .SyncHeaderMsg syncHeaderMsg = 1;
@@ -1315,6 +1410,8 @@ class SyncGetnodeInfoAck :
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr checkhashforward_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr checkhashbackward_;
   ::SyncHeaderMsg* syncheadermsg_;
   ::PROTOBUF_NAMESPACE_ID::uint64 height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1755,9 +1852,11 @@ class SyncBlockInfoReq :
 
   enum : int {
     kCheckhashFieldNumber = 3,
+    kIdFieldNumber = 6,
     kSyncHeaderMsgFieldNumber = 1,
     kHeightFieldNumber = 2,
     kMaxNumFieldNumber = 4,
+    kMaxHeightFieldNumber = 5,
   };
   // repeated .CheckHash checkhash = 3;
   int checkhash_size() const;
@@ -1776,6 +1875,22 @@ class SyncBlockInfoReq :
   ::CheckHash* add_checkhash();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CheckHash >&
       checkhash() const;
+
+  // string id = 6;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
 
   // .SyncHeaderMsg syncHeaderMsg = 1;
   bool has_syncheadermsg() const;
@@ -1810,15 +1925,26 @@ class SyncBlockInfoReq :
   void _internal_set_max_num(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
+  // uint64 max_height = 5;
+  void clear_max_height();
+  ::PROTOBUF_NAMESPACE_ID::uint64 max_height() const;
+  void set_max_height(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_max_height() const;
+  void _internal_set_max_height(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:SyncBlockInfoReq)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CheckHash > checkhash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::SyncHeaderMsg* syncheadermsg_;
   ::PROTOBUF_NAMESPACE_ID::uint64 height_;
   ::PROTOBUF_NAMESPACE_ID::uint64 max_num_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 max_height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_ca_5fprotomsg_2eproto;
 };
@@ -2446,14 +2572,31 @@ class SignNodeMsg :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSignMsgFieldNumber = 1,
-    kSignPubKeyFieldNumber = 2,
-    kGasFeeFieldNumber = 3,
-    kOnlineTimeFieldNumber = 4,
-    kAwardTotalFieldNumber = 5,
-    kSignSumFieldNumber = 6,
+    kIdFieldNumber = 1,
+    kSignMsgFieldNumber = 2,
+    kSignPubKeyFieldNumber = 3,
+    kGasFeeFieldNumber = 4,
+    kOnlineTimeFieldNumber = 5,
+    kAwardTotalFieldNumber = 6,
+    kSignSumFieldNumber = 7,
   };
-  // bytes signMsg = 1;
+  // string id = 1;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // bytes signMsg = 2;
   void clear_signmsg();
   const std::string& signmsg() const;
   void set_signmsg(const std::string& value);
@@ -2469,7 +2612,7 @@ class SignNodeMsg :
   std::string* _internal_mutable_signmsg();
   public:
 
-  // bytes signPubKey = 2;
+  // bytes signPubKey = 3;
   void clear_signpubkey();
   const std::string& signpubkey() const;
   void set_signpubkey(const std::string& value);
@@ -2485,7 +2628,7 @@ class SignNodeMsg :
   std::string* _internal_mutable_signpubkey();
   public:
 
-  // string gasFee = 3;
+  // string gasFee = 4;
   void clear_gasfee();
   const std::string& gasfee() const;
   void set_gasfee(const std::string& value);
@@ -2501,7 +2644,7 @@ class SignNodeMsg :
   std::string* _internal_mutable_gasfee();
   public:
 
-  // double onlineTime = 4;
+  // double onlineTime = 5;
   void clear_onlinetime();
   double onlinetime() const;
   void set_onlinetime(double value);
@@ -2510,7 +2653,7 @@ class SignNodeMsg :
   void _internal_set_onlinetime(double value);
   public:
 
-  // uint64 awardTotal = 5;
+  // uint64 awardTotal = 6;
   void clear_awardtotal();
   ::PROTOBUF_NAMESPACE_ID::uint64 awardtotal() const;
   void set_awardtotal(::PROTOBUF_NAMESPACE_ID::uint64 value);
@@ -2519,7 +2662,7 @@ class SignNodeMsg :
   void _internal_set_awardtotal(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // uint64 signSum = 6;
+  // uint64 signSum = 7;
   void clear_signsum();
   ::PROTOBUF_NAMESPACE_ID::uint64 signsum() const;
   void set_signsum(::PROTOBUF_NAMESPACE_ID::uint64 value);
@@ -2533,6 +2676,7 @@ class SignNodeMsg :
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr signmsg_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr signpubkey_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr gasfee_;
@@ -2655,7 +2799,9 @@ class TxMsg :
     kIdFieldNumber = 2,
     kTxFieldNumber = 3,
     kTxEncodeHashFieldNumber = 4,
+    kPrevBlkHashFieldNumber = 7,
     kTopFieldNumber = 6,
+    kTryCountDownFieldNumber = 8,
   };
   // repeated .SignNodeMsg signNodeMsg = 5;
   int signnodemsg_size() const;
@@ -2707,7 +2853,7 @@ class TxMsg :
   std::string* _internal_mutable_id();
   public:
 
-  // bytes Tx = 3;
+  // bytes tx = 3;
   void clear_tx();
   const std::string& tx() const;
   void set_tx(const std::string& value);
@@ -2739,6 +2885,22 @@ class TxMsg :
   std::string* _internal_mutable_txencodehash();
   public:
 
+  // string prevBlkHash = 7;
+  void clear_prevblkhash();
+  const std::string& prevblkhash() const;
+  void set_prevblkhash(const std::string& value);
+  void set_prevblkhash(std::string&& value);
+  void set_prevblkhash(const char* value);
+  void set_prevblkhash(const char* value, size_t size);
+  std::string* mutable_prevblkhash();
+  std::string* release_prevblkhash();
+  void set_allocated_prevblkhash(std::string* prevblkhash);
+  private:
+  const std::string& _internal_prevblkhash() const;
+  void _internal_set_prevblkhash(const std::string& value);
+  std::string* _internal_mutable_prevblkhash();
+  public:
+
   // uint64 top = 6;
   void clear_top();
   ::PROTOBUF_NAMESPACE_ID::uint64 top() const;
@@ -2746,6 +2908,15 @@ class TxMsg :
   private:
   ::PROTOBUF_NAMESPACE_ID::uint64 _internal_top() const;
   void _internal_set_top(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // int32 tryCountDown = 8;
+  void clear_trycountdown();
+  ::PROTOBUF_NAMESPACE_ID::int32 trycountdown() const;
+  void set_trycountdown(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_trycountdown() const;
+  void _internal_set_trycountdown(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:TxMsg)
@@ -2758,7 +2929,9 @@ class TxMsg :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tx_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txencodehash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr prevblkhash_;
   ::PROTOBUF_NAMESPACE_ID::uint64 top_;
+  ::PROTOBUF_NAMESPACE_ID::int32 trycountdown_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_ca_5fprotomsg_2eproto;
 };
@@ -2917,6 +3090,159 @@ class BuileBlockBroadcastMsg :
 };
 // -------------------------------------------------------------------
 
+class TxPendingBroadcastMsg :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TxPendingBroadcastMsg) */ {
+ public:
+  TxPendingBroadcastMsg();
+  virtual ~TxPendingBroadcastMsg();
+
+  TxPendingBroadcastMsg(const TxPendingBroadcastMsg& from);
+  TxPendingBroadcastMsg(TxPendingBroadcastMsg&& from) noexcept
+    : TxPendingBroadcastMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline TxPendingBroadcastMsg& operator=(const TxPendingBroadcastMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TxPendingBroadcastMsg& operator=(TxPendingBroadcastMsg&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TxPendingBroadcastMsg& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TxPendingBroadcastMsg* internal_default_instance() {
+    return reinterpret_cast<const TxPendingBroadcastMsg*>(
+               &_TxPendingBroadcastMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(TxPendingBroadcastMsg& a, TxPendingBroadcastMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TxPendingBroadcastMsg* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TxPendingBroadcastMsg* New() const final {
+    return CreateMaybeMessage<TxPendingBroadcastMsg>(nullptr);
+  }
+
+  TxPendingBroadcastMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TxPendingBroadcastMsg>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TxPendingBroadcastMsg& from);
+  void MergeFrom(const TxPendingBroadcastMsg& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TxPendingBroadcastMsg* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "TxPendingBroadcastMsg";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kTxRawFieldNumber = 2,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // bytes txRaw = 2;
+  void clear_txraw();
+  const std::string& txraw() const;
+  void set_txraw(const std::string& value);
+  void set_txraw(std::string&& value);
+  void set_txraw(const char* value);
+  void set_txraw(const void* value, size_t size);
+  std::string* mutable_txraw();
+  std::string* release_txraw();
+  void set_allocated_txraw(std::string* txraw);
+  private:
+  const std::string& _internal_txraw() const;
+  void _internal_set_txraw(const std::string& value);
+  std::string* _internal_mutable_txraw();
+  public:
+
+  // @@protoc_insertion_point(class_scope:TxPendingBroadcastMsg)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txraw_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
 class GetDevInfoReq :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetDevInfoReq) */ {
  public:
@@ -2959,7 +3285,7 @@ class GetDevInfoReq :
                &_GetDevInfoReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(GetDevInfoReq& a, GetDevInfoReq& b) {
     a.Swap(&b);
@@ -3112,7 +3438,7 @@ class GetDevInfoAck :
                &_GetDevInfoAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(GetDevInfoAck& a, GetDevInfoAck& b) {
     a.Swap(&b);
@@ -3265,6 +3591,399 @@ class GetDevInfoAck :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr hash_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr base58addr_;
   ::PROTOBUF_NAMESPACE_ID::uint64 height_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ConfirmTransactionReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ConfirmTransactionReq) */ {
+ public:
+  ConfirmTransactionReq();
+  virtual ~ConfirmTransactionReq();
+
+  ConfirmTransactionReq(const ConfirmTransactionReq& from);
+  ConfirmTransactionReq(ConfirmTransactionReq&& from) noexcept
+    : ConfirmTransactionReq() {
+    *this = ::std::move(from);
+  }
+
+  inline ConfirmTransactionReq& operator=(const ConfirmTransactionReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ConfirmTransactionReq& operator=(ConfirmTransactionReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const ConfirmTransactionReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ConfirmTransactionReq* internal_default_instance() {
+    return reinterpret_cast<const ConfirmTransactionReq*>(
+               &_ConfirmTransactionReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    20;
+
+  friend void swap(ConfirmTransactionReq& a, ConfirmTransactionReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ConfirmTransactionReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ConfirmTransactionReq* New() const final {
+    return CreateMaybeMessage<ConfirmTransactionReq>(nullptr);
+  }
+
+  ConfirmTransactionReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ConfirmTransactionReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ConfirmTransactionReq& from);
+  void MergeFrom(const ConfirmTransactionReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ConfirmTransactionReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "ConfirmTransactionReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+    kTxHashFieldNumber = 3,
+    kFlagFieldNumber = 4,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // string tx_hash = 3;
+  void clear_tx_hash();
+  const std::string& tx_hash() const;
+  void set_tx_hash(const std::string& value);
+  void set_tx_hash(std::string&& value);
+  void set_tx_hash(const char* value);
+  void set_tx_hash(const char* value, size_t size);
+  std::string* mutable_tx_hash();
+  std::string* release_tx_hash();
+  void set_allocated_tx_hash(std::string* tx_hash);
+  private:
+  const std::string& _internal_tx_hash() const;
+  void _internal_set_tx_hash(const std::string& value);
+  std::string* _internal_mutable_tx_hash();
+  public:
+
+  // .ConfirmCacheFlag flag = 4;
+  void clear_flag();
+  ::ConfirmCacheFlag flag() const;
+  void set_flag(::ConfirmCacheFlag value);
+  private:
+  ::ConfirmCacheFlag _internal_flag() const;
+  void _internal_set_flag(::ConfirmCacheFlag value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:ConfirmTransactionReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tx_hash_;
+  int flag_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_ca_5fprotomsg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ConfirmTransactionAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ConfirmTransactionAck) */ {
+ public:
+  ConfirmTransactionAck();
+  virtual ~ConfirmTransactionAck();
+
+  ConfirmTransactionAck(const ConfirmTransactionAck& from);
+  ConfirmTransactionAck(ConfirmTransactionAck&& from) noexcept
+    : ConfirmTransactionAck() {
+    *this = ::std::move(from);
+  }
+
+  inline ConfirmTransactionAck& operator=(const ConfirmTransactionAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ConfirmTransactionAck& operator=(ConfirmTransactionAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const ConfirmTransactionAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ConfirmTransactionAck* internal_default_instance() {
+    return reinterpret_cast<const ConfirmTransactionAck*>(
+               &_ConfirmTransactionAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    21;
+
+  friend void swap(ConfirmTransactionAck& a, ConfirmTransactionAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ConfirmTransactionAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ConfirmTransactionAck* New() const final {
+    return CreateMaybeMessage<ConfirmTransactionAck>(nullptr);
+  }
+
+  ConfirmTransactionAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ConfirmTransactionAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ConfirmTransactionAck& from);
+  void MergeFrom(const ConfirmTransactionAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ConfirmTransactionAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "ConfirmTransactionAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_ca_5fprotomsg_2eproto);
+    return ::descriptor_table_ca_5fprotomsg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kIdFieldNumber = 2,
+    kTxHashFieldNumber = 3,
+    kBlockRawFieldNumber = 6,
+    kFlagFieldNumber = 4,
+    kSuccessFieldNumber = 5,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // string id = 2;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // string tx_hash = 3;
+  void clear_tx_hash();
+  const std::string& tx_hash() const;
+  void set_tx_hash(const std::string& value);
+  void set_tx_hash(std::string&& value);
+  void set_tx_hash(const char* value);
+  void set_tx_hash(const char* value, size_t size);
+  std::string* mutable_tx_hash();
+  std::string* release_tx_hash();
+  void set_allocated_tx_hash(std::string* tx_hash);
+  private:
+  const std::string& _internal_tx_hash() const;
+  void _internal_set_tx_hash(const std::string& value);
+  std::string* _internal_mutable_tx_hash();
+  public:
+
+  // bytes block_raw = 6;
+  void clear_block_raw();
+  const std::string& block_raw() const;
+  void set_block_raw(const std::string& value);
+  void set_block_raw(std::string&& value);
+  void set_block_raw(const char* value);
+  void set_block_raw(const void* value, size_t size);
+  std::string* mutable_block_raw();
+  std::string* release_block_raw();
+  void set_allocated_block_raw(std::string* block_raw);
+  private:
+  const std::string& _internal_block_raw() const;
+  void _internal_set_block_raw(const std::string& value);
+  std::string* _internal_mutable_block_raw();
+  public:
+
+  // .ConfirmCacheFlag flag = 4;
+  void clear_flag();
+  ::ConfirmCacheFlag flag() const;
+  void set_flag(::ConfirmCacheFlag value);
+  private:
+  ::ConfirmCacheFlag _internal_flag() const;
+  void _internal_set_flag(::ConfirmCacheFlag value);
+  public:
+
+  // bool success = 5;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:ConfirmTransactionAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tx_hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr block_raw_;
+  int flag_;
+  bool success_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_ca_5fprotomsg_2eproto;
 };
@@ -3925,6 +4644,46 @@ inline void SyncGetnodeInfoReq::set_allocated_syncheadermsg(::SyncHeaderMsg* syn
   // @@protoc_insertion_point(field_set_allocated:SyncGetnodeInfoReq.syncHeaderMsg)
 }
 
+// uint64 height = 2;
+inline void SyncGetnodeInfoReq::clear_height() {
+  height_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncGetnodeInfoReq::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncGetnodeInfoReq::height() const {
+  // @@protoc_insertion_point(field_get:SyncGetnodeInfoReq.height)
+  return _internal_height();
+}
+inline void SyncGetnodeInfoReq::_internal_set_height(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  height_ = value;
+}
+inline void SyncGetnodeInfoReq::set_height(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:SyncGetnodeInfoReq.height)
+}
+
+// uint64 syncNum = 3;
+inline void SyncGetnodeInfoReq::clear_syncnum() {
+  syncnum_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncGetnodeInfoReq::_internal_syncnum() const {
+  return syncnum_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncGetnodeInfoReq::syncnum() const {
+  // @@protoc_insertion_point(field_get:SyncGetnodeInfoReq.syncNum)
+  return _internal_syncnum();
+}
+inline void SyncGetnodeInfoReq::_internal_set_syncnum(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  syncnum_ = value;
+}
+inline void SyncGetnodeInfoReq::set_syncnum(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_syncnum(value);
+  // @@protoc_insertion_point(field_set:SyncGetnodeInfoReq.syncNum)
+}
+
 // -------------------------------------------------------------------
 
 // SyncGetnodeInfoAck
@@ -4067,6 +4826,126 @@ inline void SyncGetnodeInfoAck::set_allocated_hash(std::string* hash) {
   }
   hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hash);
   // @@protoc_insertion_point(field_set_allocated:SyncGetnodeInfoAck.hash)
+}
+
+// bytes checkHashForward = 4;
+inline void SyncGetnodeInfoAck::clear_checkhashforward() {
+  checkhashforward_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& SyncGetnodeInfoAck::checkhashforward() const {
+  // @@protoc_insertion_point(field_get:SyncGetnodeInfoAck.checkHashForward)
+  return _internal_checkhashforward();
+}
+inline void SyncGetnodeInfoAck::set_checkhashforward(const std::string& value) {
+  _internal_set_checkhashforward(value);
+  // @@protoc_insertion_point(field_set:SyncGetnodeInfoAck.checkHashForward)
+}
+inline std::string* SyncGetnodeInfoAck::mutable_checkhashforward() {
+  // @@protoc_insertion_point(field_mutable:SyncGetnodeInfoAck.checkHashForward)
+  return _internal_mutable_checkhashforward();
+}
+inline const std::string& SyncGetnodeInfoAck::_internal_checkhashforward() const {
+  return checkhashforward_.GetNoArena();
+}
+inline void SyncGetnodeInfoAck::_internal_set_checkhashforward(const std::string& value) {
+  
+  checkhashforward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void SyncGetnodeInfoAck::set_checkhashforward(std::string&& value) {
+  
+  checkhashforward_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:SyncGetnodeInfoAck.checkHashForward)
+}
+inline void SyncGetnodeInfoAck::set_checkhashforward(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  checkhashforward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:SyncGetnodeInfoAck.checkHashForward)
+}
+inline void SyncGetnodeInfoAck::set_checkhashforward(const void* value, size_t size) {
+  
+  checkhashforward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:SyncGetnodeInfoAck.checkHashForward)
+}
+inline std::string* SyncGetnodeInfoAck::_internal_mutable_checkhashforward() {
+  
+  return checkhashforward_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* SyncGetnodeInfoAck::release_checkhashforward() {
+  // @@protoc_insertion_point(field_release:SyncGetnodeInfoAck.checkHashForward)
+  
+  return checkhashforward_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void SyncGetnodeInfoAck::set_allocated_checkhashforward(std::string* checkhashforward) {
+  if (checkhashforward != nullptr) {
+    
+  } else {
+    
+  }
+  checkhashforward_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), checkhashforward);
+  // @@protoc_insertion_point(field_set_allocated:SyncGetnodeInfoAck.checkHashForward)
+}
+
+// bytes checkHashBackward = 5;
+inline void SyncGetnodeInfoAck::clear_checkhashbackward() {
+  checkhashbackward_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& SyncGetnodeInfoAck::checkhashbackward() const {
+  // @@protoc_insertion_point(field_get:SyncGetnodeInfoAck.checkHashBackward)
+  return _internal_checkhashbackward();
+}
+inline void SyncGetnodeInfoAck::set_checkhashbackward(const std::string& value) {
+  _internal_set_checkhashbackward(value);
+  // @@protoc_insertion_point(field_set:SyncGetnodeInfoAck.checkHashBackward)
+}
+inline std::string* SyncGetnodeInfoAck::mutable_checkhashbackward() {
+  // @@protoc_insertion_point(field_mutable:SyncGetnodeInfoAck.checkHashBackward)
+  return _internal_mutable_checkhashbackward();
+}
+inline const std::string& SyncGetnodeInfoAck::_internal_checkhashbackward() const {
+  return checkhashbackward_.GetNoArena();
+}
+inline void SyncGetnodeInfoAck::_internal_set_checkhashbackward(const std::string& value) {
+  
+  checkhashbackward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void SyncGetnodeInfoAck::set_checkhashbackward(std::string&& value) {
+  
+  checkhashbackward_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:SyncGetnodeInfoAck.checkHashBackward)
+}
+inline void SyncGetnodeInfoAck::set_checkhashbackward(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  checkhashbackward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:SyncGetnodeInfoAck.checkHashBackward)
+}
+inline void SyncGetnodeInfoAck::set_checkhashbackward(const void* value, size_t size) {
+  
+  checkhashbackward_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:SyncGetnodeInfoAck.checkHashBackward)
+}
+inline std::string* SyncGetnodeInfoAck::_internal_mutable_checkhashbackward() {
+  
+  return checkhashbackward_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* SyncGetnodeInfoAck::release_checkhashbackward() {
+  // @@protoc_insertion_point(field_release:SyncGetnodeInfoAck.checkHashBackward)
+  
+  return checkhashbackward_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void SyncGetnodeInfoAck::set_allocated_checkhashbackward(std::string* checkhashbackward) {
+  if (checkhashbackward != nullptr) {
+    
+  } else {
+    
+  }
+  checkhashbackward_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), checkhashbackward);
+  // @@protoc_insertion_point(field_set_allocated:SyncGetnodeInfoAck.checkHashBackward)
 }
 
 // -------------------------------------------------------------------
@@ -4498,6 +5377,86 @@ inline void SyncBlockInfoReq::_internal_set_max_num(::PROTOBUF_NAMESPACE_ID::uin
 inline void SyncBlockInfoReq::set_max_num(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_max_num(value);
   // @@protoc_insertion_point(field_set:SyncBlockInfoReq.max_num)
+}
+
+// uint64 max_height = 5;
+inline void SyncBlockInfoReq::clear_max_height() {
+  max_height_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncBlockInfoReq::_internal_max_height() const {
+  return max_height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SyncBlockInfoReq::max_height() const {
+  // @@protoc_insertion_point(field_get:SyncBlockInfoReq.max_height)
+  return _internal_max_height();
+}
+inline void SyncBlockInfoReq::_internal_set_max_height(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  max_height_ = value;
+}
+inline void SyncBlockInfoReq::set_max_height(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_max_height(value);
+  // @@protoc_insertion_point(field_set:SyncBlockInfoReq.max_height)
+}
+
+// string id = 6;
+inline void SyncBlockInfoReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& SyncBlockInfoReq::id() const {
+  // @@protoc_insertion_point(field_get:SyncBlockInfoReq.id)
+  return _internal_id();
+}
+inline void SyncBlockInfoReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:SyncBlockInfoReq.id)
+}
+inline std::string* SyncBlockInfoReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:SyncBlockInfoReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& SyncBlockInfoReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void SyncBlockInfoReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void SyncBlockInfoReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:SyncBlockInfoReq.id)
+}
+inline void SyncBlockInfoReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:SyncBlockInfoReq.id)
+}
+inline void SyncBlockInfoReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:SyncBlockInfoReq.id)
+}
+inline std::string* SyncBlockInfoReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* SyncBlockInfoReq::release_id() {
+  // @@protoc_insertion_point(field_release:SyncBlockInfoReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void SyncBlockInfoReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:SyncBlockInfoReq.id)
 }
 
 // -------------------------------------------------------------------
@@ -5015,7 +5974,67 @@ inline void SyncLoseBlockAck::set_allocated_blocks(std::string* blocks) {
 
 // SignNodeMsg
 
-// bytes signMsg = 1;
+// string id = 1;
+inline void SignNodeMsg::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& SignNodeMsg::id() const {
+  // @@protoc_insertion_point(field_get:SignNodeMsg.id)
+  return _internal_id();
+}
+inline void SignNodeMsg::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:SignNodeMsg.id)
+}
+inline std::string* SignNodeMsg::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:SignNodeMsg.id)
+  return _internal_mutable_id();
+}
+inline const std::string& SignNodeMsg::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void SignNodeMsg::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void SignNodeMsg::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:SignNodeMsg.id)
+}
+inline void SignNodeMsg::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:SignNodeMsg.id)
+}
+inline void SignNodeMsg::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:SignNodeMsg.id)
+}
+inline std::string* SignNodeMsg::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* SignNodeMsg::release_id() {
+  // @@protoc_insertion_point(field_release:SignNodeMsg.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void SignNodeMsg::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:SignNodeMsg.id)
+}
+
+// bytes signMsg = 2;
 inline void SignNodeMsg::clear_signmsg() {
   signmsg_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -5075,7 +6094,7 @@ inline void SignNodeMsg::set_allocated_signmsg(std::string* signmsg) {
   // @@protoc_insertion_point(field_set_allocated:SignNodeMsg.signMsg)
 }
 
-// bytes signPubKey = 2;
+// bytes signPubKey = 3;
 inline void SignNodeMsg::clear_signpubkey() {
   signpubkey_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -5135,7 +6154,7 @@ inline void SignNodeMsg::set_allocated_signpubkey(std::string* signpubkey) {
   // @@protoc_insertion_point(field_set_allocated:SignNodeMsg.signPubKey)
 }
 
-// string gasFee = 3;
+// string gasFee = 4;
 inline void SignNodeMsg::clear_gasfee() {
   gasfee_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -5195,7 +6214,7 @@ inline void SignNodeMsg::set_allocated_gasfee(std::string* gasfee) {
   // @@protoc_insertion_point(field_set_allocated:SignNodeMsg.gasFee)
 }
 
-// double onlineTime = 4;
+// double onlineTime = 5;
 inline void SignNodeMsg::clear_onlinetime() {
   onlinetime_ = 0;
 }
@@ -5215,7 +6234,7 @@ inline void SignNodeMsg::set_onlinetime(double value) {
   // @@protoc_insertion_point(field_set:SignNodeMsg.onlineTime)
 }
 
-// uint64 awardTotal = 5;
+// uint64 awardTotal = 6;
 inline void SignNodeMsg::clear_awardtotal() {
   awardtotal_ = PROTOBUF_ULONGLONG(0);
 }
@@ -5235,7 +6254,7 @@ inline void SignNodeMsg::set_awardtotal(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   // @@protoc_insertion_point(field_set:SignNodeMsg.awardTotal)
 }
 
-// uint64 signSum = 6;
+// uint64 signSum = 7;
 inline void SignNodeMsg::clear_signsum() {
   signsum_ = PROTOBUF_ULONGLONG(0);
 }
@@ -5379,20 +6398,20 @@ inline void TxMsg::set_allocated_id(std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:TxMsg.id)
 }
 
-// bytes Tx = 3;
+// bytes tx = 3;
 inline void TxMsg::clear_tx() {
   tx_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline const std::string& TxMsg::tx() const {
-  // @@protoc_insertion_point(field_get:TxMsg.Tx)
+  // @@protoc_insertion_point(field_get:TxMsg.tx)
   return _internal_tx();
 }
 inline void TxMsg::set_tx(const std::string& value) {
   _internal_set_tx(value);
-  // @@protoc_insertion_point(field_set:TxMsg.Tx)
+  // @@protoc_insertion_point(field_set:TxMsg.tx)
 }
 inline std::string* TxMsg::mutable_tx() {
-  // @@protoc_insertion_point(field_mutable:TxMsg.Tx)
+  // @@protoc_insertion_point(field_mutable:TxMsg.tx)
   return _internal_mutable_tx();
 }
 inline const std::string& TxMsg::_internal_tx() const {
@@ -5406,26 +6425,26 @@ inline void TxMsg::set_tx(std::string&& value) {
   
   tx_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:TxMsg.Tx)
+  // @@protoc_insertion_point(field_set_rvalue:TxMsg.tx)
 }
 inline void TxMsg::set_tx(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   tx_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:TxMsg.Tx)
+  // @@protoc_insertion_point(field_set_char:TxMsg.tx)
 }
 inline void TxMsg::set_tx(const void* value, size_t size) {
   
   tx_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:TxMsg.Tx)
+  // @@protoc_insertion_point(field_set_pointer:TxMsg.tx)
 }
 inline std::string* TxMsg::_internal_mutable_tx() {
   
   return tx_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline std::string* TxMsg::release_tx() {
-  // @@protoc_insertion_point(field_release:TxMsg.Tx)
+  // @@protoc_insertion_point(field_release:TxMsg.tx)
   
   return tx_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -5436,7 +6455,7 @@ inline void TxMsg::set_allocated_tx(std::string* tx) {
     
   }
   tx_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tx);
-  // @@protoc_insertion_point(field_set_allocated:TxMsg.Tx)
+  // @@protoc_insertion_point(field_set_allocated:TxMsg.tx)
 }
 
 // string txEncodeHash = 4;
@@ -5556,6 +6575,86 @@ inline void TxMsg::_internal_set_top(::PROTOBUF_NAMESPACE_ID::uint64 value) {
 inline void TxMsg::set_top(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_top(value);
   // @@protoc_insertion_point(field_set:TxMsg.top)
+}
+
+// string prevBlkHash = 7;
+inline void TxMsg::clear_prevblkhash() {
+  prevblkhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxMsg::prevblkhash() const {
+  // @@protoc_insertion_point(field_get:TxMsg.prevBlkHash)
+  return _internal_prevblkhash();
+}
+inline void TxMsg::set_prevblkhash(const std::string& value) {
+  _internal_set_prevblkhash(value);
+  // @@protoc_insertion_point(field_set:TxMsg.prevBlkHash)
+}
+inline std::string* TxMsg::mutable_prevblkhash() {
+  // @@protoc_insertion_point(field_mutable:TxMsg.prevBlkHash)
+  return _internal_mutable_prevblkhash();
+}
+inline const std::string& TxMsg::_internal_prevblkhash() const {
+  return prevblkhash_.GetNoArena();
+}
+inline void TxMsg::_internal_set_prevblkhash(const std::string& value) {
+  
+  prevblkhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxMsg::set_prevblkhash(std::string&& value) {
+  
+  prevblkhash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxMsg.prevBlkHash)
+}
+inline void TxMsg::set_prevblkhash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  prevblkhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxMsg.prevBlkHash)
+}
+inline void TxMsg::set_prevblkhash(const char* value, size_t size) {
+  
+  prevblkhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxMsg.prevBlkHash)
+}
+inline std::string* TxMsg::_internal_mutable_prevblkhash() {
+  
+  return prevblkhash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxMsg::release_prevblkhash() {
+  // @@protoc_insertion_point(field_release:TxMsg.prevBlkHash)
+  
+  return prevblkhash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxMsg::set_allocated_prevblkhash(std::string* prevblkhash) {
+  if (prevblkhash != nullptr) {
+    
+  } else {
+    
+  }
+  prevblkhash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), prevblkhash);
+  // @@protoc_insertion_point(field_set_allocated:TxMsg.prevBlkHash)
+}
+
+// int32 tryCountDown = 8;
+inline void TxMsg::clear_trycountdown() {
+  trycountdown_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TxMsg::_internal_trycountdown() const {
+  return trycountdown_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TxMsg::trycountdown() const {
+  // @@protoc_insertion_point(field_get:TxMsg.tryCountDown)
+  return _internal_trycountdown();
+}
+inline void TxMsg::_internal_set_trycountdown(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  trycountdown_ = value;
+}
+inline void TxMsg::set_trycountdown(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_trycountdown(value);
+  // @@protoc_insertion_point(field_set:TxMsg.tryCountDown)
 }
 
 // -------------------------------------------------------------------
@@ -5680,6 +6779,130 @@ inline void BuileBlockBroadcastMsg::set_allocated_blockraw(std::string* blockraw
   }
   blockraw_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), blockraw);
   // @@protoc_insertion_point(field_set_allocated:BuileBlockBroadcastMsg.blockRaw)
+}
+
+// -------------------------------------------------------------------
+
+// TxPendingBroadcastMsg
+
+// string version = 1;
+inline void TxPendingBroadcastMsg::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxPendingBroadcastMsg::version() const {
+  // @@protoc_insertion_point(field_get:TxPendingBroadcastMsg.version)
+  return _internal_version();
+}
+inline void TxPendingBroadcastMsg::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:TxPendingBroadcastMsg.version)
+}
+inline std::string* TxPendingBroadcastMsg::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:TxPendingBroadcastMsg.version)
+  return _internal_mutable_version();
+}
+inline const std::string& TxPendingBroadcastMsg::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void TxPendingBroadcastMsg::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxPendingBroadcastMsg::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxPendingBroadcastMsg.version)
+}
+inline void TxPendingBroadcastMsg::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxPendingBroadcastMsg.version)
+}
+inline void TxPendingBroadcastMsg::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxPendingBroadcastMsg.version)
+}
+inline std::string* TxPendingBroadcastMsg::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxPendingBroadcastMsg::release_version() {
+  // @@protoc_insertion_point(field_release:TxPendingBroadcastMsg.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxPendingBroadcastMsg::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:TxPendingBroadcastMsg.version)
+}
+
+// bytes txRaw = 2;
+inline void TxPendingBroadcastMsg::clear_txraw() {
+  txraw_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& TxPendingBroadcastMsg::txraw() const {
+  // @@protoc_insertion_point(field_get:TxPendingBroadcastMsg.txRaw)
+  return _internal_txraw();
+}
+inline void TxPendingBroadcastMsg::set_txraw(const std::string& value) {
+  _internal_set_txraw(value);
+  // @@protoc_insertion_point(field_set:TxPendingBroadcastMsg.txRaw)
+}
+inline std::string* TxPendingBroadcastMsg::mutable_txraw() {
+  // @@protoc_insertion_point(field_mutable:TxPendingBroadcastMsg.txRaw)
+  return _internal_mutable_txraw();
+}
+inline const std::string& TxPendingBroadcastMsg::_internal_txraw() const {
+  return txraw_.GetNoArena();
+}
+inline void TxPendingBroadcastMsg::_internal_set_txraw(const std::string& value) {
+  
+  txraw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void TxPendingBroadcastMsg::set_txraw(std::string&& value) {
+  
+  txraw_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:TxPendingBroadcastMsg.txRaw)
+}
+inline void TxPendingBroadcastMsg::set_txraw(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txraw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:TxPendingBroadcastMsg.txRaw)
+}
+inline void TxPendingBroadcastMsg::set_txraw(const void* value, size_t size) {
+  
+  txraw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:TxPendingBroadcastMsg.txRaw)
+}
+inline std::string* TxPendingBroadcastMsg::_internal_mutable_txraw() {
+  
+  return txraw_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* TxPendingBroadcastMsg::release_txraw() {
+  // @@protoc_insertion_point(field_release:TxPendingBroadcastMsg.txRaw)
+  
+  return txraw_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void TxPendingBroadcastMsg::set_allocated_txraw(std::string* txraw) {
+  if (txraw != nullptr) {
+    
+  } else {
+    
+  }
+  txraw_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txraw);
+  // @@protoc_insertion_point(field_set_allocated:TxPendingBroadcastMsg.txRaw)
 }
 
 // -------------------------------------------------------------------
@@ -6070,6 +7293,494 @@ inline void GetDevInfoAck::set_allocated_base58addr(std::string* base58addr) {
   // @@protoc_insertion_point(field_set_allocated:GetDevInfoAck.base58addr)
 }
 
+// -------------------------------------------------------------------
+
+// ConfirmTransactionReq
+
+// string version = 1;
+inline void ConfirmTransactionReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionReq::version() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionReq.version)
+  return _internal_version();
+}
+inline void ConfirmTransactionReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionReq.version)
+}
+inline std::string* ConfirmTransactionReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& ConfirmTransactionReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void ConfirmTransactionReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionReq.version)
+}
+inline void ConfirmTransactionReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionReq.version)
+}
+inline void ConfirmTransactionReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionReq.version)
+}
+inline std::string* ConfirmTransactionReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionReq::release_version() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionReq.version)
+}
+
+// string id = 2;
+inline void ConfirmTransactionReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionReq::id() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionReq.id)
+  return _internal_id();
+}
+inline void ConfirmTransactionReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionReq.id)
+}
+inline std::string* ConfirmTransactionReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& ConfirmTransactionReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void ConfirmTransactionReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionReq.id)
+}
+inline void ConfirmTransactionReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionReq.id)
+}
+inline void ConfirmTransactionReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionReq.id)
+}
+inline std::string* ConfirmTransactionReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionReq::release_id() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionReq.id)
+}
+
+// string tx_hash = 3;
+inline void ConfirmTransactionReq::clear_tx_hash() {
+  tx_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionReq::tx_hash() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionReq.tx_hash)
+  return _internal_tx_hash();
+}
+inline void ConfirmTransactionReq::set_tx_hash(const std::string& value) {
+  _internal_set_tx_hash(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionReq.tx_hash)
+}
+inline std::string* ConfirmTransactionReq::mutable_tx_hash() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionReq.tx_hash)
+  return _internal_mutable_tx_hash();
+}
+inline const std::string& ConfirmTransactionReq::_internal_tx_hash() const {
+  return tx_hash_.GetNoArena();
+}
+inline void ConfirmTransactionReq::_internal_set_tx_hash(const std::string& value) {
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionReq::set_tx_hash(std::string&& value) {
+  
+  tx_hash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionReq.tx_hash)
+}
+inline void ConfirmTransactionReq::set_tx_hash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionReq.tx_hash)
+}
+inline void ConfirmTransactionReq::set_tx_hash(const char* value, size_t size) {
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionReq.tx_hash)
+}
+inline std::string* ConfirmTransactionReq::_internal_mutable_tx_hash() {
+  
+  return tx_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionReq::release_tx_hash() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionReq.tx_hash)
+  
+  return tx_hash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionReq::set_allocated_tx_hash(std::string* tx_hash) {
+  if (tx_hash != nullptr) {
+    
+  } else {
+    
+  }
+  tx_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tx_hash);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionReq.tx_hash)
+}
+
+// .ConfirmCacheFlag flag = 4;
+inline void ConfirmTransactionReq::clear_flag() {
+  flag_ = 0;
+}
+inline ::ConfirmCacheFlag ConfirmTransactionReq::_internal_flag() const {
+  return static_cast< ::ConfirmCacheFlag >(flag_);
+}
+inline ::ConfirmCacheFlag ConfirmTransactionReq::flag() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionReq.flag)
+  return _internal_flag();
+}
+inline void ConfirmTransactionReq::_internal_set_flag(::ConfirmCacheFlag value) {
+  
+  flag_ = value;
+}
+inline void ConfirmTransactionReq::set_flag(::ConfirmCacheFlag value) {
+  _internal_set_flag(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionReq.flag)
+}
+
+// -------------------------------------------------------------------
+
+// ConfirmTransactionAck
+
+// string version = 1;
+inline void ConfirmTransactionAck::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionAck::version() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.version)
+  return _internal_version();
+}
+inline void ConfirmTransactionAck::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.version)
+}
+inline std::string* ConfirmTransactionAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionAck.version)
+  return _internal_mutable_version();
+}
+inline const std::string& ConfirmTransactionAck::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void ConfirmTransactionAck::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionAck::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionAck.version)
+}
+inline void ConfirmTransactionAck::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionAck.version)
+}
+inline void ConfirmTransactionAck::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionAck.version)
+}
+inline std::string* ConfirmTransactionAck::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionAck::release_version() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionAck.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionAck::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionAck.version)
+}
+
+// string id = 2;
+inline void ConfirmTransactionAck::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionAck::id() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.id)
+  return _internal_id();
+}
+inline void ConfirmTransactionAck::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.id)
+}
+inline std::string* ConfirmTransactionAck::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionAck.id)
+  return _internal_mutable_id();
+}
+inline const std::string& ConfirmTransactionAck::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void ConfirmTransactionAck::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionAck::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionAck.id)
+}
+inline void ConfirmTransactionAck::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionAck.id)
+}
+inline void ConfirmTransactionAck::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionAck.id)
+}
+inline std::string* ConfirmTransactionAck::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionAck::release_id() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionAck.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionAck::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionAck.id)
+}
+
+// string tx_hash = 3;
+inline void ConfirmTransactionAck::clear_tx_hash() {
+  tx_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionAck::tx_hash() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.tx_hash)
+  return _internal_tx_hash();
+}
+inline void ConfirmTransactionAck::set_tx_hash(const std::string& value) {
+  _internal_set_tx_hash(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.tx_hash)
+}
+inline std::string* ConfirmTransactionAck::mutable_tx_hash() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionAck.tx_hash)
+  return _internal_mutable_tx_hash();
+}
+inline const std::string& ConfirmTransactionAck::_internal_tx_hash() const {
+  return tx_hash_.GetNoArena();
+}
+inline void ConfirmTransactionAck::_internal_set_tx_hash(const std::string& value) {
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionAck::set_tx_hash(std::string&& value) {
+  
+  tx_hash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionAck.tx_hash)
+}
+inline void ConfirmTransactionAck::set_tx_hash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionAck.tx_hash)
+}
+inline void ConfirmTransactionAck::set_tx_hash(const char* value, size_t size) {
+  
+  tx_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionAck.tx_hash)
+}
+inline std::string* ConfirmTransactionAck::_internal_mutable_tx_hash() {
+  
+  return tx_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionAck::release_tx_hash() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionAck.tx_hash)
+  
+  return tx_hash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionAck::set_allocated_tx_hash(std::string* tx_hash) {
+  if (tx_hash != nullptr) {
+    
+  } else {
+    
+  }
+  tx_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tx_hash);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionAck.tx_hash)
+}
+
+// .ConfirmCacheFlag flag = 4;
+inline void ConfirmTransactionAck::clear_flag() {
+  flag_ = 0;
+}
+inline ::ConfirmCacheFlag ConfirmTransactionAck::_internal_flag() const {
+  return static_cast< ::ConfirmCacheFlag >(flag_);
+}
+inline ::ConfirmCacheFlag ConfirmTransactionAck::flag() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.flag)
+  return _internal_flag();
+}
+inline void ConfirmTransactionAck::_internal_set_flag(::ConfirmCacheFlag value) {
+  
+  flag_ = value;
+}
+inline void ConfirmTransactionAck::set_flag(::ConfirmCacheFlag value) {
+  _internal_set_flag(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.flag)
+}
+
+// bool success = 5;
+inline void ConfirmTransactionAck::clear_success() {
+  success_ = false;
+}
+inline bool ConfirmTransactionAck::_internal_success() const {
+  return success_;
+}
+inline bool ConfirmTransactionAck::success() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.success)
+  return _internal_success();
+}
+inline void ConfirmTransactionAck::_internal_set_success(bool value) {
+  
+  success_ = value;
+}
+inline void ConfirmTransactionAck::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.success)
+}
+
+// bytes block_raw = 6;
+inline void ConfirmTransactionAck::clear_block_raw() {
+  block_raw_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& ConfirmTransactionAck::block_raw() const {
+  // @@protoc_insertion_point(field_get:ConfirmTransactionAck.block_raw)
+  return _internal_block_raw();
+}
+inline void ConfirmTransactionAck::set_block_raw(const std::string& value) {
+  _internal_set_block_raw(value);
+  // @@protoc_insertion_point(field_set:ConfirmTransactionAck.block_raw)
+}
+inline std::string* ConfirmTransactionAck::mutable_block_raw() {
+  // @@protoc_insertion_point(field_mutable:ConfirmTransactionAck.block_raw)
+  return _internal_mutable_block_raw();
+}
+inline const std::string& ConfirmTransactionAck::_internal_block_raw() const {
+  return block_raw_.GetNoArena();
+}
+inline void ConfirmTransactionAck::_internal_set_block_raw(const std::string& value) {
+  
+  block_raw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ConfirmTransactionAck::set_block_raw(std::string&& value) {
+  
+  block_raw_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ConfirmTransactionAck.block_raw)
+}
+inline void ConfirmTransactionAck::set_block_raw(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  block_raw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ConfirmTransactionAck.block_raw)
+}
+inline void ConfirmTransactionAck::set_block_raw(const void* value, size_t size) {
+  
+  block_raw_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ConfirmTransactionAck.block_raw)
+}
+inline std::string* ConfirmTransactionAck::_internal_mutable_block_raw() {
+  
+  return block_raw_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ConfirmTransactionAck::release_block_raw() {
+  // @@protoc_insertion_point(field_release:ConfirmTransactionAck.block_raw)
+  
+  return block_raw_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ConfirmTransactionAck::set_allocated_block_raw(std::string* block_raw) {
+  if (block_raw != nullptr) {
+    
+  } else {
+    
+  }
+  block_raw_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), block_raw);
+  // @@protoc_insertion_point(field_set_allocated:ConfirmTransactionAck.block_raw)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
@@ -6109,9 +7820,25 @@ inline void GetDevInfoAck::set_allocated_base58addr(std::string* base58addr) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::ConfirmCacheFlag> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ConfirmCacheFlag>() {
+  return ::ConfirmCacheFlag_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

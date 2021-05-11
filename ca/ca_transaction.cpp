@@ -24,15 +24,11 @@
 #include "ca_coredefs.h"
 #include "ca_hexcode.h"
 #include "Crypto_ECDSA.h"
-#include "../include/cJSON.h"
 #include "ca_interface.h"
 #include "../include/logging.h"
 #include "ca.h"
 #include "ca_test.h"
-#include "./proto/block.pb.h"
-#ifndef _CA_FILTER_FUN_
 #include "../include/net_interface.h"
-#endif
 #include "ca_clientinfo.h"
 #include "../include/ScopeGuard.h"
 #include "ca_clientinfo.h"
@@ -45,13 +41,13 @@
 #include "ca_sha2.h"
 #include "ca_base64.h"
 #include "ca_txhelper.h"
-#include "ca_verify.h"
-
 #include "ca_pwdattackchecker.h"
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "../utils/time_util.h"
+#include "../common/devicepwd.h"
+#include "../net/node_cache.h"
 
 static std::mutex s_ResMutex;
 #include "./ca_blockpool.h"
@@ -62,10 +58,19 @@ static std::mutex s_ResMutex;
 #include "proto/ca_protomsg.pb.h"
 #include "ca_txhelper.h"
 #include "ca_txvincache.h"
-
+#include "ca_txconfirmtimer.h"
+#include "ca_block_http_callback.h"
+#include "interface.pb.h"
 
 std::shared_mutex MinutesCountLock;
+static const int REASONABLE_HEIGHT_RANGE = 10;
 
+template<typename Ack> void ReturnAckCode(const MsgData& msgdata, std::map<int32_t, std::string> errInfo, Ack & ack, int32_t code, const std::string & extraInfo = "");
+template<typename TxReq> int CheckAddrs( const std::shared_ptr<TxReq>& req);
+
+int GetAddrsFromMsg( const std::shared_ptr<CreateMultiTxMsgReq>& msg, 
+                     std::vector<std::string> &fromAddr,
+                     std::map<std::string, int64_t> &toAddr);
 
 int StringSplit(std::vector<std::string>& dst, const std::string& src, const std::string& separator)
 {
@@ -80,7 +85,8 @@ int StringSplit(std::vector<std::string>& dst, const std::string& src, const std
     while((pos = src.find_first_of(separator, offset)) != std::string::npos)
     {
         temp = src.substr(offset, pos - offset);
-        if (temp.length() > 0){
+        if (temp.length() > 0)
+		{
             dst.push_back(temp);
             nCount ++;
         }
@@ -89,7 +95,8 @@ int StringSplit(std::vector<std::string>& dst, const std::string& src, const std
 
     // 分割第n个
     temp = src.substr(offset, src.length() - offset);
-    if (temp.length() > 0){
+    if (temp.length() > 0)
+	{
         dst.push_back(temp);
         nCount ++;
     }
@@ -194,7 +201,8 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 	}
 	
 	db_status = pRocksDb->GetUtxoHashsByAddress(txn, fromAddr, utxoHashs);
-	if (db_status != 0) {
+	if (db_status != 0) 
+	{
 		error("FindUtxosFromRocksDb GetUtxoHashsByAddress");
 		return false;
 	}
@@ -325,7 +333,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 	txoutFromAddr->set_value(total - amt);
 	txoutFromAddr->set_scriptpubkey(fromAddr);
 
-	uint64_t time = Singleton<TimeUtil>::get_instance()->getTimestamp();
+	uint64_t time = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
 	outTx.set_time(time);
 	outTx.set_txowner(fromAddr);
 	outTx.set_ip(net_get_self_node_id());
@@ -370,7 +378,7 @@ bool checkTop(int top)
 	unsigned int mytop = 0;
 	pRocksDb->GetBlockTop(txn, mytop);	
 
-	if(top < (int)mytop - 1 )
+	if(top < (int)mytop - 4 )
 	{
 		error("checkTop fail other top:%d my top:%d", top, (int)mytop);
 		return false;
@@ -379,7 +387,8 @@ bool checkTop(int top)
 	{
 		error("checkTop other top:%d my top:%d", top, (int)mytop);
 		return false;
-	}else
+	}
+	else
 	{
 		return true;
 	}
@@ -391,6 +400,20 @@ bool checkTransaction(const CTransaction & tx)
 	{
 		return false;
 	}
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if ( txn == NULL )
+	{
+		error("(FindUtxosFromRocksDb) TransactionInit failed !");
+		return false;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+	int db_status = 0;
 
 	uint64_t total = 0;
 	for (int i = 0; i < tx.vout_size(); i++)
@@ -414,24 +437,81 @@ bool checkTransaction(const CTransaction & tx)
 	bool isRedeem = false;
 	nlohmann::json extra = nlohmann::json::parse(tx.extra());
 	std::string txType = extra["TransactionType"].get<std::string>();
+	std::string redeemUtxo;
+
 	if (txType == TXTYPE_REDEEM)
 	{
 		isRedeem= true;
+
+		if (CheckTransactionType(tx) == kTransactionType_Tx)
+		{
+			nlohmann::json txInfo = extra["TransactionInfo"].get<nlohmann::json>();
+			redeemUtxo = txInfo["RedeemptionUTXO"];
+
+			// 检查质押时间
+			if ( 0 != IsMoreThan30DaysForRedeem(redeemUtxo) )
+			{
+				error("Redeem time is less than 30 days!");
+				std::cout << "Redeem time is less than 30 days!" << std::endl;
+				return false;
+			}
+		}
 	}
 
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if ( txn == NULL )
+	if (CheckTransactionType(tx) == kTransactionType_Tx)
 	{
-		error("(FindUtxosFromRocksDb) TransactionInit failed !");
-		return -2;
+		// 检查txowner和vin签名者是否一致
+		std::vector<std::string> vinSigners;
+		for (const auto & vin : vTxins)
+		{
+			std::string pubKey = vin.scriptsig().pub();
+			std::string addr = GetBase58Addr(pubKey);
+			if (vinSigners.end() == find(vinSigners.begin(), vinSigners.end(), addr))
+			{
+				vinSigners.push_back(addr);
+			}
+		}
+
+		std::vector<std::string> txOwners = TxHelper::GetTxOwner(tx);
+		if (vinSigners != txOwners)
+		{
+			error("TxOwner or vin signer error!");
+			return false;
+		}
+
+		// utxo是否存在
+		for (const auto & vin : vTxins)
+		{
+			std::string pubKey = vin.scriptsig().pub();
+			std::string addr = GetBase58Addr(pubKey);
+
+			std::vector<std::string> utxos;
+			if (pRocksDb->GetUtxoHashsByAddress(txn, addr, utxos))
+			{
+				error("GetUtxoHashsByAddress error !");
+				return false;
+			}
+			
+			std::vector<std::string> pledgeUtxo;
+			pRocksDb->GetPledgeAddressUtxo(txn, addr, pledgeUtxo);
+			if (utxos.end() == find(utxos.begin(), utxos.end(), vin.prevout().hash()))
+			{
+				if (isRedeem)
+				{
+					if (vin.prevout().hash() != redeemUtxo)
+					{
+						error("tx vin not found !");
+						return false;
+					}
+				}
+				else
+				{
+					error("tx vin not found !");
+					return false;
+				}
+			}
+		}
 	}
-
-	ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, false);
-	};
-
-	int db_status = 0;
 
 	// 检查是否有重复vin
 	std::sort(vTxins.begin(), vTxins.end(), [](const CTxin & txin0, const CTxin & txin1){
@@ -550,7 +630,23 @@ bool checkTransaction(const CTransaction & tx)
 
 std::vector<std::string> randomNode(unsigned int n)
 {
-	std::vector<std::string> v = net_get_node_ids();
+	std::vector<Node> nodeInfos ;
+	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
+	{
+		nodeInfos = Singleton<PeerNode>::get_instance()->get_nodelist();
+		cout<<"randomNode PeerNode size() ="<<nodeInfos.size()<<endl;
+	}
+	else
+	{
+		nodeInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
+		cout<<"randomNode NodeCache size() ="<<nodeInfos.size()<<endl;
+	}
+	std::vector<std::string> v;
+	for (const auto & i : nodeInfos)
+	{
+		v.push_back(i.id);
+	}
+	
 	unsigned int nodeSize = n;
 	std::vector<std::string> sendid;
 	if ((unsigned int)v.size() < nodeSize)
@@ -566,23 +662,38 @@ std::vector<std::string> randomNode(unsigned int n)
 		v.erase(iter);
 	}
 
-	std::set<int> rSet;
-	srand(time(NULL));
-	while (1)
+	if (v.empty())
 	{
-	    int i = rand() % v.size();
-	    rSet.insert(i);
-	    if (rSet.size() == nodeSize)
-	    {
-			break;
-	    }
+		return v;
 	}
 
-	for (auto &i : rSet)
+	if (v.size() <= nodeSize)
 	{
-	    sendid.push_back(v[i]);
+		for (auto & i : v)
+		{
+			sendid.push_back(i);	
+		}
 	}
+	else
+	{
+		std::set<int> rSet;
+		srand(time(NULL));
+		while (1)
+		{
+			int i = rand() % v.size();
+			rSet.insert(i);
+			if (rSet.size() == nodeSize)
+			{
+				break;
+			}
+		}
 
+		for (auto &i : rSet)
+		{
+			sendid.push_back(v[i]);
+		}
+	}
+	
 	return sendid;
 }
 
@@ -694,6 +805,559 @@ int GetRedemUtxoAmount(const std::string & redeemUtxoStr, uint64_t & amount)
 }
 
 
+bool VerifyBlockHeader(const CBlock & cblock)
+{
+	// uint64_t t1 = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
+	std::string hash = cblock.hash();
+    int db_status = 0;
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		std::cout << "(VerifyBlockHeader) TransactionInit failed !" << std::endl;
+		return false;
+	}
+
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	std::string strTempHeader;
+	db_status = pRocksDb->GetBlockByBlockHash(txn, hash, strTempHeader);
+
+	if (strTempHeader.size() != 0)
+	{
+		std::cout<<"BlockInfo has exist , do not need to add ..."<<std::endl;
+		debug("BlockInfo has exist , do not need to add ...");
+		bRollback = true;
+        return false;
+	}
+
+	std::string strPrevHeader;
+	db_status = pRocksDb->GetBlockByBlockHash(txn, cblock.prevhash(), strPrevHeader);
+    if (db_status != 0) 
+	{
+        std::cout << "VerifyBlockHeader (GetBlockByBlockHash) failed ! " << __LINE__ << std::endl;
+    }
+	if (strPrevHeader.size() == 0)
+	{
+		error("bp_block_valid lookup hashPrevBlock ERROR !!!");
+		bRollback = true;
+		return false;
+	}
+
+	// 区块检查
+
+	// 时间戳检查	
+	std::string strGenesisBlockHash;
+	db_status = pRocksDb->GetBlockHashByBlockHeight(txn, 0, strGenesisBlockHash);
+	if (db_status != 0)
+	{
+		error("GetBlockHashByBlockHeight failed!" );
+		return false;
+	}
+	std::string strGenesisBlockHeader;
+	pRocksDb->GetBlockByBlockHash(txn, strGenesisBlockHash, strGenesisBlockHeader);
+	if (db_status != 0)
+	{
+		error("GetBlockHashByBlockHeight failed!" );
+		return false;
+	}
+
+	if (strGenesisBlockHeader.length() == 0)
+	{
+		error("Genesis Block is not exist");
+		return false;
+	}
+	
+	CBlock genesisBlockHeader;
+	genesisBlockHeader.ParseFromString(strGenesisBlockHeader);
+	uint64_t blockHeaderTimestamp = cblock.time();
+	uint64_t genesisBlockHeaderTimestamp = genesisBlockHeader.time();
+	if (blockHeaderTimestamp == 0 || genesisBlockHeaderTimestamp == 0 || blockHeaderTimestamp <= genesisBlockHeaderTimestamp)
+	{
+		error("block timestamp error!");
+		return false;
+	}
+
+	if (cblock.txs_size() == 0)
+	{
+		error("cblock.txs_size() == 0");
+		bRollback = true;
+		return false;
+	}
+
+	if (cblock.SerializeAsString().size() > MAX_BLOCK_SIZE)
+	{
+		error("cblock.SerializeAsString().size() > MAX_BLOCK_SIZE");
+		bRollback = true;
+		return false;
+	}
+
+	if (CalcBlockHeaderMerkle(cblock) != cblock.merkleroot())
+	{
+		error("CalcBlockHeaderMerkle(cblock) != cblock.merkleroot()");
+		bRollback = true;
+		return false;
+	}
+
+	// 获取本块的签名个数
+	uint64_t blockSignNum = 0;
+	for (auto & txTmp : cblock.txs())
+	{
+		if (CheckTransactionType(txTmp) == kTransactionType_Fee)
+		{
+			blockSignNum = txTmp.vout_size();
+		}
+	}
+
+	std::map<std::string, uint64_t> addrAwards;
+	// 获取奖励交易中的节点信息,计算各个账号奖励值,用于校验
+	if (cblock.height() > g_compatMinHeight)
+	{
+		for (auto & txTmp : cblock.txs())
+		{
+			if (CheckTransactionType(txTmp) == kTransactionType_Award)
+			{
+				nlohmann::json txExtra;
+				try
+				{
+					txExtra = nlohmann::json::parse(txTmp.extra());
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << e.what() << '\n';
+					bRollback = true;
+					return false;
+				}
+				
+				std::vector<std::string> addrs;
+				std::vector<double> onlines;
+				std::vector<uint64_t> awardTotals;
+				std::vector<uint64_t> signSums;
+
+				for(const auto& info : txExtra["OnlineTime"])
+				{
+					try
+					{
+						addrs.push_back(info["Addr"].get<std::string>());
+						onlines.push_back(info["OnlineTime"].get<double>());
+						awardTotals.push_back(info["AwardTotal"].get<uint64_t>());
+						signSums.push_back(info["SignSum"].get<uint64_t>());
+					}
+					catch(const std::exception& e)
+					{
+						std::cerr << e.what() << '\n';
+						bRollback = true;
+						return false;
+					}
+				}
+
+				if (addrs.size() == 0 || onlines.size() == 0 || awardTotals.size() == 0 || signSums.size() == 0)
+				{
+					if (cblock.height() != 0)
+					{
+						error("Get sign node info error !");
+						std::cout << "Get sign node info error !" << std::endl;
+						bRollback = true;
+						return false;
+					}
+				}
+				else
+				{
+					a_award::AwardAlgorithm awardAlgorithm;
+					if ( 0 != awardAlgorithm.Build(blockSignNum, addrs, onlines, awardTotals, signSums) )
+					{
+						std::cout << "awardAlgorithm.Build() failed!" << std::endl;
+						error("awardAlgorithm.Build() failed!");
+						bRollback = true;
+						return false;
+					}
+
+					auto awardInfo = awardAlgorithm.GetDisAward();
+					for (auto & award : awardInfo)
+					{
+						addrAwards.insert(std::make_pair(award.second, award.first));
+					}	
+				}
+				// awardAlgorithm.TestPrint(true);
+			}
+		}
+	}
+
+	// 交易检查
+	for (int i = 0; i < cblock.txs_size(); i++)
+	{
+		CTransaction tx = cblock.txs(i);
+		if (!checkTransaction(tx))
+		{
+			error("checkTransaction(tx)");
+			bRollback = true;
+			return false;
+		}
+
+		bool iscb = CheckTransactionType(tx) == kTransactionType_Fee || CheckTransactionType(tx) == kTransactionType_Award;
+
+		if (iscb && 0 == tx.signprehash_size())
+		{
+			continue;
+		}
+
+		std::string bestChainHash;
+		db_status = pRocksDb->GetBestChainHash(txn, bestChainHash);
+        if (db_status != 0) {
+			error(" pRocksDb->GetBestChainHash");
+			bRollback = true;
+            return false;
+        }
+		bool isBestChainHash = bestChainHash.size() != 0;
+		if (! isBestChainHash && iscb && 0 == cblock.txs_size())
+		{
+			continue;
+		}
+
+		if (0 == cblock.txs_size() && ! isBestChainHash)
+		{
+			error("0 == cblock.txs_size() && ! isBestChainHash");
+			bRollback = true;
+			return false;
+		}
+
+		if (isBestChainHash)
+		{
+			int verifyPreHashCount = 0;
+			std::string txBlockHash;
+
+            std::string txHashStr;
+            
+            for (int i = 0; i < cblock.txs_size(); i++)
+            {
+                CTransaction transaction = cblock.txs(i);
+                if ( CheckTransactionType(transaction) == kTransactionType_Tx)
+                {
+                    CTransaction copyTx = transaction;
+                    for (int i = 0; i != copyTx.vin_size(); ++i)
+                    {
+                        CTxin * txin = copyTx.mutable_vin(i);
+                        txin->clear_scriptsig();
+                    }
+
+                    copyTx.clear_signprehash();
+                    copyTx.clear_hash();
+
+                    std::string serCopyTx = copyTx.SerializeAsString();
+
+                    size_t encodeLen = serCopyTx.size() * 2 + 1;
+                    unsigned char encode[encodeLen] = {0};
+                    memset(encode, 0, encodeLen);
+                    long codeLen = base64_encode((unsigned char *)serCopyTx.data(), serCopyTx.size(), encode);
+                    std::string encodeStr( (char *)encode, codeLen );
+
+                    txHashStr = getsha256hash(encodeStr);
+                }
+            }
+
+			if (! VerifyTransactionSign(tx, verifyPreHashCount, txBlockHash, txHashStr))
+			{
+				error("VerifyTransactionSign");
+				bRollback = true;
+				return false;
+			}
+
+			if (verifyPreHashCount < g_MinNeedVerifyPreHashCount)
+			{
+				error("verifyPreHashCount < g_MinNeedVerifyPreHashCount");
+				bRollback = true;
+				return false;
+			}
+		}
+
+		// 获取交易类型
+		// bool bIsRedeem = false;
+		std::string redempUtxoStr;
+		for (int i = 0; i < cblock.txs_size(); i++)
+		{
+			CTransaction transaction = cblock.txs(i);
+			if ( CheckTransactionType(transaction) == kTransactionType_Tx)
+			{
+				CTransaction copyTx = transaction;
+
+				nlohmann::json txExtra = nlohmann::json::parse(copyTx.extra());
+				std::string txType = txExtra["TransactionType"].get<std::string>();
+
+				if (txType == TXTYPE_REDEEM)
+				{
+					// bIsRedeem = true;
+
+					nlohmann::json txInfo = txExtra["TransactionInfo"].get<nlohmann::json>();
+					redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
+				}
+			}
+		}
+		//{{ Redeem time is more than 30 days, 20201214
+		// std::cout << "Enter check Redeem time! " << redempUtxoStr << std::endl;
+		if (!redempUtxoStr.empty() && cblock.height() > g_compatMinHeight)
+		{
+			int result = IsMoreThan30DaysForRedeem(redempUtxoStr);
+			if (result != 0)
+			{
+				error("Redeem time is less than 30 days!");
+				std::cout << "Redeem time is less than 30 days!" << std::endl;
+				bRollback = true;
+				return false;
+			}
+			else
+			{
+				std::cout << "Redeem time is more than 30 days!" << std::endl;
+			}
+		}
+		//}}
+
+		// 验证签名公钥和base58地址是否一致
+		std::vector< std::string > signBase58Addrs;
+		for (int i = 0; i < cblock.txs_size(); i++)
+		{
+			CTransaction transaction = cblock.txs(i);
+			if ( CheckTransactionType(transaction) == kTransactionType_Tx)
+			{
+				// 取出所有签名账号的base58地址
+				for (int k = 0; k < transaction.signprehash_size(); k++) 
+                {
+                    char buf[2048] = {0};
+                    size_t buf_len = sizeof(buf);
+                    GetBase58Addr(buf, &buf_len, 0x00, transaction.signprehash(k).pub().c_str(), transaction.signprehash(k).pub().size());
+					std::string bufStr(buf);
+					signBase58Addrs.push_back( bufStr );
+                }
+			}
+		}
+
+		std::vector<std::string> txOwners;
+		uint64_t packageFee = 0;
+		uint64_t signFee = 0;
+		for (int i = 0; i < cblock.txs_size(); i++)
+		{
+			CTransaction transaction = cblock.txs(i);
+			if ( CheckTransactionType(transaction) == kTransactionType_Tx)
+			{
+				SplitString(tx.txowner(), txOwners, "_");
+				if (txOwners.size() < 1)
+				{
+					error("txOwners error!");
+					bRollback = true;
+					return false;
+				}
+
+				nlohmann::json extra = nlohmann::json::parse(tx.extra());
+				packageFee = extra["PackageFee"].get<uint64_t>();
+				signFee = extra["SignFee"].get<uint64_t>();
+			}
+		}
+
+		for (int i = 0; i < cblock.txs_size(); i++)
+		{
+			CTransaction transaction = cblock.txs(i);
+			if ( CheckTransactionType(transaction) == kTransactionType_Fee)
+			{
+				// 签名账号的数量和vout的数量不一致，错误
+				if( signBase58Addrs.size() != (size_t)transaction.vout_size() )
+				{
+					error("signBase58Addrs.size() != (size_t)transaction.vout_size()");
+					bRollback = true;
+					return false;
+				}
+
+				// base58地址不一致，错误
+				for(int l = 0; l < transaction.vout_size(); l++)
+				{
+					CTxout txout = transaction.vout(l);	
+					auto iter = find(signBase58Addrs.begin(), signBase58Addrs.end(), txout.scriptpubkey());
+					if( iter == signBase58Addrs.end() )
+					{
+						error("iter == signBase58Addrs.end()");
+						bRollback = true;
+						return false;
+					}
+
+					if (txout.value() < 0)
+					{
+						error("vout error !");
+						std::cout << "vout error !" << std::endl;
+						bRollback = true;
+						return false;
+					}
+
+					if (txOwners.end() != find(txOwners.begin(), txOwners.end(), txout.scriptpubkey()))
+					{
+						if (txout.value() != 0)
+						{
+							bRollback = true;
+							return false;
+						}
+					}
+					else
+					{
+						if ((uint64_t)txout.value() != signFee && (uint64_t)txout.value() != packageFee)
+						{
+							error("SignFee or packageFee error !");
+							std::cout << "SignFee or packageFee error ! " << std::endl;
+							bRollback = true;
+							return false;
+						}
+					}
+				}
+			}
+			else if ( CheckTransactionType(transaction) == kTransactionType_Award )
+			{
+				uint64_t awardAmountTotal = 0;
+				for (auto & txout : transaction.vout())
+				{
+					// 不使用uint64 是为了防止有负值的情况
+					int64_t value = txout.value();
+					std::string voutAddr = txout.scriptpubkey();
+
+					if (cblock.height() > g_compatMinHeight)
+					{		
+						// 发起方账号奖励为0
+						if (txOwners.end() != find(txOwners.begin(), txOwners.end(), voutAddr))
+						{
+							if (value != 0)
+							{
+								error("Award error !");
+								bRollback = true;
+								return false;
+							}
+						}
+						else
+						{
+							// 奖励为负值，或者大于单笔最高奖励值的时候，错误，返回
+							if (value < 0 || (uint64_t)value > g_MaxAwardTotal)
+							{
+								error("Award error !");
+								bRollback = true;
+								return false;
+							}
+							else if (value == 0)
+							{
+								for (int i = 0; i < cblock.txs_size(); i++)
+								{
+									CTransaction transaction = cblock.txs(i);
+									uint32_t count = 0;
+									if ( CheckTransactionType(transaction) == kTransactionType_Award)
+									{
+										for (auto & txout : transaction.vout())
+										{
+											if (txout.value() == 0)
+											{
+												count++;
+											}
+										}
+
+										if (count > 1)
+										{
+											bRollback = true;
+											return false;
+										}
+									}
+								}
+							}
+
+							nlohmann::json txExtra;
+							try
+							{
+								txExtra = nlohmann::json::parse(tx.extra());
+							}
+							catch(const std::exception& e)
+							{
+								std::cerr << e.what() << '\n';
+								bRollback = true;
+								return false;
+							}
+							
+							for (nlohmann::json::iterator it = txExtra.begin(); it != txExtra.end(); ++it) 
+							{
+								if (voutAddr == it.key())
+								{
+									auto iter = addrAwards.find(voutAddr);
+									if (iter == addrAwards.end())
+									{
+										std::cout << "Transaction award error !" << __LINE__ << std::endl;
+										error("Transaction award error !");
+										bRollback = true;
+										return false;
+									}
+									else
+									{
+										if ((uint64_t)value != iter->second)
+										{
+											std::cout << "Transaction award error !" << __LINE__ << std::endl;
+											error("Transaction award error !");
+											bRollback = true;
+											return false;
+										}
+									}
+								}
+							}
+						}
+					}
+					awardAmountTotal += txout.value();
+				}
+
+				if (awardAmountTotal > g_MaxAwardTotal)
+				{
+					error("awardAmountTotal error !");
+					bRollback = true;
+					return false;
+				}
+			}
+		}
+	}
+
+
+	// 共识数不能小于g_MinNeedVerifyPreHashCount
+	if (cblock.height() > g_compatMinHeight)
+	{
+		for(auto & tx : cblock.txs())
+		{
+			if (CheckTransactionType(tx) == kTransactionType_Tx)
+			{
+				std::vector<std::string> txownersTmp = TxHelper::GetTxOwner(tx);
+
+				for (auto & txout : tx.vout())
+				{
+					if (txout.value() <= 0 && txownersTmp.end() == find(txownersTmp.begin(), txownersTmp.end(), txout.scriptpubkey()))
+					{
+						// 交易接收方接收金额不能为0
+						error("Tx vout error !");
+						bRollback = true;
+						return false;
+					}
+					else if (txout.value() < 0 && txownersTmp.end() != find(txownersTmp.begin(), txownersTmp.end(), txout.scriptpubkey()))
+					{
+						// 交易发起方剩余资产可以为0.但不能小于0
+						error("Tx vout error !");
+						bRollback = true;
+						return false;
+					}
+				}
+			}
+			else if ( CheckTransactionType(tx) == kTransactionType_Fee)
+			{
+				if (tx.vout_size() < g_MinNeedVerifyPreHashCount)
+				{
+					error("The number of signers is not less than %d !", g_MinNeedVerifyPreHashCount);
+					bRollback = true;
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+
 std::string CalcBlockHeaderMerkle(const CBlock & cblock)
 {
 	std::string merkle;
@@ -746,7 +1410,7 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 {
 	CBlock cblock;
 
-	uint64_t time = Singleton<TimeUtil>::get_instance()->getTimestamp();
+	uint64_t time = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
     cblock.set_time(time);
 	cblock.set_version(0);
 
@@ -796,6 +1460,31 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 	ON_SCOPE_EXIT{
 		pRocksDb->TransactionDelete(txn, true);
 	};
+
+	std::string prevBlockHash = SendTxMsg->prevblkhash();
+	unsigned int prevBlockHeight = 0;
+	if (0 != pRocksDb->GetBlockHeightByBlockHash(txn, prevBlockHash, prevBlockHeight))
+	{
+		// 父块不存在, 不建块
+		cblock.clear_hash();
+		return cblock;
+	}
+
+	// 要加的块的高度
+	unsigned int cblockHeight = ++prevBlockHeight;
+
+	unsigned int myTop = 0;
+	pRocksDb->GetBlockTop(txn, myTop);
+	if ( (myTop  > 9) && (myTop - 9 > cblockHeight))
+	{
+		cblock.clear_hash();
+		return cblock;
+	}
+	else if (myTop + 1 < cblockHeight)
+	{
+		cblock.clear_hash();
+		return cblock;
+	}
 
 	std::string bestChainHash;
 	db_status = pRocksDb->GetBestChainHash(txn, bestChainHash);
@@ -963,22 +1652,26 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 
 
 	db_status = pRocksDb->SetBlockHeightByBlockHash(txn, block.hash(), block.height());
-    if (db_status != 0) {
+    if (db_status != 0) 
+	{
 		bRollback = true;
         return false;
     }
 	db_status = pRocksDb->SetBlockHashByBlockHeight(txn, block.height(), block.hash(), is_mainblock);
-    if (db_status != 0) {
+    if (db_status != 0) 
+	{
 		bRollback = true;
         return false;
     }
 	db_status = pRocksDb->SetBlockHeaderByBlockHash(txn, block.hash(), block.SerializeAsString());
-    if (db_status != 0) {
+    if (db_status != 0) 
+	{
 		bRollback = true;
         return false;
     }
 	db_status = pRocksDb->SetBlockByBlockHash(txn, block.hash(), cblock.SerializeAsString());
-    if (db_status != 0) {
+    if (db_status != 0) 
+	{
 		bRollback = true;
         return false;
     }
@@ -1457,19 +2150,24 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 			int result = MagicSingleton<TxVinCache>::GetInstance()->Remove(tx.hash(), txOwnerVec);
 			if (result == 0)
 			{
-				std::cout << "Remove pending transaction in Cache ^^^^^VVVVV " << tx.hash() << " from ";
+				std::cout << "Remove pending transaction in Cache " << tx.hash() << " from ";
 				for_each(txOwnerVec.begin(), txOwnerVec.end(), [](const string& owner){ cout << owner << " "; });
 				std::cout << std::endl;
 			}
-			else if (result == 1)
-			{
-			}
-			else
-			{
-				std::cout << "Failed that remove pending transaction in Cache ^^^^^VVVVV " << tx.hash() << " from ";
-				for_each(txOwnerVec.begin(), txOwnerVec.end(), [](const string& owner){ cout << owner << " "; });
-				std::cout << std::endl;
-			}
+		}
+	}
+	//}}
+
+	//{{ Update the height of the self node, 20210323 Liu
+	Singleton<PeerNode>::get_instance()->set_self_chain_height();
+	//}}
+	
+	//{{ Check http callback, 20210324 Liu
+	if (Singleton<Config>::get_instance()->HasHttpCallback())
+	{
+		if (MagicSingleton<CBlockHttpCallback>::GetInstance()->IsRunning())
+		{
+			MagicSingleton<CBlockHttpCallback>::GetInstance()->AddBlock(cblock);
 		}
 	}
 	//}}
@@ -1729,7 +2427,8 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 	{
 		std::string strBestChainHash;
 		db_status = pRocksDb->GetBestChainHash(txn, strBestChainHash);
-        if (db_status != 0) {
+        if (db_status != 0) 
+		{
             return false;
         }
 		if (strBestChainHash.size() != 0)
@@ -1772,11 +2471,13 @@ unsigned get_extra_award_height()
 	};
 
     db_status = pRocksDb->GetBlockTop(txn, top);
-    if (db_status != 0) {
+    if (db_status != 0) 
+	{
         return 0;
     }
     auto b_height = top;
-    if (b_height <= MAX_AWARD) {
+    if (b_height <= MAX_AWARD) 
+	{
         award = 2000;
     }
     return award;
@@ -2025,7 +2726,7 @@ CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward, const std::sha
     txIndex++;
     retTx.set_n(txIndex);
 
-	uint64_t time = Singleton<TimeUtil>::get_instance()->getTimestamp();
+	uint64_t time = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
     retTx.set_time(time);
     retTx.set_ip(net_get_self_node_id());
 
@@ -2081,13 +2782,29 @@ CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward, const std::sha
 
 void InitAccount(accountinfo *acc, const char *path)
 {
-	if(NULL == path)
-		g_AccountInfo.path =  OWNER_CERT_PATH;
+	// 默认账户
+	if (g_testflag)
+	{
+		g_InitAccount = "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu";
+	}
 	else
-		g_AccountInfo.path =  path;
+	{
+		g_InitAccount = "16psRip78QvUruQr9fMzr8EomtFS1bVaXk";
+	}
 
-	if('/' != g_AccountInfo.path[g_AccountInfo.path.size()-1])
+	if(NULL == path)
+	{
+		g_AccountInfo.path =  OWNER_CERT_PATH;
+	}
+	else
+	{
+		g_AccountInfo.path =  path;
+	}
+
+	if('/' != g_AccountInfo.path[g_AccountInfo.path.size()-1]) 
+	{
 		g_AccountInfo.path += "/";
+	}
 
 	if(access(g_AccountInfo.path.c_str(), F_OK))
     {
@@ -2103,6 +2820,7 @@ void InitAccount(accountinfo *acc, const char *path)
 		std::cout<<"InitAccount Failed ..."<<std::endl;
         return;
 	}
+	
     DIR *dir;
     struct dirent *ptr;
 
@@ -2139,21 +2857,21 @@ void InitAccount(accountinfo *acc, const char *path)
         }
     }
 	closedir(dir);
+
+	if(!g_AccountInfo.GetAccSize())
+    {
+        g_AccountInfo.GenerateKey();
+    }
+
 	return;
 }
 
-void GetDefault58Addr(char *buf, size_t len)
+std::string GetDefault58Addr()
 {
 	string sPubStr;
 	GetPublicKey(g_publicKey, sPubStr);
-	cstring * pPubKey = cstr_new_buf(sPubStr.c_str(), sPubStr.size());
-	size_t buf_len = len;
-	GetBase58Addr(buf, &buf_len, 0x00, pPubKey->str, pPubKey->len);
-	cstr_free(pPubKey, true);
+	return GetBase58Addr(sPubStr);
 }
-
-
-
 
 /**
     vector最后一列为奖励总额
@@ -2257,808 +2975,6 @@ int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount, fl
     return 1;
 }
 
-int RollbackRedeemTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTransaction &tx)
-{
-	ca_console ResBlockColor(kConsoleColor_Green, kConsoleColor_Black, true);
-
-	nlohmann::json txExtra = nlohmann::json::parse(tx.extra());
-	nlohmann::json txInfo = txExtra["TransactionInfo"].get<nlohmann::json>();
-	std::string redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
-
-	// 取出交易发起方，解质押交易只有一个发起方和接收方
-	std::vector<std::string> owner_addrs = TxHelper::GetTxOwner(tx);
-	std::string txOwner = owner_addrs[0];
-
-	if(CheckTransactionType(tx) == kTransactionType_Tx)
-	{
-		uint64_t pledgeValue = 0;
-
-		std::string txRaw;
-		if (0 != pRocksDb->GetTransactionByHash(txn, redempUtxoStr, txRaw) )
-		{
-			printf("%sGetTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -1;
-		}
-
-		CTransaction utxoTx;
-		utxoTx.ParseFromString(txRaw);
-
-		for (int j = 0; j < utxoTx.vout_size(); j++)
-		{
-			CTxout txOut = utxoTx.vout(j);
-			if (txOut.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-			{
-				pledgeValue += txOut.value();
-			}
-		}
-
-		// 回滚vin
-		std::vector<std::string> vinUtxos;
-		uint64_t vinAmountTotal = 0;
-		uint64_t voutAmountTotal = 0;
-		for (auto & txin : tx.vin())
-		{
-			vinUtxos.push_back(txin.prevout().hash());
-		}
-
-		auto iter = find(vinUtxos.begin(), vinUtxos.end(), redempUtxoStr);
-		if (iter != vinUtxos.end())
-		{
-			vinUtxos.erase(iter);
-		}
-		else
-		{
-			printf("%s Find redempUtxoStr in vinUtxos failed ! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -2;
-		}
-		
-		for (auto & vinUtxo : vinUtxos)
-		{
-			vinAmountTotal += TxHelper::GetUtxoAmount(vinUtxo, txOwner);
-		}
-		
-		for (auto & txout : tx.vout())
-		{
-			voutAmountTotal += txout.value();
-		}
-
-		// 判断解质押交易的vin中是否有质押产生的正常utxo部分
-		nlohmann::json extra = nlohmann::json::parse(tx.extra());
-		uint64_t signFee = extra["SignFee"].get<int>();
-		uint64_t NeedVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
-		uint64_t packageFee = extra["PackageFee"].get<int>();
-
-		voutAmountTotal += signFee * (NeedVerifyPreHashCount - 1);
-		voutAmountTotal += packageFee;
-
-		bool bIsUnused = true;
-		if (voutAmountTotal != vinAmountTotal)
-		{
-			uint64_t usable = TxHelper::GetUtxoAmount(redempUtxoStr, txOwner);
-			if (voutAmountTotal == vinAmountTotal - usable)
-			{
-				// 本交易未使用质押utxo的正常部分
-				bIsUnused = false;
-			}
-		}
-
-		for (auto & txin : tx.vin())
-		{
-			if (txin.prevout().hash() == redempUtxoStr && bIsUnused)
-			{
-				continue;
-			}
-			
-			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, txOwner, txin.prevout().hash()) )
-			{
-				std::string txRaw;
-				if ( 0 != pRocksDb->GetTransactionByHash(txn, txin.prevout().hash(), txRaw) )
-				{
-					printf("%sGetTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -2;
-				}
-
-				CTransaction vinUtxoTx;
-				vinUtxoTx.ParseFromString(txRaw);
-
-				nlohmann::json extra = nlohmann::json::parse(vinUtxoTx.extra());
-				std::string txType = extra["TransactionType"].get<std::string>();
-				if (txType != TXTYPE_REDEEM)
-				{
-					printf("%sSetUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -3;
-				}
-			}
-		}
-
-		int64_t value = 0;
-		if ( 0 != pRocksDb->GetBalanceByAddress(txn, txOwner, value) )
-		{
-			printf("%sGetBalanceByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -2;
-		}
-
-		int64_t amount = 0;
-		amount = value - pledgeValue;
-
-		// 回滚余额
-		if ( 0 != pRocksDb->SetBalanceByAddress(txn, txOwner, amount) )
-		{
-			printf("%sSetBalanceByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -3;
-		}
-
-		// 删除交易记录
-		if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txOwner, tx.hash()) )
-		{
-			printf("%sRemoveAllTransactionByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -4;
-		}
-
-		// 放回解质押的utxo
-		if (0 != pRocksDb->SetPledgeAddressUtxo(txn, txOwner, redempUtxoStr) )
-		{
-			printf("%sSetPledgeAddressUtxo failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -5;
-		}
-
-		// 放回解质押的地址
-		std::vector<std::string> utxoes;
-		if (0 != pRocksDb->GetPledgeAddressUtxo(txn, txOwner, utxoes))
-		{
-			printf("%sGetPledgeAddressUtxo failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -6;
-		}
-
-		// 如果是刚放入的utxo，则说明回滚前无质押地址，需要放回去
-		if (utxoes.size() == 1)
-		{
-			if (0 != pRocksDb->SetPledgeAddresses(txn, txOwner))
-			{
-				printf("%sSetPledgeAddresses failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -7;
-			}
-		}
-
-		if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txOwner, tx.hash()))
-		{
-			printf("%sRemoveUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -8;
-		}
-	}
-	else if (CheckTransactionType(tx) == kTransactionType_Fee || CheckTransactionType(tx) == kTransactionType_Award)
-	{
-		uint64_t signFee = 0;
-		std::string txOwnerAddr;
-		std::string txRaw;
-		if (0 != pRocksDb->GetTransactionByHash(txn, redempUtxoStr, txRaw) )
-		{
-			printf("%sGetTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-			return -9;
-		}
-
-		CTransaction utxoTx;
-		utxoTx.ParseFromString(txRaw);
-
-		for (int j = 0; j < utxoTx.vout_size(); j++)
-		{
-			CTxout txOut = utxoTx.vout(j);
-			if (txOut.scriptpubkey() != VIRTUAL_ACCOUNT_PLEDGE)
-			{
-				txOwnerAddr += txOut.scriptpubkey();
-			}
-		}
-
-		for (int j = 0; j < tx.vout_size(); j++)
-		{
-			CTxout txout = tx.vout(j);
-
-			if (txout.scriptpubkey() != txOwnerAddr)
-			{
-				signFee += txout.value();
-			}
-
-			int64_t value = 0;
-			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
-			{
-				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -10;
-			}
-			int64_t amount = value - txout.value();
-			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
-			{
-				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -11;
-			}
-			if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -12;
-			}
-			if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveUtxoHashsByAddress  2  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -13;
-			}
-		}
-
-		if (CheckTransactionType(tx) == kTransactionType_Fee)
-		{
-			int64_t value = 0;
-			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txOwnerAddr, value) )
-			{
-				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -14;
-			}
-
-			signFee += value;
-
-			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txOwnerAddr, signFee) )
-			{
-				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -15;
-			}
-		}
-	}
-
-	return 0;
-}
-
-int RollbackPledgeTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTransaction &tx)
-{
-	int db_status = 0;
-	std::vector<std::string> owner_addrs = TxHelper::GetTxOwner(tx);
-	ca_console ResBlockColor(kConsoleColor_Green, kConsoleColor_Black, true);
-
-	// 取质押账户
-	std::string addr;
-	if (owner_addrs.size() != 0)
-	{
-		addr = owner_addrs[0]; 
-	}
-	
-	if (CheckTransactionType(tx) == kTransactionType_Tx) 
-	{
-		if (0 !=  pRocksDb->RemovePledgeAddressUtxo(txn, addr, tx.hash()))
-		{
-			return -33;
-		}
-
-		std::vector<std::string> utxoes;
-		pRocksDb->GetPledgeAddressUtxo(txn, addr, utxoes); // 无需判断
-		
-		if (utxoes.size() == 0)
-		{
-			if (0 != pRocksDb->RemovePledgeAddresses(txn, addr))
-			{
-				return -34;
-			}
-		}
-
-		//vin加
-		for (int j = 0; j < tx.vin_size(); j++)
-		{
-			CTxin txin = tx.vin(j);
-			std::string vin_hash = txin.prevout().hash();  //花费的vin
-			std::string vin_owner = GetBase58Addr(txin.scriptsig().pub());
-
-			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, vin_owner, vin_hash ))
-			{
-				// vin 重复时，若不是解质押产生的utxo，则返回
-				std::string txRaw;
-				if ( 0 != pRocksDb->GetTransactionByHash(txn, vin_hash, txRaw) )
-				{
-					printf("%sGetTransactionByHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -17;
-				}
-
-				CTransaction vinHashTx;
-				vinHashTx.ParseFromString(txRaw);
-
-				nlohmann::json extra = nlohmann::json::parse(vinHashTx.extra());
-				std::string txType = extra["TransactionType"];
-
-				if (txType != TXTYPE_REDEEM)
-				{
-					printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -17;
-				}
-				else
-				{
-					continue;
-				}	
-			}
-
-			//vin加余额
-			uint64_t amount = TxHelper::GetUtxoAmount(vin_hash, vin_owner);
-			int64_t balance = 0;
-
-			db_status = pRocksDb->GetBalanceByAddress(txn, vin_owner, balance);
-			if (db_status != 0) 
-			{
-				error("AddBlock:GetBalanceByAddress");
-			}
-
-			balance += amount;
-			db_status = pRocksDb->SetBalanceByAddress(txn, vin_owner, balance);
-			if (db_status != 0) 
-			{
-				return -18;
-			}
-		}
-
-		//vout减
-		for (int j = 0; j < tx.vout_size(); j++)
-		{
-			CTxout txout = tx.vout(j);
-			// if(std::find(std::begin(owner_addrs), std::end(owner_addrs), txout.scriptpubkey()) == std::end(owner_addrs))
-			
-			int64_t value = 0;
-			if (txout.scriptpubkey() != VIRTUAL_ACCOUNT_PLEDGE)
-			{
-				if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
-				{
-					printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -30;
-				}
-				int64_t amount = value - txout.value();
-				if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
-				{
-					printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -31;
-				}
-
-				if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()))
-				{
-					printf("%sRemoveUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -15;
-				}
-				if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-				{
-					printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -32;
-				}
-			}
-		}
-	}
-	else if (CheckTransactionType(tx) == kTransactionType_Fee || CheckTransactionType(tx) == kTransactionType_Award)
-	{
-		for (int j = 0; j < tx.vout_size(); j++)
-		{
-			CTxout txout = tx.vout(j);
-			int64_t value = 0;
-			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
-			{
-				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -30;
-			}
-			int64_t amount = value - txout.value();
-			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
-			{
-				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -31;
-			}
-			if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -32;
-			}
-			if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveUtxoHashsByAddress  2  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -18;
-			}
-		}
-	}
-
-	return 0;
-}
-
-int RollbackTx(std::shared_ptr<Rocksdb> pRocksDb, Transaction* txn, CTransaction tx)
-{
-	ca_console ResBlockColor(kConsoleColor_Green, kConsoleColor_Black, true);
-	int db_status = 0;
-	std::vector<std::string> owner_addrs = TxHelper::GetTxOwner(tx);
-	if(CheckTransactionType(tx) == kTransactionType_Tx) 
-	{
-		for (auto & addr : owner_addrs)
-		{
-			if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, addr, tx.hash()) )
-			{
-				printf("%sRemoveAllTransactionByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -1;
-			}
-		}
-		//vin加
-		for (int j = 0; j < tx.vin_size(); j++)
-		{
-			CTxin txin = tx.vin(j);
-			std::string vin_hash = txin.prevout().hash();  //花费的vin
-			std::string vin_owner = GetBase58Addr(txin.scriptsig().pub());
-
-			if ( 0 != pRocksDb->SetUtxoHashsByAddress(txn, vin_owner, vin_hash ))
-			{
-				// vin 重复时，若不是解质押产生的utxo，则返回
-				std::string txRaw;
-				if ( 0 != pRocksDb->GetTransactionByHash(txn, vin_hash, txRaw) )
-				{
-					printf("%sGetTransactionByHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -2;
-				}
-
-				CTransaction vinHashTx;
-				vinHashTx.ParseFromString(txRaw);
-
-				nlohmann::json extra = nlohmann::json::parse(vinHashTx.extra());
-				std::string txType = extra["TransactionType"];
-
-				if (txType != TXTYPE_REDEEM)
-				{
-					printf("%sSetUtxoHashsByAddress  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -3;
-				}
-				else
-				{
-					continue;
-				}	
-			}
-
-			//vin加余额
-			uint64_t amount = TxHelper::GetUtxoAmount(vin_hash, vin_owner);
-			int64_t balance = 0;
-			db_status = pRocksDb->GetBalanceByAddress(txn, vin_owner, balance);
-			if (db_status != 0) 
-			{
-				error("AddBlock:GetBalanceByAddress");
-			}
-			balance += amount;
-			db_status = pRocksDb->SetBalanceByAddress(txn, vin_owner, balance);
-			if (db_status != 0) 
-			{
-				return -4;
-			}
-		}
-		//vout减
-		for (int j = 0; j < tx.vout_size(); j++)
-		{
-			CTxout txout = tx.vout(j);
-			
-			int64_t value = 0;
-			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
-			{
-				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -5;
-			}
-			int64_t amount = value - txout.value();
-			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
-			{
-				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -6;
-			}
-
-			if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()))
-			{
-				printf("%sRemoveUtxoHashsByAddress failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -7;
-			}
-
-			// 交易接收方交易记录
-			if (owner_addrs.end() == find(owner_addrs.begin(), owner_addrs.end(), txout.scriptpubkey()))
-			{
-				if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-				{
-					printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					return -8;
-				}
-			}
-		}					
-	}	
-	else if (CheckTransactionType(tx) == kTransactionType_Fee || CheckTransactionType(tx) == kTransactionType_Award)
-	{
-		for (int j = 0; j < tx.vout_size(); j++)
-		{
-			CTxout txout = tx.vout(j);
-			int64_t value = 0;
-			if ( 0 != pRocksDb->GetBalanceByAddress(txn, txout.scriptpubkey(), value) )
-			{
-				printf("%sGetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -9;
-			}
-			int64_t amount = value - txout.value();
-			if ( 0 != pRocksDb->SetBalanceByAddress(txn, txout.scriptpubkey(), amount) )
-			{
-				printf("%sSetBalanceByAddress  3  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -10;
-			}
-			if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveAllTransactionByAddress  5  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -11;
-			}
-			if ( 0 != pRocksDb->RemoveUtxoHashsByAddress(txn, txout.scriptpubkey(), tx.hash()) )
-			{
-				printf("%sRemoveUtxoHashsByAddress  2  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				return -12;
-			}
-		}
-	}
-	return 0;
-}
-
-
-int RollbackToHeight(unsigned int height)
-{
-	ca_console ResBlockColor(kConsoleColor_Green, kConsoleColor_Black, true);
-    int db_status = 0;
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if( txn == NULL )
-	{
-		std::cout << "(RollbackToHeight) TransactionInit failed !" << std::endl;
-		return -1;
-	}
-	bool bRollback = true;
-	unsigned int top = 0;
-	db_status = pRocksDb->GetBlockTop(txn, top);
-    if (db_status != 0) 
-	{
-		bRollback = true;
-        return -2;
-    }
-	pRocksDb->TransactionDelete(txn, false);
-	if (height >= top)
-	{
-		bRollback = true;
-		return -3;
-	}
-
-	while (top > height)
-	{
-		txn = pRocksDb->TransactionInit();
-		if( txn == NULL )
-		{
-			std::cout << "(RollbackToHeight) TransactionInit failed !" << std::endl;
-			return -4;
-		}
-		bRollback = true;
-		ON_SCOPE_EXIT{
-			pRocksDb->TransactionDelete(txn, bRollback);
-		};
-		
-		std::vector<std::string> vBlockHashs;
-		if ( 0 != pRocksDb->GetBlockHashsByBlockHeight(txn, top, vBlockHashs) )
-		{
-			printf("%sGetBlockHashsByBlockHeight failed !!! %s\n", ResBlockColor.color().c_str(), ResBlockColor.reset().c_str());
-			bRollback = true;
-			return -5;
-		}
-
-		for (auto blockHash : vBlockHashs)
-		{
-			CBlock cblock;
-			std::string serBlockHeader;
-
-            /* 交易数据统计回滚 */
-            // 交易
-            uint64_t counts{0};
-            pRocksDb->GetTxCount(txn, counts);
-            counts--;
-            pRocksDb->SetTxCount(txn, counts);
-            // 燃料费
-            counts = 0;
-            pRocksDb->GetGasCount(txn, counts);
-            counts--;
-            pRocksDb->SetGasCount(txn, counts);
-            // 额外奖励
-            counts = 0;
-            pRocksDb->GetAwardCount(txn, counts);
-            counts--;
-            pRocksDb->SetAwardCount(txn, counts);
-
-			if ( 0 != pRocksDb->GetBlockByBlockHash(txn, blockHash, serBlockHeader) )
-			{
-				printf("%sGetBlockHeaderByBlockHash failed !!! %s\n", ResBlockColor.color().c_str(), ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -6;
-			}
-
-			cblock.ParseFromString(serBlockHeader);
-
-			bool isRedeem = false;
-			bool isPledge = false;
-			std::string redempUtxoStr;
-
-			nlohmann::json blockExtra = nlohmann::json::parse(cblock.extra());
-			std::string txType = blockExtra["TransactionType"].get<std::string>();
-			if (txType == TXTYPE_PLEDGE)
-			{
-				isPledge = true;
-			}
-			else if (txType == TXTYPE_REDEEM)
-			{
-				isRedeem = true;
-				nlohmann::json txInfo = blockExtra["TransactionInfo"].get<nlohmann::json>();
-				redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
-			}
-
-			for (int i = 0; i < cblock.txs_size(); i++)
-			{
-				CTransaction tx = cblock.txs(i);
-				std::vector<std::string> owner_addrs = TxHelper::GetTxOwner(tx);
-				if ( 0 != pRocksDb->DeleteTransactionByHash(txn, tx.hash()) )
-				{
-					printf("%sDeleteTransactionByHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					bRollback = true;
-					return -7;
-				}
-
-				if ( 0 != pRocksDb->DeleteBlockHashByTransactionHash(txn, tx.hash()) )
-				{
-					printf("%sDeleteBlockHashByTransactionHash failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-					bRollback = true;
-					return -8;
-				}
-				if(CheckTransactionType(tx) == kTransactionType_Tx)
-				{
-					for(const auto& addr:owner_addrs)
-					{
-						if ( 0 != pRocksDb->RemoveAllTransactionByAddress(txn, addr, tx.hash()) )
-						{
-							std::cout << "addr:" << addr << " hash:" << tx.hash() << std::endl;
-							printf("%sRemoveAllTransactionByAddress  1   failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-							bRollback = true;
-							return -14;
-						}
-					}
-				}
-			}
-
-			CBlockHeader block;
-			std::string serBlock;
-			if ( 0 != pRocksDb->GetBlockHeaderByBlockHash(txn, blockHash, serBlock) )
-			{
-				printf("%sGetBlockByBlockHash  2  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -20;
-			}
-
-			block.ParseFromString(serBlock);
-
-			if ( 0 != pRocksDb->DeleteBlockHeightByBlockHash(txn, blockHash) )
-			{
-				printf("%sDeleteBlockHeightByBlockHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -21;
-			}
-
-			if ( 0 != pRocksDb->RemoveBlockHashByBlockHeight(txn, top, blockHash) )
-			{
-				printf("%sRemoveBlockHashByBlockHeight  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -22;
-			}
-
-			if ( 0 != pRocksDb->DeleteBlockByBlockHash(txn, blockHash) )
-			{
-				printf("%sDeleteBlockHeaderByBlockHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -23;
-			}
-
-			if ( 0 != pRocksDb->DeleteBlockHeaderByBlockHash(txn, blockHash) )
-			{
-				printf("%sDeleteBlockByBlockHash  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-				bRollback = true;
-				return -24;
-			}
-
-			for (int i = 0; i < cblock.txs_size(); i++)
-			{
-				CTransaction tx = cblock.txs(i);
-				if (isPledge)
-				{
-					if (0 != RollbackPledgeTx(pRocksDb, txn, tx) )
-					{
-						bRollback = true;
-						return -25;
-					}
-				}
-				else if (isRedeem)
-				{
-					if (0 != RollbackRedeemTx(pRocksDb, txn, tx))
-					{
-						bRollback = true;
-						return -26;
-					}
-				}
-				else
-				{
-					int ret = RollbackTx(pRocksDb, txn, tx);
-					if( ret != 0)
-					{
-						bRollback = true;
-						return ret;
-					}
-				}
-
-				// 回滚账号获得的总奖励值和总签名数
-				if (CheckTransactionType(tx) == kTransactionType_Award)
-				{
-					for (auto & txout : tx.vout())
-					{
-						// 总奖励值
-						uint64_t awardTotal = 0;
-						if (0 != pRocksDb->GetAwardTotalByAddress(txn, txout.scriptpubkey(), awardTotal))
-						{
-							std::cout << "(RollbackToHeight) GetAwardTotalByAddress failed !" << std::endl;
-							error("(RollbackToHeight) GetAwardTotalByAddress failed !");
-							bRollback = true;
-							return -33;
-						}
-						awardTotal = (txout.value() > 0) && (awardTotal > (uint64_t)txout.value()) ? awardTotal - txout.value() : 0;
-
-						if (0 != pRocksDb->SetAwardTotalByAddress(txn, txout.scriptpubkey(), awardTotal))
-						{
-							std::cout << "(RollbackToHeight) SetAwardTotalByAddress failed !" << std::endl;
-							error("(RollbackToHeight) SetAwardTotalByAddress failed !");
-							bRollback = true;
-							return false;
-						}
-
-						// 总签名数
-						uint64_t signSum = 0;
-						if (0 != pRocksDb->GetSignNumByAddress(txn, txout.scriptpubkey(), signSum))
-						{
-							std::cout << "(RollbackToHeight) GetSignNumByAddress failed !" << std::endl;
-							error("(RollbackToHeight) GetSignNumByAddress failed !");
-							bRollback = true;
-							return false;
-						}
-						signSum = signSum > 0 ? signSum - 1 : 0;
-
-						if (0 != pRocksDb->SetSignNumByAddress(txn, txout.scriptpubkey(), signSum))
-						{
-							std::cout << "(AddBlock) SetSignNumByAddress failed !" << std::endl;
-							error("(AddBlock) SetSignNumByAddress failed !");
-							bRollback = true;
-							return false;
-						}
-					}
-				}
-			}
-		}
-		
-		//更新top
-		if ( 0 != pRocksDb->SetBlockTop(txn, --top) )
-			printf("%sSetBlockTop  failed !!! %s\n", ResBlockColor.color().c_str(),  ResBlockColor.reset().c_str());
-		//更新besthash
-		std::string besthash;
-		pRocksDb->GetBlockHashByBlockHeight(txn, top, besthash);		
-		db_status = pRocksDb->SetBestChainHash(txn, besthash);
-        if (db_status != 0) 
-		{
-			std::cout << "rollback SetBestChainHash error" << std::endl;
-			return -9;
-        }	
-
-		if( pRocksDb->TransactionCommit(txn) )
-		{
-			bRollback = true;
-			std::cout << "(RollbackToHeight) TransactionCommit failed !" << std::endl;
-			return -33;
-		}
-	}
-	
-
-	ca_console redColor(kConsoleColor_Red, kConsoleColor_Black, true);
-	std::cout << redColor.color() << "Rollback to block " << height << redColor.reset() << std::endl;
-
-	return 0;
-}
-
-
-
-
 bool ExitGuardian()
 {
 	std::string name = "ebpc_daemon";
@@ -3074,7 +2990,7 @@ bool ExitGuardian()
 void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>& msg, const MsgData& msgdata )
 {
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		error("HandleBuileBlockBroadcastMsg IsVersionCompatible");
 		return ;
@@ -3085,6 +3001,23 @@ void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>
 	cblock.ParseFromString(serBlock);
 
 	MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock));
+}
+
+// Create: receive pending transaction from network and add to cache,  20210114   Liu
+void HandleTxPendingBroadcastMsg(const std::shared_ptr<TxPendingBroadcastMsg>& msg, const MsgData& msgdata)
+{
+	// 判断版本是否兼容
+	if (Util::IsVersionCompatible(msg->version()) != 0)
+	{
+		error("HandleTxPendingBroadcastMsg IsVersionCompatible");
+		return ;
+	}
+
+	std::string transactionRaw = msg->txraw();
+	CTransaction tx;
+	tx.ParseFromString(transactionRaw);
+	int result = MagicSingleton<TxVinCache>::GetInstance()->Add(tx, false);
+	cout << "Receive pending transaction broadcast message ^^^^^VVVVV " << result << endl;
 }
 
 
@@ -3163,279 +3096,377 @@ int BuildBlock(std::string &recvTxString, const std::shared_ptr<TxMsg>& SendTxMs
 		return -4;
 	}
 
-	bool succ = MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock));
-	if(!succ)
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsBroadcast(tx.hash()))
 	{
+		std::cout << "Block has already broadcast ^^^^VVVV" << std::endl;
 		return -5;
 	}
+
 	BuileBlockBroadcastMsg buileBlockBroadcastMsg;
 	buileBlockBroadcastMsg.set_version(getVersion());
 	buileBlockBroadcastMsg.set_blockraw(serBlock);
 
-	net_broadcast_message<BuileBlockBroadcastMsg>(buileBlockBroadcastMsg);
+	net_broadcast_message<BuileBlockBroadcastMsg>(buileBlockBroadcastMsg, net_com::Priority::kPriority_High_1);
+
+	MagicSingleton<TxVinCache>::GetInstance()->SetBroadcastFlag(tx.hash());
+	// Add transaction broadcast time, 20210506   Liu
+	MagicSingleton<TxVinCache>::GetInstance()->UpdateTransactionBroadcastTime(tx.hash());
+	
 	info("BuildBlock BuileBlockBroadcastMsg");
 	return 0;
 }
 
-int IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion)
+int IsBlockExist(const std::string & blkHash)
 {
-	if (vRecvVersion.size() == 0)
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (!txn)
 	{
-		std::cout << "(linux)版本错误：-1" << std::endl;
+		error("TransactionInit error !");
 		return -1;
 	}
-	std::string ownerVersion = getVersion();
-	std::vector<std::string> vOwnerVersion;
-	SplitString(ownerVersion, vOwnerVersion, "_");
 
-	if (vOwnerVersion.size() != 3)
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	unsigned int blockHeight = 0;
+	if (0 != pRocksDb->GetBlockHeightByBlockHash(txn, blkHash, blockHeight))
 	{
-		std::cout << "(linux)版本错误：-2" << std::endl;
+		error("GetBlockHeightByBlockHash error !");
 		return -2;
-	}
-
-	// 版本号判断
-	std::vector<std::string> vOwnerVersionNum;
-	SplitString(vOwnerVersion[1], vOwnerVersionNum, ".");
-	if (vOwnerVersionNum.size() == 0)
-	{
-		std::cout << "(linux)版本错误：-3" << std::endl;
-		return -3;
-	}
-
-	std::vector<std::string> vRecvVersionNum;
-	SplitString(vRecvVersion[1], vRecvVersionNum, ".");
-	if (vRecvVersionNum.size() != vOwnerVersionNum.size())
-	{
-		std::cout << "(linux)版本错误：-4" << std::endl;
-		return -4;
-	}
-
-	for (size_t i = 0; i < vRecvVersionNum.size(); i++)
-	{
-		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
-		{
-			std::cout << "(linux)版本错误：-5" << std::endl;
-			return -5;
-		}
-	}
-
-	if (g_testflag == 1)
-	{
-		if (vRecvVersion[2] != "t")
-		{
-			std::cout << "(linux)版本错误：-6" << std::endl;
-			return -6;
-		}
-	}
-	else
-	{
-		if (vRecvVersion[2] != "p")
-		{
-			std::cout << "(linux)版本错误：-7" << std::endl;
-			return -7;
-		}
 	}
 
 	return 0;
 }
 
-int IsOtherVersionCompatible(const std::string & vRecvVersion, bool bIsAndroid)
+int CalcTxTryCountDown(int needVerifyPreHashCount)
 {
-	if (vRecvVersion.size() == 0)
+	if (needVerifyPreHashCount < g_MinNeedVerifyPreHashCount)
 	{
-		std::cout << "(other) 版本错误: -1" << std::endl;
-		return -1;
-	}
-
-	std::vector<std::string> vRecvVersionNum;
-	SplitString(vRecvVersion, vRecvVersionNum, ".");
-	if (vRecvVersionNum.size() != 3)
-	{
-		std::cout << "(other) 版本错误: -2" << std::endl;
-		return -2;
-	}
-
-	std::string ownerVersion;
-	if (bIsAndroid)
-	{
-		ownerVersion = g_AndroidCompatible;
+		return 0;
 	}
 	else
 	{
-		ownerVersion = g_IOSCompatible;
+		return needVerifyPreHashCount - 4;
+	}
+}
+
+int GetTxTryCountDwon(const TxMsg & txMsg)
+{
+	return txMsg.trycountdown();
+}
+
+int GetLocalDeviceOnlineTime(double_t & onlinetime)
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		std::cout << "(GetLocalDeviceOnlineTime) TransactionInit failed !" << std::endl;
+		return -1;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	int ret = 0;
+	std::string ownPubKey = GetDefault58Addr();
+	std::vector<string> pledgeUtxos;
+	if (0 != pRocksDb->GetPledgeAddressUtxo(txn, ownPubKey, pledgeUtxos))
+	{
+		ret = 1;
+	}
+
+	uint64_t pledgeTime = time(NULL);
+	uint64_t startTime = pledgeTime;
+	for (auto & hash : pledgeUtxos)
+	{
+		std::string txRaw;
+		if (0 != pRocksDb->GetTransactionByHash(txn, hash, txRaw))
+		{
+			ret = -2;
+		}
+
+		CTransaction utxoTx;
+		utxoTx.ParseFromString(txRaw);
+
+		for (auto & txout : utxoTx.vout())
+		{
+			if (txout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
+			{
+				if (txout.value() > (int64_t)g_TxNeedPledgeAmt && utxoTx.time() < pledgeTime)
+				{
+					pledgeTime = utxoTx.time();
+				}
+			}
+		}
 	}
 	
-	std::vector<std::string> vOwnerVersionNum;
-	SplitString(ownerVersion, vOwnerVersionNum, ".");
-
-	for (size_t i = 0; i < vOwnerVersionNum.size(); ++i)
+	if (pledgeTime == startTime)
 	{
-		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
+		onlinetime = 1;
+	}
+	else
+	{
+		onlinetime = (time(NULL) - pledgeTime) / 3600 / 24;
+		onlinetime = onlinetime > 1 ? onlinetime : 1;
+	}
+
+	return ret;
+}
+
+int SendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg, uint32_t number)
+{
+	// 所有签过名的节点的id
+	std::vector<std::string> signedIds;  
+	for (auto & item : msg->signnodemsg())
+	{
+		signedIds.push_back( item.id() );
+	}
+
+	std::vector<std::string> sendid;
+	int ret = FindSignNode(tx, number, signedIds, sendid);
+	if( ret < 0 )
+	{
+		return -1;
+	}
+
+	for (auto id : sendid)
+	{
+		net_send_message<TxMsg>(id.c_str(), *msg, net_com::Priority::kPriority_High_1);
+	}
+
+	return 0;
+}
+
+int RetrySendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg)
+{
+	int tryCountDown = msg->trycountdown();
+	tryCountDown--;
+	msg->set_trycountdown(tryCountDown);
+	if (tryCountDown <= 0)
+	{
+		return -1;
+	}
+	else
+	{
+		// 继续尝试转发
+		SendTxMsg(tx, msg, 1);
+	}
+
+	return 0;
+}
+
+int AddSignNodeMsg(const std::shared_ptr<TxMsg>& msg)
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		return -1;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	// 是否有足够质押节点
+	bool isEnoughPledgeNode = false;
+	uint32_t pledegeNodeCount = 0;
+	std::vector<std::string> addressVec;
+	pRocksDb->GetPledgeAddress(txn, addressVec);
+
+	for (auto & addr : addressVec)
+	{
+		uint64_t pledgeamount = 0;
+		SearchPledge(addr, pledgeamount);
+		if (pledgeamount >= g_TxNeedPledgeAmt)
 		{
-			std::cout << "(other) 版本错误: -3" << std::endl;
-			std::cout << "(other) 接收到的版本：" << vRecvVersion << std::endl;
-			std::cout << "(other) 本地的版本：" << ownerVersion << std::endl;
+			pledegeNodeCount++;
+		}
+		if (pledegeNodeCount > g_minPledgeNodeNum)
+		{
+			isEnoughPledgeNode = true;
+			break;
+		}
+	}
+
+	double_t onlinetime = 0.0;
+	if (0 > GetLocalDeviceOnlineTime(onlinetime))
+	{
+		if (isEnoughPledgeNode)
+		{
+			return -2;
+		}
+	}
+
+	uint64_t mineSignatureFee = 0;
+	pRocksDb->GetDeviceSignatureFee( mineSignatureFee );
+	if(mineSignatureFee <= 0)
+	{
+		return -3;
+	}
+
+	std::string default58Addr = GetDefault58Addr();
+
+	uint64_t addrAwardTotal = 0;
+	pRocksDb->GetAwardTotalByAddress(txn, default58Addr, addrAwardTotal);
+	
+	uint64_t signSum = 0;
+	pRocksDb->GetSignNumByAddress(txn, default58Addr, signSum);
+
+	SignNodeMsg * psignNodeMsg = msg->add_signnodemsg();
+	psignNodeMsg->set_id(net_get_self_node_id());
+	psignNodeMsg->set_signpubkey( default58Addr );
+	psignNodeMsg->set_gasfee( std::to_string( mineSignatureFee ) );
+	psignNodeMsg->set_onlinetime(onlinetime);
+	psignNodeMsg->set_awardtotal(addrAwardTotal);
+	psignNodeMsg->set_signsum(signSum);
+
+	std::string ser = psignNodeMsg->SerializeAsString();
+	std::string signatureMsg;
+	std::string strPub;
+	GetSignString(ser, signatureMsg, strPub);
+	psignNodeMsg->set_signmsg(signatureMsg);
+
+	return 0;
+}
+
+int CheckTxMsg( const std::shared_ptr<TxMsg>& msg )
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		return -1;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	// 取交易体
+	CTransaction tx;
+	tx.ParseFromString(msg->tx());
+
+	// 取交易发起方
+	std::vector<std::string> vTxOwners = TxHelper::GetTxOwner(tx);
+
+	// 取流转交易体中签名者
+	std::vector<std::string> vMsgSigners;
+	for (const auto & signer : msg->signnodemsg())
+	{
+		vMsgSigners.push_back(signer.signpubkey());
+	}
+
+	// 取交易体中签名者
+	std::vector<std::string> vTxSigners;
+	for (const auto & signInfo : tx.signprehash())
+	{
+		std::string addr = GetBase58Addr(signInfo.pub());
+		vTxSigners.push_back(addr);
+	}
+
+	std::sort(vMsgSigners.begin(), vMsgSigners.end());
+	std::sort(vTxSigners.begin(), vTxSigners.end());
+
+	// 比对差异
+	if (vMsgSigners != vTxSigners)
+	{
+		return -2;
+	}
+
+	// 取交易类型
+	bool bIsPledgeTx = false;
+	auto extra = nlohmann::json::parse(tx.extra());
+	std::string txType = extra["TransactionType"].get<std::string>();
+	if ( txType == TXTYPE_PLEDGE )
+	{
+		bIsPledgeTx = true;
+	}
+
+	// 取全网质押账号
+	std::vector<string> pledgeAddrs;
+	pRocksDb->GetPledgeAddress(txn, pledgeAddrs);
+
+	// 判断是否为初始账号交易
+	bool bIsInitAccount = false;
+	if (vTxOwners.end() != find(vTxOwners.begin(), vTxOwners.end(), g_InitAccount))
+	{
+		bIsInitAccount = true;
+	}
+
+	// 判断签名节点是否需要质押
+	if ( (bIsPledgeTx || bIsInitAccount) && pledgeAddrs.size() < g_minPledgeNodeNum )
+	{
+		return 0;
+	}
+
+	// 判断签名节点质押金额
+	for (auto & addr : vTxSigners)
+	{
+		// 发起方不进行质押判断
+		if (vTxOwners.end() != std::find(vTxOwners.begin(), vTxOwners.end(), addr))
+		{
+			continue;
+		}
+
+		uint64_t amount = 0;
+		SearchPledge(addr, amount);
+		if (amount < g_TxNeedPledgeAmt)
+		{
 			return -3;
 		}
 	}
-
 	return 0;
-}
-
-int IsVersionCompatible( std::string recvVersion )
-{
-	if (recvVersion.size() == 0)
-	{
-		std::cout << "版本错误：-1" << std::endl;
-		return -1;
-	}
-
-	std::vector<std::string> vRecvVersion;
-	SplitString(recvVersion, vRecvVersion, "_");
-	if (vRecvVersion.size() != 2 && vRecvVersion.size() != 3)
-	{
-		std::cout << "版本错误：-2" << std::endl;
-		return -2;
-	}
-
-	int versionPrefix = std::stoi(vRecvVersion[0]);
-	if (versionPrefix > 4 || versionPrefix < 1)
-	{
-		std::cout << "版本错误：-3" << std::endl;
-		return -3;
-	}
-	
-	switch(versionPrefix)
-	{
-		case 1:
-		{
-			// linux  (例：1_0.3_t)
-			if ( 0 != IsLinuxVersionCompatible(vRecvVersion) )
-			{
-				return -4;
-			}
-			break;
-		}
-		case 2:
-		{
-			// 暂无windows
-			return -5;
-		}
-		case 3:
-		{
-			// Android  (例：4_3.0.14)
-			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], false) )
-			{
-				return -6;
-			}
-			break;
-		}
-		case 4:
-		{
-			// IOS  (例：3_3.0.14)
-			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], true) )
-			{
-				return -6;
-			}
-			break;
-		}
-		default:
-		{
-			return -7;
-		}
-	}
-	return 0;
-}
-
-bool IsAllowSign(CTransaction &tx)
-{
-	char buf[512] = {0};
-	GetDefault58Addr(buf, sizeof(buf));
-
-	std::string default58Addr(buf, strlen(buf));
-
-	for (int i = 0; i < tx.vout_size(); ++i)
-	{
-		CTxout txOut = tx.vout(i);
-		if (txOut.scriptpubkey() == default58Addr)
-		{
-			return false;
-		}
-	}
-
-	return true;
 }
 
 void HandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata)
 {
 	std::string tx_hash;
-	DoHandleTx( msg, msgdata, tx_hash );
+	DoHandleTx( msg, tx_hash);
 }
 
-
-
-int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::string & tx_hash )
+int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 {
-	TxMsgAck txMsgAck;
-	txMsgAck.set_version(getVersion());
-	
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
-		error("HandleTx IsVersionCompatible");
 		return -1;
 	}
+	
+	// 判断高度是否符合
 	if(!checkTop(msg->top()))
 	{
 		return -2;
 	}
-	std::string RecvTxData = msg->tx();
 
-	bool enable = false;
-	Singleton<Config>::get_instance()->GetEnable(kConfigEnabelTypeTx, &enable);
-	if (! enable)
+	// 检查本节点是否存在该交易的父块
+	if (IsBlockExist(msg->prevblkhash()))
 	{
-		txMsgAck.set_code(-1);
-		txMsgAck.set_message("Disable Tx");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx Disable Tx");
 		return -3;
 	}
 
-	debug("Recv TX ...");
+	std::cout << "Recv TX ..." << std::endl;
 
-	//TX的头部带有签名过的网络节点的id，格式为 num [nodeid,nodeid,...] tx
+	//TX的头部带有签名过的网络节点的id，格式为 num [nodeid,nodeid,...] tx // 可删除
 	CTransaction tx;
-	std::vector<std::string> signedIds;  // 所有签过名的节点的id
-	int verify_num;
-	bool ret = txstr_parse((char *)RecvTxData.data(), (size_t)RecvTxData.size(), tx, signedIds, &verify_num);
-	if(!ret)
-	{
-		txMsgAck.set_code(-2);
-		txMsgAck.set_message("txstr_parse() error");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx txstr_parse() error");
-		return -4;	
-	}
+	tx.ParseFromString(msg->tx());
 
-	if (verify_num < g_MinNeedVerifyPreHashCount)
+	// 此次交易的共识数
+	auto extra = nlohmann::json::parse(tx.extra());
+    int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
+	if (needVerifyPreHashCount < g_MinNeedVerifyPreHashCount)
 	{
-		txMsgAck.set_code(-6);
-		txMsgAck.set_message("verify_num error");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx verify_num error");
-		return -19;
+		return -4;
 	}
 
 	CalcTransactionHash(tx);
 
 	if (! checkTransaction(tx))
 	{
-		txMsgAck.set_code(-3);
-		txMsgAck.set_message("tx invalid");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx checkTransaction");
 		return -5;
 	}
 
@@ -3443,10 +3474,6 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		txMsgAck.set_code(-4);
-		txMsgAck.set_message("TransactionInit failed !");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx (NetMessageTx) TransactionInit failed !");
 		return -6;
 	}
 
@@ -3454,33 +3481,48 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
+	// 所有签过名的节点的id
+	std::vector<std::string> signedIds;
+	for (auto & item : msg->signnodemsg())
+	{
+		signedIds.push_back( item.id() );
+		if (item.onlinetime() <= 0)
+		{
+			return -7;
+		}
+	}
+
+	if (0 != CheckTxMsg(msg))
+	{
+		return -8;
+	}
+
+	//验证别人的签名
 	int verifyPreHashCount = 0;
 	std::string txBlockHash;
 	std::string blockPrevHash;
-	
-	//验证别人的签名
 	bool rc = VerifyTransactionSign(tx, verifyPreHashCount, txBlockHash, msg->txencodehash());
-	// std::cout << "HandleTx===:" << verifyPreHashCount << "from fd:" << msgdata.fd << std::endl;
-	if ( verifyPreHashCount < verify_num && ContainSelfSign(tx))
-	{
-		txMsgAck.set_code(-7);
-		txMsgAck.set_message("Give up Sign and broadcasting because you have signed ...");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx Give up Sign and broadcasting because you have signed ... ");
-		return -7;
-	}
 	if(!rc)
 	{
-		txMsgAck.set_code(-8);
-		txMsgAck.set_message("TX verify sign failed");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		error("HandleTx VerifyTransactionSign ");
-		return -8;
+		if(tx.signprehash_size() == 0)
+		{
+			return -9;
+		}
+		else
+		{
+			return (0 != RetrySendTxMsg(tx, msg) ? -9 : 0);
+		}
+	}
+
+	std::cout << "verifyPreHashCount: " << verifyPreHashCount << std::endl;
+
+	if ( verifyPreHashCount < needVerifyPreHashCount && ContainSelfSign(tx))
+	{
+		return (0 != RetrySendTxMsg(tx, msg) ? -10 : 0);
 	}
 
 	// 判断是否为质押交易
 	bool isPledgeTx = false;
-	nlohmann::json extra = nlohmann::json::parse(tx.extra());
 	std::string txType = extra["TransactionType"].get<std::string>();
 	if (txType == TXTYPE_PLEDGE)
 	{
@@ -3499,46 +3541,32 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 	}
 
 	// 账号未质押不允许签名转账交易, 但允许签名质押交易
-	// verifyPreHashCount == 0 时为自己发起交易允许签名，verifyPreHashCount == verify_num时签名已经足够 开始建块
-	if (!isPledgeTx && !isInitAccountTx && (verifyPreHashCount != 0 && verifyPreHashCount != verify_num) )
+	// verifyPreHashCount == 0 时为自己发起交易允许签名，verifyPreHashCount == needVerifyPreHashCount 时签名已经足够 开始建块
+	if (!isPledgeTx && !isInitAccountTx && (verifyPreHashCount != 0 && verifyPreHashCount != needVerifyPreHashCount) )
 	{
-		size_t len = 512;
-		char buf[len] = {0};
-		GetDefault58Addr(buf, len);
-		std::string defauleAddr(buf, strlen(buf));
+		std::string defauleAddr = GetDefault58Addr();
 
 		uint64_t amount = 0;
 		SearchPledge(defauleAddr, amount);
-
 		if (amount < g_TxNeedPledgeAmt && defauleAddr != g_InitAccount)
 		{
-			txMsgAck.set_code(-5);
-			txMsgAck.set_message("defaule account not pledge enough assets!");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);
-			
-			std::cout << "account: " << defauleAddr << " defaule not pledge enough assets!" << std::endl;
-			std::cout << "pledge amount : " << amount << std::endl;
-			error("defaule account: %s not pledge enough assets!", defauleAddr.c_str());
-			return -9;
+			return (0 != RetrySendTxMsg(tx, msg) ? -11 : 0);
 		}
 	}
 
 	// 交易接收方禁止签名
-	char buf[512] = {0};
-	GetDefault58Addr(buf, sizeof(buf));
-	
-	std::string default58Addr(buf, sizeof(buf));
+	std::string default58Addr = GetDefault58Addr();
 	for(int i = 0; i < tx.vout_size(); i++)
 	{
 		CTxout txout = tx.vout(i);
 		if(default58Addr == txout.scriptpubkey() && default58Addr != TxHelper::GetTxOwner(tx)[0])
 		{
-			error("Transaction account cannot be signed!");
-			return -10;
+			return (0 != RetrySendTxMsg(tx, msg) ? -12 : 0);
 		}
 	}
 
-	if ( verifyPreHashCount < verify_num)
+	// 自身开始签名
+	if ( verifyPreHashCount < needVerifyPreHashCount)
 	{
 		tx_hash = tx.hash();
 		//自己来签名
@@ -3546,510 +3574,163 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata, std::
 		std::string strPub;
 		GetSignString(txBlockHash, strSignature, strPub);
 
-		char buf[512] = {0};
-		GetDefault58Addr(buf, sizeof(buf));
-		debug("[%s] add Sign ...", buf);
+		std::cout << "[" << GetDefault58Addr() << "] add Sign ..." << endl;
 
 		CSignPreHash * signPreHash = tx.add_signprehash();
 		signPreHash->set_sign(strSignature);
 		signPreHash->set_pub(strPub);
 		verifyPreHashCount++;
 	}
-
-	// 返回增加txhash字段
-	txMsgAck.set_txhash(tx.hash());
 	
 	uint64_t mineSignatureFee = 0;
 	pRocksDb->GetDeviceSignatureFee( mineSignatureFee );
-	
 	if(mineSignatureFee <= 0)
 	{
-		txMsgAck.set_code(-9);
-		txMsgAck.set_message("mineSignatureFee get failed or not set!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		std::cout << "mineSignatureFee get failed or not set!" << std::endl;
-		error("HandleTx mineSignatureFee get failed or not set!");
-		return -11;
-	}
-
-	nlohmann::json txExtra = nlohmann::json::parse(tx.extra());
-	int txOwnerPayGasFee = txExtra["SignFee"].get<int>();
-
-	if((uint64_t)txOwnerPayGasFee < g_minSignFee || (uint64_t)txOwnerPayGasFee > g_maxSignFee)
-	{
-		txMsgAck.set_code(-10);
-		txMsgAck.set_message("GasFee error!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		std::cout << "txOwnerPayGasFee is " << txOwnerPayGasFee << std::endl;
-		error("HandleTx txOwnerPayGasFee is 0!");
-		return -12;
+		if (tx.signprehash_size() == 1)
+		{
+			// 发起方必须设置矿费
+			return -13;
+		}
+		else
+		{
+			// 交易流转节点可重试发送
+			return (0 != RetrySendTxMsg(tx, msg) ? -13 : 0);
+		}
 	}
 
 	std::string ownID = net_get_self_node_id();
-
+	int txOwnerPayGasFee = extra["SignFee"].get<int>();
 	if (ownID != tx.ip())
 	{
 		// 交易发起方所支付的手续费低于本节点设定的签名费时不予签名
 		if(verifyPreHashCount != 0 && ((uint64_t)txOwnerPayGasFee) < mineSignatureFee )
 		{
-			error("HandleTx txOwnerPayGasFee < mineSignatureFee!");
-			return -13;
+			return (0 != RetrySendTxMsg(tx, msg) ? -14 : 0);
 		}
+	}
 
-		// 签名节点不能为交易接收方
-		rc = IsAllowSign(tx);
-		if (!rc)
-		{
-			std::cout << "default account is tx account!" << std::endl;
-			error("default account is tx account!");
-			return -14;
-		}
+	if((uint64_t)txOwnerPayGasFee < g_minSignFee || (uint64_t)txOwnerPayGasFee > g_maxSignFee)
+	{
+		return -15;
 	}
  
 	std::string serTx = tx.SerializeAsString();
+	msg->set_tx(serTx);
 
-	TxMsg sendTxMsg;
-	sendTxMsg.set_top(msg->top());	
-	if (verifyPreHashCount < verify_num)
+	if (verifyPreHashCount < needVerifyPreHashCount)
 	{
-		std::vector<std::string> v;
+		// 签名数不足时
 
-		int nodeSize = verify_num * 50;
-		if(verifyPreHashCount > 1)   // 除自己本身签名外，其他节点签名的时候转发节点数为1
+		// 添加交易流转的签名信息		
+		if (0 != AddSignNodeMsg(msg))
 		{
+			return -16;
+		}
+
+		if (!CheckAllNodeChainHeightInReasonableRange())
+		{
+			std::cout << "Check chain height of node failed, ^^^VVV" << std::endl;
+			return -22;
+		}
+		
+		//只有一个签名,签名是自己,ip相等,添加到Cache中, 20201214
+		if (ownID == tx.ip() && tx.signprehash_size() == 1)
+		{
+			char buf[2048] = {0};
+			size_t buf_len = sizeof(buf);
+			string pub = tx.signprehash(0).pub();
+			GetBase58Addr(buf, &buf_len, 0x00, pub.c_str(), pub.size());
+			std::string strBuf(buf, strlen(buf));
+
+			std::string default58Addr = GetDefault58Addr();
+			if (strBuf == default58Addr)
+			{
+				int result = MagicSingleton<TxVinCache>::GetInstance()->Add(tx);
+				std::cout << "Transaction add to Cache ^^^^^VVVVV " << result << " " << TxVinCache::TxToString(tx) << std::endl;
+			}
+		}
+
+		int nodeSize = needVerifyPreHashCount * 1;
+		if(verifyPreHashCount > 1)   
+		{
+			// 除自己本身签名外，其他节点签名的时候转发节点数为1
 			nodeSize = 1;
 		}
 
-		std::string nextNode;
-		int ret = FindSignNode(tx, nodeSize, v);
-		if( ret < 0 )
+		if (0 != SendTxMsg(tx, msg, nodeSize))
 		{
-			txMsgAck.set_code(-11);
-			txMsgAck.set_message("FindSignNode failed!");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-			error("HandleTx FindSignNode failed! ");
-			return -15;
-		}
-
-		for(auto signedId : signedIds)
-		{
-			auto iter = std::find(v.begin(), v.end(), signedId);
-			if (iter != v.end())
-			{
-				v.erase(iter);
-			}
-		}
-
-		std::set<int> rSet;
-		srand(time(NULL));
-		int num = std::min((int)v.size(), nodeSize);
-		for(int i = 0; i < num; i++)
-		{
-			int j = rand() % v.size();
-			rSet.insert(j);		
-		}
-
-		std::vector<std::string> sendid;
-		for (auto i : rSet)
-		{
-			sendid.push_back(v[i]);
-		}
-#ifndef _CA_FILTER_FUN_
-		std::string myid = net_get_self_node_id();
-		signedIds.push_back(myid);
-		cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), verify_num, signedIds );
-		std::string txstrtmp(txstr->str, txstr->len);
-
-		sendTxMsg.set_version(getVersion());
-		sendTxMsg.set_tx(txstrtmp);
-		sendTxMsg.set_txencodehash( msg->txencodehash() );
-
-		for(int signCoutnt = 0; signCoutnt < msg->signnodemsg_size(); signCoutnt++)
-		{
-			SignNodeMsg signNodeMsg = msg->signnodemsg(signCoutnt);
-			std::string signPubKey = signNodeMsg.signpubkey();
-			std::string signGasFee = signNodeMsg.gasfee();
-			std::string signaturemsg  = signNodeMsg.signmsg();
-			double signonlinetime = signNodeMsg.onlinetime();
-			if (signonlinetime <= 0)
-			{
-				txMsgAck.set_code(-12);
-				txMsgAck.set_message("signonlinetime error !");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-				error("HandleTx signonlinetime error ! ");
-				return -16;
-			}
-
-			SignNodeMsg * psignNodeMsg = sendTxMsg.add_signnodemsg();
-			psignNodeMsg->set_signpubkey( signPubKey );
-			psignNodeMsg->set_gasfee( signGasFee );
-			psignNodeMsg->set_onlinetime(signonlinetime);
-			psignNodeMsg->set_signmsg(signaturemsg);
-			psignNodeMsg->set_awardtotal(signNodeMsg.awardtotal());
-			psignNodeMsg->set_signsum(signNodeMsg.signsum());
-		}
-
-		std::string ownPubKey;
-		GetPublicKey(g_publicKey, ownPubKey);
-
-		char SignerCstr[2048] = {0};
-		size_t SignerCstrLen = sizeof(SignerCstr);
-		GetBase58Addr(SignerCstr, &SignerCstrLen, 0x00, ownPubKey.c_str(),ownPubKey.size());
-
-		double mineronlinetime = 0;
-		// if ( 0 != pRocksDb->GetDeviceOnLineTime(mineronlinetime) )
-		std::vector<string> pledgeUtxos;
-		if (0 != pRocksDb->GetPledgeAddressUtxo(txn, std::string(SignerCstr), pledgeUtxos))
-		{
-			// txMsgAck.set_code(-12);
-			// txMsgAck.set_message("GetPledgeAddressUtxo failed!");
-			// net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-			// error("HandleTx GetPledgeAddressUtxo failed! ");
-			// return -15;
-		}
-
-		uint64_t pledgeTime = time(NULL);
-		uint64_t startTime = pledgeTime;
-		for (auto & hash : pledgeUtxos)
-		{
-			std::string txRaw;
-			if (0 != pRocksDb->GetTransactionByHash(txn, hash, txRaw))
-			{
-				txMsgAck.set_code(-13);
-				txMsgAck.set_message("GetTransactionByHash failed!");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-				error("HandleTx GetTransactionByHash failed! ");
-				return -16;
-			}
-
-			CTransaction utxoTx;
-			utxoTx.ParseFromString(txRaw);
-
-			for (auto & txout : utxoTx.vout())
-			{
-				if (txout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-				{
-					if (txout.value() > (int64_t)g_TxNeedPledgeAmt && utxoTx.time() < pledgeTime)
-					{
-						pledgeTime = utxoTx.time();
-					}
-				}
-			}
+			return -17;
 		}
 		
-		if (pledgeTime == startTime)
-		{
-			mineronlinetime = 1;
-		}
-		else
-		{
-			mineronlinetime = (time(NULL) - pledgeTime) / 3600 / 24;
-			mineronlinetime = mineronlinetime > 1 ? mineronlinetime : 1;
-		}
-		
-		uint64_t addrAwardTotal = 0;
-		if (0 != pRocksDb->GetAwardTotalByAddress(txn, std::string(SignerCstr), addrAwardTotal))
-		{
-			// 可能是第一次签名,取值失败不返回
-			error("(AddBlock) GetAwardTotalByAddress failed !");
-		}
-
-		uint64_t signSum = 0;
-		if (0 != pRocksDb->GetSignNumByAddress(txn, std::string(SignerCstr), signSum))
-		{
-			// 可能是第一次签名,取值失败不返回
-			error("(AddBlock) GetSignNumByAddress failed !");
-		}
-
-		SignNodeMsg * psignNodeMsg = sendTxMsg.add_signnodemsg();
-		psignNodeMsg->set_signpubkey( SignerCstr );
-		psignNodeMsg->set_gasfee( std::to_string( mineSignatureFee ) );
-		psignNodeMsg->set_onlinetime(mineronlinetime);
-		std::string ser = psignNodeMsg->SerializeAsString();
-	    std::string signatureMsg;
-		std::string strPub;
-		GetSignString(ser, signatureMsg, strPub);
-		psignNodeMsg->set_signmsg(signatureMsg);
-		psignNodeMsg->set_awardtotal(addrAwardTotal);
-		psignNodeMsg->set_signsum(signSum);
-
-		cstr_free(txstr, true);
-		txstr = nullptr;									
-		if (sendid.size() > 0)
-		{
-			//{{ 只有一个签名,签名是自己,ip相等,添加到Cache中, 20201214
-			if (ownID == tx.ip() && tx.signprehash_size() == 1)
-			{
-				char buf[2048] = {0};
-                size_t buf_len = sizeof(buf);
-				string pub = tx.signprehash(0).pub();
-                GetBase58Addr(buf, &buf_len, 0x00, pub.c_str(), pub.size());
-				std::string strBuf(buf, strlen(buf));
-
-				char bufAddr[512] = {0};
-				GetDefault58Addr(bufAddr, sizeof(bufAddr));
-				std::string default58Addr(bufAddr, strlen(bufAddr));
-				if (strBuf == default58Addr)
-				{
-					TxVinCache::Tx newTx;
-					newTx.txHash = tx.hash();
-					for (int i = 0; i < tx.vin_size(); i++)
-					{
-						CTxin txin = tx.vin(i);
-						std::string hash = txin.prevout().hash();
-						newTx.vins.push_back(hash);
-					}
-					
-					std::vector<std::string> txOwnerVec;
-                	SplitString(tx.txowner(), txOwnerVec, "_");
-					newTx.from = txOwnerVec;
-
-					uint64_t amount = 0;
-					std::vector<std::string> toId;
-					std::vector<std::string> toAmount;
-					for (int i = 0; i < tx.vout_size(); i++)
-					{
-						CTxout out = tx.vout(i);
-						auto found = std::find(txOwnerVec.begin(), txOwnerVec.end(), out.scriptpubkey());
-						if (found == txOwnerVec.end())
-						{
-							toId.push_back(out.scriptpubkey());
-							toAmount.push_back(to_string(((double)out.value()) / DECIMAL_NUM));
-							amount += out.value();
-						}
-					}					
-					newTx.amount = to_string(((double)amount) / DECIMAL_NUM);
-					newTx.to = toId;
-					newTx.toAmount = toAmount;
-					newTx.timestamp = Singleton<TimeUtil>::get_instance()->getTimestamp();
-
-					nlohmann::json extra = nlohmann::json::parse(tx.extra());
-					uint64_t signFee = extra["SignFee"].get<uint64_t>();               
-					uint64_t needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<uint64_t>();
-					uint64_t packageFee = extra["PackageFee"].get<uint64_t>();
-					uint64_t gas = signFee * (needVerifyPreHashCount - 1) + packageFee;
-					newTx.gas = to_string(((double)gas)/DECIMAL_NUM);
-
-					uint32_t type = 0;
-					string txType = extra["TransactionType"].get<std::string>();
-					if (txType == TXTYPE_TX)
-						type = 0;
-					else if (txType == TXTYPE_PLEDGE)
-						type = 1;
-					else if (txType == TXTYPE_REDEEM)
-						type = 2;
-					newTx.type = type;
-
-					if (txType == TXTYPE_REDEEM)
-					{
-						nlohmann::json txInfo = extra["TransactionInfo"].get<nlohmann::json>();
-						std::string utxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
-						std::string strTxRaw;
-						if (pRocksDb->GetTransactionByHash(txn, utxoStr, strTxRaw) == 0)
-						{
-							CTransaction utxoTx;
-							utxoTx.ParseFromString(strTxRaw);
-							for (int i = 0; i < utxoTx.vout_size(); i++)
-							{
-								CTxout txout = utxoTx.vout(i);
-								if (txout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-								{
-									uint64_t outAmount = txout.value();
-									newTx.amount = to_string(((double)outAmount) / DECIMAL_NUM);
-									newTx.to = newTx.from;
-									std::vector<std::string> currentToAmount = { newTx.amount };
-									newTx.toAmount = currentToAmount;
-									break ;
-								}
-							}
-							
-						}
-					}
-
-					MagicSingleton<TxVinCache>::GetInstance()->Add(newTx);
-					std::cout << "Transaction add to Cache ^^^^^VVVVV " << TxVinCache::TxToString(newTx) << std::endl;
-				}
-			}
-			//}}
-
-			for (auto id : sendid)
-			{
-				net_send_message<TxMsg>(id.c_str(), sendTxMsg);
-			}
-		}
-		else
-		{
-			error("sendid.size() <= 0");
-		}
-		
-#endif
-		txMsgAck.set_code(0);
-		txMsgAck.set_message("TX need to net_broadcast");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		info("TX begin broadcast==========");
+		std::cout << "TX begin broadcast" << std::endl;
 	}
 	else
 	{
+		// 签名数达到共识数
 		std::string ip = net_get_self_node_id();
 
 		if (ip != tx.ip())
 		{
-			cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), verify_num );
-			std::string txstrtmp(txstr->str, txstr->len);
-
-			sendTxMsg.set_version(getVersion());
-			sendTxMsg.set_tx(txstrtmp);
-			sendTxMsg.set_txencodehash( msg->txencodehash() );
-
-			for(int signCount = 0; signCount < msg->signnodemsg_size(); signCount++)
-			{
-				SignNodeMsg signNodeMsg = msg->signnodemsg( signCount );
-				SignNodeMsg * psignNodeMsg = sendTxMsg.add_signnodemsg();
-
-				psignNodeMsg->set_signpubkey(signNodeMsg.signpubkey());
-				psignNodeMsg->set_gasfee(signNodeMsg.gasfee());
-				psignNodeMsg->set_onlinetime(signNodeMsg.onlinetime());
-				psignNodeMsg->set_signmsg(signNodeMsg.signmsg());
-			}
-
-			std::string ownPubKey;
-			GetPublicKey(g_publicKey, ownPubKey);
+			// 如果是全网节点质押数
 			
-			char SignerCstr[2048] = {0};
-			size_t SignerCstrLen = sizeof(SignerCstr);
-			GetBase58Addr(SignerCstr, &SignerCstrLen, 0x00, ownPubKey.c_str(),ownPubKey.size());
-
-			uint64_t mineSignatureFee = 0;
-			pRocksDb->GetDeviceSignatureFee( mineSignatureFee );
-			double mineronlinetime = 0;
-
-			std::vector<string> pledgeUtxos;
-			if (0 != pRocksDb->GetPledgeAddressUtxo(txn, std::string(SignerCstr), pledgeUtxos))
+			// 添加交易流转的签名信息		
+			if (0 != AddSignNodeMsg(msg))
 			{
-				txMsgAck.set_code(-12);
-				txMsgAck.set_message("GetPledgeAddressUtxo failed!");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-				error("HandleTx GetPledgeAddressUtxo failed! ");
-				// return -15;
+				return -18;
 			}
- 
-			uint64_t pledgeTime = time(NULL);
-			uint64_t startTime = pledgeTime;
-			for (auto & hash : pledgeUtxos)
-			{
-				std::string txRaw;
-				if (0 != pRocksDb->GetTransactionByHash(txn, hash, txRaw))
-				{
-					txMsgAck.set_code(-13);
-					txMsgAck.set_message("GetTransactionByHash failed!");
-					net_send_message<TxMsgAck>(msgdata, txMsgAck);			
-					error("HandleTx GetTransactionByHash failed! ");
-					return -16;
-				}
 
-				CTransaction utxoTx;
-				utxoTx.ParseFromString(txRaw);
+			std::cout << "Send to ip[" << tx.ip().c_str() << "] to CreateBlock ..." << std::endl;
+			net_send_message<TxMsg>(tx.ip(), *msg, net_com::Priority::kPriority_High_1);
 
-				for (auto & txout : utxoTx.vout())
-				{
-					if (txout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-					{
-						if (txout.value() > (int64_t)g_TxNeedPledgeAmt && utxoTx.time() < pledgeTime)
-						{
-							pledgeTime = utxoTx.time();
-						}
-					}
-				}
-			}
-			
-			if (pledgeTime == startTime)
-			{
-				mineronlinetime = 1;
-			}
-			else
-			{
-				mineronlinetime = (time(NULL) - pledgeTime) / 3600 / 24;
-				mineronlinetime = mineronlinetime > 1 ? mineronlinetime : 1;
-			}
-			
-			SignNodeMsg * psignNodeMsg = sendTxMsg.add_signnodemsg();
-			psignNodeMsg->set_signpubkey( SignerCstr );
-			psignNodeMsg->set_gasfee( std::to_string( mineSignatureFee ) );
-			psignNodeMsg->set_onlinetime( mineronlinetime );
-			std::string sequencestr = psignNodeMsg->SerializeAsString();
-	   		std::string signatureMsg;
-			std::string strPub;
-			GetSignString(sequencestr, signatureMsg, strPub);
-			psignNodeMsg->set_signmsg(signatureMsg);
-
-			cstr_free(txstr, true);
-			txstr = nullptr;
-#ifndef _CA_FILTER_FUN_
-			// std::cout<<"Send to ip["<< tx.ip() <<"] to CreateBlock ..."<<std::endl;
-			debug("Send to ip[%s] to CreateBlock ...", tx.ip().c_str());
-			net_send_message<TxMsg>(tx.ip(), sendTxMsg);
-#endif
-			txMsgAck.set_code(2);
-			txMsgAck.set_message("TX send to Create Block");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);
+			std::cout << "TX send to Create Block" << std::endl;
 		}
 		else
 		{
-			bool find = true;
+			// 返回到发起节点
 			std::string blockHash;
-			if ( 0 != pRocksDb->GetBlockHashByTransactionHash(txn, tx.hash(), blockHash) )
-			{
-				find = false;
-			}
+			pRocksDb->GetBlockHashByTransactionHash(txn, tx.hash(), blockHash);
 			
-			if(find)
+			if(blockHash.length())
 			{
-				txMsgAck.set_code(1);
-				txMsgAck.set_message("TX has been dealed");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);
-				// error("ip TxHashToBlock %s has been dealed", tx.hash().c_str());
-				return -16;
+				// 查询到说明已加块
+				return -19;
 			}
-			
-			cJSON * root = cJSON_Parse( tx.extra().data() );
-			cJSON * needVerifyPreHashCountTmp = cJSON_GetObjectItem(root, "NeedVerifyPreHashCount");
-			int NeedVerifyPreHashCount = needVerifyPreHashCountTmp->valueint;
-			cJSON_Delete(root);
 
-			if(verify_num != NeedVerifyPreHashCount)
+			if(msg->signnodemsg_size() != needVerifyPreHashCount)
 			{
-				txMsgAck.set_code(-14);
-				txMsgAck.set_message("verify_num != NeedVerifyPreHashCount");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);
-				error("HandleTx verify_num != NeedVerifyPreHashCount");
-				return -17;
-			}	
+				return -20;
+			}
 
 			if( 0 != BuildBlock( serTx, msg) )
 			{
-				txMsgAck.set_code(-15);
-				txMsgAck.set_message("BuildBlock failed");
-				net_send_message<TxMsgAck>(msgdata, txMsgAck);
-				error("HandleTx BuildBlock fail");
-				return -18;
+				std::cout << "HandleTx BuildBlock fail" << std::endl;
+				return -21;
 			}
 		}
 	}
 	return 0;
-	// std::cout << "HandleTx over===========" << std::endl;
+}
+
+std::map<int32_t, std::string> GetPreTxRawCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"),
+												make_pair(-2, "数据库打开错误"),
+												make_pair(-2, "获取主链信息失败"),
+												};
+	return errInfo;
 }
 
 void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdata )
 {
 	TxMsgAck txMsgAck;
-	txMsgAck.set_version(getVersion());
+
+	auto errInfo = GetPreTxRawCode();
 
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
-		txMsgAck.set_code(-1);
-		txMsgAck.set_message("Version incompatible!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
 		return ;
 	}
 
@@ -4076,24 +3757,19 @@ void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdat
 
 	std::string serTx = tx.SerializeAsString();
 
-	cJSON * root = cJSON_Parse( tx.extra().data() );
-	cJSON * needVerifyPreHashCountTmp = cJSON_GetObjectItem(root, "NeedVerifyPreHashCount");
-	int needVerifyPreHashCount = needVerifyPreHashCountTmp->valueint;
-	cJSON_Delete(root);
-
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
+	auto extra = nlohmann::json::parse(tx.extra());
+	int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
 
 	TxMsg phoneToTxMsg;
 	phoneToTxMsg.set_version(getVersion());
-	phoneToTxMsg.set_tx(txstrtmp);
+	phoneToTxMsg.set_tx(serTx);
 	phoneToTxMsg.set_txencodehash(msg->txencodehash());
 
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
 	{
-		std::cout << "(HandlePreTxRaw) TransactionInit failed !" << std::endl;
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2);
 		return;
 	}
 
@@ -4102,12 +3778,31 @@ void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdat
 		pRocksDb->TransactionDelete(txn, bRollback);
 	};
 
+	std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+    	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+        return;
+    }
+    phoneToTxMsg.set_prevblkhash(blockHash);
+	phoneToTxMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
 	unsigned int top = 0;
 	pRocksDb->GetBlockTop(txn, top);	
 	phoneToTxMsg.set_top(top);
 
 	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
-	HandleTx( txmsg, msgdata );
+	std::string txHash;
+	int ret = DoHandleTx(txmsg, txHash);
+	txMsgAck.set_txhash(txHash);
+	if (ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
 }
 
 /* ====================================================================================  
@@ -4120,18 +3815,26 @@ void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdat
  #    调用interface_NetMessageReqTxRaw对hash值进行签名。
  # 4，手机端回传TxMsgReq到PC端，PC端通过HandlePreTxRaw接口处理接收到的手机端的交易
  ==================================================================================== */
+
+ std::map<int32_t, std::string> GetCreateTxInfoReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"),
+												make_pair(-2, "参数错误"),
+												make_pair(-3, "未找到相关utxo"),
+												};
+	return errInfo;
+}
 // 手机端交易处理
 void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const MsgData& msgdata )
 {
 	CreateTxMsgAck createTxMsgAck;
-	createTxMsgAck.set_version(getVersion());
+	auto errInfo = GetCreateTxInfoReqCode();
 
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
-		createTxMsgAck.set_code(-1);
-		createTxMsgAck.set_message("Version incompatible!");
-		net_send_message<CreateTxMsgAck>(msgdata, createTxMsgAck);
+		ReturnAckCode<CreateTxMsgAck>(msgdata, errInfo, createTxMsgAck, -1);		
 		return ;
 	}
 
@@ -4152,10 +3855,7 @@ void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const Ms
 			sendMessage = "UTXO not found!";
 		}
 		
-		createTxMsgAck.set_code( code );
-		createTxMsgAck.set_message( sendMessage );
-
-		net_send_message<CreateTxMsgAck>(msgdata, createTxMsgAck);
+		ReturnAckCode<CreateTxMsgAck>(msgdata, errInfo, createTxMsgAck, code);
 		return ;
 	}
 
@@ -4165,18 +3865,15 @@ void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const Ms
 	memset(encode, 0, encodeLen);
 	long codeLen = base64_encode((unsigned char *)txData.data(), txData.size(), encode);
 
-	createTxMsgAck.set_code( 0 );
-	createTxMsgAck.set_message( "successful!" );
 	createTxMsgAck.set_txdata( (char *)encode, codeLen );
-
 	std::string encodeStr((char *)encode, codeLen);
 	std::string txEncodeHash = getsha256hash(encodeStr);
 	createTxMsgAck.set_txencodehash(txEncodeHash);
 
-	net_send_message<CreateTxMsgAck>(msgdata, createTxMsgAck);
+	ReturnAckCode<CreateTxMsgAck>(msgdata, errInfo, createTxMsgAck, 0);
 }
 
-void GetDeviceInfo(const std::shared_ptr<GetMacReq>& getMacReq, const MsgData& from)
+void HandleGetMacReq(const std::shared_ptr<GetMacReq>& getMacReq, const MsgData& from)
 {	
 	std::cout << "GetDeviceInfo ok" << std::endl;
 	std::vector<string> outmac;
@@ -4268,7 +3965,7 @@ int SearchPledge(const std::string &address, uint64_t &pledgeamount, std::string
 	int db_status = pRocksDb->GetPledgeAddressUtxo(txn, address, utxos);
 	if (db_status != 0) 
 	{
-		std::cout << __LINE__ << std::endl;
+		// std::cout << __LINE__ << std::endl;
 		return -1;
 	}
 	uint64_t total = 0;
@@ -4456,10 +4153,10 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 	return 0;
 }
 
-int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<std::string> &nextNode)
+int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vector<std::string> & signedNodes, std::vector<std::string> & nextNodes)
 {
 	// 参数判断
-	if(nextNodeNumber <= 0)
+	if(nodeNumber <= 0)
 	{
 		return -1;
 	}
@@ -4492,36 +4189,57 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 		pRocksDb->TransactionDelete(txn, false);
 	};
 
-	// <ID, gasFee>
-	std::map<std::string, uint64_t> idsInfo = net_get_node_ids_and_fees();
-
-	// <ID, base58>
-	std::map<std::string, std::string> idBase58s = net_get_node_ids_and_base58address();
+	const Node & selfNode = Singleton<PeerNode>::get_instance()->get_self_node();
+	std::vector<Node> nodelist;
+	if (selfNode.is_public_node)
+	{
+		nodelist = Singleton<PeerNode>::get_instance()->get_nodelist();
+	}
+	else
+	{
+		nodelist = Singleton<NodeCache>::get_instance()->get_nodelist();
+	}
+	
+	// 当前数据块高度为0时，GetPledgeAddress会返回错误，故不做返回判断
+	std::vector<string> addresses; // 已质押地址
+	std::vector<string> pledgeAddrs; // 待选的已质押地址
+	// pRocksDb->GetPledgeAddress(txn, addresses);
+	pRocksDb->GetPledgeAddress(txn, pledgeAddrs);
 
 	// 去除base58重复的节点
-	std::map<std::string, std::string> tmpBase58Ids;
-	std::vector<std::string> vRepeatedIds;
-	for (auto & idBase58 : idBase58s)
+	std::map<std::string, std::string> tmpBase58Ids; // 临时去重
+	std::vector<std::string> vRepeatedIds; // 重复的地址
+	
+	for (auto & node : nodelist)
 	{
-		auto ret = tmpBase58Ids.insert(make_pair(idBase58.second, idBase58.first));
+		// 查询列表中已质押地址
+		// std::string addr = node.base58address;
+		// auto iter = find(addresses.begin(), addresses.end(), addr);
+		// if (iter != addresses.end())
+		// {
+		// 	pledgeAddrs.push_back(addr);
+		// }
+
+		// 查询重复base58地址
+		auto ret = tmpBase58Ids.insert(make_pair(node.base58address, node.id));
 		if (!ret.second)
 		{
-			vRepeatedIds.push_back(idBase58.first);
+			vRepeatedIds.push_back(node.id);
+		}
+	}
+	
+	for (auto & id : vRepeatedIds)
+	{
+		auto iter = std::find_if(nodelist.begin(), nodelist.end(), [id](auto & node){
+			return id == node.id;
+		});
+		if (iter != nodelist.end())
+		{
+			nodelist.erase(iter);
 		}
 	}
 
-	for (auto & id : vRepeatedIds)
-	{
-		idBase58s.erase(id);
-	}
-
-	std::string ownerID = net_get_self_node_id();
-	// 删除自己的节点
-	auto iter = idsInfo.find(ownerID);
-	if(iter != idsInfo.end())
-	{
-		idsInfo.erase(iter);
-	}
+	std::string ownerID = net_get_self_node_id(); // 自己的节点
 
 	// 取出交易双方
 	std::vector<std::string> txAddrs;
@@ -4531,44 +4249,57 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 		txAddrs.push_back(txout.scriptpubkey());
 	}
 
-	// 删除交易双方节点
-	for (auto idBase58 : idBase58s)
-	{
-		if (txAddrs.end() != find(txAddrs.begin(), txAddrs.end(), idBase58.second))
-		{
-			idsInfo.erase(idBase58.first);
-		}
-	}
-
+	// 获取异常账户的节点
 	std::vector<std::string> abnormalAddrList;
 	if ( 0 != GetAbnormalAwardAddrList(abnormalAddrList) )
 	{
 		std::cout << "(FindSignNode) GetAbnormalAwardAddrList failed ! " << std::endl;
 		return -3;
 	}
-
-	// 去除奖励值异常账号
-	for (auto idBase58 : idBase58s)
+	
+	for (auto iter = nodelist.begin(); iter != nodelist.end(); )
 	{
-		if (abnormalAddrList.end() != find(abnormalAddrList.begin(), abnormalAddrList.end(), idBase58.second))
+		// 删除自身节点
+		if (iter->id == ownerID)
 		{
-			idsInfo.erase(idBase58.first);
+			iter = nodelist.erase(iter);
+			continue;
 		}
-	}
 
+		// 删除交易双方节点
+		if (txAddrs.end() != find(txAddrs.begin(), txAddrs.end(), iter->base58address))
+		{
+			iter = nodelist.erase(iter);
+			continue;
+		}
+
+		// 去除奖励值异常账号
+		
+		if (abnormalAddrList.end() != find(abnormalAddrList.begin(), abnormalAddrList.end(), iter->base58address))
+		{
+			iter = nodelist.erase(iter);
+			continue;
+		}
+
+		if (iter->chain_height + REASONABLE_HEIGHT_RANGE < selfNode.chain_height || 
+			selfNode.chain_height + REASONABLE_HEIGHT_RANGE < iter->chain_height)
+		{
+			iter = nodelist.erase(iter);
+			continue;
+		}
+
+		++iter;
+	}
+	
 	std::vector<std::pair<std::string, uint64_t>> vecIdsInfos;
-	for (auto & info : idsInfo)
+	for (auto & node : nodelist)
 	{
-		vecIdsInfos.push_back(info);
+		vecIdsInfos.push_back(std::make_pair(node.id, node.fee));
 	}
-
-	// 当前数据块高度为0时，GetPledgeAddress会返回错误，故不做返回判断
-	std::vector<string> addresses;
-	pRocksDb->GetPledgeAddress(txn, addresses);
 
 	// 随机取节点
 	random_device rd;
-	while (nextNode.size() != (uint64_t)nextNodeNumber && vecIdsInfos.size() != 0)
+	while (nextNodes.size() != (uint64_t)nodeNumber && vecIdsInfos.size() != 0)
 	{
 		default_random_engine rng {rd()};
 		uniform_int_distribution<int> dist {0, (int)vecIdsInfos.size() - 1};
@@ -4577,17 +4308,22 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 		if (vecIdsInfos[randNum].second <= minerFee)
 		{
 			std::string id = vecIdsInfos[randNum].first;
-			auto idBase58Iter = idBase58s.find(id);
-			if (idBase58s.end() != idBase58Iter)
+			
+			auto iter = std::find_if(nodelist.begin(), nodelist.end(), [id](auto & node){
+				return id == node.id;
+			});
+
+			if (nodelist.end() != iter)
 			{
-				if ( (isPledge && addresses.size() < g_minPledgeNodeNum) || isInitAccount)
+				if ( (isPledge || isInitAccount) && pledgeAddrs.size() < g_minPledgeNodeNum )
 				{
-					nextNode.push_back(idBase58Iter->first);
+					
+					nextNodes.push_back(iter->id);
 				}
 				else
 				{
 					uint64_t pledgeAmount = 0;
-					if ( 0 != SearchPledge(idBase58Iter->second, pledgeAmount) )
+					if ( 0 != SearchPledge(iter->base58address, pledgeAmount) )
 					{
 						vecIdsInfos.erase(vecIdsInfos.begin() + randNum);
 						continue;
@@ -4595,13 +4331,52 @@ int FindSignNode(const CTransaction &tx, const int nextNodeNumber, std::vector<s
 
 					if (pledgeAmount >= g_TxNeedPledgeAmt)
 					{
-						nextNode.push_back(idBase58Iter->first);
+						nextNodes.push_back(iter->id);
 					}
 				}
 			}
 		}
 		vecIdsInfos.erase(vecIdsInfos.begin() + randNum);
 	}
+
+	// 过滤已签名的
+	for(auto signedId : signedNodes)
+	{
+		auto iter = std::find(nextNodes.begin(), nextNodes.end(), signedId);
+		if (iter != nextNodes.end())
+		{
+			nextNodes.erase(iter);
+		}
+	}
+
+	// 筛选随机节点
+	std::vector<std::string> sendid;
+	if (nextNodes.size() <= (uint32_t)nodeNumber)
+	{
+		for (auto & nodeid  : nextNodes)
+		{
+			sendid.push_back(nodeid);
+		}
+	}
+	else
+	{
+		std::set<int> rSet;
+		srand(time(NULL));
+		int num = std::min((int)nextNodes.size(), nodeNumber);
+		for(int i = 0; i < num; i++)
+		{
+			int j = rand() % nextNodes.size();
+			rSet.insert(j);		
+		}
+
+		for (auto i : rSet)
+		{
+			sendid.push_back(nextNodes[i]);
+		}
+	}
+
+	nextNodes = sendid;
+
 	return 0;
 }
 
@@ -4698,27 +4473,85 @@ void GetOnLineTime()
 	}
 }
 
-
-void alarmcountfunc()
+int PrintOnLineTime()
 {
-	if(g_ready == true)
-	{
-		return ;
-	}
-	else
-	{
-		g_ready = true;
-		for(int i = 0; i < 7200; i++)
-		{
-			MinutesCountLock.lock();
-			minutescount--;
-			MinutesCountLock.unlock();
-			sleep(1);	
-		}
+	double  onlinetime;
+	auto 	pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	int 	db_status = pRocksDb->GetDeviceOnLineTime(onlinetime);
+	int  day = 0,hour = 0,minute = 0,second = 0;
 
-		g_VerifyPasswordCount = 0;
-		g_ready = false;
+    double totalsecond = onlinetime *86400;
+
+	cout<<"totalsecond="<<totalsecond<<endl;
+
+	day = totalsecond/86400;
+	cout<<"day="<< day <<endl;
+
+	hour = (totalsecond - (day *86400))/3600;
+	cout<<"hour="<< hour <<endl;
+
+	minute = (totalsecond - (day *86400) - (hour *3600))/60;
+	cout<<"minute="<< minute <<endl;
+
+	second = (totalsecond - (day *86400) - (hour *3600) - (minute *60));
+	cout<<"second="<< second <<endl;
+
+	cout<<"day:"<<day<<"hour:"<<hour<<"minute:"<<minute <<"second:"<< second<<endl;
+
+	if(db_status != 0)
+	{
+		std::cout << __LINE__ << std::endl;
+		cout<<"Get the device time  failed"<<endl;
+		return -1;
+	}    
+	return 0;        
+}
+
+int TestSetOnLineTime()
+{
+	cout<<"先查看在线时长然后设置设备在线时长"<<endl;
+	PrintOnLineTime();
+	std::cout <<"请输入设备的在线时长"<<std::endl;
+	
+	static double day  = 0.0,hour = 0.0,minute = 0.0,second = 0.0,totalsecond = 0.0,accumlateday=0.0;
+	double inday  = 0.0,inhour = 0.0,inminute = 0.0,insecond = 0.0,intotalsecond = 0.0,inaccumlateday=0.0;
+	cout<<"请输入设备在线天数"<<endl;
+	std::cin >> inday;
+	cout<<"请输入设备在线小时数"<<endl;
+	std::cin >> inhour;
+	cout<<"请输入设备在线分钟数"<<endl;
+	std::cin >> inminute;
+	cout<<"请输入设备在线秒数"<<endl;
+	std::cin >> insecond;
+	
+	intotalsecond = inday *86400 + inhour *3600 + inminute*60 +insecond;
+	inaccumlateday = intotalsecond/86400;
+	
+	cout<<"input day="<< inday<<endl;
+	cout<<"input hour="<< inhour <<endl;
+	cout<<"input minute="<< inminute <<endl;
+	cout<<"input second="<< insecond <<endl;
+	cout<< "input accumlateday= "<< inaccumlateday <<endl;
+	cout<<"input totalsecond = "<<intotalsecond <<endl;
+	day  += inday; 
+	hour += inhour;
+	minute += inminute;
+	second += insecond;
+	totalsecond = day *86400 + hour *3600 + minute*60 +second;
+	accumlateday = totalsecond/86400;
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	// std::string time;
+	// std::cin >> time;
+	// std::stringstream ssAmount(time);
+	// double day;
+	// ssAmount >> day;
+  	int db_status = pRocksDb->SetDeviceOnlineTime(accumlateday);
+	if(db_status == 0)
+	{
+		cout<<"set the data success"<<endl;
+		return 0;
 	}
+	return -1;
 }
 
 
@@ -4729,7 +4562,7 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 	verifyDevicePasswordAck.set_version(getVersion());
 
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		verifyDevicePasswordAck.set_code(-1);
 		verifyDevicePasswordAck.set_message("version error!");
@@ -4738,11 +4571,11 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 		return ;
 	}
 
-	string  minerpasswd = Singleton<Config>::get_instance()->GetDevPassword();
+	string  minerpasswd = Singleton<DevicePwd>::get_instance()->GetDevPassword();
 	std::string passwordStr = generateDeviceHashPassword(msg->password());
 	std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
    
     uint32_t minutescount ;
@@ -4794,57 +4627,6 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
         error("password error!");
         return;
     }
-	// 判断是否输入错误密码过多，进入倒计时
-	// if(g_ready == false)
-	// {
-	// 	// 未进入倒计时，判断密码是否正确，
-	// 	string  minerpasswd = Singleton<Config>::get_instance()->GetDevPassword();
-	// 	std::string passwordStr = generateDeviceHashPassword(msg->password());
-
-
-	// 	if( !passwordStr.compare( minerpasswd ) )
-	// 	{
-	// 		g_VerifyPasswordCount = 0 ;
-	// 		verifyDevicePasswordAck.set_code(0);
-	// 		verifyDevicePasswordAck.set_message("The password of miner is right");
-	// 		net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
-	// 	}
-	// 	else 
-	// 	{
-	// 		// 密码错误 计数
-	// 		g_VerifyPasswordCount++;
-	// 		verifyDevicePasswordAck.set_code(-2);
-	// 		verifyDevicePasswordAck.set_message("password error!");
-	// 		net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
-			
-	// 		// 计数超过限定错误次数，进入倒计时
-	// 		if(g_VerifyPasswordCount >= 10 && g_ready == false)
-	// 		{
-	// 			// debug/////////////////////////////////////////////////
-	// 			std::cout << "进入倒计时！" << std::endl;
-	// 			// //////////////////////////////////////////////////////
-	// 			std::thread counter(alarmcountfunc);
-	// 			counter.detach();
-	// 		}
-	// 	}
-	// }
-	// else
-	// {
-	// 	// 已在倒计时，返回剩下的秒数
-
-	// 	MinutesCountLock.lock_shared();
-	// 					// debug/////////////////////////////////////////////////
-	// 			std::cout << "倒计时剩余：" << minutescount << std::endl;
-
-	// 			// //////////////////////////////////////////////////////
-	// 	std::string minutescountStr = std::to_string(minutescount);
-	// 	MinutesCountLock.unlock_shared();
-
-	// 	verifyDevicePasswordAck.set_code(-10);
-	// 	verifyDevicePasswordAck.set_message( minutescountStr );
-	// 	net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
-	// }
-
 	return ;
 }
 
@@ -4857,11 +4639,11 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 	txMsgAck.set_version(getVersion());
 
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( msg->version() ) )
+	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		txMsgAck.set_code(-1);
 		txMsgAck.set_message("version error!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 		error("HandleCreateDeviceTxMsgReq IsVersionCompatible");
 		return ;
 	}
@@ -4869,7 +4651,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 	// 判断矿机密码是否正确
     std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
 	auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
   
     uint32_t minutescount ;
@@ -4879,7 +4661,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
         std::string minutescountStr = std::to_string(minutescount);
         txMsgAck.set_code(-31);
         txMsgAck.set_message(minutescountStr);
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
         cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
         return ;
     }
@@ -4892,14 +4674,14 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
             cout<<"密码输入错误"<<endl;
             txMsgAck.set_code(-5);
             txMsgAck.set_message("密码输入错误");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);
+			net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
             return ;
        }
 	   else
 	   {
 			txMsgAck.set_code(-30);
 			txMsgAck.set_message("第三次密码输入错误");
-			net_send_message<TxMsgAck>(msgdata, txMsgAck);
+			net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 			return ;
 	   }
     }
@@ -4916,7 +4698,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
     {
         txMsgAck.set_code(-5);
         txMsgAck.set_message("password error!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
+        net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
         error("password error!");
         return;
     }
@@ -4927,17 +4709,19 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 	{
 		txMsgAck.set_code(-2);
 		txMsgAck.set_message("parameter error!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 
 		error("HandleCreateDeviceTxMsgReq parameter error!");
 		return ;
 	}
 
-	if( std::stod( msg->minerfees() ) < 0 || std::stoi( msg->needverifyprehashcount() ) < g_MinNeedVerifyPreHashCount )
+	if( std::stod( msg->minerfees() ) <= 0 || 
+		std::stoi( msg->needverifyprehashcount() ) < g_MinNeedVerifyPreHashCount ||
+		std::stod( msg->amt() ) <= 0)
 	{
 		txMsgAck.set_code(-3);
 		txMsgAck.set_message("minerfees or needverifyprehashcount error!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 
 		error("HandleCreateDeviceTxMsgReq parameter error!");
 		return ;
@@ -4950,7 +4734,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 		cout<<"IsConflict HandleCreateDeviceTxMsgReq"<<endl;
 		txMsgAck.set_code(-20);
 		txMsgAck.set_message("The addr has being pengding!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 		cout<<"HandleCreateDeviceTxMsgReq CreateTx failed!!"<<endl;
 		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
 		return ;
@@ -4961,7 +4745,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 	{
 		txMsgAck.set_code(-4);
 		txMsgAck.set_message("CreateTx failed!");
-		net_send_message<TxMsgAck>(msgdata, txMsgAck);
+		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 
 		error("HandleCreateDeviceTxMsgReq CreateTx failed!!");
 		return ;
@@ -4969,10 +4753,1659 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 
 	txMsgAck.set_code(0);
 	txMsgAck.set_message("CreateTx successful! Waiting for broadcast!");
-	net_send_message<TxMsgAck>(msgdata, txMsgAck);
+	net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 
 	debug("HandleCreateDeviceTxMsgReq CreateTx successful! Waiting for broadcast! ");
 	return ;
 }
 
 
+std::map<int32_t, std::string> GetCreateDeviceMultiTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"),
+												make_pair(-2, "三次密码输入错误"),
+												make_pair(-3, "密码输入错误"),
+												make_pair(-4, "第三次密码输入错误"),
+												make_pair(-5, "密码不正确"),
+												make_pair(-6, "发起地址参数错误"),
+												make_pair(-7, "接收地址参数错误"),
+
+												make_pair(-8, "创建交易时参数错误"),
+												make_pair(-9, "创建交易时交易地址错误"),
+												make_pair(-10, "创建交易时有之前交易挂起"),
+												make_pair(-11, "创建交易时打开数据库错误"),
+												make_pair(-12, "创建交易时获得打包费失败"),
+												make_pair(-13, "创建交易时获得交易信息失败"),
+												make_pair(-14, "创建交易时余额不足"),
+												make_pair(-15, "创建交易时其他错误"),
+
+												make_pair(-16, "打开数据库错误"),
+												make_pair(-17, "获得打包费错误"),
+												make_pair(-18, "获得主链错误"),
+												};
+
+	return errInfo;												
+}
+
+void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMsgReq>& msg, const MsgData& msgdata)
+{
+    TxMsgAck txMsgAck;
+	auto errInfo = GetCreateDeviceMultiTxMsgReqCode();
+    
+    if( 0 != Util::IsVersionCompatible( msg->version() ) )
+	{		
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+
+    // 判断矿机密码是否正确
+    std::string password = msg->password();
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
+    auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+   
+    uint32_t minutescount ;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+		cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        std::string minutescountStr = std::to_string(minutescount);
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2, minutescountStr);
+        return;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            cout<<"密码输入错误"<<endl;
+            ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+            return;
+       } 
+       else
+       {
+			// 第三次密码输入错误
+    		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+            return;
+       }
+    }
+    else 
+    {
+        cout<<"密码输入正确重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+    }
+   
+    if (hashOriPass != targetPassword) 
+    {
+		// 密码不正确
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -5);
+        return;
+    }
+
+    if (0 != CheckAddrs<CreateDeviceMultiTxMsgReq>(msg))
+    {
+		// 发起方参数错误
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -6);
+		return ;
+    }
+
+    std::vector<std::string> fromAddr;
+    std::map<std::string, int64_t> toAddr;
+
+    for (int i = 0; i < msg->from_size(); ++i)
+    {
+        std::string fromAddrStr = msg->from(i);
+        fromAddr.push_back(fromAddrStr);
+    }
+
+    for (int i = 0; i < msg->to_size(); ++i)
+    {
+        ToAddr toAddrInfo = msg->to(i);
+        int64_t amount = std::stod(toAddrInfo.amt()) * DECIMAL_NUM;
+        toAddr.insert( make_pair(toAddrInfo.toaddr(), amount ) );
+    }
+
+    if(toAddr.size() != (size_t)msg->to_size())
+    {
+        // 接收方参数错误
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -7);
+        return;
+    }
+
+    uint64_t gasFee = std::stod( msg->gasfees() ) * DECIMAL_NUM;
+    uint32_t needVerifyPreHashCount = stoi( msg->needverifyprehashcount() );
+    
+    CTransaction outTx;
+    int ret = TxHelper::CreateTxMessage(fromAddr,toAddr, needVerifyPreHashCount, gasFee, outTx);
+	if(ret != 0)
+	{
+		ret -= 100;
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+		return ;
+	}
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+    Transaction* txn = pRocksDb->TransactionInit();
+    if (txn == NULL)
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -8);
+        return;
+    }
+
+    ON_SCOPE_EXIT
+    {
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+    uint64_t packageFee = 0;
+    if ( 0 != pRocksDb->GetDevicePackageFee(packageFee) )
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -9);
+        return ;
+    }
+
+    nlohmann::json txExtra = nlohmann::json::parse(outTx.extra());
+    txExtra["TransactionType"] = TXTYPE_TX;	
+    txExtra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
+	txExtra["SignFee"] = gasFee;
+    txExtra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+
+    outTx.set_extra(txExtra.dump());
+
+    std::vector<std::string> addrs;
+	for (int i = 0; i < outTx.vin_size(); i++)
+	{
+		CTxin * txin = outTx.mutable_vin(i);;
+		std::string pub = txin->mutable_scriptsig()->pub();
+		txin->clear_scriptsig();
+		addrs.push_back(GetBase58Addr(pub));
+	}
+
+    std::string serTx = outTx.SerializeAsString();
+
+    size_t encodeLen = serTx.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
+	std::string encodeStr( (char *)encode, codeLen );
+
+	std::string encodeStrHash = getsha256hash(encodeStr);
+
+    //签名
+	for (int i = 0; i < outTx.vin_size(); i++)
+	{
+		std::string addr = addrs[i];
+		// std::cout << "DoCreateTx:签名:" << addr << std::endl;
+		std::string signature;
+		std::string strPub;
+		g_AccountInfo.Sign(addr.c_str(), encodeStrHash, signature);
+		g_AccountInfo.GetPubKeyStr(addr.c_str(), strPub);
+		CTxin * txin = outTx.mutable_vin(i);
+		txin->mutable_scriptsig()->set_sign(signature);
+		txin->mutable_scriptsig()->set_pub(strPub);
+	}
+
+    serTx = outTx.SerializeAsString();
+	
+	TxMsg txMsg;
+    txMsg.set_version(getVersion());
+
+    txMsg.set_tx(serTx);
+	txMsg.set_txencodehash( encodeStrHash );
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -18);
+        return;
+    }
+    txMsg.set_prevblkhash(blockHash);
+    txMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+    
+	unsigned int top = 0;
+	pRocksDb->GetBlockTop(txn, top);	
+	txMsg.set_top(top);
+
+    auto pTxMsg = make_shared<TxMsg>(txMsg);
+	std::string txHash;
+	ret = DoHandleTx(pTxMsg, txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if (ret != 0)
+	{
+		ret -= 200;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+}
+
+std::map<int32_t, std::string> GetCreateMultiTxReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "参数不合法"), 
+												make_pair(-3, "交易双方地址错误"), 
+												make_pair(-4, "获得交易双方地址错误"), 
+
+												make_pair(-1001, "创建交易时参数错误"),
+												make_pair(-1002, "创建交易时交易地址错误"),
+												make_pair(-1003, "创建交易时有之前交易挂起"),
+												make_pair(-1004, "创建交易时打开数据库错误"),
+												make_pair(-1005, "创建交易时获得打包费失败"),
+												make_pair(-1006, "创建交易时获得交易信息失败"),
+												make_pair(-1007, "创建交易时余额不足"),
+
+												make_pair(-5, "打开数据库错误"),
+												make_pair(-6, "获得打包费错误"),
+												
+												};
+
+	return errInfo;												
+}
+void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, const MsgData& msgdata )
+{
+    // 手机端回执消息体
+    CreateMultiTxMsgAck createMultiTxMsgAck;
+	auto errInfo = GetCreateMultiTxReqCode();
+
+    // 判断版本是否兼容
+    if( 0 != Util::IsVersionCompatible( msg->version() ) )
+	{
+		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -1);
+		return ;
+	}
+
+    if (msg->from_size() > 1 && msg->to_size() > 1)
+    {
+        // 参数不合法
+		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -2);
+		return ;
+    }
+
+	if (0 != CheckAddrs<CreateMultiTxMsgReq>(msg))
+	{
+		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -3);
+		return ;
+	}
+
+    CTransaction outTx;
+    std::vector<std::string> fromAddr;
+    std::map<std::string, int64_t> toAddr;
+
+    int ret = GetAddrsFromMsg(msg, fromAddr, toAddr);
+    if (0 != ret)
+    {
+		// 交易地址有错误
+		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -4);
+        return ;
+    }
+
+    uint64_t minerFees = stod( msg->minerfees() ) * DECIMAL_NUM;
+    uint32_t needVerifyPreHashCount = stoi( msg->needverifyprehashcount() );
+    
+    ret = TxHelper::CreateTxMessage(fromAddr, toAddr, needVerifyPreHashCount, minerFees, outTx);
+    if(ret != 0)
+	{
+		ret -= 100;
+        ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, ret);
+		return;
+	}
+
+    for(int i = 0;i <outTx.vin_size();i++)
+    {
+        CTxin *txin = outTx.mutable_vin(i);
+        txin->clear_scriptsig();
+    }
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+    Transaction* txn = pRocksDb->TransactionInit();
+    if (txn == NULL)
+    {
+        ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -5);
+        return;
+    }
+
+    ON_SCOPE_EXIT
+    {
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+    uint64_t packageFee = 0;
+    if ( 0 != pRocksDb->GetDevicePackageFee(packageFee) )
+    {
+        ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -6);
+        return;
+    }
+
+    nlohmann::json extra;
+    extra["TransactionType"] = TXTYPE_TX;
+	extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
+	extra["SignFee"] = minerFees;
+    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+	outTx.set_extra(extra.dump());
+
+    std::string serTx = outTx.SerializeAsString();
+
+	size_t encodeLen = serTx.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
+	std::string encodeStr( (char *)encode, codeLen );
+
+	std::string encodeStrHash = getsha256hash(encodeStr);
+
+    createMultiTxMsgAck.set_txdata(encodeStr);
+    createMultiTxMsgAck.set_txencodehash(encodeStrHash);
+    
+	ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, 0);
+}
+
+std::map<int32_t, std::string> GetMultiTxReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"),
+												make_pair(-2, "签名不正确"),
+												make_pair(-3, "打开数据库错误"),
+												make_pair(-4, "获得主链错误"),
+												};
+
+	return errInfo;												
+}
+void HandleMultiTxReq( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgData& msgdata )
+{
+    TxMsgAck txMsgAck;
+
+	auto errInfo = GetMultiTxReqCode();
+
+    if( 0 != Util::IsVersionCompatible( msg->version() ) )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+
+    unsigned char serTxCstr[msg->sertx().size()] = {0};
+	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
+	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
+
+    CTransaction tx;
+    tx.ParseFromString(serTxStr);
+
+    std::vector<SignInfo> vSignInfo;
+    for (int i = 0; i < msg->signinfo_size(); ++i)
+    {
+        SignInfo signInfo = msg->signinfo(i);
+        vSignInfo.push_back(signInfo);
+    }
+
+    if (vSignInfo.size() <= 0)
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2);
+    }
+
+    // 一对多交易只有一个发起方，取第0个
+    SignInfo signInfo = msg->signinfo(0);
+    unsigned char strsignatureCstr[signInfo.signstr().size()] = {0};
+	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)signInfo.signstr().data(), signInfo.signstr().size(), strsignatureCstr);
+
+	unsigned char strpubCstr[signInfo.pubstr().size()] = {0};
+	unsigned long strpubCstrLen = base64_decode((unsigned char *)signInfo.pubstr().data(), signInfo.pubstr().size(), strpubCstr);
+
+    for (int i = 0; i < tx.vin_size(); ++i)
+    {
+        CTxin * txin = tx.mutable_vin(i);
+
+        txin->mutable_scriptsig()->set_sign( strsignatureCstr, strsignatureCstrLen );
+        txin->mutable_scriptsig()->set_pub( strpubCstr, strpubCstrLen );
+    }
+
+    auto extra = nlohmann::json::parse(tx.extra());
+    int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+		return;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+        return;
+    }
+
+	std::string serTx = tx.SerializeAsString();
+	unsigned int top = 0;
+	pRocksDb->GetBlockTop(txn, top);
+    
+    TxMsg phoneToTxMsg;
+    phoneToTxMsg.set_version(getVersion());
+	phoneToTxMsg.set_tx(serTx);
+	phoneToTxMsg.set_txencodehash(msg->txencodehash());
+    phoneToTxMsg.set_prevblkhash(blockHash);
+    phoneToTxMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+	phoneToTxMsg.set_top(top);
+
+	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
+	std::string txHash;
+	int ret = DoHandleTx(txmsg, txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if(ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+	return;
+}
+
+std::map<int32_t, std::string> GetCreatePledgeTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "参数错误"), 
+												make_pair(-3, "打开数据库错误"), 
+
+												make_pair(-1001, "创建交易时参数错误"),
+												make_pair(-1002, "创建交易时交易地址错误"),
+												make_pair(-1003, "创建交易时有之前交易挂起"),
+												make_pair(-1004, "创建交易时打开数据库错误"),
+												make_pair(-1005, "创建交易时获得打包费失败"),
+												make_pair(-1006, "创建交易时获得交易信息失败"),
+												make_pair(-1007, "创建交易时余额不足"),
+												};
+
+	return errInfo;												
+}
+void HandleCreatePledgeTxMsgReq(const std::shared_ptr<CreatePledgeTxMsgReq>& msg, const MsgData &msgdata)
+{
+    CreatePledgeTxMsgAck createPledgeTxMsgAck; 
+	auto errInfo = GetCreatePledgeTxMsgReqCode();
+
+	if( 0 != Util::IsVersionCompatible( getVersion() ) )
+	{
+        ReturnAckCode<CreatePledgeTxMsgAck>(msgdata, errInfo, createPledgeTxMsgAck, -1);
+		return ;
+	}
+   
+    uint64_t gasFee = std::stod(msg->gasfees().c_str()) * DECIMAL_NUM;
+    uint64_t amount = std::stod(msg->amt().c_str()) * DECIMAL_NUM;
+    uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
+  
+    if(msg->addr().size()<= 0 || amount <= 0 || needverifyprehashcount < (uint32_t)g_MinNeedVerifyPreHashCount || gasFee <= 0)
+    {
+        ReturnAckCode<CreatePledgeTxMsgAck>(msgdata, errInfo, createPledgeTxMsgAck, -2);
+        return ;
+    }
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if ( txn == NULL )
+	{
+        ReturnAckCode<CreatePledgeTxMsgAck>(msgdata, errInfo, createPledgeTxMsgAck, -3);
+		return ;
+	}
+
+	ON_SCOPE_EXIT
+    {
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+    std::vector<std::string> fromAddr;
+    fromAddr.push_back(msg->addr());
+
+    std::map<std::string, int64_t> toAddr;
+    toAddr[VIRTUAL_ACCOUNT_PLEDGE] = amount;
+
+    CTransaction outTx;
+    int ret = TxHelper::CreateTxMessage(fromAddr, toAddr,needverifyprehashcount , gasFee, outTx);
+	if(ret != 0)
+	{
+		ret -= 100;
+        ReturnAckCode<CreatePledgeTxMsgAck>(msgdata, errInfo, createPledgeTxMsgAck, ret);
+		return ;
+	}
+
+    for(int i = 0;i <outTx.vin_size();i++)
+    {
+        CTxin *txin = outTx.mutable_vin(i);
+        txin->clear_scriptsig();
+    }
+
+    nlohmann::json txInfo;
+    txInfo["PledgeType"] = PLEDGE_NET_LICENCE;
+    txInfo["PledgeAmount"] = amount;
+
+    auto extra = nlohmann::json::parse(outTx.extra());
+    extra["TransactionType"] = TXTYPE_PLEDGE;
+	extra["TransactionInfo"] = txInfo;
+	outTx.set_extra(extra.dump());
+    std::string txData = outTx.SerializePartialAsString();
+
+    size_t encodeLen = txData.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)txData.data(), txData.size(), encode);
+
+    std::string encodeStr((char *)encode, codeLen);
+	std::string txEncodeHash = getsha256hash(encodeStr);
+    createPledgeTxMsgAck.set_txdata(encodeStr);
+    createPledgeTxMsgAck.set_txencodehash(txEncodeHash);
+
+	ReturnAckCode<CreatePledgeTxMsgAck>(msgdata, errInfo, createPledgeTxMsgAck, 0);
+    
+    return ;
+}
+
+std::map<int32_t, std::string> GetPledgeTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "参数错误"), 
+												make_pair(-3, "打开数据库错误"), 
+												make_pair(-4, "获得主链错误"),
+												make_pair(-5, "获得最高高度错误"),
+
+												};
+
+	return errInfo;												
+}
+void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgData &msgdata)
+{
+    TxMsgAck txMsgAck;
+
+	auto errInfo = GetPledgeTxMsgReqCode();
+   
+	//判断版本是否兼容
+	if( 0 != Util::IsVersionCompatible(msg->version() ) )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+
+    if (msg->sertx().data() == nullptr || msg->sertx().size() == 0 || 
+        msg->strsignature().data() == nullptr || msg->strsignature().size() == 0 || 
+        msg->strpub().data() == nullptr || msg->strpub().size() == 0)
+    {
+   		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2);
+		return ;
+    }
+
+	// 将交易信息体，公钥，签名信息反base64
+	unsigned char serTxCstr[msg->sertx().size()] = {0};
+	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
+	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
+
+	CTransaction tx;
+	tx.ParseFromString(serTxStr);
+
+	unsigned char strsignatureCstr[msg->strsignature().size()] = {0};
+	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)msg->strsignature().data(), msg->strsignature().size(), strsignatureCstr);
+
+	unsigned char strpubCstr[msg->strsignature().size()] = {0};
+	unsigned long strpubCstrLen = base64_decode((unsigned char *)msg->strpub().data(), msg->strpub().size(), strpubCstr);
+
+	for (int i = 0; i < tx.vin_size(); i++)
+	{
+		CTxin * txin = tx.mutable_vin(i);
+		txin->mutable_scriptsig()->set_sign( std::string( (char *)strsignatureCstr, strsignatureCstrLen ) );
+		txin->mutable_scriptsig()->set_pub( std::string( (char *)strpubCstr, strpubCstrLen ) );  
+	}
+
+    std::string serTx = tx.SerializeAsString();
+	
+    auto extra = nlohmann::json::parse(tx.extra());
+    int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
+
+	TxMsg phoneToTxMsg;
+    phoneToTxMsg.set_version(getVersion());
+	phoneToTxMsg.set_tx(serTx);
+	phoneToTxMsg.set_txencodehash(msg->txencodehash());
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+        return;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+        return;
+    }
+    phoneToTxMsg.set_prevblkhash(blockHash);
+    phoneToTxMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
+	unsigned int top = 0;
+	int db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -5);
+        return;
+    }	
+	phoneToTxMsg.set_top(top);
+
+	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
+	std::string txHash;
+	int ret = DoHandleTx(txmsg, txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if (ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+    return ;
+}
+
+
+std::map<int32_t, std::string> GetCreateRedeemTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "参数错误"), 
+												make_pair(-3, "交易被挂起"), 
+												make_pair(-4, "打开数据库错误"), 
+												make_pair(-5, "获得质押信息错误"),
+												make_pair(-6, "账户未质押"),
+												make_pair(-7, "查不到质押信息"),
+												make_pair(-8, "质押信息错误"),
+												make_pair(-9, "质押未超过30天期限"),
+												make_pair(-10, "查询本地该账户质押信息失败"),
+												make_pair(-11, "查询本地该账户无该质押信息"),
+												make_pair(-12, "查询本地该账户无足够的utxo"),
+												make_pair(-13, "获取打包费失败"),
+												};
+
+	return errInfo;												
+}
+void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg,const MsgData &msgdata)
+{
+    CreateRedeemTxMsgAck createRedeemTxMsgAck;
+
+	auto errInfo = GetCreateRedeemTxMsgReqCode();
+
+    // 判断版本是否兼容
+	if( 0 != Util::IsVersionCompatible( getVersion() ) )
+	{
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -1);
+		return ;
+	}
+    
+    string fromAddr = msg->addr();
+    uint64_t gasFee = std::stod(msg->gasfees().c_str()) * DECIMAL_NUM;
+    uint64_t amount = std::stod(msg->amt().c_str()) * DECIMAL_NUM;
+    uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
+    string txhash = msg->txhash();
+    
+    if(fromAddr.size()<= 0 || amount <= 0 || needverifyprehashcount < (uint32_t)g_MinNeedVerifyPreHashCount || gasFee <= 0||txhash.empty())
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -2);
+        return ;
+    }
+
+	vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -3);
+		return ;
+	}
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if ( txn == NULL )
+	{
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -4);
+		return ;
+	}
+
+	ON_SCOPE_EXIT
+    {
+		pRocksDb->TransactionDelete(txn, false);
+	};
+    // 查询账号是否已经质押资产
+    std::vector<string> addresses;
+    int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
+    if(db_status != 0)
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -5);
+        return ;
+    }
+
+    auto iter = find(addresses.begin(), addresses.end(), fromAddr);
+    if( iter == addresses.end() )
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -6);
+        return ;
+    }
+
+    CBlock cblock;
+    string blockHeaderStr ;
+    std::vector<string> utxoes;
+    pRocksDb->GetPledgeAddressUtxo(txn,fromAddr, utxoes);
+    if (utxoes.size() > 0)
+    {
+        std::string blockHash;
+        pRocksDb->GetBlockHashByTransactionHash(txn, utxoes[0], blockHash); 
+        int db_status1 = pRocksDb->GetBlockByBlockHash(txn,blockHash,blockHeaderStr);
+    
+        if(db_status1 != 0)
+        {
+            ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -7);
+            return ;
+        }
+     }
+    cblock.ParseFromString(blockHeaderStr);
+
+    std::string utxoStr = msg->txhash();
+    if (utxoStr.empty())
+    {
+        for (int i = 0; i < cblock.txs_size(); i++)
+        {
+            CTransaction tx = cblock.txs(i);
+            if (CheckTransactionType(tx) == kTransactionType_Tx)
+            {
+                for (int j = 0; j < tx.vout_size(); j++)
+                {   
+                    CTxout vout = tx.vout(j);
+                    if (vout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
+                    {
+                        utxoStr = tx.hash();
+                    }
+                }
+            }
+        }
+    }
+
+    if (utxoStr.empty())
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -8);
+		return ;   
+    }
+
+    //{{ Check redeem time, it must be more than 30 days, 20201209
+    int result = IsMoreThan30DaysForRedeem(utxoStr);
+    if (result != 0)
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -9);
+        return ;
+    }
+    //}}
+
+    std::vector<string> utxos;
+    db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
+    if (db_status != 0)
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -10);
+        return ;
+    }
+
+    auto utxoIter = find(utxos.begin(), utxos.end(), utxoStr);
+    if (utxoIter == utxos.end())
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -11);
+        return ;
+    }
+    CTransaction outTx;
+    bool isTrue = FindUtxosFromRocksDb(fromAddr, fromAddr, 0, needverifyprehashcount, gasFee, outTx, utxoStr);
+    for(int i = 0;i <outTx.vin_size();i++)
+    {
+        CTxin *txin = outTx.mutable_vin(i);
+        txin->clear_scriptsig();
+    }
+    
+	for (int i = 0; i != outTx.vin_size(); ++i)
+	{
+			CTxin * txin = outTx.mutable_vin(i);
+			txin->clear_scriptsig();
+	}
+
+	outTx.clear_signprehash();
+	outTx.clear_hash();
+
+	if(!isTrue)
+	{
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -12);
+		return ;
+	}
+
+    uint64_t packageFee = 0;
+    if ( 0 != pRocksDb->GetDevicePackageFee(packageFee) )
+    {
+        ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -13);
+		return ;
+    }
+
+    nlohmann::json txInfo;
+    txInfo["RedeemptionUTXO"] = txhash;
+    txInfo["ReleasePledgeAmount"] = amount;
+
+	nlohmann::json extra;
+    extra["fromaddr"] = fromAddr;
+	extra["NeedVerifyPreHashCount"] = needverifyprehashcount;
+	extra["SignFee"] = gasFee;
+    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+	extra["TransactionType"] = TXTYPE_REDEEM;
+    extra["TransactionInfo"] = txInfo;
+
+	outTx.set_extra(extra.dump());
+    std::string txData = outTx.SerializePartialAsString();
+
+    size_t encodeLen = txData.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)txData.data(), txData.size(), encode);
+
+    std::string encodeStr((char *)encode, codeLen);
+	std::string txEncodeHash = getsha256hash(encodeStr);
+    createRedeemTxMsgAck.set_txdata(encodeStr);
+    createRedeemTxMsgAck.set_txencodehash(txEncodeHash);
+    
+	ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, 0);
+}
+
+
+std::map<int32_t, std::string> GetRedeemTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "打开数据库错误"), 
+												make_pair(-3, "获得最高高度错误"),
+												make_pair(-4, "获得主链错误"),
+												};
+
+	return errInfo;												
+}
+void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgData &msgdata )
+{
+    TxMsgAck txMsgAck; 
+	auto errInfo = GetRedeemTxMsgReqCode();
+
+    // 判断版本是否兼容
+	if( 0 != Util::IsVersionCompatible(getVersion() ) )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+	// 将交易信息体，公钥，签名信息反base64
+	unsigned char serTxCstr[msg->sertx().size()] = {0};
+	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
+	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
+
+	CTransaction tx;
+	tx.ParseFromString(serTxStr);
+
+	unsigned char strsignatureCstr[msg->strsignature().size()] = {0};
+	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)msg->strsignature().data(), msg->strsignature().size(), strsignatureCstr);
+
+	unsigned char strpubCstr[msg->strsignature().size()] = {0};
+	unsigned long strpubCstrLen = base64_decode((unsigned char *)msg->strpub().data(), msg->strpub().size(), strpubCstr);
+
+	for (int i = 0; i < tx.vin_size(); i++)
+	{
+		CTxin * txin = tx.mutable_vin(i);
+		txin->mutable_scriptsig()->set_sign( std::string( (char *)strsignatureCstr, strsignatureCstrLen ) );
+		txin->mutable_scriptsig()->set_pub( std::string( (char *)strpubCstr, strpubCstrLen ) );
+	}
+
+    std::string serTx = tx.SerializeAsString();
+    auto extra = nlohmann::json::parse(tx.extra());
+    int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
+
+	TxMsg phoneToTxMsg;
+    phoneToTxMsg.set_version(getVersion());
+	phoneToTxMsg.set_tx(serTx);
+	phoneToTxMsg.set_txencodehash(msg->txencodehash());
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2);
+        return;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+	unsigned int top = 0;
+	int db_status = pRocksDb->GetBlockTop(txn, top);	
+    if (db_status) 
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+        return;
+    }
+	phoneToTxMsg.set_top(top);
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+        return;
+    }
+    phoneToTxMsg.set_prevblkhash(blockHash);
+    phoneToTxMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
+	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
+	std::string txHash;
+	int ret = DoHandleTx(txmsg, txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if (ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+	
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+    
+    return; 
+}
+
+int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & amount_str, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string password, std::string pledgeType, std::string & txHash)
+{
+    uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
+    uint64_t amount = std::stod(amount_str) * DECIMAL_NUM;
+    if(fromAddr.size() <= 0 || amount <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0)
+    {
+        return -1;
+    }
+
+    // // 判断矿机密码是否正确
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
+    
+    if (hashOriPass != targetPassword) 
+    {
+        return -2;
+    }
+
+    vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		return -3;
+	}
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if ( txn == NULL )
+	{
+		return -4;
+	}
+
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    CTransaction outTx;
+    bool isTrue = FindUtxosFromRocksDb(fromAddr, VIRTUAL_ACCOUNT_PLEDGE, amount, needVerifyPreHashCount, GasFee, outTx);
+	if(!isTrue)
+	{
+		return -5;
+	}
+
+    nlohmann::json txInfo;
+    txInfo["PledgeType"] = pledgeType;
+    txInfo["PledgeAmount"] = amount;
+
+    nlohmann::json extra;
+    extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
+    extra["SignFee"] = GasFee;
+    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
+    extra["TransactionType"] = TXTYPE_PLEDGE;
+    extra["TransactionInfo"] = txInfo;
+
+    outTx.set_extra(extra.dump());
+
+    for (int i = 0; i < outTx.vin_size(); i++)
+	{
+		CTxin * txin = outTx.mutable_vin(i);;
+		txin->clear_scriptsig();
+	}
+
+	std::string serTx = outTx.SerializeAsString();
+
+	size_t encodeLen = serTx.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
+	std::string encodeStr( (char *)encode, codeLen );
+
+	std::string encodeStrHash = getsha256hash(encodeStr);
+
+    if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
+    {
+        return -6;
+    }
+
+	std::string signature;
+	std::string strPub;
+	GetSignString(encodeStrHash, signature, strPub);
+
+	for (int i = 0; i < outTx.vin_size(); i++)
+	{
+		CTxin * txin = outTx.mutable_vin(i);
+		txin->mutable_scriptsig()->set_sign(signature);
+		txin->mutable_scriptsig()->set_pub(strPub);
+	}
+
+	serTx = outTx.SerializeAsString();
+
+	TxMsg txMsg;
+    txMsg.set_version( getVersion() );
+	txMsg.set_tx(serTx);
+	txMsg.set_txencodehash( encodeStrHash );
+
+	unsigned int top = 0;
+	int db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        return -7;
+    }	
+	txMsg.set_top(top);
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        return -8;
+    }
+    txMsg.set_prevblkhash(blockHash);
+    txMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
+	auto msg = make_shared<TxMsg>(txMsg);
+    int ret = DoHandleTx(msg, txHash);
+
+    if (ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+    return ret;
+}
+
+std::map<int32_t, std::string> GetCreateDevicePledgeTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "密码错误倒计时未结束"), 
+												make_pair(-3, "密码错误"),
+												make_pair(-4, "密码第三次输入错误"),
+
+												};
+
+	return errInfo;												
+}
+void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTxMsgReq>& msg, const MsgData &msgdata )
+{
+    TxMsgAck txMsgAck;
+	auto errInfo = GetCreateDevicePledgeTxMsgReqCode();
+
+	// 判断版本是否兼容
+	if( 0 != Util::IsVersionCompatible(getVersion() ) )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+	
+	std::string hashOriPass = generateDeviceHashPassword(msg->password());
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
+  
+  	auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+    uint32_t minutescount = 0;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2, std::to_string(minutescount));
+        return ;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+            return;
+       }
+       else
+       {
+            ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+            return;
+       }   
+    }
+    else 
+    {
+        cout<<"输入密码成功重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+    }
+
+
+	std::string txHash;
+	int ret = CreatePledgeTransaction(msg->addr(), msg->amt(), std::stoi(msg->needverifyprehashcount()), msg->gasfees(), msg->password(), PLEDGE_NET_LICENCE, txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if (ret != 0)
+	{
+		ret -= 1000;
+	}
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+    return ;
+}
+
+int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, std::string & txHash)
+{
+    // 参数判断
+    uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
+    if(fromAddr.size() <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0 || utxo.empty())
+    {
+        return -1;
+    }
+
+    // 判断矿机密码是否正确
+    std::string hashOriPass = generateDeviceHashPassword(password);
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
+    if (hashOriPass != targetPassword) 
+    {
+        return -2;
+    }
+
+    vector<string> Addr;
+	Addr.push_back(fromAddr);
+	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
+	{
+		return -3;
+	}
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		return -4;
+	}
+
+    ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    // 查询账号是否已经质押资产
+    std::vector<string> addresses;
+    int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
+    if(db_status != 0)
+    {
+        return -5;
+    }
+    auto iter = find(addresses.begin(), addresses.end(), fromAddr);
+    if( iter == addresses.end() )
+    {
+        return -6;
+    }
+   
+    std::vector<string> utxos;
+    db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
+    if (db_status != 0)
+    {
+        return -7;
+    }
+
+    auto utxoIter = find(utxos.begin(), utxos.end(), utxo);
+    if (utxoIter == utxos.end())
+    {
+        return -8;
+    }
+
+    //{{ Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
+    int result = IsMoreThan30DaysForRedeem(utxo);
+    if (result != 0)
+    {
+        return -9;
+    }
+    //}}End
+
+    CTransaction outTx;
+    bool isTrue = FindUtxosFromRocksDb(fromAddr, fromAddr, 0, needVerifyPreHashCount, GasFee, outTx, utxo);
+	if(!isTrue)
+	{
+        return -10;
+	}
+
+    nlohmann::json txInfo;
+    txInfo["RedeemptionUTXO"] = utxo;
+
+    nlohmann::json extra;
+    extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
+    extra["SignFee"] = GasFee;
+    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
+    extra["TransactionType"] = TXTYPE_REDEEM;
+    extra["TransactionInfo"] = txInfo;
+
+	outTx.set_extra(extra.dump());
+
+	std::string serTx = outTx.SerializeAsString();
+
+	size_t encodeLen = serTx.size() * 2 + 1;
+	unsigned char encode[encodeLen] = {0};
+	memset(encode, 0, encodeLen);
+	long codeLen = base64_encode((unsigned char *)serTx.data(), serTx.size(), encode);
+	std::string encodeStr( (char *)encode, codeLen );
+
+	std::string encodeStrHash = getsha256hash(encodeStr);
+
+    // 设置默认账号为发起账号
+    if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
+    {
+        return -11;
+    }
+
+	std::string signature;
+	std::string strPub;
+	GetSignString(encodeStrHash, signature, strPub);
+
+	for (int i = 0; i < outTx.vin_size(); i++)
+	{
+		CTxin * txin = outTx.mutable_vin(i);
+		txin->mutable_scriptsig()->set_sign(signature);
+		txin->mutable_scriptsig()->set_pub(strPub);
+	}
+
+	serTx = outTx.SerializeAsString();
+	
+	TxMsg txMsg;
+	txMsg.set_version( getVersion() );
+
+	txMsg.set_tx(serTx);
+	txMsg.set_txencodehash( encodeStrHash );
+
+	unsigned int top = 0;
+	db_status = pRocksDb->GetBlockTop(txn, top);
+    if (db_status) 
+    {
+        return -12;
+    }
+	txMsg.set_top(top);
+
+    std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        return -13;
+    }
+    txMsg.set_prevblkhash(blockHash);
+    txMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
+	auto msg = make_shared<TxMsg>(txMsg);
+    int ret = DoHandleTx(msg, txHash);
+
+	if (ret != 0)
+	{
+		ret -= 100;
+	}
+
+	std::cout << "ret: " << ret << std::endl;
+
+    return ret;
+}
+
+
+std::map<int32_t, std::string> GetCreateDeviceRedeemTxMsgReqCode()
+{
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
+												make_pair(-1, "版本不兼容"), 
+												make_pair(-2, "密码错误倒计时未结束"), 
+												make_pair(-3, "密码错误"),
+												make_pair(-4, "密码第三次输入错误"),
+												};
+
+	return errInfo;												
+}
+
+// 手机连接矿机发起解质押交易
+void HandleCreateDeviceRedeemTxMsgReq(const std::shared_ptr<CreateDeviceRedeemTxReq> &msg, const MsgData &msgdata )
+{
+	TxMsgAck txMsgAck;
+	auto errInfo = GetCreateDeviceRedeemTxMsgReqCode();
+
+	// 判断版本是否兼容
+	if( 0 != Util::IsVersionCompatible(getVersion() ) )
+	{
+		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
+		return ;
+	}
+	
+	std::string hashOriPass = generateDeviceHashPassword(msg->password());
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
+  
+  	auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
+    uint32_t minutescount = 0;
+    bool retval = pCPwdAttackChecker->IsOk(minutescount);
+    if(retval == false)
+    {
+        ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2, std::to_string(minutescount));
+        return;
+    }
+
+    if(hashOriPass.compare(targetPassword))
+    {
+        cout<<"输入密码错误开始记录次数"<<endl;
+       if(pCPwdAttackChecker->Wrong())
+       {
+            ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
+            return;
+       }
+       else
+       {
+            ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
+            return;
+       }   
+    }
+    else 
+    {
+        cout<<"输入密码成功重置为0"<<endl;
+        pCPwdAttackChecker->Right();
+    }
+
+	std::string txHash;
+    int ret = CreateRedeemTransaction(msg->addr(), std::stoi(msg->needverifyprehashcount()), msg->gasfees(), msg->utxo(), msg->password(), txHash);
+	txMsgAck.set_txhash(txHash);
+
+	if (ret != 0)
+	{
+		ret -= 1000;
+	}
+
+	ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, ret);
+    return ;
+}
+
+template<typename Ack>
+void ReturnAckCode(const MsgData& msgdata, std::map<int32_t, std::string> errInfo, Ack & ack, int32_t code, const std::string & extraInfo)
+{
+	ack.set_version(getVersion());
+	ack.set_code(code);
+	if (extraInfo.size())
+	{
+		ack.set_message(extraInfo);
+	}
+	else
+	{
+		ack.set_message(errInfo[code]);
+	}
+
+	net_send_message<Ack>(msgdata, ack, net_com::Priority::kPriority_High_1); // ReturnAckCode大部分处理交易，默认优先级为high1
+}
+
+template<typename TxReq> 
+int CheckAddrs( const std::shared_ptr<TxReq>& req)
+{
+	if (req->from_size() > 1 && req->to_size() > 1)
+    {
+		return -1;
+    }
+	if (req->from_size() == 0 || req->to_size() == 0)
+    {
+		return -2;
+    }
+	return 0;
+}
+
+int GetAddrsFromMsg( const std::shared_ptr<CreateMultiTxMsgReq>& msg, 
+                     std::vector<std::string> &fromAddr,
+                     std::map<std::string, int64_t> &toAddr)
+{
+    for (int i = 0; i < msg->from_size(); ++i)
+    {
+        std::string fromAddrStr = msg->from(i);
+        fromAddr.push_back(fromAddrStr);
+    }
+
+    for (int i = 0; i < msg->to_size(); ++i)
+    {
+        ToAddr toAddrInfo = msg->to(i);
+        if (toAddrInfo.toaddr().empty() && toAddrInfo.amt().empty())
+        {
+            error("parse error! toaddr or amt is empty!");
+            return -1;
+        }
+
+        int64_t amount = std::stod(toAddrInfo.amt()) * DECIMAL_NUM;
+        toAddr.insert( make_pair(toAddrInfo.toaddr(), amount ) );
+    }
+
+    if (fromAddr.size() == 0 || toAddr.size() == 0)
+    {
+        return -2;
+    }
+
+    if (toAddr.size() != (size_t)msg->to_size())
+    {
+        return -3;
+    }
+
+    return 0;
+}
+
+// Check time of the redeem, redeem time must be more than 30 days, add 20201208   LiuMingLiang
+int IsMoreThan30DaysForRedeem(const std::string& utxo)
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		return -1;
+	}
+
+    ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
+    std::string strTransaction;
+    int db_status = pRocksDb->GetTransactionByHash(txn, utxo, strTransaction);
+    if (db_status != 0)
+    {
+        return -1;
+    }
+
+    CTransaction utxoPledge;
+    utxoPledge.ParseFromString(strTransaction);
+    uint64_t nowTime = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
+    static const uint64_t DAYS30 = (uint64_t)1000000 * 60 * 60 * 24 * 30;
+    if ((nowTime - utxoPledge.time()) >= DAYS30)
+    {
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+// Create: Check chain height of the all node, 20210225
+bool CheckAllNodeChainHeightInReasonableRange()
+{
+	// Get chain height
+    unsigned int chainHeight = get_chain_height();
+	if (chainHeight == 0)
+	{
+		return true;
+	}
+
+	unsigned int reasonableCount = 0;
+	std::vector<Node> nodelist;
+	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
+	{
+		nodelist = Singleton<PeerNode>::get_instance()->get_nodelist();
+	}
+	else
+	{
+		nodelist = Singleton<NodeCache>::get_instance()->get_nodelist();
+	}
+	if (nodelist.empty())
+	{
+		// std::cout << "NodeCache is empty!" << std::endl;
+		return true;
+	}
+	for (auto& node : nodelist)
+	{
+		std::cout << "Node chain height: " << node.id << " " << node.chain_height << " " << chainHeight << std::endl;
+		int difference = node.chain_height - chainHeight;
+		if (abs(difference) <= REASONABLE_HEIGHT_RANGE)
+		{
+			++reasonableCount;
+		}
+	}
+
+	float fTotalCount = nodelist.size();
+	float fReasonableCount = reasonableCount;
+	static const float STANDARD_VALUE = 0.60;
+	bool result = ((fReasonableCount / fTotalCount) >= STANDARD_VALUE);
+	std::cout << "Check chain height: " << fReasonableCount << ", " << fTotalCount << ", ^^^VVV " << result << std::endl;
+
+	return result;
+}
+
+// Description: handle the ConfirmTransactionReq from network,   20210309   Liu
+void HandleConfirmTransactionReq(const std::shared_ptr<ConfirmTransactionReq>& msg, const MsgData& msgdata)
+{
+	std::string version = msg->version();
+	std::string id = msg->id();
+	std::string txHash = msg->tx_hash();
+	
+	bool success = false;
+	CBlock block;
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn != nullptr)
+	{
+		std::string txRaw;
+		int db_status = pRocksDb->GetTransactionByHash(txn, txHash, txRaw);
+		if (db_status == 0)
+		{
+			success = true;
+			string blockHash;
+			pRocksDb->GetBlockHashByTransactionHash(txn, txHash, blockHash);
+			string blockRaw;
+			pRocksDb->GetBlockByBlockHash(txn, blockHash, blockRaw);
+			block.ParseFromString(blockRaw);
+			std::cout << "In confirm transaction, Get block success.^^^VVV " << blockHash << std::endl;
+		}
+		pRocksDb->TransactionDelete(txn, true);
+	}
+
+	ConfirmTransactionAck ack;
+	ack.set_version(getVersion());
+	ack.set_id(net_get_self_node_id());
+	ack.set_tx_hash(txHash);
+	ack.set_flag(msg->flag());
+	// std::cout << "Response confirm: " << txHash << ", success=" << success  << ", flag=" << (int)ack.flag() << std::endl;
+	if (success)
+	{
+		ack.set_success(true);
+		std::string blockRaw = block.SerializeAsString();
+		ack.set_block_raw(blockRaw);
+	}
+	else
+	{
+		ack.set_success(false);
+	}
+
+	net_send_message<ConfirmTransactionAck>(id, ack);
+}
+
+void HandleConfirmTransactionAck(const std::shared_ptr<ConfirmTransactionAck>& msg, const MsgData& msgdata)
+{
+	std::string ver = msg->version();
+	std::string id = msg->id();
+	std::string tx_hash = msg->tx_hash();
+	bool success = msg->success();
+	std::cout << "Receive confirm: " << id << ", " << tx_hash << ", " << success << std::endl;
+	if (success)
+	{
+		std::string blockRaw = msg->block_raw();
+		CBlock block;
+		block.ParseFromString(blockRaw);
+
+		if (msg->flag() == ConfirmTxFlag)
+		{
+			MagicSingleton<TransactionConfirmTimer>::GetInstance()->update_count(tx_hash, block);
+		}
+		else if (msg->flag() == ConfirmRpcFlag)
+		{
+			g_RpcTransactionConfirm.update_count(tx_hash, block);
+			g_RpcTransactionConfirm.update_id(tx_hash,id);
+		}
+	}
+	else
+	{
+	}
+}
+
+void SendTransactionConfirm(const std::string& tx_hash, ConfirmCacheFlag flag, const uint32_t confirmCount)
+{
+	if (confirmCount == 0)
+	{
+		std::cout << "confirmCount is empty" << std::endl;
+		return;
+	}
+
+	ConfirmTransactionReq req;
+	req.set_version(getVersion());
+	req.set_id(net_get_self_node_id());
+	req.set_tx_hash(tx_hash);
+	req.set_flag(flag);
+
+	std::vector<Node> list;
+	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
+	{
+		list = Singleton<PeerNode>::get_instance()->get_nodelist();
+	}
+	else
+	{
+		list = Singleton<NodeCache>::get_instance()->get_nodelist();
+	}
+
+	std::random_device device;
+	std::mt19937 engine(device());
+
+	int send_size = std::min(list.size(), (size_t)confirmCount);
+
+	int count = 0;
+	while (count < send_size && !list.empty())
+	{
+		int index = engine() % list.size();
+
+		net_send_message<ConfirmTransactionReq>(list[index].id, req);
+		++count;
+		std::cout << "Send to confirm: " << index << ", " << list[index].id << ", " << count << std::endl;
+
+		list.erase(list.begin() + index);
+	}
+}

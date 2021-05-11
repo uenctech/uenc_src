@@ -1,43 +1,28 @@
 #ifndef __CA_GLOBAL_H__
 #define __CA_GLOBAL_H__
 #include "Crypto_ECDSA.h"
-#include "../utils/time_task.h"
 #include <unordered_set>
 
+#include "../common/global.h"
 #include "proto/ca_protomsg.pb.h"
 #include "../utils/CTimer.hpp"
+#include "./net/peer_node.h"
+#include "ca_txconfirmtimer.h"
 
 #define NETWORKID_LEN 129
 
-
 class Sync;
 
-extern std::string g_LinuxCompatible;
-extern std::string g_WindowsCompatible;
-extern std::string g_IOSCompatible;
-extern std::string g_AndroidCompatible;
-
 extern const int64_t g_compatMinHeight;
-
-typedef enum CAVERSION
-{
-    kUnknown = 0,
-    kLINUX   = 1,        // linux版本前缀
-    kWINDOWS = 2,        // windows版本前缀
-    kIOS     = 3,        // ios版本前缀
-    kANDROID = 4,        // android版本前缀
-} Version;
 
 extern struct chain_info g_chain_metadata;
 extern ECDSA<ECP, SHA1>::PrivateKey g_privateKey;
 extern ECDSA<ECP, SHA1>::PublicKey g_publicKey;
 extern accountinfo g_AccountInfo;
-extern bool g_phone;
 extern char g_ip[NETWORKID_LEN];
 extern const int g_MinNeedVerifyPreHashCount;
 extern Sync* g_synch;
 extern std::vector<GetDevInfoAck> g_nodeinfo;
-
 
 extern const char * build_time;
 extern string build_commit_hash;
@@ -45,16 +30,11 @@ extern CTimer g_blockpool_timer;
 extern CTimer g_synch_timer; 
 extern CTimer g_deviceonline_timer;
 extern CTimer g_public_node_refresh_timer;
-extern CTimer g_device2pubnet_timer;
-extern std::vector<string>   g_random_normal_node;
-extern std::vector<string>   g_random_public_node;
+
+extern std::vector<Node> g_localnode;
+
 extern std::mutex mu_return;
 extern std::atomic_int64_t echo_counter ; 
-
-extern int g_VerifyPasswordCount;
-extern int minutescount ;
-extern bool g_ready ;
-extern int g_testflag;
 
 extern const uint64_t g_minSignFee;
 extern const uint64_t g_maxSignFee;
@@ -66,6 +46,10 @@ extern uint64_t g_MaxAwardTotal;
 
 extern uint64_t g_minPledgeNodeNum;   // 全网最少质押数，达到这个数之后普通节点不再能够签名质押交易
 
+extern std::mutex rollbackLock;
+extern int rollbackCount;
+
+extern TransactionConfirmTimer g_RpcTransactionConfirm;
 
 #ifdef __cplusplus
 extern "C" {
@@ -151,26 +135,6 @@ extern char BLKDB_DATA_PATH[256];
 
 // 特殊交易虚拟账号
 #define VIRTUAL_ACCOUNT_PLEDGE "0000000000000000000000000000000000"
-/* ====================================================================================  
- # @description:  获取版本号
- # @param  NONE
- # @return 返回版本
- # @Mark 返回结构为3部分组成，以下划线分割，第一部分为系统号，第二部分为版本号，第三部分为运行环境
- # 例如：1_0.3_t,
- # 系统号：1为linux，2为windows，3为iOS，4为Android
- # 版本号： 两级版本号如1.0
- # 运行环境：m为主网，t为测试网
- ==================================================================================== */
-string getVersion();
-string getEbpcVersion();
-/* ====================================================================================  
- # @description: 获取系统类型
- # @param  NONE
- # @return 返回为系统号
- # @mark
- # 系统号：1为linux，2为windows，3为iOS，4为Android
- ==================================================================================== */
-Version getSystem();
 
 
 

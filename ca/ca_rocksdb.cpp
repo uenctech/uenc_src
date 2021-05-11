@@ -459,10 +459,13 @@ int Rocksdb::RemoveUtxoHashsByAddress(Transaction* txn, const std::string &addre
     }
     std::string utxoHash_ = utxoHash + "_";
     auto pos = valueString.find(utxoHash_);
-    if(pos != valueString.npos)
+    if(pos == valueString.npos)
     {
-        valueString.erase(pos, utxoHash_.size());
+        return ROCKSDB_NOT_FOUND;
     }
+
+    valueString.erase(pos, utxoHash_.size());
+
     return writedata(txn, db_key, valueString);
 }
 

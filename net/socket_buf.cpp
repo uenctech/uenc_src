@@ -37,19 +37,6 @@ void SocketBuf::set_sending_msg(bool is_sending)
 	is_sending_ = is_sending;
 }
 
-
-
-// void FunTest()
-// {
-//     char buf[] = "CgMwLjISDVBob25lVHhNc2dSZXEquAMKAwoBMRLEAkVJS28vZllGSWlJeFFqUmpOV1pTZFd0YVVYZENTblJ0VFU1MFdXNDNaSGhFY0VObFJERlNZbmRES0FFeUtHUmlZVGt5WVdFM1lXWTJOVEJtTUdZMk1XRTJPR0kyTkRKbVptUm1PVFl5TlRkbE5qTm1OVFpDUmdwRUNrQm1aV1ZoWmpaaFpqTmlOVGRtT1dWa1l6ZzRPR1kxTjJObE4yWXlPVFJqTkRsaE5HWXhOak0xWWpkbVpqVmlZMkkwWXpSa09EUTFaRFkwTVRSbFlXWTRFQUZLSmdnVUVpSXhSekp5VURFMVpHczVSbkF4UWtKTE0yOW5VbFJrYmpWak5UaHRjV3QyWW5ObFNpa0lpS3ppQkJJaU1VSTBZelZtVW5WcldsRjNRa3AwYlUxT2RGbHVOMlI0UkhCRFpVUXhVbUozUXc9PRom+PYtaJc7GqKXhDtWBhqxWZ3vfoizESzU2Jpt6E9pPNjg1d74DdgiQiAgrni5yJQ+qUuDVUxBUQKPVghQgWgfKZOkyzyZhUP6EWEyGOhfkarR5q9Homzibvk1f/2JgyULkhuq1sknh3/MOg==";
-//     unsigned char *plain = new unsigned char[1024];
-//     unsigned long ret = base64_decode((unsigned char *)buf, strlen(buf), plain);
-
-//     uint32_t checksum = Util::adler32((const char *)plain, ret);
-
-//     std::cout << "*******************checksum = " << checksum << std::endl;
-// }
-
 void SocketBuf::verify_cache(size_t curr_msg_len)
 {
     if (curr_msg_len > 100*1000*1000)
@@ -111,20 +98,16 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
         {
             this->cache.erase(0, 4);
             std::string read_data(this->cache.begin(), this->cache.begin() + curr_msg_len);
+
             // 验证checksum
-            if (read_data.size() < sizeof(uint32_t)*2)
+            if (read_data.size() < sizeof(uint32_t) * 3)
             {
                 SocketBuf::correct_cache();
                 return false;
             }
-            uint32_t checksum = Util::adler32(read_data.data(), read_data.size() - sizeof(uint32_t)*2);
-            uint32_t pack_checksum = *((uint32_t *)(this->cache.data() + read_data.size() - sizeof(uint32_t)*2));
-            //uint32_t pack_end_flag = *((uint32_t *)(this->cache.data() + read_data.size() - sizeof(uint32_t)));
-
-            // printf("curr_msg_len:%u \n",(unsigned int)curr_msg_len);
-            // printf("checksum:%x \n",checksum);
-            // printf("pack_checksum:%x \n",pack_checksum);
-            // printf("pack_end_flag:%d \n",pack_end_flag);
+            uint32_t checksum = Util::adler32((unsigned char *)read_data.data(), read_data.size() - sizeof(uint32_t) * 3);
+            uint32_t pack_checksum = *((uint32_t *)(this->cache.data() + read_data.size() - sizeof(uint32_t) * 3));
+            
             if(checksum != pack_checksum)
             {
                 correct_cache();
@@ -132,7 +115,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
             }
             this->cache.erase(0, curr_msg_len);
 
-            // data + checksum + flag
+            // data + checksum + flag + end
             this->send_pk_to_mess_queue(read_data);
 
             if (this->cache.size() < 4)
@@ -140,8 +123,6 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
             memcpy(&curr_msg_len, this->cache.data(), 4);
             SocketBuf::verify_cache(curr_msg_len);
         }
-
-        
         
         //this->cache.reserve(this->cache.size());
         if(this->cache.capacity() > this->cache.size() * 20)
@@ -413,44 +394,6 @@ void BufferCrol::pop_n_write_buffer_queue(std::string ip, uint16_t port, int n)
     uint64_t port_and_ip = net_data::pack_port_and_ip(port, ip);
     debug("port_and_ip :%lu, ip :%s, port :%d", port_and_ip, ip.c_str(), port);
     return this->pop_n_write_buffer_queue(port_and_ip, n);
-}
-
-bool BufferCrol::add_write_pack(uint64_t port_and_ip, const net_pack& pack)
-{
-	string data = Pack::packag_to_str(pack);
-    
-	if (data.size() == 0)
-	{
-		error("add_write_buffer_queue error data.size == 0");
-        
-		return false;
-	}
-
-	std::lock_guard<std::mutex> lck(mutex_);
-	auto itr = this->BufferMap.find(port_and_ip);
-	if (itr == this->BufferMap.end())
-	{
-		debug("no key port_and_ip is %lu", port_and_ip);
-        
-		return false;
-	}
-	itr->second->push_send_msg(data);
-    
-	return true;
-}
-
-bool BufferCrol::add_write_pack(std::string ip, uint16_t port, const net_pack& pack)
-{
-	uint64_t port_and_ip = net_data::pack_port_and_ip(port, ip);
-	add_write_pack(port_and_ip, pack);
-	return true;
-}
-
-bool BufferCrol::add_write_pack(uint32_t ip, uint16_t port, const net_pack& pack)
-{
-	uint64_t port_and_ip = net_data::pack_port_and_ip(port, ip);
-	add_write_pack(port_and_ip, pack);
-	return true;
 }
 
 bool BufferCrol::is_exists(uint64_t port_and_ip)

@@ -8,15 +8,12 @@
 #include "../net/msg_queue.h"
 
 /**
- * @description: ca 初始化log
- */
-void ca_initConfig();
-/**
- * @description: ca 初始化
- * @param 无
- * @return: 成功返回ture，失败返回false
- */
+* @description: ca 初始化
+* @param 无
+* @return: 成功返回ture，失败返回false
+*/
 bool ca_init();
+
 
 /**
  * @description: ca 清理函数
@@ -25,7 +22,13 @@ bool ca_init();
  */
 void ca_cleanup();
 
-bool id_isvalid(const std::string &id);
+/**
+ * @description: ca 菜单
+ * @param 无
+ * @return: 无
+ */
+void ca_print();
+
 
 /**
  * @description: ca 版本
@@ -68,7 +71,13 @@ int set_device_signature_fee(uint64_t fee);
 int set_device_package_fee(uint64_t fee);
 int get_device_package_fee(uint64_t& packageFee);
 
+void handle_transaction();
+void handle_pledge();
+void handle_redeem_pledge();
 bool isPublicIp(const string& ip);
 int UpdatePublicNodeToConfigFile();
+void AutoTranscation();
+
+unsigned int get_chain_height();
 
 #endif

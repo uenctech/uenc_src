@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <unistd.h>
+#include <utility>
 #include <map>
 #include "ca_global.h"
 #include "ca_message.h"
@@ -22,10 +23,17 @@
 #include <algorithm>
 #include <tuple>
 #include "../utils/string_util.h"
+#include "../net/peer_node.h"
+#include "../net/node_cache.h"
+#include "../utils/base64.h"
 
 
 /* 设置获取到的其他节点的最高块信息 */ 
-bool Sync::SetPotentialNodes(const std::string &id, const int64_t &height, const std::string &hash)
+bool Sync::SetPotentialNodes(const std::string &id, 
+							const int64_t &height, 
+							const std::string &hash, 
+							const std::string & forwardHash, 
+							const std::string & backwardHash)
 {
 	std::lock_guard<std::mutex> lck(mu_potential_nodes);
     if(id.size() == 0)
@@ -42,7 +50,7 @@ bool Sync::SetPotentialNodes(const std::string &id, const int64_t &height, const
             return false;
         }
     }
-    struct SyncNode data = {id, height, hash};
+    struct SyncNode data = {id, height, hash, forwardHash, backwardHash};
     this->potential_nodes.push_back(data);
     return true;
 }
@@ -61,6 +69,96 @@ void Sync::SetPledgeNodes(const std::vector<std::string> & ids)
 }
 
 
+int Sync::GetSyncInfo(std::vector<std::string> & reliables, int64_t & syncHeight)
+{
+	if (this->potential_nodes.size() == 0)
+	{
+		return -1;
+	}
+
+	std::map<int64_t, std::map<std::string, std::vector<std::string>>> height_hash_id;
+	for (auto & node : potential_nodes)
+	{
+		std::vector<std::string> checkHashs;
+		StringUtil::SplitString(node.backwardHash, checkHashs, "_");
+
+		for (auto & hash : checkHashs)
+		{
+			CheckHash checkHash;
+			checkHash.ParseFromString(base64Decode(hash));
+
+			auto idIter = height_hash_id.find(checkHash.end());
+			if (height_hash_id.end() != idIter)
+			{
+				auto hashIter = idIter->second.find(checkHash.hash());
+				if (idIter->second.end() != hashIter)
+				{
+					hashIter->second.push_back(node.id);
+				}
+				else
+				{
+					std::map<std::string, std::vector<std::string>> & hash_id = height_hash_id[checkHash.end()];
+					std::vector<std::string> ids = {node.id};
+					hash_id.insert(make_pair(checkHash.hash(), ids));
+				}
+			}
+			else
+			{
+				std::vector<std::string> ids = {node.id};
+				std::map<std::string, std::vector<std::string>> hash_id;
+				hash_id.insert(std::make_pair(checkHash.hash(), ids));
+				height_hash_id.insert(make_pair(checkHash.end(), hash_id));
+			}
+		}
+	}
+
+	int most = SYNCNUM * 0.6;
+	for (auto & i : height_hash_id)
+	{
+		auto hash_id = i.second;
+		int64_t tmpHeight = i.first;
+		if (tmpHeight > syncHeight)
+		{
+			int mostHashCount = 0;
+			std::string mostHash;
+			std::vector<std::string> ids;
+			for(auto & j : hash_id)
+			{
+				if (j.second.size() > (size_t)mostHashCount && j.second.size() >= (size_t)most)
+				{
+					mostHashCount = j.second.size();
+					mostHash = j.first;
+					ids = j.second;
+				}
+			}
+
+			if ((size_t)mostHashCount >= reliables.size())
+			{
+				syncHeight = tmpHeight;
+				reliables = ids;
+			}
+		}
+	}
+	return 0;
+}
+
+int Sync::SyncDataFromPubNode()
+{
+	std::vector<Node> nodes = net_get_public_node();
+	if (nodes.size() == 0)
+	{
+		return -1;
+	}
+
+	srand(time(NULL));
+	int i = rand() % nodes.size();
+
+	int syncNum = Singleton<Config>::get_instance()->GetSyncDataCount();
+	DataSynch(nodes[i].id, syncNum);
+
+	return 0;
+}
+
 
 // 同步开始
 void Sync::Process()
@@ -70,12 +168,48 @@ void Sync::Process()
 		std::cout << "sync_adding..." << std::endl;
 		return;
 	}               
-    // std::cout << "\n======Sync block begin====== " << std::endl;
+    std::cout << "\n======Sync block begin====== " << std::endl;
     potential_nodes.clear();
 	verifying_node.id.clear();
 
+	// 连续3次查找可靠节点失败，直接向公网节点请求同步
+	if (reliableCount >= 3 || rollbackCount >= 3)
+	{
+		SyncDataFromPubNode();
+		if ( reliableCount != 0)
+		{
+			std::lock_guard<std::mutex> lock(reliableLock);
+			reliableCount = 0;
+		}
+
+		if ( rollbackCount != 0 )
+		{
+			std::lock_guard<std::mutex> lock(rollbackLock);
+			rollbackCount = 0;
+		}
+		return ;
+	}
+
     // === 1.寻找潜在可靠节点 ===
-    std::vector<std::string> nodes = net_get_node_ids();
+	std::vector<Node> nodeInfos;
+	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
+	{
+		nodeInfos = Singleton<PeerNode>::get_instance()->get_nodelist();
+		cout<<"public node size() = "<<nodeInfos.size()<<endl;
+	}
+	else
+	{
+		nodeInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
+		cout<<"normal node size() = "<<nodeInfos.size()<<endl;
+	}
+   
+   std::cout << "nodeInfos size() = " << nodeInfos.size() << std::endl;
+
+	std::vector<std::string> nodes;
+	for (const auto & nodeInfo : nodeInfos)
+	{
+		nodes.push_back(nodeInfo.id);
+	}
     if(nodes.size() == 0)
     {
         error("sync block not have node!!");
@@ -85,116 +219,158 @@ void Sync::Process()
 
     /* 随机选择节点，保证公平*/
     std::vector<std::string> sendid = randomNode(nodesum);
-   	// std::cout << "sync send is size :" << sendid.size() << std::endl;
-    for(auto& id : sendid)
-    {
-        SendSyncGetnodeInfoReq(id);
-    }
+   	std::cout << "sync send is size :" << sendid.size() << std::endl;
+
+	string proxyid = Singleton<Config>::get_instance()->GetProxyID();
+	Type type = Singleton<Config>::get_instance()->GetProxyTypeStatus();
+	bool ispublicid = Singleton<Config>::get_instance()->GetIsPublicNode();
+	if((type == kMANUAL) && (!proxyid.empty()) &&(!ispublicid))
+	{
+		SendSyncGetnodeInfoReq(proxyid);
+	}
+	else if((type == kAUTOMUTIC)  && (!ispublicid))
+	{
+		g_localnode.clear();
+		vector<Node> allnode = Singleton<PeerNode>::get_instance()->get_nodelist();//打洞的还需要去除掉
+		string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
+		vector<Node> localnode;
+		vector<Node> idsequence;
+		
+		for(auto &item :allnode)
+		{
+			if(item.conn_kind != BYHOLE && (!item.is_public_node ))
+			{
+				localnode.push_back(item);
+			}
+		}
+
+		Node self = Singleton<PeerNode>::get_instance()->get_self_node();	
+		if(!self.is_public_node)
+		{
+			localnode.push_back(self);
+		}
+
+		std::sort(localnode.begin(),localnode.end(),Compare(true));
+		localnode.erase(unique(localnode.begin(), localnode.end()), localnode.end());
+
+		uint64_t height = localnode[0].chain_height;
+		for(auto &item:localnode)
+		{
+			if(item.chain_height == height)
+			{
+				idsequence.push_back(item);
+			}
+		}
+		std::sort(idsequence.begin(),idsequence.end(),Compare(false));
+
+		if(self_id.compare(idsequence[0].id))
+		{
+			g_localnode.push_back(idsequence[0]);
+			SendSyncGetnodeInfoReq(g_localnode[0].id);
+			cout<<"potential g_localnode[0].ip = "<<IpPort::ipsz(g_localnode[0].local_ip)<<"g_localnode[0].height = "<<g_localnode[0].chain_height<<endl;
+		}	
+	}
+	
+	for(auto& id : sendid)
+	{ 
+		SendSyncGetnodeInfoReq(id); //随机节点节点信息请求
+	}
+	
     sleep(3);
     if(potential_nodes.size() == 0)
     {
         error("potential_nodes == 0");
 		return;
     }
-    // std::cout << "potential_nodes list:" << std::endl;
-    std::sort(potential_nodes.begin(), potential_nodes.end());
-    // for(auto i : potential_nodes)
-    // {
-    //     printf("id: %s ", i.id.c_str());
-    //     printf("height: %ld ", i.height);
-    //     printf("hash: %s\n", i.hash.c_str());
-    // }
 
-	if(IsOverIt(potential_nodes.back().height))
+	std::vector<std::string> reliables;
+	int64_t syncHeight = 0;
+	if ( 0 != GetSyncInfo(reliables, syncHeight) )
 	{
-		// std::cout << "sync is over other,not sync." << std::endl;
 		return;
 	}
-    // === 2.验证潜在可靠节点 ===
-    while(potential_nodes.size() > 0)
-    {
-		verifying_result.clear();
-        verifying_node = potential_nodes.back();
+	
+	if (reliables.size() <= 1)
+	{
+		std::lock_guard<std::mutex> lock(reliableLock);
+		reliableCount++;
+		return ;
+	}
+	else
+	{
+		std::lock_guard<std::mutex> lock(reliableLock);
+		reliableCount = 0;
+	}
 
-        sendid = randomNode(nodesum);
-		for (auto it = sendid.begin(); it != sendid.end(); ++it) 
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) TransactionInit failed !");
+		return ;
+	}
+
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	unsigned int top = 0;
+	if (pRocksDb->GetBlockTop(txn, top))
+	{
+		return ;
+	}
+	int sync_cnt = Singleton<Config>::get_instance()->GetSyncDataCount();
+	int syncNum = std::min(syncHeight - top, (int64_t)sync_cnt);
+	
+	for(auto const &i :reliables)
+	{
+		if((type == kMANUAL) && (!proxyid.empty()) && (!ispublicid))
 		{
-			if(*it == verifying_node.id)
+			if(!proxyid.compare(i))
 			{
-				it = sendid.erase(it);
+				ca_console infoColor(kConsoleColor_Red, kConsoleColor_Black, true);
+				DataSynch(proxyid, syncNum);
+				cout<<"proxyid ="<<proxyid<<endl;
+				cout << infoColor.reset();
+				return;
+			}
+		}
+		else if ((type == kAUTOMUTIC)  && (!ispublicid))
+		{
+			if(g_localnode.size() == 0)
+			{
 				break;
 			}
-		}
-
-        for(auto& id : sendid)
-        {
-            SendVerifyReliableNodeReq(id, verifying_node.height);
-        }
-        sleep(3); 
-		if(verifying_result.size() == 0)
-		{
-			error("verifying_result == 0");
-			potential_nodes.pop_back();
-			continue;
-		}		
-        //检查verifying_result
-        // std::cout << "verifying_node id:"<< verifying_node.id 
-        //     << " height:" << verifying_node.height
-        //     << " hash:" << verifying_node.hash << endl;
-
-		bool is_alone = true;
-		for(auto& other: verifying_result)
-		{
-            // std::cout << "other id:"<< other.id 
-            //     << " height:" << other.height
-            //     << " hash:" << other.hash << endl;  			
-			if(other.height >= verifying_node.height)
+			string autoid = g_localnode[0].id;
+			if (!autoid.compare(i))
 			{
-				is_alone = false;
+				ca_console infoColor(kConsoleColor_Red, kConsoleColor_Black, true);
+				cout<<"autoid.ip = "<<IpPort::ipsz(g_localnode[0].local_ip)<<" "<<"autoid.height ="<<g_localnode[0].chain_height<<endl;
+				cout << infoColor.reset();
+				DataSynch(autoid, syncNum);
+				return;
 			}
 		}
-		if(is_alone)
-		{
-			// error("sync verifying_node height is alone!!!");
-			potential_nodes.pop_back();
-			continue;
-		}
-
-        bool isok = false;
-        for(auto& other: verifying_result)
-        {      
-            if(other.height >= verifying_node.height && other.hash ==  verifying_node.hash)
-            {
-                isok = true;
-            }
-        }
-        if(isok)
-        {
-            break;
-        }else{
-            potential_nodes.pop_back();
-        }
-    }
-	if(potential_nodes.size() == 0){
-		error("over potential_nodes.size() == 0");
-		return;
 	}
-    DataSynch(verifying_node.id);
+
+	srand(time(NULL));
+	int i = rand() % reliables.size();
+	DataSynch(reliables[i], syncNum);
 }
 
+
 /* 发起同步请求*/
-bool Sync::DataSynch(std::string id)
+bool Sync::DataSynch(std::string id, const int syncNum)
 {
     if(0 == id.size())
     {
 		error("DataSynch:id is empty!!");
         return false;
     }
-    SendSyncBlockInfoReq(id);   
+    SendSyncBlockInfoReq(id, syncNum);
     return true;
 }
-
-
 
 //============区块同步交互协议================
 
@@ -205,9 +381,31 @@ void SendSyncGetnodeInfoReq(std::string id)
 		return;
 	}
 
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if (txn == NULL)
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) TransactionInit failed !");
+		return ;
+	}
+
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	unsigned int top = 0;
+	if (0 != pRocksDb->GetBlockTop(txn, top))
+	{
+		error("(HandleSyncVerifyPledgeNodeReq) GetBlockTop failed !");
+		return;
+	}
+
     SyncGetnodeInfoReq getBestchainInfoReq;
     SetSyncHeaderMsg<SyncGetnodeInfoReq>(getBestchainInfoReq);
-	net_send_message<SyncGetnodeInfoReq>(id, getBestchainInfoReq, true);
+	getBestchainInfoReq.set_height(top);
+	getBestchainInfoReq.set_syncnum( Singleton<Config>::get_instance()->GetSyncDataCount() );
+	net_send_message<SyncGetnodeInfoReq>(id, getBestchainInfoReq, net_com::Compress::kCompress_True);
 }
 
 int SendVerifyPledgeNodeReq(std::vector<std::string> ids)
@@ -227,7 +425,7 @@ int SendVerifyPledgeNodeReq(std::vector<std::string> ids)
 
 	for (auto id : ids)
 	{
-		net_send_message<SyncVerifyPledgeNodeReq>(id, syncVerifyPledgeNodeReq, true);
+		net_send_message<SyncVerifyPledgeNodeReq>(id, syncVerifyPledgeNodeReq, net_com::Compress::kCompress_True);
 	}
 
 	return 0;
@@ -237,7 +435,7 @@ void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeRe
 {
 	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
-	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
+	if(0 != Util::IsVersionCompatible(HeaderMsg->version()))
 	{
 		error("HandleSyncGetnodeInfoReq IsVersionCompatible");
 		return ;
@@ -294,7 +492,7 @@ void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeRe
 	}
 
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	net_send_message<SyncVerifyPledgeNodeAck>(headerMsg->id(), syncVerifyPledgeNodeAck, true);
+	net_send_message<SyncVerifyPledgeNodeAck>(headerMsg->id(), syncVerifyPledgeNodeAck, net_com::Compress::kCompress_True);
 }
 
 void HandleSyncVerifyPledgeNodeAck( const std::shared_ptr<SyncVerifyPledgeNodeAck>& msg, const MsgData& msgdata )
@@ -322,14 +520,14 @@ void SendSyncGetPledgeNodeReq(std::string id)
 
     SyncGetPledgeNodeReq getBestchainInfoReq;
     SetSyncHeaderMsg<SyncGetPledgeNodeReq>(getBestchainInfoReq);
-	net_send_message<SyncGetPledgeNodeReq>(id, getBestchainInfoReq, true);
+	net_send_message<SyncGetPledgeNodeReq>(id, getBestchainInfoReq, net_com::Compress::kCompress_True);
 }
 
 void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& msg, const MsgData& msgdata )
 {
 	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
-	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
+	if( 0 != Util::IsVersionCompatible( HeaderMsg->version() ) )
 	{
 		error("HandleSyncGetnodeInfoReq IsVersionCompatible");
 		return ;
@@ -367,7 +565,7 @@ void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& ms
 		}
 	}
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	net_send_message<SyncGetPledgeNodeAck>(headerMsg->id(), syncGetPledgeNodeAck, true);
+	net_send_message<SyncGetPledgeNodeAck>(headerMsg->id(), syncGetPledgeNodeAck, net_com::Compress::kCompress_True);
 }
 
 void HandleSyncGetPledgeNodeAck( const std::shared_ptr<SyncGetPledgeNodeAck>& msg, const MsgData& msgdata )
@@ -394,33 +592,33 @@ void SendVerifyReliableNodeReq(std::string id, int64_t height)
 
     verifyReliableNodeReq.set_height(height);
 
-	net_send_message<VerifyReliableNodeReq>(id, verifyReliableNodeReq, true);
+	net_send_message<VerifyReliableNodeReq>(id, verifyReliableNodeReq, net_com::Compress::kCompress_True);
 }
 
-std::vector<CheckHash> get_check_hash(int height)
+int get_check_hash(const uint32_t begin, const uint32_t end, const uint32_t end_height, std::vector<CheckHash> & vCheckHash)
 {
+	if (begin > end)
+	{
+		return -1;
+	}
+
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		return -2;
+	}
 
-	bool bRollback = true;
 	ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, bRollback);
+		pRocksDb->TransactionDelete(txn, false);
 	};
 
-	std::vector<CheckHash> v_checkhash;
-	if(height < 1) 
-	{
-		return v_checkhash;
-	}
-	int check_end = (height / CHECK_HEIGHT);        // 5
-	int check_num = std::min(check_end, (CHECKNUM-1) ); //5
-	int check_begin = check_end - check_num; //0
 	std::vector<std::tuple<int, int>> check_range; 
-	for(int i = check_begin; i < check_end; i++)
+	for(int i = begin; i < (int)end; i++)
 	{
-		check_range.push_back(std::make_tuple(i*100, (i+1)*100 - 1));
+		check_range.push_back(std::make_tuple(i*CHECK_HEIGHT, (i+1)*CHECK_HEIGHT));
 	}
-	check_range.push_back(std::make_tuple(check_end*100, height - 1));
+	check_range.push_back(std::make_tuple(end*CHECK_HEIGHT, end_height));
 
     for(auto i: check_range)
     {
@@ -444,16 +642,65 @@ std::vector<CheckHash> get_check_hash(int height)
 			std::string all_hash = getsha256hash(StringUtil::concat(hashs, "_"));
 			checkhash.set_hash(all_hash.substr(0,HASH_LEN));
 		}
-		v_checkhash.push_back(checkhash);
-		// std::cout << "begin:" << begin << std::endl;
-		// std::cout << "end:" << end << std::endl;
-		// std::cout << "all_hash:" << all_hash.substr(0,HASH_LEN) << std::endl;
+		vCheckHash.push_back(checkhash);
     }
+	return 0;
+}
+
+std::vector<CheckHash> get_check_hash_backward(const int height, const int num)
+{
+	std::vector<CheckHash> v_checkhash;
+
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
+	if ( txn == NULL )
+	{
+		return v_checkhash;
+	}
+
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	unsigned int top = 0;
+	if (pRocksDb->GetBlockTop(txn, top))
+	{
+		return v_checkhash;
+	}
+
+	int check_begin = height / CHECK_HEIGHT;
+	int end_height = std::min((height + num), (int)top);
+	int check_end = end_height / CHECK_HEIGHT;
+
+	get_check_hash(check_begin, check_end, end_height, v_checkhash);
 	return v_checkhash;
 }
 
+std::vector<CheckHash> get_check_hash_forward(int height)
+{
+	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction* txn = pRocksDb->TransactionInit();
 
-void SendSyncBlockInfoReq(std::string id)
+	bool bRollback = true;
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, bRollback);
+	};
+
+	std::vector<CheckHash> v_checkhash;
+	if(height < 1) 
+	{
+		return v_checkhash;
+	}
+	int check_end = (height / CHECK_HEIGHT);        // 5
+	int check_num = std::min(check_end, (CHECKNUM-1) ); //5
+	int check_begin = check_end - check_num; //0
+
+	get_check_hash(check_begin, check_end, height, v_checkhash);
+	return v_checkhash;
+}
+
+void  SendSyncBlockInfoReq(std::string id, const int syncNum)
 {
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
@@ -476,8 +723,9 @@ void SendSyncBlockInfoReq(std::string id)
 	syncBlockInfoReq.set_height(blockHeight);
 	int sync_cnt = Singleton<Config>::get_instance()->GetSyncDataCount();
 	syncBlockInfoReq.set_max_num(sync_cnt);
+	syncBlockInfoReq.set_max_height(blockHeight + syncNum);
 	
-	std::vector<CheckHash> v_checkhash = get_check_hash(blockHeight);
+	std::vector<CheckHash> v_checkhash = get_check_hash_forward(blockHeight);
 	for(auto i:v_checkhash)
 	{
 		CheckHash *checkhash = syncBlockInfoReq.add_checkhash();
@@ -485,7 +733,19 @@ void SendSyncBlockInfoReq(std::string id)
 		checkhash->set_end(i.end());
 		checkhash->set_hash(i.hash());
 	}
-	net_send_message<SyncBlockInfoReq>(id, syncBlockInfoReq, true);
+	net_send_message<SyncBlockInfoReq>(id, syncBlockInfoReq, net_com::Compress::kCompress_True);
+}
+
+
+std::vector<std::string> CheckHashToString(const std::vector<CheckHash> & v)
+{
+	std::vector<std::string> vRet;
+	for (const auto & i : v)
+	{
+		vRet.push_back(base64Encode(i.SerializeAsString()));
+	}
+
+	return vRet;
 }
 
 
@@ -493,7 +753,7 @@ void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, c
 {
 	// 判断版本是否兼容
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
-	if( 0 != IsVersionCompatible( HeaderMsg->version() ) )
+	if( 0 != Util::IsVersionCompatible( HeaderMsg->version() ) )
 	{
 		error("HandleSyncGetnodeInfoReq IsVersionCompatible");
 		return ;
@@ -531,25 +791,31 @@ void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, c
 	SyncGetnodeInfoAck syncGetnodeInfoAck;
 	SetSyncHeaderMsg<SyncGetnodeInfoAck>(syncGetnodeInfoAck);
 
+	std::vector<CheckHash> vCheckHashForward = get_check_hash_forward(msg->height());
+	std::vector<CheckHash> vCheckHashbackward = get_check_hash_backward(msg->height(), msg->syncnum());
+	std::vector<std::string> vStrForward = CheckHashToString(vCheckHashForward);
+	std::vector<std::string> vStrBackward = CheckHashToString(vCheckHashbackward);
+
 	syncGetnodeInfoAck.set_height(blockHeight);
 	syncGetnodeInfoAck.set_hash(blockHash.substr(0,HASH_LEN));
+	syncGetnodeInfoAck.set_checkhashforward( StringUtil::concat(vStrForward, "_") );
+	syncGetnodeInfoAck.set_checkhashbackward( StringUtil::concat(vStrBackward, "_") );
 
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-
-	net_send_message<SyncGetnodeInfoAck>(headerMsg->id(), syncGetnodeInfoAck, true);
+	net_send_message<SyncGetnodeInfoAck>(headerMsg->id(), syncGetnodeInfoAck, net_com::Compress::kCompress_True);
 }
 
 void HandleSyncGetnodeInfoAck( const std::shared_ptr<SyncGetnodeInfoAck>& msg, const MsgData& msgdata )
 {
 	// 判断版本是否兼容
 	SyncHeaderMsg * pSyncHeaderMsg= msg->mutable_syncheadermsg();
-	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
+	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncGetnodeInfoAck IsVersionCompatible");
 		return ;
 	}
 
-	g_synch->SetPotentialNodes( pSyncHeaderMsg->id(), msg->height(), msg->hash() );
+	g_synch->SetPotentialNodes( pSyncHeaderMsg->id(), msg->height(), msg->hash(), msg->checkhashforward(), msg->checkhashbackward() );
 }
 
 void HandleVerifyReliableNodeReq( const std::shared_ptr<VerifyReliableNodeReq>& msg, const MsgData& msgdata )
@@ -582,15 +848,7 @@ void HandleVerifyReliableNodeReq( const std::shared_ptr<VerifyReliableNodeReq>& 
     }
 	verifyReliableNodeAck.set_hash(hash.substr(0,HASH_LEN));
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	net_send_message<VerifyReliableNodeAck>(headerMsg->id(), verifyReliableNodeAck, true);
-}
-
-
-void HandleVerifyReliableNodeAck( const std::shared_ptr<VerifyReliableNodeAck>& msg, const MsgData& msgdata )
-{
-	std::lock_guard<std::mutex> lck(g_synch->mu_verifying_result);
-    SyncNode data(msg->id(), msg->height(), msg->hash());
-    g_synch->verifying_result.push_back(data);
+	net_send_message<VerifyReliableNodeAck>(headerMsg->id(), verifyReliableNodeAck, net_com::Compress::kCompress_True);
 }
 
 
@@ -598,9 +856,9 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 {
 
 	SyncHeaderMsg * pSyncHeaderMsg = msg->mutable_syncheadermsg();
-
+	
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
+	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoReq:IsVersionCompatible");
 		return ;
@@ -615,30 +873,25 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 	int64_t other_height = msg->height();
 	unsigned int ownblockHeight;
 	pRocksDb->GetBlockTop(txn, ownblockHeight);
-	int64_t end = ownblockHeight;
+
+	unsigned int max_height = msg->max_height();           // 请求节点要同步的最大高度
+	int64_t end = std::min(ownblockHeight, max_height);    // 同步结束高度
+	
 	if(ownblockHeight < msg->height())
 	{
 		std::cout<<"request height is over me,not sync." << std::endl;
 		return ;	
 	}
 
-
 	SyncBlockInfoAck syncBlockInfoAck;
 	SetSyncHeaderMsg<SyncBlockInfoAck>(syncBlockInfoAck);
 
-
-	if(ownblockHeight > msg->height() )
-	{
-		std::string blocks = get_blkinfo_ser(other_height, end, msg->max_num());
-		syncBlockInfoAck.set_blocks(blocks);
-		syncBlockInfoAck.set_poolblocks(MagicSingleton<BlockPoll>::GetInstance()->GetBlock());
-	}
-
-	std::vector<CheckHash> v_checkhash = get_check_hash(other_height);
+	std::vector<CheckHash> v_checkhash = get_check_hash_forward(other_height);
 	if((int)v_checkhash.size() == (int)msg->checkhash_size())
 	{
 		std::vector<CheckHash> v_invalid_checkhash;
-		for (int i = 0; i < msg->checkhash_size(); i++) {
+		for (int i = 0; i < msg->checkhash_size(); i++) 
+		{
 			const CheckHash& checkhash = msg->checkhash(i);
 			if(checkhash.begin() == v_checkhash[i].begin() 
 				&& checkhash.end() == v_checkhash[i].end() 
@@ -651,21 +904,31 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 				invalid_checkhash->set_end(checkhash.end());
 			}
 		}
-		// if(v_invalid_checkhash.size() > 0 )
-		// {
-		// 	std::cout << "HandleSyncBlockInfoReq v_invalid_checkhash.size > 0" << std::endl;
-		// 	for(auto i:v_invalid_checkhash)
-		// 	{
-		// 		std::cout << "begin:" << i.begin() << std::endl;
-		// 		std::cout << "end:" << i.end() << std::endl;
-		// 	}
-		// }
-	}else{
+	}
+	else
+	{
 		error("checkhash.size not equal!! form:%d me:%d",(int)msg->checkhash_size(), (int)v_checkhash.size());
 	}
 
+	int beginHeight = 0;
+	if (syncBlockInfoAck.invalid_checkhash_size() != 0)
+	{
+		beginHeight = syncBlockInfoAck.invalid_checkhash(0).begin();
+	}
+	else
+	{
+		beginHeight = msg->height();
+	}
+	
+	if(ownblockHeight > msg->height() )
+	{
+		std::string blocks = get_blkinfo_ser(beginHeight, end, msg->max_num());
+		syncBlockInfoAck.set_blocks(blocks);
+		syncBlockInfoAck.set_poolblocks(MagicSingleton<BlockPoll>::GetInstance()->GetBlock());
+	}
+
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	net_send_message<SyncBlockInfoAck>(headerMsg->id(), syncBlockInfoAck, true);	
+	net_send_message<SyncBlockInfoAck>(headerMsg->id(), syncBlockInfoAck, net_com::Compress::kCompress_True);	
 }
 
 
@@ -673,9 +936,13 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const MsgData& msgdata )
 {
 	SyncHeaderMsg * pSyncHeaderMsg = msg->mutable_syncheadermsg();
-
+	string id = pSyncHeaderMsg->id();
+	cout<<"id = "<<id <<endl;
+	Node node;
+	Singleton<PeerNode>::get_instance()->find_node(id, node);
+	cout<<"HandleSyncBlockInfoAck ip = "<<IpPort::ipsz(node.local_ip)<<"syncBlockInfoReq height =" <<node.chain_height<<endl;
 	// 判断版本是否兼容
-	if( 0 != IsVersionCompatible( pSyncHeaderMsg->version() ) )
+	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoAck:IsOverIt");
 		return ;
@@ -697,13 +964,14 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 	};
 
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	for (int i = 0; i < msg->invalid_checkhash_size(); i++) {
+	for (int i = 0; i < msg->invalid_checkhash_size(); i++) 
+	{
 		const CheckHash& checkhash = msg->invalid_checkhash(i);
 		std::cout << "invalid_checkhash==================:" << std::endl;
 		std::cout << "begin:" << checkhash.begin() << std::endl;
 		std::cout << "end:" << checkhash.end() << std::endl;
 		std::cout << "invalid_checkhash===============end" << std::endl;
-
+ 
 		SyncLoseBlockReq syncLoseBlockReq;
 		SetSyncHeaderMsg<SyncLoseBlockReq>(syncLoseBlockReq);
 		syncLoseBlockReq.set_begin(checkhash.begin());
@@ -717,11 +985,11 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 			std::for_each(vBlockHashs.begin(), vBlockHashs.end(),
 				 [](std::string &s){ s = s.substr(0,HASH_LEN);}
 			);
-
+			
 			hashs.push_back(StringUtil::concat(vBlockHashs, "_"));
 		}
 		syncLoseBlockReq.set_all_hash(StringUtil::concat(hashs, "_"));
-		net_send_message<SyncLoseBlockReq>(headerMsg->id(), syncLoseBlockReq, true);	
+		net_send_message<SyncLoseBlockReq>(headerMsg->id(), syncLoseBlockReq, net_com::Compress::kCompress_True);	
 		break;
 	}
 
@@ -733,15 +1001,16 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 	SplitString(blocks, v_blocks, "_");
 	SplitString(poolblocks, v_poolblocks, "_");
 
-	if(msg->invalid_checkhash_size() > 0 && v_blocks.size() > 0)
+	if(msg->invalid_checkhash_size() > 0 )
 	{
-		g_synch->conflict_height = msg->invalid_checkhash(0).begin();
-		sleep(5);
+		int begin = msg->invalid_checkhash(0).begin() == 0 ? 1 : msg->invalid_checkhash(0).begin();
+		g_synch->conflict_height = begin;
+		// sleep(5);
 	}
-	if(msg->invalid_checkhash_size() == 0)
-	{
-		g_synch->conflict_height = -1;
-	}
+	// if(msg->invalid_checkhash_size() == 0)
+	// {
+	// 	g_synch->conflict_height = -1;
+	// }
 
 
 	for(size_t i = 0; i < v_blocks.size(); i++)
@@ -758,6 +1027,8 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 			return ;
 		}
 	}	
+	sleep(1);
+	g_synch->conflict_height = -1;
 }
 
 
@@ -774,6 +1045,10 @@ void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
 
+	ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, false);
+	};
+
 	std::vector<std::string> ser_block;
 	for(auto i = begin; i <= end; i++)
 	{
@@ -781,19 +1056,25 @@ void HandleSyncLoseBlockReq( const std::shared_ptr<SyncLoseBlockReq>& msg, const
 		pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs); //i height
 		for(auto hash:vBlockHashs)
 		{
-			auto res = std::find(std::begin(v_hashs), std::end(v_hashs), hash.substr(0,HASH_LEN));
-			if (res == std::end(v_hashs)) {
-				std::cout << "HandleSyncLoseBlockReq hash:" << hash.substr(0,HASH_LEN) << std::endl;
-				string strHeader;
-				pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
-				ser_block.push_back(Str2Hex(strHeader));
+			// auto res = std::find(std::begin(v_hashs), std::end(v_hashs), hash.substr(0,HASH_LEN));
+			// if (res == std::end(v_hashs)) {
+			// 	std::cout << "HandleSyncLoseBlockReq hash:" << hash.substr(0,HASH_LEN) << std::endl;
+			// 	string strHeader;
+			// 	pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
+			// 	ser_block.push_back(Str2Hex(strHeader));
+			// }
+			string strBlock;
+			if ( 0 != pRocksDb->GetBlockByBlockHash(txn, hash, strBlock) ) 
+			{
+				return ;
 			}
+			ser_block.push_back(Str2Hex(strBlock));
 		}
 	}
 	SyncLoseBlockAck syncLoseBlockAck;
 	syncLoseBlockAck.set_blocks(StringUtil::concat(ser_block, "_"));
 	SyncHeaderMsg * headerMsg = msg->mutable_syncheadermsg();
-	net_send_message<SyncLoseBlockAck>(headerMsg->id(), syncLoseBlockAck, true);	
+	net_send_message<SyncLoseBlockAck>(headerMsg->id(), syncLoseBlockAck, net_com::Compress::kCompress_True);	
 }
 
 void HandleSyncLoseBlockAck( const std::shared_ptr<SyncLoseBlockAck>& msg, const MsgData& msgdata )
@@ -867,7 +1148,8 @@ std::string get_blkinfo_ser(int64_t begin, int64_t end, int64_t max_num)
 
 	std::vector<std::string> ser_block;
 	int block_num = 0;
-	for (auto i = begin; i <= end; i++) {
+	for (auto i = begin; i <= end; i++) 
+	{
 		if(block_num >= max_num)
 		{
 			break;
@@ -875,7 +1157,8 @@ std::string get_blkinfo_ser(int64_t begin, int64_t end, int64_t max_num)
         std::vector<std::string> vBlockHashs;
         pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs);
 		block_num += vBlockHashs.size();
-        for (auto hash : vBlockHashs) {
+        for (auto hash : vBlockHashs) 
+		{
             string strHeader;
             pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
             ser_block.push_back(Str2Hex(strHeader));
@@ -908,7 +1191,8 @@ std::vector<std::string> get_blkinfo(int64_t begin, int64_t end, int64_t max_num
 
 	std::vector<std::string> v_blocks;
 	int block_num = 0;
-	for (auto i = begin; i <= end; i++) {
+	for (auto i = begin; i <= end; i++) 
+	{
 		if(block_num >= max_num)
 		{
 			break;
@@ -916,7 +1200,8 @@ std::vector<std::string> get_blkinfo(int64_t begin, int64_t end, int64_t max_num
         std::vector<std::string> vBlockHashs;
         pRocksDb->GetBlockHashsByBlockHeight(txn, i, vBlockHashs);
 		block_num += vBlockHashs.size();
-        for (auto hash : vBlockHashs) {
+        for (auto hash : vBlockHashs) 
+		{
             string strHeader;
             pRocksDb->GetBlockByBlockHash(txn, hash, strHeader);
             v_blocks.push_back(strHeader);
@@ -949,3 +1234,8 @@ int SyncData(std::string &headerstr, bool isSync)
 	MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock,isSync));
 	return 0;
 }
+
+
+
+
+

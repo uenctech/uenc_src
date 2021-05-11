@@ -62,7 +62,7 @@
 
 int deal_command(int argc);
 
-
+//加上-m或者-M参数才会调用菜单函数
 int init_menu(int argc, char *argv[]);
 
 int mkdir_log();
@@ -71,7 +71,11 @@ int kblog_file_init();
 int idlog_file_init();
 
 bool init();
+bool InitDevicePwd();
 
 void menu();
+
+int parse_command(int argc, char *argv[]);
+void menu_command();
 
 #endif

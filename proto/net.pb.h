@@ -32,6 +32,7 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
+#include "transaction.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_net_2eproto
@@ -47,13 +48,19 @@ struct TableStruct_net_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[22]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_net_2eproto;
+class BroadcaseMsgReq;
+class BroadcaseMsgReqDefaultTypeInternal;
+extern BroadcaseMsgReqDefaultTypeInternal _BroadcaseMsgReq_default_instance_;
+class BroadcastNodeReq;
+class BroadcastNodeReqDefaultTypeInternal;
+extern BroadcastNodeReqDefaultTypeInternal _BroadcastNodeReq_default_instance_;
 class ConnectNodeReq;
 class ConnectNodeReqDefaultTypeInternal;
 extern ConnectNodeReqDefaultTypeInternal _ConnectNodeReq_default_instance_;
@@ -63,6 +70,21 @@ extern EchoAckDefaultTypeInternal _EchoAck_default_instance_;
 class EchoReq;
 class EchoReqDefaultTypeInternal;
 extern EchoReqDefaultTypeInternal _EchoReq_default_instance_;
+class GetHeightAck;
+class GetHeightAckDefaultTypeInternal;
+extern GetHeightAckDefaultTypeInternal _GetHeightAck_default_instance_;
+class GetHeightReq;
+class GetHeightReqDefaultTypeInternal;
+extern GetHeightReqDefaultTypeInternal _GetHeightReq_default_instance_;
+class GetTransInfoAck;
+class GetTransInfoAckDefaultTypeInternal;
+extern GetTransInfoAckDefaultTypeInternal _GetTransInfoAck_default_instance_;
+class GetTransInfoReq;
+class GetTransInfoReqDefaultTypeInternal;
+extern GetTransInfoReqDefaultTypeInternal _GetTransInfoReq_default_instance_;
+class NodeHeight;
+class NodeHeightDefaultTypeInternal;
+extern NodeHeightDefaultTypeInternal _NodeHeight_default_instance_;
 class NodeInfo;
 class NodeInfoDefaultTypeInternal;
 extern NodeInfoDefaultTypeInternal _NodeInfo_default_instance_;
@@ -100,9 +122,16 @@ class UpdatePackageFeeReq;
 class UpdatePackageFeeReqDefaultTypeInternal;
 extern UpdatePackageFeeReqDefaultTypeInternal _UpdatePackageFeeReq_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
+template<> ::BroadcaseMsgReq* Arena::CreateMaybeMessage<::BroadcaseMsgReq>(Arena*);
+template<> ::BroadcastNodeReq* Arena::CreateMaybeMessage<::BroadcastNodeReq>(Arena*);
 template<> ::ConnectNodeReq* Arena::CreateMaybeMessage<::ConnectNodeReq>(Arena*);
 template<> ::EchoAck* Arena::CreateMaybeMessage<::EchoAck>(Arena*);
 template<> ::EchoReq* Arena::CreateMaybeMessage<::EchoReq>(Arena*);
+template<> ::GetHeightAck* Arena::CreateMaybeMessage<::GetHeightAck>(Arena*);
+template<> ::GetHeightReq* Arena::CreateMaybeMessage<::GetHeightReq>(Arena*);
+template<> ::GetTransInfoAck* Arena::CreateMaybeMessage<::GetTransInfoAck>(Arena*);
+template<> ::GetTransInfoReq* Arena::CreateMaybeMessage<::GetTransInfoReq>(Arena*);
+template<> ::NodeHeight* Arena::CreateMaybeMessage<::NodeHeight>(Arena*);
 template<> ::NodeInfo* Arena::CreateMaybeMessage<::NodeInfo>(Arena*);
 template<> ::NotifyConnectReq* Arena::CreateMaybeMessage<::NotifyConnectReq>(Arena*);
 template<> ::PingReq* Arena::CreateMaybeMessage<::PingReq>(Arena*);
@@ -374,6 +403,7 @@ class NodeInfo :
     kNodeIdFieldNumber = 1,
     kMacMd5FieldNumber = 7,
     kBase58AddrFieldNumber = 11,
+    kPublicNodeIdFieldNumber = 13,
     kLocalIpFieldNumber = 2,
     kLocalPortFieldNumber = 3,
     kPublicIpFieldNumber = 4,
@@ -382,6 +412,7 @@ class NodeInfo :
     kConnKindFieldNumber = 8,
     kFeeFieldNumber = 9,
     kPackageFeeFieldNumber = 10,
+    kChainHeightFieldNumber = 12,
   };
   // string node_id = 1;
   void clear_node_id();
@@ -429,6 +460,22 @@ class NodeInfo :
   const std::string& _internal_base58addr() const;
   void _internal_set_base58addr(const std::string& value);
   std::string* _internal_mutable_base58addr();
+  public:
+
+  // string public_node_id = 13;
+  void clear_public_node_id();
+  const std::string& public_node_id() const;
+  void set_public_node_id(const std::string& value);
+  void set_public_node_id(std::string&& value);
+  void set_public_node_id(const char* value);
+  void set_public_node_id(const char* value, size_t size);
+  std::string* mutable_public_node_id();
+  std::string* release_public_node_id();
+  void set_allocated_public_node_id(std::string* public_node_id);
+  private:
+  const std::string& _internal_public_node_id() const;
+  void _internal_set_public_node_id(const std::string& value);
+  std::string* _internal_mutable_public_node_id();
   public:
 
   // uint32 local_ip = 2;
@@ -503,6 +550,15 @@ class NodeInfo :
   void _internal_set_package_fee(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
+  // uint32 chain_height = 12;
+  void clear_chain_height();
+  ::PROTOBUF_NAMESPACE_ID::uint32 chain_height() const;
+  void set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_chain_height() const;
+  void _internal_set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:NodeInfo)
  private:
   class _Internal;
@@ -511,6 +567,7 @@ class NodeInfo :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr node_id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr mac_md5_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr base58addr_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr public_node_id_;
   ::PROTOBUF_NAMESPACE_ID::uint32 local_ip_;
   ::PROTOBUF_NAMESPACE_ID::uint32 local_port_;
   ::PROTOBUF_NAMESPACE_ID::uint32 public_ip_;
@@ -519,6 +576,7 @@ class NodeInfo :
   ::PROTOBUF_NAMESPACE_ID::int32 conn_kind_;
   ::PROTOBUF_NAMESPACE_ID::uint64 fee_;
   ::PROTOBUF_NAMESPACE_ID::uint64 package_fee_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 chain_height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_net_2eproto;
 };
@@ -913,6 +971,7 @@ class SyncNodeReq :
 
   enum : int {
     kIdsFieldNumber = 1,
+    kNodesFieldNumber = 2,
   };
   // repeated string ids = 1;
   int ids_size() const;
@@ -938,12 +997,31 @@ class SyncNodeReq :
   std::string* _internal_add_ids();
   public:
 
+  // repeated .NodeInfo nodes = 2;
+  int nodes_size() const;
+  private:
+  int _internal_nodes_size() const;
+  public:
+  void clear_nodes();
+  ::NodeInfo* mutable_nodes(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >*
+      mutable_nodes();
+  private:
+  const ::NodeInfo& _internal_nodes(int index) const;
+  ::NodeInfo* _internal_add_nodes();
+  public:
+  const ::NodeInfo& nodes(int index) const;
+  ::NodeInfo* add_nodes();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >&
+      nodes() const;
+
   // @@protoc_insertion_point(class_scope:SyncNodeReq)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> ids_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo > nodes_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_net_2eproto;
 };
@@ -1246,6 +1324,140 @@ class ConnectNodeReq :
 };
 // -------------------------------------------------------------------
 
+class BroadcastNodeReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BroadcastNodeReq) */ {
+ public:
+  BroadcastNodeReq();
+  virtual ~BroadcastNodeReq();
+
+  BroadcastNodeReq(const BroadcastNodeReq& from);
+  BroadcastNodeReq(BroadcastNodeReq&& from) noexcept
+    : BroadcastNodeReq() {
+    *this = ::std::move(from);
+  }
+
+  inline BroadcastNodeReq& operator=(const BroadcastNodeReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BroadcastNodeReq& operator=(BroadcastNodeReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BroadcastNodeReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BroadcastNodeReq* internal_default_instance() {
+    return reinterpret_cast<const BroadcastNodeReq*>(
+               &_BroadcastNodeReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(BroadcastNodeReq& a, BroadcastNodeReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BroadcastNodeReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BroadcastNodeReq* New() const final {
+    return CreateMaybeMessage<BroadcastNodeReq>(nullptr);
+  }
+
+  BroadcastNodeReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BroadcastNodeReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BroadcastNodeReq& from);
+  void MergeFrom(const BroadcastNodeReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BroadcastNodeReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "BroadcastNodeReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMynodeFieldNumber = 1,
+  };
+  // .NodeInfo mynode = 1;
+  bool has_mynode() const;
+  private:
+  bool _internal_has_mynode() const;
+  public:
+  void clear_mynode();
+  const ::NodeInfo& mynode() const;
+  ::NodeInfo* release_mynode();
+  ::NodeInfo* mutable_mynode();
+  void set_allocated_mynode(::NodeInfo* mynode);
+  private:
+  const ::NodeInfo& _internal_mynode() const;
+  ::NodeInfo* _internal_mutable_mynode();
+  public:
+
+  // @@protoc_insertion_point(class_scope:BroadcastNodeReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::NodeInfo* mynode_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
 class TransMsgReq :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TransMsgReq) */ {
  public:
@@ -1288,7 +1500,7 @@ class TransMsgReq :
                &_TransMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(TransMsgReq& a, TransMsgReq& b) {
     a.Swap(&b);
@@ -1354,6 +1566,7 @@ class TransMsgReq :
   enum : int {
     kDataFieldNumber = 2,
     kDestFieldNumber = 1,
+    kPriorityFieldNumber = 3,
   };
   // bytes data = 2;
   void clear_data();
@@ -1386,6 +1599,15 @@ class TransMsgReq :
   ::NodeInfo* _internal_mutable_dest();
   public:
 
+  // uint32 priority = 3;
+  void clear_priority();
+  ::PROTOBUF_NAMESPACE_ID::uint32 priority() const;
+  void set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_priority() const;
+  void _internal_set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:TransMsgReq)
  private:
   class _Internal;
@@ -1393,6 +1615,170 @@ class TransMsgReq :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
   ::NodeInfo* dest_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 priority_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BroadcaseMsgReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BroadcaseMsgReq) */ {
+ public:
+  BroadcaseMsgReq();
+  virtual ~BroadcaseMsgReq();
+
+  BroadcaseMsgReq(const BroadcaseMsgReq& from);
+  BroadcaseMsgReq(BroadcaseMsgReq&& from) noexcept
+    : BroadcaseMsgReq() {
+    *this = ::std::move(from);
+  }
+
+  inline BroadcaseMsgReq& operator=(const BroadcaseMsgReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BroadcaseMsgReq& operator=(BroadcaseMsgReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BroadcaseMsgReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BroadcaseMsgReq* internal_default_instance() {
+    return reinterpret_cast<const BroadcaseMsgReq*>(
+               &_BroadcaseMsgReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(BroadcaseMsgReq& a, BroadcaseMsgReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BroadcaseMsgReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BroadcaseMsgReq* New() const final {
+    return CreateMaybeMessage<BroadcaseMsgReq>(nullptr);
+  }
+
+  BroadcaseMsgReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BroadcaseMsgReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BroadcaseMsgReq& from);
+  void MergeFrom(const BroadcaseMsgReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BroadcaseMsgReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "BroadcaseMsgReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDataFieldNumber = 2,
+    kFromFieldNumber = 1,
+    kPriorityFieldNumber = 3,
+  };
+  // bytes data = 2;
+  void clear_data();
+  const std::string& data() const;
+  void set_data(const std::string& value);
+  void set_data(std::string&& value);
+  void set_data(const char* value);
+  void set_data(const void* value, size_t size);
+  std::string* mutable_data();
+  std::string* release_data();
+  void set_allocated_data(std::string* data);
+  private:
+  const std::string& _internal_data() const;
+  void _internal_set_data(const std::string& value);
+  std::string* _internal_mutable_data();
+  public:
+
+  // .NodeInfo from = 1;
+  bool has_from() const;
+  private:
+  bool _internal_has_from() const;
+  public:
+  void clear_from();
+  const ::NodeInfo& from() const;
+  ::NodeInfo* release_from();
+  ::NodeInfo* mutable_from();
+  void set_allocated_from(::NodeInfo* from);
+  private:
+  const ::NodeInfo& _internal_from() const;
+  ::NodeInfo* _internal_mutable_from();
+  public:
+
+  // uint32 priority = 3;
+  void clear_priority();
+  ::PROTOBUF_NAMESPACE_ID::uint32 priority() const;
+  void set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_priority() const;
+  void _internal_set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:BroadcaseMsgReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
+  ::NodeInfo* from_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 priority_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_net_2eproto;
 };
@@ -1440,7 +1826,7 @@ class NotifyConnectReq :
                &_NotifyConnectReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(NotifyConnectReq& a, NotifyConnectReq& b) {
     a.Swap(&b);
@@ -1591,7 +1977,7 @@ class PingReq :
                &_PingReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(PingReq& a, PingReq& b) {
     a.Swap(&b);
@@ -1726,7 +2112,7 @@ class PongReq :
                &_PongReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(PongReq& a, PongReq& b) {
     a.Swap(&b);
@@ -1791,6 +2177,7 @@ class PongReq :
 
   enum : int {
     kIdFieldNumber = 1,
+    kChainHeightFieldNumber = 2,
   };
   // string id = 1;
   void clear_id();
@@ -1808,12 +2195,22 @@ class PongReq :
   std::string* _internal_mutable_id();
   public:
 
+  // uint32 chain_height = 2;
+  void clear_chain_height();
+  ::PROTOBUF_NAMESPACE_ID::uint32 chain_height() const;
+  void set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_chain_height() const;
+  void _internal_set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:PongReq)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 chain_height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_net_2eproto;
 };
@@ -1861,7 +2258,7 @@ class EchoReq :
                &_EchoReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(EchoReq& a, EchoReq& b) {
     a.Swap(&b);
@@ -1996,7 +2393,7 @@ class EchoAck :
                &_EchoAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   friend void swap(EchoAck& a, EchoAck& b) {
     a.Swap(&b);
@@ -2131,7 +2528,7 @@ class UpdateFeeReq :
                &_UpdateFeeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    15;
 
   friend void swap(UpdateFeeReq& a, UpdateFeeReq& b) {
     a.Swap(&b);
@@ -2277,7 +2674,7 @@ class UpdatePackageFeeReq :
                &_UpdatePackageFeeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    16;
 
   friend void swap(UpdatePackageFeeReq& a, UpdatePackageFeeReq& b) {
     a.Swap(&b);
@@ -2376,6 +2773,782 @@ class UpdatePackageFeeReq :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::PROTOBUF_NAMESPACE_ID::uint64 package_fee_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetHeightReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetHeightReq) */ {
+ public:
+  GetHeightReq();
+  virtual ~GetHeightReq();
+
+  GetHeightReq(const GetHeightReq& from);
+  GetHeightReq(GetHeightReq&& from) noexcept
+    : GetHeightReq() {
+    *this = ::std::move(from);
+  }
+
+  inline GetHeightReq& operator=(const GetHeightReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetHeightReq& operator=(GetHeightReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetHeightReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetHeightReq* internal_default_instance() {
+    return reinterpret_cast<const GetHeightReq*>(
+               &_GetHeightReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(GetHeightReq& a, GetHeightReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetHeightReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetHeightReq* New() const final {
+    return CreateMaybeMessage<GetHeightReq>(nullptr);
+  }
+
+  GetHeightReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetHeightReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetHeightReq& from);
+  void MergeFrom(const GetHeightReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetHeightReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetHeightReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdFieldNumber = 1,
+    kIsFetchPublicFieldNumber = 2,
+  };
+  // string id = 1;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // bool is_fetch_public = 2;
+  void clear_is_fetch_public();
+  bool is_fetch_public() const;
+  void set_is_fetch_public(bool value);
+  private:
+  bool _internal_is_fetch_public() const;
+  void _internal_set_is_fetch_public(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetHeightReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  bool is_fetch_public_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class NodeHeight :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:NodeHeight) */ {
+ public:
+  NodeHeight();
+  virtual ~NodeHeight();
+
+  NodeHeight(const NodeHeight& from);
+  NodeHeight(NodeHeight&& from) noexcept
+    : NodeHeight() {
+    *this = ::std::move(from);
+  }
+
+  inline NodeHeight& operator=(const NodeHeight& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline NodeHeight& operator=(NodeHeight&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const NodeHeight& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const NodeHeight* internal_default_instance() {
+    return reinterpret_cast<const NodeHeight*>(
+               &_NodeHeight_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(NodeHeight& a, NodeHeight& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(NodeHeight* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline NodeHeight* New() const final {
+    return CreateMaybeMessage<NodeHeight>(nullptr);
+  }
+
+  NodeHeight* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<NodeHeight>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const NodeHeight& from);
+  void MergeFrom(const NodeHeight& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(NodeHeight* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "NodeHeight";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdFieldNumber = 1,
+    kBase58AddrFieldNumber = 3,
+    kFeeFieldNumber = 4,
+    kHeightFieldNumber = 2,
+  };
+  // string id = 1;
+  void clear_id();
+  const std::string& id() const;
+  void set_id(const std::string& value);
+  void set_id(std::string&& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  std::string* mutable_id();
+  std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // string base58addr = 3;
+  void clear_base58addr();
+  const std::string& base58addr() const;
+  void set_base58addr(const std::string& value);
+  void set_base58addr(std::string&& value);
+  void set_base58addr(const char* value);
+  void set_base58addr(const char* value, size_t size);
+  std::string* mutable_base58addr();
+  std::string* release_base58addr();
+  void set_allocated_base58addr(std::string* base58addr);
+  private:
+  const std::string& _internal_base58addr() const;
+  void _internal_set_base58addr(const std::string& value);
+  std::string* _internal_mutable_base58addr();
+  public:
+
+  // uint64 fee = 4;
+  void clear_fee();
+  ::PROTOBUF_NAMESPACE_ID::uint64 fee() const;
+  void set_fee(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_fee() const;
+  void _internal_set_fee(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint32 height = 2;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::uint32 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:NodeHeight)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr base58addr_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 fee_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 height_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetHeightAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetHeightAck) */ {
+ public:
+  GetHeightAck();
+  virtual ~GetHeightAck();
+
+  GetHeightAck(const GetHeightAck& from);
+  GetHeightAck(GetHeightAck&& from) noexcept
+    : GetHeightAck() {
+    *this = ::std::move(from);
+  }
+
+  inline GetHeightAck& operator=(const GetHeightAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetHeightAck& operator=(GetHeightAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetHeightAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetHeightAck* internal_default_instance() {
+    return reinterpret_cast<const GetHeightAck*>(
+               &_GetHeightAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(GetHeightAck& a, GetHeightAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetHeightAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetHeightAck* New() const final {
+    return CreateMaybeMessage<GetHeightAck>(nullptr);
+  }
+
+  GetHeightAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetHeightAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetHeightAck& from);
+  void MergeFrom(const GetHeightAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetHeightAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetHeightAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNodesHeightFieldNumber = 1,
+    kPublicNodesFieldNumber = 2,
+  };
+  // repeated .NodeHeight nodes_height = 1;
+  int nodes_height_size() const;
+  private:
+  int _internal_nodes_height_size() const;
+  public:
+  void clear_nodes_height();
+  ::NodeHeight* mutable_nodes_height(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeHeight >*
+      mutable_nodes_height();
+  private:
+  const ::NodeHeight& _internal_nodes_height(int index) const;
+  ::NodeHeight* _internal_add_nodes_height();
+  public:
+  const ::NodeHeight& nodes_height(int index) const;
+  ::NodeHeight* add_nodes_height();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeHeight >&
+      nodes_height() const;
+
+  // repeated .NodeInfo public_nodes = 2;
+  int public_nodes_size() const;
+  private:
+  int _internal_public_nodes_size() const;
+  public:
+  void clear_public_nodes();
+  ::NodeInfo* mutable_public_nodes(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >*
+      mutable_public_nodes();
+  private:
+  const ::NodeInfo& _internal_public_nodes(int index) const;
+  ::NodeInfo* _internal_add_public_nodes();
+  public:
+  const ::NodeInfo& public_nodes(int index) const;
+  ::NodeInfo* add_public_nodes();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >&
+      public_nodes() const;
+
+  // @@protoc_insertion_point(class_scope:GetHeightAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeHeight > nodes_height_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo > public_nodes_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetTransInfoReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetTransInfoReq) */ {
+ public:
+  GetTransInfoReq();
+  virtual ~GetTransInfoReq();
+
+  GetTransInfoReq(const GetTransInfoReq& from);
+  GetTransInfoReq(GetTransInfoReq&& from) noexcept
+    : GetTransInfoReq() {
+    *this = ::std::move(from);
+  }
+
+  inline GetTransInfoReq& operator=(const GetTransInfoReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetTransInfoReq& operator=(GetTransInfoReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetTransInfoReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetTransInfoReq* internal_default_instance() {
+    return reinterpret_cast<const GetTransInfoReq*>(
+               &_GetTransInfoReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    20;
+
+  friend void swap(GetTransInfoReq& a, GetTransInfoReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetTransInfoReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetTransInfoReq* New() const final {
+    return CreateMaybeMessage<GetTransInfoReq>(nullptr);
+  }
+
+  GetTransInfoReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetTransInfoReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetTransInfoReq& from);
+  void MergeFrom(const GetTransInfoReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetTransInfoReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetTransInfoReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTxidFieldNumber = 1,
+    kNodeidFieldNumber = 2,
+  };
+  // string txid = 1;
+  void clear_txid();
+  const std::string& txid() const;
+  void set_txid(const std::string& value);
+  void set_txid(std::string&& value);
+  void set_txid(const char* value);
+  void set_txid(const char* value, size_t size);
+  std::string* mutable_txid();
+  std::string* release_txid();
+  void set_allocated_txid(std::string* txid);
+  private:
+  const std::string& _internal_txid() const;
+  void _internal_set_txid(const std::string& value);
+  std::string* _internal_mutable_txid();
+  public:
+
+  // string nodeid = 2;
+  void clear_nodeid();
+  const std::string& nodeid() const;
+  void set_nodeid(const std::string& value);
+  void set_nodeid(std::string&& value);
+  void set_nodeid(const char* value);
+  void set_nodeid(const char* value, size_t size);
+  std::string* mutable_nodeid();
+  std::string* release_nodeid();
+  void set_allocated_nodeid(std::string* nodeid);
+  private:
+  const std::string& _internal_nodeid() const;
+  void _internal_set_nodeid(const std::string& value);
+  std::string* _internal_mutable_nodeid();
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetTransInfoReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr nodeid_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_net_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetTransInfoAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetTransInfoAck) */ {
+ public:
+  GetTransInfoAck();
+  virtual ~GetTransInfoAck();
+
+  GetTransInfoAck(const GetTransInfoAck& from);
+  GetTransInfoAck(GetTransInfoAck&& from) noexcept
+    : GetTransInfoAck() {
+    *this = ::std::move(from);
+  }
+
+  inline GetTransInfoAck& operator=(const GetTransInfoAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetTransInfoAck& operator=(GetTransInfoAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const GetTransInfoAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const GetTransInfoAck* internal_default_instance() {
+    return reinterpret_cast<const GetTransInfoAck*>(
+               &_GetTransInfoAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    21;
+
+  friend void swap(GetTransInfoAck& a, GetTransInfoAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetTransInfoAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetTransInfoAck* New() const final {
+    return CreateMaybeMessage<GetTransInfoAck>(nullptr);
+  }
+
+  GetTransInfoAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetTransInfoAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const GetTransInfoAck& from);
+  void MergeFrom(const GetTransInfoAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetTransInfoAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GetTransInfoAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_net_2eproto);
+    return ::descriptor_table_net_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTransFieldNumber = 1,
+    kHeightFieldNumber = 2,
+  };
+  // .CTransaction trans = 1;
+  bool has_trans() const;
+  private:
+  bool _internal_has_trans() const;
+  public:
+  void clear_trans();
+  const ::CTransaction& trans() const;
+  ::CTransaction* release_trans();
+  ::CTransaction* mutable_trans();
+  void set_allocated_trans(::CTransaction* trans);
+  private:
+  const ::CTransaction& _internal_trans() const;
+  ::CTransaction* _internal_mutable_trans();
+  public:
+
+  // uint32 height = 2;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::uint32 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GetTransInfoAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::CTransaction* trans_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_net_2eproto;
 };
@@ -2814,6 +3987,86 @@ inline void NodeInfo::set_allocated_base58addr(std::string* base58addr) {
   // @@protoc_insertion_point(field_set_allocated:NodeInfo.base58addr)
 }
 
+// uint32 chain_height = 12;
+inline void NodeInfo::clear_chain_height() {
+  chain_height_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 NodeInfo::_internal_chain_height() const {
+  return chain_height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 NodeInfo::chain_height() const {
+  // @@protoc_insertion_point(field_get:NodeInfo.chain_height)
+  return _internal_chain_height();
+}
+inline void NodeInfo::_internal_set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  chain_height_ = value;
+}
+inline void NodeInfo::set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_chain_height(value);
+  // @@protoc_insertion_point(field_set:NodeInfo.chain_height)
+}
+
+// string public_node_id = 13;
+inline void NodeInfo::clear_public_node_id() {
+  public_node_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& NodeInfo::public_node_id() const {
+  // @@protoc_insertion_point(field_get:NodeInfo.public_node_id)
+  return _internal_public_node_id();
+}
+inline void NodeInfo::set_public_node_id(const std::string& value) {
+  _internal_set_public_node_id(value);
+  // @@protoc_insertion_point(field_set:NodeInfo.public_node_id)
+}
+inline std::string* NodeInfo::mutable_public_node_id() {
+  // @@protoc_insertion_point(field_mutable:NodeInfo.public_node_id)
+  return _internal_mutable_public_node_id();
+}
+inline const std::string& NodeInfo::_internal_public_node_id() const {
+  return public_node_id_.GetNoArena();
+}
+inline void NodeInfo::_internal_set_public_node_id(const std::string& value) {
+  
+  public_node_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void NodeInfo::set_public_node_id(std::string&& value) {
+  
+  public_node_id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NodeInfo.public_node_id)
+}
+inline void NodeInfo::set_public_node_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  public_node_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NodeInfo.public_node_id)
+}
+inline void NodeInfo::set_public_node_id(const char* value, size_t size) {
+  
+  public_node_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NodeInfo.public_node_id)
+}
+inline std::string* NodeInfo::_internal_mutable_public_node_id() {
+  
+  return public_node_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* NodeInfo::release_public_node_id() {
+  // @@protoc_insertion_point(field_release:NodeInfo.public_node_id)
+  
+  return public_node_id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeInfo::set_allocated_public_node_id(std::string* public_node_id) {
+  if (public_node_id != nullptr) {
+    
+  } else {
+    
+  }
+  public_node_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), public_node_id);
+  // @@protoc_insertion_point(field_set_allocated:NodeInfo.public_node_id)
+}
+
 // -------------------------------------------------------------------
 
 // RegisterNodeReq
@@ -3019,6 +4272,45 @@ SyncNodeReq::mutable_ids() {
   return &ids_;
 }
 
+// repeated .NodeInfo nodes = 2;
+inline int SyncNodeReq::_internal_nodes_size() const {
+  return nodes_.size();
+}
+inline int SyncNodeReq::nodes_size() const {
+  return _internal_nodes_size();
+}
+inline void SyncNodeReq::clear_nodes() {
+  nodes_.Clear();
+}
+inline ::NodeInfo* SyncNodeReq::mutable_nodes(int index) {
+  // @@protoc_insertion_point(field_mutable:SyncNodeReq.nodes)
+  return nodes_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >*
+SyncNodeReq::mutable_nodes() {
+  // @@protoc_insertion_point(field_mutable_list:SyncNodeReq.nodes)
+  return &nodes_;
+}
+inline const ::NodeInfo& SyncNodeReq::_internal_nodes(int index) const {
+  return nodes_.Get(index);
+}
+inline const ::NodeInfo& SyncNodeReq::nodes(int index) const {
+  // @@protoc_insertion_point(field_get:SyncNodeReq.nodes)
+  return _internal_nodes(index);
+}
+inline ::NodeInfo* SyncNodeReq::_internal_add_nodes() {
+  return nodes_.Add();
+}
+inline ::NodeInfo* SyncNodeReq::add_nodes() {
+  // @@protoc_insertion_point(field_add:SyncNodeReq.nodes)
+  return _internal_add_nodes();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >&
+SyncNodeReq::nodes() const {
+  // @@protoc_insertion_point(field_list:SyncNodeReq.nodes)
+  return nodes_;
+}
+
 // -------------------------------------------------------------------
 
 // SyncNodeAck
@@ -3202,6 +4494,70 @@ inline void ConnectNodeReq::set_allocated_mynode(::NodeInfo* mynode) {
 
 // -------------------------------------------------------------------
 
+// BroadcastNodeReq
+
+// .NodeInfo mynode = 1;
+inline bool BroadcastNodeReq::_internal_has_mynode() const {
+  return this != internal_default_instance() && mynode_ != nullptr;
+}
+inline bool BroadcastNodeReq::has_mynode() const {
+  return _internal_has_mynode();
+}
+inline void BroadcastNodeReq::clear_mynode() {
+  if (GetArenaNoVirtual() == nullptr && mynode_ != nullptr) {
+    delete mynode_;
+  }
+  mynode_ = nullptr;
+}
+inline const ::NodeInfo& BroadcastNodeReq::_internal_mynode() const {
+  const ::NodeInfo* p = mynode_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::NodeInfo*>(
+      &::_NodeInfo_default_instance_);
+}
+inline const ::NodeInfo& BroadcastNodeReq::mynode() const {
+  // @@protoc_insertion_point(field_get:BroadcastNodeReq.mynode)
+  return _internal_mynode();
+}
+inline ::NodeInfo* BroadcastNodeReq::release_mynode() {
+  // @@protoc_insertion_point(field_release:BroadcastNodeReq.mynode)
+  
+  ::NodeInfo* temp = mynode_;
+  mynode_ = nullptr;
+  return temp;
+}
+inline ::NodeInfo* BroadcastNodeReq::_internal_mutable_mynode() {
+  
+  if (mynode_ == nullptr) {
+    auto* p = CreateMaybeMessage<::NodeInfo>(GetArenaNoVirtual());
+    mynode_ = p;
+  }
+  return mynode_;
+}
+inline ::NodeInfo* BroadcastNodeReq::mutable_mynode() {
+  // @@protoc_insertion_point(field_mutable:BroadcastNodeReq.mynode)
+  return _internal_mutable_mynode();
+}
+inline void BroadcastNodeReq::set_allocated_mynode(::NodeInfo* mynode) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete mynode_;
+  }
+  if (mynode) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      mynode = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, mynode, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  mynode_ = mynode;
+  // @@protoc_insertion_point(field_set_allocated:BroadcastNodeReq.mynode)
+}
+
+// -------------------------------------------------------------------
+
 // TransMsgReq
 
 // .NodeInfo dest = 1;
@@ -3322,6 +4678,170 @@ inline void TransMsgReq::set_allocated_data(std::string* data) {
   }
   data_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), data);
   // @@protoc_insertion_point(field_set_allocated:TransMsgReq.data)
+}
+
+// uint32 priority = 3;
+inline void TransMsgReq::clear_priority() {
+  priority_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 TransMsgReq::_internal_priority() const {
+  return priority_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 TransMsgReq::priority() const {
+  // @@protoc_insertion_point(field_get:TransMsgReq.priority)
+  return _internal_priority();
+}
+inline void TransMsgReq::_internal_set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  priority_ = value;
+}
+inline void TransMsgReq::set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_priority(value);
+  // @@protoc_insertion_point(field_set:TransMsgReq.priority)
+}
+
+// -------------------------------------------------------------------
+
+// BroadcaseMsgReq
+
+// .NodeInfo from = 1;
+inline bool BroadcaseMsgReq::_internal_has_from() const {
+  return this != internal_default_instance() && from_ != nullptr;
+}
+inline bool BroadcaseMsgReq::has_from() const {
+  return _internal_has_from();
+}
+inline void BroadcaseMsgReq::clear_from() {
+  if (GetArenaNoVirtual() == nullptr && from_ != nullptr) {
+    delete from_;
+  }
+  from_ = nullptr;
+}
+inline const ::NodeInfo& BroadcaseMsgReq::_internal_from() const {
+  const ::NodeInfo* p = from_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::NodeInfo*>(
+      &::_NodeInfo_default_instance_);
+}
+inline const ::NodeInfo& BroadcaseMsgReq::from() const {
+  // @@protoc_insertion_point(field_get:BroadcaseMsgReq.from)
+  return _internal_from();
+}
+inline ::NodeInfo* BroadcaseMsgReq::release_from() {
+  // @@protoc_insertion_point(field_release:BroadcaseMsgReq.from)
+  
+  ::NodeInfo* temp = from_;
+  from_ = nullptr;
+  return temp;
+}
+inline ::NodeInfo* BroadcaseMsgReq::_internal_mutable_from() {
+  
+  if (from_ == nullptr) {
+    auto* p = CreateMaybeMessage<::NodeInfo>(GetArenaNoVirtual());
+    from_ = p;
+  }
+  return from_;
+}
+inline ::NodeInfo* BroadcaseMsgReq::mutable_from() {
+  // @@protoc_insertion_point(field_mutable:BroadcaseMsgReq.from)
+  return _internal_mutable_from();
+}
+inline void BroadcaseMsgReq::set_allocated_from(::NodeInfo* from) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete from_;
+  }
+  if (from) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      from = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, from, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  from_ = from;
+  // @@protoc_insertion_point(field_set_allocated:BroadcaseMsgReq.from)
+}
+
+// bytes data = 2;
+inline void BroadcaseMsgReq::clear_data() {
+  data_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& BroadcaseMsgReq::data() const {
+  // @@protoc_insertion_point(field_get:BroadcaseMsgReq.data)
+  return _internal_data();
+}
+inline void BroadcaseMsgReq::set_data(const std::string& value) {
+  _internal_set_data(value);
+  // @@protoc_insertion_point(field_set:BroadcaseMsgReq.data)
+}
+inline std::string* BroadcaseMsgReq::mutable_data() {
+  // @@protoc_insertion_point(field_mutable:BroadcaseMsgReq.data)
+  return _internal_mutable_data();
+}
+inline const std::string& BroadcaseMsgReq::_internal_data() const {
+  return data_.GetNoArena();
+}
+inline void BroadcaseMsgReq::_internal_set_data(const std::string& value) {
+  
+  data_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void BroadcaseMsgReq::set_data(std::string&& value) {
+  
+  data_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:BroadcaseMsgReq.data)
+}
+inline void BroadcaseMsgReq::set_data(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  data_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:BroadcaseMsgReq.data)
+}
+inline void BroadcaseMsgReq::set_data(const void* value, size_t size) {
+  
+  data_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:BroadcaseMsgReq.data)
+}
+inline std::string* BroadcaseMsgReq::_internal_mutable_data() {
+  
+  return data_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* BroadcaseMsgReq::release_data() {
+  // @@protoc_insertion_point(field_release:BroadcaseMsgReq.data)
+  
+  return data_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void BroadcaseMsgReq::set_allocated_data(std::string* data) {
+  if (data != nullptr) {
+    
+  } else {
+    
+  }
+  data_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), data);
+  // @@protoc_insertion_point(field_set_allocated:BroadcaseMsgReq.data)
+}
+
+// uint32 priority = 3;
+inline void BroadcaseMsgReq::clear_priority() {
+  priority_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 BroadcaseMsgReq::_internal_priority() const {
+  return priority_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 BroadcaseMsgReq::priority() const {
+  // @@protoc_insertion_point(field_get:BroadcaseMsgReq.priority)
+  return _internal_priority();
+}
+inline void BroadcaseMsgReq::_internal_set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  priority_ = value;
+}
+inline void BroadcaseMsgReq::set_priority(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_priority(value);
+  // @@protoc_insertion_point(field_set:BroadcaseMsgReq.priority)
 }
 
 // -------------------------------------------------------------------
@@ -3574,6 +5094,26 @@ inline void PongReq::set_allocated_id(std::string* id) {
   }
   id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
   // @@protoc_insertion_point(field_set_allocated:PongReq.id)
+}
+
+// uint32 chain_height = 2;
+inline void PongReq::clear_chain_height() {
+  chain_height_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 PongReq::_internal_chain_height() const {
+  return chain_height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 PongReq::chain_height() const {
+  // @@protoc_insertion_point(field_get:PongReq.chain_height)
+  return _internal_chain_height();
+}
+inline void PongReq::_internal_set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  chain_height_ = value;
+}
+inline void PongReq::set_chain_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_chain_height(value);
+  // @@protoc_insertion_point(field_set:PongReq.chain_height)
 }
 
 // -------------------------------------------------------------------
@@ -3872,9 +5412,555 @@ inline void UpdatePackageFeeReq::set_package_fee(::PROTOBUF_NAMESPACE_ID::uint64
   // @@protoc_insertion_point(field_set:UpdatePackageFeeReq.package_fee)
 }
 
+// -------------------------------------------------------------------
+
+// GetHeightReq
+
+// string id = 1;
+inline void GetHeightReq::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetHeightReq::id() const {
+  // @@protoc_insertion_point(field_get:GetHeightReq.id)
+  return _internal_id();
+}
+inline void GetHeightReq::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:GetHeightReq.id)
+}
+inline std::string* GetHeightReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:GetHeightReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& GetHeightReq::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void GetHeightReq::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetHeightReq::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetHeightReq.id)
+}
+inline void GetHeightReq::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetHeightReq.id)
+}
+inline void GetHeightReq::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetHeightReq.id)
+}
+inline std::string* GetHeightReq::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetHeightReq::release_id() {
+  // @@protoc_insertion_point(field_release:GetHeightReq.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetHeightReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:GetHeightReq.id)
+}
+
+// bool is_fetch_public = 2;
+inline void GetHeightReq::clear_is_fetch_public() {
+  is_fetch_public_ = false;
+}
+inline bool GetHeightReq::_internal_is_fetch_public() const {
+  return is_fetch_public_;
+}
+inline bool GetHeightReq::is_fetch_public() const {
+  // @@protoc_insertion_point(field_get:GetHeightReq.is_fetch_public)
+  return _internal_is_fetch_public();
+}
+inline void GetHeightReq::_internal_set_is_fetch_public(bool value) {
+  
+  is_fetch_public_ = value;
+}
+inline void GetHeightReq::set_is_fetch_public(bool value) {
+  _internal_set_is_fetch_public(value);
+  // @@protoc_insertion_point(field_set:GetHeightReq.is_fetch_public)
+}
+
+// -------------------------------------------------------------------
+
+// NodeHeight
+
+// string id = 1;
+inline void NodeHeight::clear_id() {
+  id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& NodeHeight::id() const {
+  // @@protoc_insertion_point(field_get:NodeHeight.id)
+  return _internal_id();
+}
+inline void NodeHeight::set_id(const std::string& value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:NodeHeight.id)
+}
+inline std::string* NodeHeight::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:NodeHeight.id)
+  return _internal_mutable_id();
+}
+inline const std::string& NodeHeight::_internal_id() const {
+  return id_.GetNoArena();
+}
+inline void NodeHeight::_internal_set_id(const std::string& value) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void NodeHeight::set_id(std::string&& value) {
+  
+  id_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NodeHeight.id)
+}
+inline void NodeHeight::set_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NodeHeight.id)
+}
+inline void NodeHeight::set_id(const char* value, size_t size) {
+  
+  id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NodeHeight.id)
+}
+inline std::string* NodeHeight::_internal_mutable_id() {
+  
+  return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* NodeHeight::release_id() {
+  // @@protoc_insertion_point(field_release:NodeHeight.id)
+  
+  return id_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeHeight::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:NodeHeight.id)
+}
+
+// uint32 height = 2;
+inline void NodeHeight::clear_height() {
+  height_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 NodeHeight::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 NodeHeight::height() const {
+  // @@protoc_insertion_point(field_get:NodeHeight.height)
+  return _internal_height();
+}
+inline void NodeHeight::_internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  height_ = value;
+}
+inline void NodeHeight::set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:NodeHeight.height)
+}
+
+// string base58addr = 3;
+inline void NodeHeight::clear_base58addr() {
+  base58addr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& NodeHeight::base58addr() const {
+  // @@protoc_insertion_point(field_get:NodeHeight.base58addr)
+  return _internal_base58addr();
+}
+inline void NodeHeight::set_base58addr(const std::string& value) {
+  _internal_set_base58addr(value);
+  // @@protoc_insertion_point(field_set:NodeHeight.base58addr)
+}
+inline std::string* NodeHeight::mutable_base58addr() {
+  // @@protoc_insertion_point(field_mutable:NodeHeight.base58addr)
+  return _internal_mutable_base58addr();
+}
+inline const std::string& NodeHeight::_internal_base58addr() const {
+  return base58addr_.GetNoArena();
+}
+inline void NodeHeight::_internal_set_base58addr(const std::string& value) {
+  
+  base58addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void NodeHeight::set_base58addr(std::string&& value) {
+  
+  base58addr_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NodeHeight.base58addr)
+}
+inline void NodeHeight::set_base58addr(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  base58addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NodeHeight.base58addr)
+}
+inline void NodeHeight::set_base58addr(const char* value, size_t size) {
+  
+  base58addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NodeHeight.base58addr)
+}
+inline std::string* NodeHeight::_internal_mutable_base58addr() {
+  
+  return base58addr_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* NodeHeight::release_base58addr() {
+  // @@protoc_insertion_point(field_release:NodeHeight.base58addr)
+  
+  return base58addr_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeHeight::set_allocated_base58addr(std::string* base58addr) {
+  if (base58addr != nullptr) {
+    
+  } else {
+    
+  }
+  base58addr_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), base58addr);
+  // @@protoc_insertion_point(field_set_allocated:NodeHeight.base58addr)
+}
+
+// uint64 fee = 4;
+inline void NodeHeight::clear_fee() {
+  fee_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 NodeHeight::_internal_fee() const {
+  return fee_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 NodeHeight::fee() const {
+  // @@protoc_insertion_point(field_get:NodeHeight.fee)
+  return _internal_fee();
+}
+inline void NodeHeight::_internal_set_fee(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  fee_ = value;
+}
+inline void NodeHeight::set_fee(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_fee(value);
+  // @@protoc_insertion_point(field_set:NodeHeight.fee)
+}
+
+// -------------------------------------------------------------------
+
+// GetHeightAck
+
+// repeated .NodeHeight nodes_height = 1;
+inline int GetHeightAck::_internal_nodes_height_size() const {
+  return nodes_height_.size();
+}
+inline int GetHeightAck::nodes_height_size() const {
+  return _internal_nodes_height_size();
+}
+inline void GetHeightAck::clear_nodes_height() {
+  nodes_height_.Clear();
+}
+inline ::NodeHeight* GetHeightAck::mutable_nodes_height(int index) {
+  // @@protoc_insertion_point(field_mutable:GetHeightAck.nodes_height)
+  return nodes_height_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeHeight >*
+GetHeightAck::mutable_nodes_height() {
+  // @@protoc_insertion_point(field_mutable_list:GetHeightAck.nodes_height)
+  return &nodes_height_;
+}
+inline const ::NodeHeight& GetHeightAck::_internal_nodes_height(int index) const {
+  return nodes_height_.Get(index);
+}
+inline const ::NodeHeight& GetHeightAck::nodes_height(int index) const {
+  // @@protoc_insertion_point(field_get:GetHeightAck.nodes_height)
+  return _internal_nodes_height(index);
+}
+inline ::NodeHeight* GetHeightAck::_internal_add_nodes_height() {
+  return nodes_height_.Add();
+}
+inline ::NodeHeight* GetHeightAck::add_nodes_height() {
+  // @@protoc_insertion_point(field_add:GetHeightAck.nodes_height)
+  return _internal_add_nodes_height();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeHeight >&
+GetHeightAck::nodes_height() const {
+  // @@protoc_insertion_point(field_list:GetHeightAck.nodes_height)
+  return nodes_height_;
+}
+
+// repeated .NodeInfo public_nodes = 2;
+inline int GetHeightAck::_internal_public_nodes_size() const {
+  return public_nodes_.size();
+}
+inline int GetHeightAck::public_nodes_size() const {
+  return _internal_public_nodes_size();
+}
+inline void GetHeightAck::clear_public_nodes() {
+  public_nodes_.Clear();
+}
+inline ::NodeInfo* GetHeightAck::mutable_public_nodes(int index) {
+  // @@protoc_insertion_point(field_mutable:GetHeightAck.public_nodes)
+  return public_nodes_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >*
+GetHeightAck::mutable_public_nodes() {
+  // @@protoc_insertion_point(field_mutable_list:GetHeightAck.public_nodes)
+  return &public_nodes_;
+}
+inline const ::NodeInfo& GetHeightAck::_internal_public_nodes(int index) const {
+  return public_nodes_.Get(index);
+}
+inline const ::NodeInfo& GetHeightAck::public_nodes(int index) const {
+  // @@protoc_insertion_point(field_get:GetHeightAck.public_nodes)
+  return _internal_public_nodes(index);
+}
+inline ::NodeInfo* GetHeightAck::_internal_add_public_nodes() {
+  return public_nodes_.Add();
+}
+inline ::NodeInfo* GetHeightAck::add_public_nodes() {
+  // @@protoc_insertion_point(field_add:GetHeightAck.public_nodes)
+  return _internal_add_public_nodes();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::NodeInfo >&
+GetHeightAck::public_nodes() const {
+  // @@protoc_insertion_point(field_list:GetHeightAck.public_nodes)
+  return public_nodes_;
+}
+
+// -------------------------------------------------------------------
+
+// GetTransInfoReq
+
+// string txid = 1;
+inline void GetTransInfoReq::clear_txid() {
+  txid_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTransInfoReq::txid() const {
+  // @@protoc_insertion_point(field_get:GetTransInfoReq.txid)
+  return _internal_txid();
+}
+inline void GetTransInfoReq::set_txid(const std::string& value) {
+  _internal_set_txid(value);
+  // @@protoc_insertion_point(field_set:GetTransInfoReq.txid)
+}
+inline std::string* GetTransInfoReq::mutable_txid() {
+  // @@protoc_insertion_point(field_mutable:GetTransInfoReq.txid)
+  return _internal_mutable_txid();
+}
+inline const std::string& GetTransInfoReq::_internal_txid() const {
+  return txid_.GetNoArena();
+}
+inline void GetTransInfoReq::_internal_set_txid(const std::string& value) {
+  
+  txid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTransInfoReq::set_txid(std::string&& value) {
+  
+  txid_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTransInfoReq.txid)
+}
+inline void GetTransInfoReq::set_txid(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTransInfoReq.txid)
+}
+inline void GetTransInfoReq::set_txid(const char* value, size_t size) {
+  
+  txid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTransInfoReq.txid)
+}
+inline std::string* GetTransInfoReq::_internal_mutable_txid() {
+  
+  return txid_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTransInfoReq::release_txid() {
+  // @@protoc_insertion_point(field_release:GetTransInfoReq.txid)
+  
+  return txid_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTransInfoReq::set_allocated_txid(std::string* txid) {
+  if (txid != nullptr) {
+    
+  } else {
+    
+  }
+  txid_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txid);
+  // @@protoc_insertion_point(field_set_allocated:GetTransInfoReq.txid)
+}
+
+// string nodeid = 2;
+inline void GetTransInfoReq::clear_nodeid() {
+  nodeid_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTransInfoReq::nodeid() const {
+  // @@protoc_insertion_point(field_get:GetTransInfoReq.nodeid)
+  return _internal_nodeid();
+}
+inline void GetTransInfoReq::set_nodeid(const std::string& value) {
+  _internal_set_nodeid(value);
+  // @@protoc_insertion_point(field_set:GetTransInfoReq.nodeid)
+}
+inline std::string* GetTransInfoReq::mutable_nodeid() {
+  // @@protoc_insertion_point(field_mutable:GetTransInfoReq.nodeid)
+  return _internal_mutable_nodeid();
+}
+inline const std::string& GetTransInfoReq::_internal_nodeid() const {
+  return nodeid_.GetNoArena();
+}
+inline void GetTransInfoReq::_internal_set_nodeid(const std::string& value) {
+  
+  nodeid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTransInfoReq::set_nodeid(std::string&& value) {
+  
+  nodeid_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTransInfoReq.nodeid)
+}
+inline void GetTransInfoReq::set_nodeid(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  nodeid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTransInfoReq.nodeid)
+}
+inline void GetTransInfoReq::set_nodeid(const char* value, size_t size) {
+  
+  nodeid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTransInfoReq.nodeid)
+}
+inline std::string* GetTransInfoReq::_internal_mutable_nodeid() {
+  
+  return nodeid_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTransInfoReq::release_nodeid() {
+  // @@protoc_insertion_point(field_release:GetTransInfoReq.nodeid)
+  
+  return nodeid_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTransInfoReq::set_allocated_nodeid(std::string* nodeid) {
+  if (nodeid != nullptr) {
+    
+  } else {
+    
+  }
+  nodeid_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), nodeid);
+  // @@protoc_insertion_point(field_set_allocated:GetTransInfoReq.nodeid)
+}
+
+// -------------------------------------------------------------------
+
+// GetTransInfoAck
+
+// .CTransaction trans = 1;
+inline bool GetTransInfoAck::_internal_has_trans() const {
+  return this != internal_default_instance() && trans_ != nullptr;
+}
+inline bool GetTransInfoAck::has_trans() const {
+  return _internal_has_trans();
+}
+inline const ::CTransaction& GetTransInfoAck::_internal_trans() const {
+  const ::CTransaction* p = trans_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::CTransaction*>(
+      &::_CTransaction_default_instance_);
+}
+inline const ::CTransaction& GetTransInfoAck::trans() const {
+  // @@protoc_insertion_point(field_get:GetTransInfoAck.trans)
+  return _internal_trans();
+}
+inline ::CTransaction* GetTransInfoAck::release_trans() {
+  // @@protoc_insertion_point(field_release:GetTransInfoAck.trans)
+  
+  ::CTransaction* temp = trans_;
+  trans_ = nullptr;
+  return temp;
+}
+inline ::CTransaction* GetTransInfoAck::_internal_mutable_trans() {
+  
+  if (trans_ == nullptr) {
+    auto* p = CreateMaybeMessage<::CTransaction>(GetArenaNoVirtual());
+    trans_ = p;
+  }
+  return trans_;
+}
+inline ::CTransaction* GetTransInfoAck::mutable_trans() {
+  // @@protoc_insertion_point(field_mutable:GetTransInfoAck.trans)
+  return _internal_mutable_trans();
+}
+inline void GetTransInfoAck::set_allocated_trans(::CTransaction* trans) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
+  }
+  if (trans) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      trans = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, trans, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  trans_ = trans;
+  // @@protoc_insertion_point(field_set_allocated:GetTransInfoAck.trans)
+}
+
+// uint32 height = 2;
+inline void GetTransInfoAck::clear_height() {
+  height_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTransInfoAck::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTransInfoAck::height() const {
+  // @@protoc_insertion_point(field_get:GetTransInfoAck.height)
+  return _internal_height();
+}
+inline void GetTransInfoAck::_internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  height_ = value;
+}
+inline void GetTransInfoAck::set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:GetTransInfoAck.height)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

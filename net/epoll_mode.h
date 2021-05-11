@@ -41,7 +41,6 @@ public:
     int epoll_fd;
 
 private:
-    
     int fd_ser_main;
     int fd_ser_hold;
 };

@@ -1,13 +1,28 @@
-## jsonrpcæ¥å£æ–‡æ¡£
+## jsonrpc½Ó¿ÚÎÄµµ :
 ---------------------------
 
-è¯´æ˜ï¼šjsonrpcæ ‡å‡†ä¸º2.0ï¼Œæ–‡æ¡£ä¸­çš„æ•°æ®çš†ä¸ºæµ‹è¯•æ•°æ®ï¼Œè¯·æ±‚æ–¹å¼ä¸º POST
+ËµÃ÷£ºjsonrpc±ê×¼Îª2.0£¬ÎÄµµÖĞµÄÊı¾İ½ÔÎª²âÊÔÊı¾İ£¬ÇëÇó·½Ê½Îª POST
+Ä¬ÈÏ¶Ë¿ÚÎª11190£¬¿ÉÒÔÔÚÅäÖÃÎÄ¼şconfig.jsonÖĞ"http_port"ÊôĞÔÖĞÖ¸¶¨¶Ë¿ÚÖµ
+¿ÉÊ¹ÓÃHTTP¹¤¾ßPostman»òÕßCurl½øĞĞ·ÃÎÊ²âÊÔ
+
+PostmanÊ¾Àı  
+![](jsonrpc½Ó¿ÚÎÄµµ.assets/postman.png)
+```
+Postman£ºĞÂ½¨"Request", Ñ¡Ôñ"POST",ÊäÈëURLµØÖ·£¬Ğè°üº¬¶Ë¿ÚºÅ11190£¨Èç£º192.168.1.51:11190/£©£»
+Ñ¡ÔñBody,Ñ¡ÔñRawÑ¡Ïî£¬ÊäÈëjsonÇëÇóÄÚÈİ£¬Èç{ "jsonrpc": "2.0", "method": "get_height", "id": "1" },
+ÌîĞ´Íê±Ïºó£¬µã»÷"Send"°´Å¥£¬·şÎñ¶ËÏìÓ¦ÇëÇó²¢·¢»ØÏìÓ¦ÄÚÈİ¡£
+```
+
+CurlÊ¾Àı
+```
+Curl: curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{ "jsonrpc": "2.0", "method": "get_height", "id": "1" }' 192.168.1.51:11190
+ÊäÈëÉÏÃæÄÚÈİ£¬¼´¿É·ÃÎÊget_height½Ó¿Ú
+```
 
 
+#### Ò»¡¢»ñÈ¡¸ß¶È£¨get_height£©
 
-### ä¸€ã€è·å–é«˜åº¦ï¼ˆget_heightï¼‰
-
-#### è¯·æ±‚
+ ÇëÇó  
 ```
 {
   "jsonrpc": "2.0",
@@ -16,18 +31,19 @@
 }
 ```
 
-#### è¿”å›å€¼
 
+³É¹¦·µ»Ø£º  
 ```
-æˆåŠŸè¿”å›ï¼š
 {
   "jsonrpc": "2.0",
   "id": "1",
   "result": {
     "height": "100"
   }
-}
-å¤±è´¥è¿”å›ï¼š
+}  
+```  
+Ê§°Ü·µ»Ø£º  
+```
 {
     "error": {
         "code": -32601,
@@ -38,25 +54,48 @@
 }
 ```
 
-#### å­—æ®µè¯´æ˜
+ ×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+jsonrpc  ×Ö·û´®ÀàĞÍ 2.0±ê×¼ (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+id		 ×Ö·û´®ÀàĞÍ ±àºÅ£¬¿Í»§¶Ë·¢ËÍÊ²Ã´£¬·şÎñ¶Ë»Ø¸´ÏàÍ¬µÄ±àºÅ (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+method	 ×Ö·û´®ÀàĞÍ µ÷ÓÃµÄ·½·¨Ãû (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)  
+ÏìÓ¦£º  
+result   json¶ÔÏó  µ÷ÓÃ³É¹¦·µ»ØµÄ½á¹ûĞÅÏ¢ (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+height 	 ×Ö·û´®ÀàĞÍ Çø¿é¸ß¶È
+error    json¶ÔÏó  µ÷ÓÃ³ö´í·µ»ØµÄ½á¹ûĞÅÏ¢ (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+code     ÕûĞÍ  	 ´íÎóÂë (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+message  ×Ö·û´®ÀàĞÍ ´íÎóÃèÊö (ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)
+
+
+Ê¾Àı
 ```
-è¯·æ±‚ï¼š
-jsonrpc  å­—ç¬¦ä¸²ç±»å‹ 2.0æ ‡å‡† (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-id		 å­—ç¬¦ä¸²ç±»å‹ ç¼–å·ï¼Œå®¢æˆ·ç«¯å‘é€ä»€ä¹ˆï¼ŒæœåŠ¡ç«¯å›å¤ç›¸åŒçš„ç¼–å· (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-method	 å­—ç¬¦ä¸²ç±»å‹ è°ƒç”¨çš„æ–¹æ³•å (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-å“åº”ï¼š
-result   jsonå¯¹è±¡  è°ƒç”¨æˆåŠŸè¿”å›çš„ç»“æœä¿¡æ¯ (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-height 	 å­—ç¬¦ä¸²ç±»å‹ åŒºå—é«˜åº¦
-error    jsonå¯¹è±¡  è°ƒç”¨å‡ºé”™è¿”å›çš„ç»“æœä¿¡æ¯ (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-code     æ•´å‹  	 é”™è¯¯ç  (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-message  å­—ç¬¦ä¸²ç±»å‹ é”™è¯¯æè¿° (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_height", "id": "1" }' 192.168.1.51:11190
+```  
+pythonÊ¾Àı:
+
+
+»ñÈ¡¸ß¶È:  
+```
+def get_height():
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_height"
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)
 ```
 
+#### ¶ş¡¢Í¨¹ı¸ß¶È»ñÈ¡ËùÓĞ½»Ò×hash  (get_txids_by_height)
 
-
-### äºŒã€é€šè¿‡é«˜åº¦è·å–æ‰€æœ‰äº¤æ˜“hash  (get_txids_by_height)
-
-#### è¯·æ±‚
+ÇëÇó:  
 ```
 {
   "jsonrpc": "2.0",
@@ -68,9 +107,8 @@ message  å­—ç¬¦ä¸²ç±»å‹ é”™è¯¯æè¿° (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
 }
 ```
 
-#### è¿”å›å€¼
+³É¹¦·µ»Ø£º   
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
@@ -80,7 +118,9 @@ message  å­—ç¬¦ä¸²ç±»å‹ é”™è¯¯æè¿° (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
         "7744719b0014bf6f733b9a0624a78273e0cf90818dd5fb02b623a0229990cebb"
     ]
 }
-å¤±è´¥è¿”å›ï¼š
+```
+Ê§°Ü·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -89,23 +129,76 @@ message  å­—ç¬¦ä¸²ç±»å‹ é”™è¯¯æè¿° (ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
     "id": "1",
     "jsonrpc": "2.0"
 }
+```  
+ÇëÇóµÄ¸ß¶È¸ñÊ½ÊäÈë´íÎó£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "height is invalid"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
+```  
+ÇëÇóµÄ¸ß¶È³¬¹ı×î¸ß¿éµÄ¸ß¶È£º  
+```
+{
+    "error": {
+        "code": -4,
+        "message": "height more than block top "
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
 ```
 
-#### å­—æ®µè¯´æ˜
+×Ö¶ÎËµÃ÷:
+
+ÇëÇó£º  
+    params   json¶ÔÏó		·½·¨ËùĞèÒªµÄ²ÎÊı(ÏàÍ¬×Ö¶ÎÒÔÏÂ²»ÔÙÖØ¸´)  
+    height 	 ×Ö·û´®ÀàĞÍ    Çø¿é¸ß¶È  
+ÏìÓ¦£º  
+    result   jsonÊı×é     µ±Ç°Çø¿é¸ß¶ÈËùÓĞ½»Ò×hash×é³ÉµÄjsonÊı×é
+
+
+Ê¾Àı:  
 ```
-è¯·æ±‚ï¼š
-params   jsonå¯¹è±¡		æ–¹æ³•æ‰€éœ€è¦çš„å‚æ•°(ç›¸åŒå­—æ®µä»¥ä¸‹ä¸å†é‡å¤)
-height 	 å­—ç¬¦ä¸²ç±»å‹    åŒºå—é«˜åº¦
-å“åº”ï¼š
-result   jsonæ•°ç»„     å½“å‰åŒºå—é«˜åº¦æ‰€æœ‰äº¤æ˜“hashç»„æˆçš„jsonæ•°ç»„
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_txids_by_height", "params": {"height": "1"} }' 192.168.1.51:11190
 ```
 
+pythonÊ¾Àı:
+
+Í¨¹ı¸ß¶È»ñÈ¡ËùÓĞ½»Ò×hash  
+ ½Ó¿Ú£ºdef get_txids_by_height()
+  
+```  
+    height = input("ÇëÊäÈëÒª²éÑ¯µÄ¸ß¶È:")
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_txids_by_height",
+        "params": {
+            "height": height
+        }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)
+```    
 
 
-### ä¸‰ã€æ ¹æ®åœ°å€è·å–ä½™é¢ï¼ˆget_balanceï¼‰
 
-#### è¯·æ±‚
-``` 
+#### Èı¡¢¸ù¾İµØÖ·»ñÈ¡Óà¶î£¨get_balance£©
+
+ ÇëÇó
+
+```
 {
   "jsonrpc": "2.0",
   "id": "1",
@@ -116,9 +209,10 @@ result   jsonæ•°ç»„     å½“å‰åŒºå—é«˜åº¦æ‰€æœ‰äº¤æ˜“hashç»„æˆçš„jsonæ•°ç»„
 }
 ```
 
-#### è¿”å›å€¼
+
+³É¹¦·µ»Ø£º
+
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
@@ -126,7 +220,11 @@ result   jsonæ•°ç»„     å½“å‰åŒºå—é«˜åº¦æ‰€æœ‰äº¤æ˜“hashç»„æˆçš„jsonæ•°ç»„
         "balance": "888.666668"
     }
 }
-å¤±è´¥è¿”å›ï¼š
+```
+
+Ê§°Ü·µ»Ø£º
+
+```
 {
     "error": {
         "code": -32602,
@@ -134,24 +232,70 @@ result   jsonæ•°ç»„     å½“å‰åŒºå—é«˜åº¦æ‰€æœ‰äº¤æ˜“hashç»„æˆçš„jsonæ•°ç»„
     },
     "id": "1",
     "jsonrpc": "2.0"
+}  
+```  
+
+²éÑ¯µØÖ·¸ñÊ½ÊäÈë´íÎó£º
+
+```
+{
+    "error": {
+        "code": -1,
+        "message": "address is invalid "
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
 }
-
 ```
 
-#### å­—æ®µè¯´æ˜
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º
+address  ×Ö·û´®ÀàĞÍ	  Ç®°üµØÖ·
+
+ÏìÓ¦£º
+balance  ×Ö·û´®ÀàĞÍ	  Ç®°üÓà¶î
+
+
+Ê¾Àı:  
+
 ```
-è¯·æ±‚ï¼š
-address  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…åœ°å€
-å“åº”ï¼š
-balance  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…ä½™é¢
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "id": "1", "method": "get_balance", "params": { "address":"1BuFpDmH2bJhqxQoyv8cC8YL3mU2TnUDES" } }' 192.168.1.51:11190
+```  
+
+
+pythonÊ¾Àı
+
+
+¸ù¾İµØÖ·»ñÈ¡Óà¶î£¨get_balance£©  
+½Ó¿Ú£ºdef get_balance()
+  
+   ```  
+    address = input("ÇëÊäÈëÒª²éÑ¯µÄµØÖ·:")
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_balance",
+        "params": {
+        "address": address
+        }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)  
+   ```
+
+
+
+#### ËÄ¡¢¸ù¾İ½»Ò×hash»ñÈ¡½»Ò×ÏêÇé  (get_tx_by_txid)
+
+ÇëÇó:  
 ```
-
-
-
-### å››ã€æ ¹æ®äº¤æ˜“hashè·å–äº¤æ˜“è¯¦æƒ…  (get_tx_by_txid)
-
-#### è¯·æ±‚
-``` 
 {
   "jsonrpc": "2.0",
   "id": "1",
@@ -161,11 +305,8 @@ balance  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…ä½™é¢
   }
 }
 ```
-
-
-#### è¿”å›å€¼
+³É¹¦·µ»Ø£º  
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
@@ -194,10 +335,9 @@ balance  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…ä½™é¢
         ]
     }
 }
-
-
-å¤±è´¥è¿”å›ï¼š
-æ²¡æœ‰æŸ¥æ‰¾åˆ°è¯¥ç¬”äº¤æ˜“è¿”å›ï¼š
+```
+Ã»ÓĞ²éÕÒµ½¸Ã±Ê½»Ò×·µ»Ø£º  
+```
 {
     "error": {
         "code": -32000,
@@ -206,8 +346,9 @@ balance  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…ä½™é¢
     "id": "1",
     "jsonrpc": "2.0"
 }
-
-å‚æ•°é”™è¯¯è¿”å›ï¼š
+```  
+²ÎÊı´íÎó·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -216,38 +357,82 @@ balance  å­—ç¬¦ä¸²ç±»å‹	  é’±åŒ…ä½™é¢
     "id": "1",
     "jsonrpc": "2.0"
 }
+```  
+
+¹şÏ£³¤¶È²»µÈÓÚ64£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "hash is invalid"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
+
+```
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+
+hash  			×Ö·û´®ÀàĞÍ		 	½»Ò×hash
+ÏìÓ¦£º
+hash  			×Ö·û´®ÀàĞÍ		 	½»Ò×hash
+time  			ÎŞ·ûºÅ64Î»ÕûĞÍ   		Ê±¼ä´Á
+
+type			×Ö·û´®ÀàĞÍ			½»Ò×µÄÀàĞÍ,ÓĞÈıÖÖÀàĞÍ,Ö»ĞèÒª´¦ÀíÕı³£½»Ò×ÀàĞÍ£º    "tx"		  	Õı³£½»Ò×
+													  	  					"pledge"  		ÖÊÑº½»Ò×
+													  	  					"redeem" 		½âÖÊÑº½»Ò×
+height			×Ö·û´®ÀàĞÍ			µ±Ç°½»Ò×ËùÔÚÇø¿é¸ß¶È
+vin   			jsonÊı×é		  	  ½»Ò×ÊäÈë
+address 		×Ö·û´®ÀàĞÍ			½»Ò××ª³öµØÖ·
+prev_hash		×Ö·û´®ÀàĞÍ			utxoËùÔÚµÄ½»Ò×hash
+output_index	ÕûĞÍ				  Ë÷Òı
+output_value	×Ö·û´®ÀàĞÍ			utxo½ğ¶î
+
+vout  			jsonÊı×é		      ½»Ò××ªÈëµØÖ·ºÍ½ğ¶î×é³ÉµÄjson¶ÔÏó
+address 		×Ö·û´®ÀàĞÍ		    ½»Ò××ªÈëµØÖ·
+value 			×Ö·û´®ÀàĞÍ		    ½»Ò×½ğ¶î 
+
+Êµ¼Ê»¨·ÑµÄfee¼ÆËã£ºvinÀïµÄoutput_value ¼õÈ¥ vout ÀïµÄËùÓĞvalue
+
+
+Ê¾Àı:  
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "id": "1", "method": "get_tx_by_txid", "params": { "hash": "3bb0c305a59c45a35eb48fef3ac5a9f42104a083288b867572fa07b9a7961baa" } }' 192.168.1.51:11190
 ```
 
-#### å­—æ®µè¯´æ˜
-```
-è¯·æ±‚ï¼š
-hash  			å­—ç¬¦ä¸²ç±»å‹		 	äº¤æ˜“hash
-å“åº”ï¼š
-hash  			å­—ç¬¦ä¸²ç±»å‹		 	äº¤æ˜“hash
-time  			æ— ç¬¦å·64ä½æ•´å‹   		æ—¶é—´æˆ³
+pythonÊ¾Àı
 
-type			å­—ç¬¦ä¸²ç±»å‹			äº¤æ˜“çš„ç±»å‹,æœ‰ä¸‰ç§ç±»å‹,åªéœ€è¦å¤„ç†æ­£å¸¸äº¤æ˜“ç±»å‹ï¼š    "tx"		  	æ­£å¸¸äº¤æ˜“
-													  	  					"pledge"  		è´¨æŠ¼äº¤æ˜“
-													  	  					"redeem" 		è§£è´¨æŠ¼äº¤æ˜“
-height			å­—ç¬¦ä¸²ç±»å‹			å½“å‰äº¤æ˜“æ‰€åœ¨åŒºå—é«˜åº¦
-vin   			jsonæ•°ç»„		  	  äº¤æ˜“è¾“å…¥
-address 		å­—ç¬¦ä¸²ç±»å‹			äº¤æ˜“è½¬å‡ºåœ°å€
-prev_hash		å­—ç¬¦ä¸²ç±»å‹			utxoæ‰€åœ¨çš„äº¤æ˜“hash
-output_index	æ•´å‹				  ç´¢å¼•
-output_value	å­—ç¬¦ä¸²ç±»å‹			utxoé‡‘é¢
+¸ù¾İ½»Ò×hash»ñÈ¡½»Ò×ÏêÇé  
+  
 
-vout  			jsonæ•°ç»„		      äº¤æ˜“è½¬å…¥åœ°å€å’Œé‡‘é¢ç»„æˆçš„jsonå¯¹è±¡
-address 		å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“è½¬å…¥åœ°å€
-value 			å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“é‡‘é¢ 
+½Ó¿Ú£ºdef get_tx_by_txid() 
+   ```  
+    hash = input("ÇëÊäÈëÒª²éÑ¯µÄ½»Ò×hash:")
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_tx_by_txid",
+        "params": {
+            "hash": hash
+        }
+    }  
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)  
+   ```
 
-å®é™…èŠ±è´¹çš„feeè®¡ç®—ï¼šviné‡Œçš„output_value å‡å» vout é‡Œçš„æ‰€æœ‰value
-```
 
+ 
+####Îå¡¢´´½¨½»Ò×Ìå  (create_tx_message)
 
-
-### äº”ã€åˆ›å»ºäº¤æ˜“ä½“  (create_tx_message)
-
-#### è¯·æ±‚
+ÇëÇó   
 ```
 {
     "jsonrpc": "2.0",
@@ -261,9 +446,8 @@ value 			å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“é‡‘é¢
 }
 ```
 
-#### è¿”å›å€¼
+³É¹¦·µ»Ø£º  
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
@@ -271,9 +455,12 @@ value 			å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“é‡‘é¢
         "tx_data": "EM2nvbfKuOwCIiIxQnVGcERtSDJiSmhxeFFveXY4Y0M4WUwzbVUyVG5VREVTMig4ZjU1M2U5ODA4MzM4MjZhMDIxYWQ5MTU4MDA5N2E5OGVkY2EzM2M3QkQKQgpAMDEwZDJmYTBkNzkwNDEzNDlmM2QwZWFmY2FjMzg5ZTQ4NTM1MzgyYzE1M2VmYzNiYWZlZjFjMTcyNjU5ZjU2YUopCI6rzAoSIjFGb1FLWmRVTmVCWFYyblRiYTZlMzU0bTVKclE0ckhZZ0FKKgjY4M+cAxIiMUJ1RnBEbUgyYkpocXhRb3l2OGNDOFlMM21VMlRuVURFU1JDeyJHYXNGZWUiOjU1NTU1NSwiTmVlZFZlcmlmeVByZUhhc2hDb3VudCI6MywiVHJhbnNhY3Rpb25UeXBlIjoidHgifQ==",
         "tx_encode_hash": "3c9a103d8542750dd048eecf2151b052ed26051f201246089bfc01e508ed7000"
     }
-}
-å¤±è´¥è¿”å›ï¼š
-åˆ›å»ºäº¤æ˜“å¤±è´¥è¿”å›ï¼š
+}  
+```
+
+
+´´½¨½»Ò×Ê§°Ü·µ»Ø£º  
+```
 {
     "error": {
         "code": -32000,
@@ -281,8 +468,11 @@ value 			å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“é‡‘é¢
     },
     "id": "1",
     "jsonrpc": "2.0"
-}
-å‚æ•°é”™è¯¯è¿”å›ï¼š
+}  
+```  
+
+²ÎÊı´íÎó·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -290,25 +480,79 @@ value 			å­—ç¬¦ä¸²ç±»å‹		    äº¤æ˜“é‡‘é¢
     },
     "id": "1",
     "jsonrpc": "2.0"
-}
+}  
+```  
+
+ÇëÇóµÄÊ±ºòvalue¸ñÊ½ÊäÈë´íÎó£º("value":1.2345678 »òÕß"value"£º"abc"µÈ)  
+
+```
+{
+    "error": {
+        "code": -32602,
+        "message": "The value is wrong or More than 6 decimal places"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}  
 ```
 
-#### å­—æ®µè¯´æ˜
+
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+from_addr       ½»Ò××ª³öµØÖ·×é³É  
+to_addr			addr:½»Ò××ªÈëµØÖ· value:½»Ò×½ğ¶î  
+fee             ½»Ò×È¼ÁÏ·Ñ  
+ÏìÓ¦£º  
+tx_data         ½»Ò×Ìå(base64±àÂë)  
+tx_encode_hash  ½»Ò×Ìåhash(´ıÇ©ÃûĞÅÏ¢)
+
+
+Ê¾Àı
+  
 ```
-è¯·æ±‚ï¼š
-from_addr       äº¤æ˜“è½¬å‡ºåœ°å€ç»„æˆ
-to_addr			addr:äº¤æ˜“è½¬å…¥åœ°å€ value:äº¤æ˜“é‡‘é¢
-fee             äº¤æ˜“ç‡ƒæ–™è´¹
-å“åº”ï¼š
-tx_data         äº¤æ˜“ä½“(base64ç¼–ç )
-tx_encode_hash  äº¤æ˜“ä½“hash(å¾…ç­¾åä¿¡æ¯)
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "id": "1", "method": "create_tx_message", "params": { "from_addr": ["1BuFpDmH2bJhqxQoyv8cC8YL3mU2TnUDES"], "to_addr": [{"addr": "1FoQKZdUNeBXV2nTba6e354m5JrQ4rHYgA", "value": "22.222222"}], "fee": "0.555555"} }' 192.168.1.51:11190
 ```
 
+pythonÊ¾Àı
 
 
-### å…­ã€å‘é€äº¤æ˜“  (send_tx)
+Í¨¹ıµ÷ÓÃcreate_tx_message rpc½Ó¿Ú£¬´´½¨½»Ò×ÌåÊı¾İ  
+½Ó¿Ú£ºdef create_tx_message()  
+ 
+  ```  
+      data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "create_tx_message",
+        "params": {
+            "from_addr": ["1FJpJQkhunjirwjKm85f1P6LcCGnF4Tfet"],
+            "to_addr": [{"addr": "1McVeDa3cM6A9939wKqLmnuxp863fZXXiC", "value": "4.1"}],
+            "fee": "0.1"
+        }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    result = json.loads(res.text)
+    tx_data = result["result"]["tx_data"]
+    tx_encode_hash = result["result"]["tx_encode_hash"]   
+    dict_list = {'tx_data': tx_data,
+                 'tx_encode_hash': tx_encode_hash}
+    return_value = json.dumps(dict_list)
+    return return_value  
+ ```
 
-#### è¯·æ±‚
+
+
+#### Áù¡¢·¢ËÍ½»Ò×  (send_tx)
+
+ÇëÇó  
+
 ```
 {
 	"jsonrpc": "2.0",
@@ -321,19 +565,22 @@ tx_encode_hash  äº¤æ˜“ä½“hash(å¾…ç­¾åä¿¡æ¯)
 		"tx_encode_hash": "b3b8f15852efddbdfe8aa759a2f026488350b6f56a4cae7494ea3cbba0f8a5c5"
 	}
 }
+```  
+
+
+³É¹¦·µ»ØÖµ:
 ```
-#### è¿”å›å€¼
-```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
     "result": {
         "tx_hash": "e241d6af1b8f8ff58508f14177005b4263d26e32a2e0d0f6b8e98d966cbaa864"
     }
-}
-å¤±è´¥è¿”å›ï¼š
-éªŒè¯ç­¾åå¤±è´¥è¿”å›ï¼š
+}  
+```
+
+ÑéÖ¤Ç©ÃûÊ§°Ü·µ»Ø£º
+```
 {
     "error": {
         "code": -32000,
@@ -341,8 +588,11 @@ tx_encode_hash  äº¤æ˜“ä½“hash(å¾…ç­¾åä¿¡æ¯)
     },
     "id": "1",
     "jsonrpc": "2.0"
-}
-å‚æ•°é”™è¯¯è¿”å›ï¼š
+}  
+```  
+
+²ÎÊı´íÎó·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -353,24 +603,63 @@ tx_encode_hash  äº¤æ˜“ä½“hash(å¾…ç­¾åä¿¡æ¯)
 }
 ```
 
-#### å­—æ®µè¯´æ˜
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+tx_data         ×Ö·û´®ÀàĞÍ		½»Ò×Ìå(base64±àÂë),´´½¨½»Ò×Ìå·½·¨µ÷ÓÃºó·µ»ØµÄtx_data  
+tx_signature    ×Ö·û´®ÀàĞÍ		¶Ô½»Ò×Ìåhash(tx_encode_hash)½øĞĞÇ©ÃûµÃµ½µÄÇ©ÃûĞÅÏ¢,µ÷ÓÃ¶¯Ì¬¿âGenSign_()·½·¨½øĞĞÇ©Ãû  
+public_key      ×Ö·û´®ÀàĞÍ		¹«Ô¿(base64±àÂë)   
+tx_encode_hash	×Ö·û´®ÀàĞÍ		½»Ò×Ìåhash(´ıÇ©ÃûĞÅÏ¢),´´½¨½»Ò×Ìå·½·¨µ÷ÓÃºó·µ»ØµÄtx_encode_hash  
+ÏìÓ¦£º
+tx_hash         ×Ö·û´®ÀàĞÍ		½»Ò×hash(¿ÉÍ¨¹ı´Ëhash²éÑ¯ÍêÕû½»Ò×ĞÅÏ¢)
+
+
+Ê¾Àı
 ```
-è¯·æ±‚ï¼š
-tx_data         å­—ç¬¦ä¸²ç±»å‹		äº¤æ˜“ä½“(base64ç¼–ç ),åˆ›å»ºäº¤æ˜“ä½“æ–¹æ³•è°ƒç”¨åè¿”å›çš„tx_data
-tx_signature    å­—ç¬¦ä¸²ç±»å‹		å¯¹äº¤æ˜“ä½“hash(tx_encode_hash)è¿›è¡Œç­¾åå¾—åˆ°çš„ç­¾åä¿¡æ¯,è°ƒç”¨åŠ¨æ€åº“GenSign_()æ–¹æ³•è¿›è¡Œç­¾å
-public_key      å­—ç¬¦ä¸²ç±»å‹		å…¬é’¥(base64ç¼–ç )
-tx_encode_hash	å­—ç¬¦ä¸²ç±»å‹		äº¤æ˜“ä½“hash(å¾…ç­¾åä¿¡æ¯),åˆ›å»ºäº¤æ˜“ä½“æ–¹æ³•è°ƒç”¨åè¿”å›çš„tx_encode_hash
-å“åº”ï¼š
-tx_hash         å­—ç¬¦ä¸²ç±»å‹		äº¤æ˜“hash(å¯é€šè¿‡æ­¤hashæŸ¥è¯¢å®Œæ•´äº¤æ˜“ä¿¡æ¯)
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "id": "1", "method": "send_tx", "params": { "tx_data":"ELvdqOvRuOwCIiIxQnVGcERtSDJiSmhxeFFveXY4Y0M4WUwzbVUyVG5VREVTMig4ZjU1M2U5ODA4MzM4MjZhMDIxYWQ5MTU4MDA5N2E5OGVkY2EzM2M3QkQKQgpAMjRkMjUxMzMxZGFkYjEyMGMyYmYxMDlhZDI2ODllOWNkMDcwYTAyZWJkZWQxNDA1ZTM5MGFlMmVhMDI0YjEzMEopCI6rzAoSIjFGb1FLWmRVTmVCWFYyblRiYTZlMzU0bTVKclE0ckhZZ0FKKgiwua+GAxIiMUJ1RnBEbUgyYkpocXhRb3l2OGNDOFlMM21VMlRuVURFU1JDeyJHYXNGZWUiOjU1NTU1NSwiTmVlZFZlcmlmeVByZUhhc2hDb3VudCI6MywiVHJhbnNhY3Rpb25UeXBlIjoidHgifQ==", "tx_signature": "N1ii0dikr0NJRvi7GXkjXOayD+mVcMfXF+49iOmOneYqYj2HHYzNm3Txj/otW/K7Dh3uBJ2Gb4nlTJW2AY3Dog==", "public_key": "ICBszM0aHCpWmDdEC3GMBL6DFN7XdWzijF33uvmWKMa1WbvWBk33+G9E4pSztJWlwDkvEt4dW4oGY8/sY2FJBtPG", "tx_encode_hash": "b3b8f15852efddbdfe8aa759a2f026488350b6f56a4cae7494ea3cbba0f8a5c5"} }' 192.168.1.51:11190
 ```
 
+pythonÊ¾Àı
 
 
-### ä¸ƒã€è·å–æœ€è¿‘100å—é«˜åº¦çš„å¹³å‡äº¤æ˜“ç‡ƒæ–™è´¹ ï¼ˆget_avg_feeï¼‰
+ µ÷ÓÃsend_tx rpc½Ó¿Ú·¢ËÍ½»Ò×  
+ @param tx_data ´´½¨½»Ò×Ìå(create_tx_message)·µ»ØµÄtx_data  
+ @param tx_signature Éú³ÉÇ©ÃûĞÅÏ¢£¨generate_sign£©·µ»ØµÄmessageĞÅÏ¢  
+ @param public_key Éú³ÉÇ®°üµØÖ·¡¢¹«Ô¿ºÍË½Ô¿£¨generate_wallet£©·µ»ØµÄpublic_key  
+ @param tx_encode_hash ´´½¨½»Ò×Ìå(create_tx_message)·µ»ØµÄtx_encode_hash  
+        
+ ½Ó¿Ú£º def send_tx(tx_data, tx_signature, public_key, tx_encode_hash)
+ ```   
+   data = {
+	    "jsonrpc": "2.0",
+	    "id": "1",
+	    "method": "send_tx",
+	    "params": {
+		    "tx_data": tx_data,
+		    "tx_signature": tx_signature,
+		    "public_key": public_key,
+		    "tx_encode_hash": tx_encode_hash
+	    }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+     result = json.loads(res.text)  
+ ```
+   
 
-è¯´æ˜ï¼šfeeç”±çŸ¿å·¥è‡ªä¸»è®¾ç½®ï¼Œå¦‚æœå‘é€äº¤æ˜“æ—¶è®¾ç½®çš„feeå€¼ä½äºå¤§å¤šæ•°çŸ¿å·¥è®¾ç½®çš„feeå€¼ï¼Œå¯èƒ½ä¼šé€ æˆäº¤æ˜“ä¸æˆåŠŸï¼Œå› æ­¤ï¼Œå¯ä»¥å‚ç…§æœ€è¿‘100ä¸ªé«˜åº¦çš„åŒºå—å¹³å‡feeå€¼æ¥è®¾å®šï¼Œç¡®ä¿äº¤æ˜“èƒ½æˆåŠŸã€‚
 
-#### è¯·æ±‚
+
+#### Æß¡¢»ñÈ¡×î½ü100¿é¸ß¶ÈµÄÆ½¾ù½»Ò×È¼ÁÏ·Ñ £¨get_avg_fee£©
+
+ËµÃ÷£º  
+feeÓÉ¿ó¹¤×ÔÖ÷ÉèÖÃ£¬Èç¹û·¢ËÍ½»Ò×Ê±ÉèÖÃµÄfeeÖµµÍÓÚ´ó¶àÊı¿ó¹¤ÉèÖÃµÄfeeÖµ£¬¿ÉÄÜ»áÔì³É½»Ò×²»³É¹¦£¬Òò´Ë£¬¿ÉÒÔ²ÎÕÕ×î½ü100¸ö¸ß¶ÈµÄÇø¿éÆ½¾ùfeeÖµÀ´Éè¶¨£¬È·±£½»Ò×ÄÜ³É¹¦¡£
+
+ÇëÇó
 
 ```
 {
@@ -380,18 +669,20 @@ tx_hash         å­—ç¬¦ä¸²ç±»å‹		äº¤æ˜“hash(å¯é€šè¿‡æ­¤hashæŸ¥è¯¢å®Œæ•´äº¤æ˜“ä¿
 }
 ```
 
-#### è¿”å›å€¼
 
+³É¹¦·µ»Ø£º
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
     "result": {
         "avg_fee": "0.112074"
     }
-}
-å¤±è´¥è¿”å›ï¼š
+}  
+```  
+
+Ê§°Ü·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -402,18 +693,42 @@ tx_hash         å­—ç¬¦ä¸²ç±»å‹		äº¤æ˜“hash(å¯é€šè¿‡æ­¤hashæŸ¥è¯¢å®Œæ•´äº¤æ˜“ä¿
 }
 ```
 
-#### å­—æ®µè¯´æ˜
+×Ö¶ÎËµÃ÷
 
+ÏìÓ¦£º  
+avg_fee         ×Ö·û´®ÀàĞÍ		×î½ü100¸ö¸ß¶ÈÇø¿éfeeµÄÆ½¾ùÖµ,Èç¹û¸ß¶È²»×ã100,ÔòÊÇËùÓĞÇø¿éµÄÆ½¾ùÖµ
+
+Ê¾Àı
 ```
-å“åº”ï¼š
-avg_fee         å­—ç¬¦ä¸²ç±»å‹		æœ€è¿‘100ä¸ªé«˜åº¦åŒºå—feeçš„å¹³å‡å€¼,å¦‚æœé«˜åº¦ä¸è¶³100,åˆ™æ˜¯æ‰€æœ‰åŒºå—çš„å¹³å‡å€¼
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_avg_fee", "id": "1" }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı
+
+
+»ñÈ¡×î½ü100¿é¸ß¶ÈµÄÆ½¾ù½»Ò×È¼ÁÏ·Ñ   
+```   
+def get_avg_fee():
+    data = {
+        "jsonrpc": "2.0",
+	    "id": "1",
+	    "method": "get_avg_fee"
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)
 ```
 
 
 
-### å…«ã€ç”Ÿæˆé’±åŒ…åœ°å€ã€å…¬é’¥å’Œç§é’¥ï¼ˆgenerate_walletï¼‰
+#### °Ë¡¢Éú³ÉÇ®°üµØÖ·¡¢¹«Ô¿ºÍË½Ô¿£¨generate_wallet£©
 
-#### è¯·æ±‚
+ÇëÇó
 
 ``` 
 {
@@ -423,10 +738,8 @@ avg_fee         å­—ç¬¦ä¸²ç±»å‹		æœ€è¿‘100ä¸ªé«˜åº¦åŒºå—feeçš„å¹³å‡å€¼,å¦‚æœé
 }
 ```
 
-#### è¿”å›å€¼
-
+³É¹¦·µ»Ø£º
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
@@ -436,32 +749,64 @@ avg_fee         å­—ç¬¦ä¸²ç±»å‹		æœ€è¿‘100ä¸ªé«˜åº¦åŒºå—feeçš„å¹³å‡å€¼,å¦‚æœé
         "public_key": "ICD6bienPIel1KE4WmGlQ6bC6M+HiPTw3+et036AUaTVtLr1iV1DMFFx2O9VYi/MUXOZyKK87s/GjPE+eN9A+wEl"
     }
 }
-å¤±è´¥è¿”å›ï¼š
-{
+```
+Ê§°Ü·µ»Ø£º  
+ 
+ ```
+ {
     "error": {
         "code": -32601,
         "message": "Method not found"
     },
     "id": "",
     "jsonrpc": "2.0"
-}
-
+ }
 ```
 
-#### å­—æ®µè¯´æ˜
+×Ö¶ÎËµÃ÷
 
+ÏìÓ¦£º  
+address  	×Ö·û´®ÀàĞÍ	  	Ç®°üµØÖ·  
+private_key ×Ö·û´®ÀàĞÍ 		base64±àÂëºóµÄË½Ô¿  
+public_key  ×Ö·û´®ÀàĞÍ 		base64±àÂëºóµÄ¹«Ô¿  
+
+
+Ê¾Àı:
 ```
-å“åº”ï¼š
-address  	å­—ç¬¦ä¸²ç±»å‹	  	é’±åŒ…åœ°å€
-private_key å­—ç¬¦ä¸²ç±»å‹ 		base64ç¼–ç åçš„ç§é’¥
-public_key  å­—ç¬¦ä¸²ç±»å‹ 		base64ç¼–ç åçš„å…¬é’¥
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "generate_wallet", "id": "1" }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı:  
+Í¨¹ıµ÷ÓÃgenerate_wallet rpc½Ó¿Ú£¬Éú³ÉÇ®°üµØÖ·ºÍÏàÓ¦µÄ¹«Ë½Ô¿   
+``` 
+def generate_wallet():  
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "generate_wallet"
+    }  
+    headers = {
+        "Content-Type": "application/json"
+    }  
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    result = json.loads(res.text)
+    address = result["result"]["address"]
+    private_key = result["result"]["private_key"]
+    public_key = result["result"]["public_key"]
+    dict_list = {'address': address,
+                 'private_key': private_key, 'public_key': public_key}
+    return_value = json.dumps(dict_list)
+    return return_value
 ```
 
 
 
-### ä¹ã€ç”Ÿæˆç­¾åä¿¡æ¯ï¼ˆgenerate_signï¼‰
+#### ¾Å¡¢Éú³ÉÇ©ÃûĞÅÏ¢£¨generate_sign£©
 
-#### è¯·æ±‚
+ÇëÇó
 
 ``` 
 {
@@ -474,19 +819,602 @@ public_key  å­—ç¬¦ä¸²ç±»å‹ 		base64ç¼–ç åçš„å…¬é’¥
 	}
 }
 ```
-
-#### è¿”å›å€¼
-
+³É¹¦·µ»Ø£º  
 ```
-æˆåŠŸè¿”å›ï¼š
 {
     "id": "1",
     "jsonrpc": "2.0",
     "result": {
         "message": "Ggy2ouJDIZw9/ShvZUwXyVgsAXSFLsxvRCh42elAf+Klit6DJH/jUY6Z3Km/W7VhPKinrsHcaEcwYqIUIwopWQ=="
     }
+}  
+```  
+
+Ê§°Ü·µ»Ø£º  
+  
+ ```
+ {
+    "error": {
+        "code": -32602,
+        "message": "Invalid params"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+  }
+```
+
+×Ö¶ÎËµÃ÷
+
+
+ÇëÇó£º  
+data			×Ö·û´®ÀàĞÍ		´ıÇ©ÃûĞÅÏ¢, create_tx_message·½·¨µ÷ÓÃºó·µ»ØµÄtx_encode_hash  
+private_key		×Ö·û´®ÀàĞÍ		base64±àÂëºóµÄË½Ô¿  
+ÏìÓ¦£º  
+message  		×Ö·û´®ÀàĞÍ		base64±àÂëºóµÄÒÑÇ©ÃûĞÅÏ¢
+
+
+Ê¾Àı
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "generate_sign", "id": "1", "params": { "data": "b3b8f15852efddbdfe8aa759a2f026488350b6f56a4cae7494ea3cbba0f8a5c5", "private_key": "xAEF+gTQZ6PmtH3hlmygJpAVxBpKHBa3Zw8iMxRjlbQ=" } }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı
+
+ µ÷ÓÃgenerate_sign rpc½Ó¿Ú½øĞĞÇ©Ãû  
+ @param tx_encode_hash ´´½¨½»Ò×Ìå(create_tx_message)·µ»ØµÄtx_encode_hash  
+ @param private_key Éú³ÉÇ®°üµØÖ·¡¢¹«Ô¿ºÍË½Ô¿(generate_wallet)·µ»ØµÄprivate_key  
+```  
+def generate_sign(tx_encode_hash, private_key):
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "generate_sign",
+  	    "params": {
+		    "data": tx_encode_hash,
+		    "private_key": private_key
+	    }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    result = json.loads(res.text)
+    //»ñÈ¡Ç©ÃûÖ®ºó·µ»ØµÄmessage*
+    message = result["result"]["message"]
+    //½«message·â×°³Éjson¸ñÊ½
+    dict_list = {"message": message}
+    return_value = json.dumps(dict_list)
+    return return_value
+```
+
+
+
+#### Ê®¡¢²éÑ¯ÕıÔÚ¹ÒÆğµÄ½»Ò×£¨get_pending_transaction£©
+
+ÇëÇó
+
+``` 
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "get_pending_transaction",
+  	"params": {
+		"address": "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+	}
 }
-å¤±è´¥è¿”å›ï¼š
+```
+
+
+³É¹¦·µ»Ø£º  
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "total": 1,
+        "transaction": [
+            {
+                "amount": "501",
+				"broadstamp": 1620378873518030,
+                "from": [
+                    "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+                ],
+                "gap": "0.050000",
+                "hash": "4303e57195616797f77d7db888ef15d677740d8f10a9a8e29370d35c3cc853fb",
+                "timestamp": 1620378873279899,
+                "to": [
+                    "1HjrxHbBuuyNQDwKMh4JtqfuGiDCLodEwC"
+                ],
+                "toAmount": [
+                    "501.000000"
+                ],
+                "vin": [
+                    "7d9a0cb698db789b5f294343209b94ca69119f02593cb5607069623810f6ed69",
+                    "92c45d62b86d37c04f5f873eedfdcb1719eeca9a43e16b206e98101d20baeb0c",
+                    "d2c9da85e7b67188c507f40a95cba88c491afca56b863cce6af512638c7b1b1c"
+                ]
+            }
+        ]
+    }
+}
+```
+Ê§°Ü·µ»ØÈçÇëÇóµÄµØÖ·¸ñÊ½ÊäÈë´íÎó£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "address is invalid"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
+```
+
+×Ö¶ÎËµÃ÷
+
+
+ÇëÇó£º  
+address         ×Ö·û´®ÀàĞÍ      ½»Ò×·¢Æğ·½µØÖ·  
+ÏìÓ¦£º  
+total           ÊıÖµÀàĞÍ        ´¦ÓÚ¹ÒÆğµÄ½»Ò×µÄ¸öÊı  
+transaction     Êı×éÀàĞÍ        ½»Ò×ÄÚÈİ,°üÀ¨½»Ò×µÄ¹şÏ££¬·¢Æğ·½£¬½ÓÊÕ·½£¬½ğ¶î£¬Ê±¼ä´Á
+
+
+Ê¾Àı
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_pending_transaction", "id": "1", "params": { "address": "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"} }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı
+
+
+²éÑ¯ÕıÔÚ¹ÒÆğµÄ½»Ò×
+½Ó¿Ú£ºdef get_pending_transaction()  
+```
+    address = input("ÇëÊäÈëÒª²éÑ¯µÄµØÖ·:")
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_pending_transaction",
+  	    "params": {
+		    "address": address
+	    }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print(res.text)
+```
+
+
+
+#### Ê®Ò»¡¢²éÑ¯Ê§°ÜµÄ½»Ò×£¨get_failure_transaction£©
+
+ÇëÇó
+
+``` 
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "get_failure_transaction",
+  	"params": {
+		"address": "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+	}
+}
+```
+
+
+³É¹¦·µ»Ø£º  
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "total": 1,
+        "transaction": [
+            {
+                "amount": "500",
+                "from": [
+                    "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+                ],
+                "gap": "0.050000",
+                "hash": "13f9730d0ce5fe401352f42fdce3677e324d15518857c02e0aafc6b5456a7676",
+                "timestamp": 1609313648455902,
+                "to": [
+                    "1HjrxHbBuuyNQDwKMh4JtqfuGiDCLodEwC"
+                ],
+                "toAmount": [
+                    "500.000000"
+                ],
+                "vin": [
+                    "b8930d79b8ecbdd2141d3b4fa85fa7dc0e4c6b3c3e30a379d573aacd34299b18",
+                    "c99ac37f9a9c591e51ea31551455f3662eac4e54a1c27923a81e7966c0eadbfa",
+                    "08cb13dea1510860de5549a71c8142e16af6698b9b0d9bea3a813789727d084f"
+                ]
+            }
+        ]
+    }
+}
+```
+·µ»ØÊ§°Ü
+
+
+ÇëÇóµÄµØÖ·¸ñÊ½ÊäÈë´íÎó£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "address isinvalid"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
+```
+
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+address         ×Ö·û´®ÀàĞÍ      ½»Ò×·¢Æğ·½µØÖ·  
+ÏìÓ¦£º  
+total           ÊıÖµÀàĞÍ        Ê§°ÜµÄ½»Ò×µÄ¸öÊı   
+transaction     Êı×éÀàĞÍ        Ê§°ÜµÄ½»Ò×ÄÚÈİ,°üÀ¨½»Ò×µÄ¹şÏ££¬·¢Æğ·½£¬½ÓÊÕ·½£¬½ğ¶î£¬Ê±¼ä´Á
+
+
+Ê¾Àı
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_failure_transaction", "id": "1", "params": { "address": "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"} }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı
+
+
+²éÑ¯Ê§°ÜµÄ½»Ò×  
+```
+def get_failure_transaction():
+    address = input("ÇëÊäÈëÒª²éÑ¯µÄµØÖ·:")
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_failure_transaction",
+  	    "params": {
+		    "address": address
+	    }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    result = json.loads(res.text)
+```
+
+
+
+#### Ê®¶ş¡¢»ñÈ¡¿éĞÅÏ¢ÁĞ±í£¨get_block_info_list£©
+
+ÇëÇó
+
+``` 
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "get_block_info_list",
+  	"params": {
+		"index": "15",
+        "count": "3",
+        "type": "0"
+	}
+}
+```
+
+
+³É¹¦·µ»Ø£º  
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "height": [
+            [
+                {
+                    "block_hash": "b4f74ea3a735a0e6de5c4041bbecfc1b6e2a30156ad41ade7e98c9992e3141ec",
+                    "block_height": 15,
+                    "block_time": 1611132153984580,
+                    "tx": {
+                        "amount": "3099.000000",
+                        "from": [
+                            "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu"
+                        ],
+                        "hash": "b9b417999b0e4d165d822e9fa9c8fdc553fdd9d6affb054d0a258f6d3db352ee",
+                        "to": [
+                            "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+                        ]
+                    }
+                }
+            ],
+            [
+                {
+                    "block_hash": "9870c60872e171b747f35e2f4e876e0792833cb8a258151e38aa1c7f72a52734",
+                    "block_height": 14,
+                    "block_time": 1611131849651811,
+                    "tx": {
+                        "amount": "3983.000000",
+                        "from": [
+                            "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu"
+                        ],
+                        "hash": "98a483aa1c0b77fed0b69c36888fe6e953fe96d5432a17704e76e4f5a5bc2d64",
+                        "to": [
+                            "1TT8sdzyPhqSmSx7Wdmn1ECeEHZKosh6v"
+                        ]
+                    }
+                }
+            ],
+            [
+                {
+                    "block_hash": "e79fb3d28be54e12a7e5ae9c21d91cefc6ba0d8f25681717d07348b569083f3f",
+                    "block_height": 13,
+                    "block_time": 1611050624949290,
+                    "tx": {
+                        "amount": "2349.000000",
+                        "from": [
+                            "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu"
+                        ],
+                        "hash": "bfe2bf795003c2960d09ad03b1d9dd5bc2109c3eba3fe790fd2001f43ce1fc8b",
+                        "to": [
+                            "1MpeeKXwH1ArnMJ85D161yfH1us471J86X"
+                        ]
+                    }
+                }
+            ]
+        ]
+    }
+}  
+```  
+Ê§°Ü·µ»Ø  
+ÇëÇó¶ËÊäÈëµÄindex¸ñÊ½³ö´í£º  
+```
+{
+    "error": {
+        "code": -32602,
+        "message": "index Invalid params"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}  
+```  
+ÇëÇó¶ËÊäÈëµÄcount¸ñÊ½³ö´í£º  
+```
+{
+    "error": {
+        "code": -32602,
+        "message": "count Invalid params"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}  
+```
+
+ÇëÇó¶ËÊäÈëµÄcount²»ÄÜÎª0£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "count is not equal zero£¡"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}  
+```  
+ÇëÇó¶ËÊäÈëµÄtype¸ñÊ½³ö´í£º  
+```
+ {
+    "error": {
+        "code": -32602,
+        "message": "type Invalid params"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+ }
+```
+
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+index           ÊıÖµÀàĞÍ        ¿é×î¸ßÆğÊ¼Ë÷ÒıµØÖ·¡£¿ÉÒÔÖ¸¶¨0£¬´Óµ±Ç°×î¸ß¿é¶ÁÈ¡  
+count           ÊıÖµÀàĞÍ        Òª¶ÁÈ¡µÄ¿éµÄ¸öÊı£¬´Ó¸ßÏòµÍÁĞ³ö  
+type            ÊıÖµÀàĞÍ        Ä¬ÈÏÎª0£¬ÒÔºóÀ©Õ¹Ê¹ÓÃ  
+ÏìÓ¦£º  
+height          Êı×éÀàĞÍ        Ã¿Ò»¸ß¶È²ãµÄ¿éÊı¾İ  
+block_hash      ×Ö·û´®ÀàĞÍ      ¿éµÄ¹şÏ£   
+block_height    ÊıÖµÀàĞÍ        ¿éËùÔÚµÄ¸ß¶È  
+block_time      ÊıÖµÀàĞÍ        ½¨¿éµÄÊ±¼ä  
+amount          ×Ö·û´®ÀàĞÍ      ½»Ò×½ğ¶î  
+from            Êı×éÀàĞÍ        ½»Ò×·¢ÆğÕß  
+hash            ×Ö·û´®ÀàĞÍ      ½»Ò×¹şÏ£  
+to              Êı×éÀàĞÍ        ½»Ò×½ÓÊÕÕß  
+
+
+Ê¾Àı
+
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "get_block_info_list", "id": "1", "params": { "index": "15", "count": "3", "type":"0" } }' 192.168.1.51:11190
+```
+
+pythonÊ¾Àı
+
+»ñÈ¡¿éĞÅÏ¢ÁĞ±í  
+½Ó¿Ú£ºdef get_block_info_list()  
+```
+    data = {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "method": "get_block_info_list",
+  	    "params": {
+		    "index": "15",
+            "count": "3",
+            "type": "0"
+	    }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.post(
+        url=domain,
+        data=json.dumps(data),
+        headers=headers)
+    print("get_block_info_list res.text:", res.text)
+    result = json.loads(res.text)
+```
+
+#### Ê®Èı¡¢È·ÈÏ½»Ò×ÊÇ·ñ³É¹¦£¨confirm_transaction£©
+ÇëÇó£º
+
+```
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "confirm_transaction",
+  	"params": {
+		"tx_hash": "d7ef410796ffa9ef60982c3470f5d816c28a4ea2d3c5299228ef2f5997bf8221"
+	}
+}
+```
+
+³É¹¦·µ»Ø£º
+
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "nodeid": [
+            "d0b206ec2cee4c04b614d7dc4f9b83584269acd8",
+            "c0f710f6b70588bd92983bf50ac710d94f913141",
+            "8e41e25eb4ee88a52c34f159d33ada701ce68469",
+            "5addc8e04079cc00c49754833b81f67b9458cff5",
+            "797a07e6ff413bb35c75243efa087fdc714e0a7d",
+            "bc37516cdea7acf3938049219698b9d7db493eba",
+            "003f2d85999a6ad668e66dc7cf1ec20dfc1aa9c0"
+        ],
+        "success": 1,
+        "total": 7
+    }
+}
+```
+
+Ê§°Ü·µ»Ø£º
+
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "nodeid": null,
+        "success": 0,
+        "total": 0
+    }
+}
+```
+
+tx_hash²ÎÊı¸ñÊ½´íÎó£º
+
+```
+{
+    "error": {
+        "code": -32700,
+        "message": "Parse error"
+    },
+    "id": "",
+    "jsonrpc": "2.0"
+}
+```
+
+
+×Ö¶ÎËµÃ÷
+
+ÇëÇó£º  
+```
+tx_hash           ×Ö·û´®ÀàĞÍ       ±¾´Î½»Ò×µÄ½»Ò×¹şÏ£ 
+```
+
+ÏìÓ¦£º 
+``` 
+nodeid          Êı×éÀàĞÍ        ·µ»Ø³É¹¦½¨¿éµÄ½ÚµãID
+total          	ÊıÖµÀàĞÍ        ³É¹¦±¾´Î½»Ò×½ÚµãÈ·ÈÏÖ®ºó·µ»ØµÄ¸öÊı 
+success      	²¼¶ûÀàĞÍ         ³É¹¦Óë·ñ
+```
+
+Ê¾Àı
+
+```
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "method": "confirm_transaction", "id": "1", "params": { "tx_hash": "d7ef410796ffa9ef60982c3470f5d816c28a4ea2d3c5299228ef2f5997bf8221"} }' 192.168.1.51:11190
+```
+#### Ê®ËÄ¡¢¸ù¾İ½»Ò×¹şÏ£ºÍ½ÚµãID»ñÈ¡½»Ò×ÏêÇé£¨get_tx_by_txid_and_nodeid£©
+ÇëÇó:  
+```
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "get_tx_by_txid",
+  "params": {
+    "hash": "3bb0c305a59c45a35eb48fef3ac5a9f42104a083288b867572fa07b9a7961baa",
+	"nodeid":"d0b206ec2cee4c04b614d7dc4f9b83584269acd8"
+  }
+}
+```
+³É¹¦·µ»Ø£º  
+```
+{
+    "id": "1",
+    "jsonrpc": "2.0",
+    "result": {
+        "hash": "3bb0c305a59c45a35eb48fef3ac5a9f42104a083288b867572fa07b9a7961baa",
+        "time": 1603854991179495,
+        "type": "tx"
+        "height": ""
+        "vin": [
+            {
+                "address": "1BuFpDmH2bJhqxQoyv8cC8YL3mU2TnUDES",
+                "output_index": 0,
+                "output_value": "1000.000000",
+                "prev_hash": "4df2ac157683a5553503731aa74495c556f46faf11c595b95ee5980f8b5013b0"
+            }
+        ],
+        "vout": [
+            {
+                "address": "1FoQKZdUNeBXV2nTba6e354m5JrQ4rHYgA",
+                "value": "10.000000"
+            },
+            {
+                "address": "1BuFpDmH2bJhqxQoyv8cC8YL3mU2TnUDES",
+                "value": "989.000000"
+            }
+        ]
+    }
+}
+```
+Ã»ÓĞ²éÕÒµ½¸Ã±Ê½»Ò×·µ»Ø£º  
+```
+{
+    "error": {
+        "code": -32000,
+        "message": "not find"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
+```  
+²ÎÊı´íÎó·µ»Ø£º  
+```
 {
     "error": {
         "code": -32602,
@@ -495,40 +1423,47 @@ public_key  å­—ç¬¦ä¸²ç±»å‹ 		base64ç¼–ç åçš„å…¬é’¥
     "id": "1",
     "jsonrpc": "2.0"
 }
+```  
+
+¹şÏ£³¤¶È²»µÈÓÚ64£º  
+```
+{
+    "error": {
+        "code": -1,
+        "message": "hash is invalid"
+    },
+    "id": "1",
+    "jsonrpc": "2.0"
+}
 
 ```
+×Ö¶ÎËµÃ÷
 
-#### å­—æ®µè¯´æ˜
+ÇëÇó£º  
 
+hash  			×Ö·û´®ÀàĞÍ		 	½»Ò×hash
+ÏìÓ¦£º
+hash  			×Ö·û´®ÀàĞÍ		 	½»Ò×hash
+time  			ÎŞ·ûºÅ64Î»ÕûĞÍ   		Ê±¼ä´Á
+
+type			×Ö·û´®ÀàĞÍ			½»Ò×µÄÀàĞÍ,ÓĞÈıÖÖÀàĞÍ,Ö»ĞèÒª´¦ÀíÕı³£½»Ò×ÀàĞÍ£º    "tx"		  	Õı³£½»Ò×
+													  	  					"pledge"  		ÖÊÑº½»Ò×
+													  	  					"redeem" 		½âÖÊÑº½»Ò×
+height			×Ö·û´®ÀàĞÍ			µ±Ç°½»Ò×ËùÔÚÇø¿é¸ß¶È
+vin   			jsonÊı×é		  	  ½»Ò×ÊäÈë
+address 		×Ö·û´®ÀàĞÍ			½»Ò××ª³öµØÖ·
+prev_hash		×Ö·û´®ÀàĞÍ			utxoËùÔÚµÄ½»Ò×hash
+output_index	ÕûĞÍ				  Ë÷Òı
+output_value	×Ö·û´®ÀàĞÍ			utxo½ğ¶î
+
+vout  			jsonÊı×é		      ½»Ò××ªÈëµØÖ·ºÍ½ğ¶î×é³ÉµÄjson¶ÔÏó
+address 		×Ö·û´®ÀàĞÍ		    ½»Ò××ªÈëµØÖ·
+value 			×Ö·û´®ÀàĞÍ		    ½»Ò×½ğ¶î 
+
+Êµ¼Ê»¨·ÑµÄfee¼ÆËã£ºvinÀïµÄoutput_value ¼õÈ¥ vout ÀïµÄËùÓĞvalue
+
+
+Ê¾Àı:  
 ```
-è¯·æ±‚ï¼š
-data			å­—ç¬¦ä¸²ç±»å‹		å¾…ç­¾åä¿¡æ¯, create_tx_messageæ–¹æ³•è°ƒç”¨åè¿”å›çš„tx_encode_hash
-private_key		å­—ç¬¦ä¸²ç±»å‹		base64ç¼–ç åçš„ç§é’¥
-å“åº”ï¼š
-message  		å­—ç¬¦ä¸²ç±»å‹		base64ç¼–ç åçš„å·²ç­¾åä¿¡æ¯
+curl -i -X POST -H "Content-Type: application/json; indent=4" -d '{"jsonrpc": "2.0", "id": "1", "method": "get_tx_by_txid_and_nodeid", "params": { "hash": "3bb0c305a59c45a35eb48fef3ac5a9f42104a083288b867572fa07b9a7961baa","nodeid":"d0b206ec2cee4c04b614d7dc4f9b83584269acd8" } }' 192.168.1.51:11190
 ```
-
-
-## æµç¨‹è¯´æ˜
-
-### å‘èµ·äº¤æ˜“è¿‡ç¨‹ï¼š
-
-![](jsonrpcæ¥å£æ–‡æ¡£.assets/send_tx.png) 
-
-1. é€šè¿‡create_tx_messageæ¥å£å‘æœåŠ¡å™¨èŠ‚ç‚¹å‘èµ·äº¤æ˜“è¯·æ±‚ï¼ŒåŒ…æ‹¬from_addrï¼Œto_addrå’Œfeeç­‰ä¿¡æ¯ï¼Œåˆ›å»ºäº¤æ˜“ä½“ï¼Œè·å¾—tx_dataå’Œtx_encode_hashä¿¡æ¯ã€‚
-2. é€šè¿‡generate_signæ¥å£ç”¨ç§é’¥å¯¹ tx_encode_hash ä¿¡æ¯è¿›è¡Œç­¾åï¼Œè·å¾—ç­¾åä¿¡æ¯tx_signatureã€‚è¿™é‡Œäº¦å¯ä½¿ç”¨æœ¬åœ°åŠ¨æ€åº“è¿›è¡Œç­¾åï¼Œè¯¦æƒ…è¯·å‚è€ƒã€ŠåŠ¨æ€åº“ä½¿ç”¨æ–‡æ¡£.mdã€‹ã€‚
-3. é€šè¿‡ send_tx æ¥å£ å°†tx_dataï¼Œpublic_keyï¼Œtx_encode_hashå’Œtx_signatureå‘é€åˆ°æœåŠ¡å™¨èŠ‚ç‚¹ï¼Œå¾—åˆ°è¯¥äº¤æ˜“çš„tx_hashã€‚
-4. å°†tx_hashä¿¡æ¯ç•™å­˜ï¼Œå¾…äº¤æ˜“ç¡®è®¤æ—¶æŸ¥è¯¢ç”¨ã€‚
-
-### éªŒè¯äº¤æ˜“è¿‡ç¨‹ï¼š
-
-![](jsonrpcæ¥å£æ–‡æ¡£.assets/comfirm_tx.png) 
-
-1. åœ¨å‘èµ·äº¤æ˜“æµç¨‹å10åˆ†é’Ÿåï¼Œç”¨get_tx_by_txidæ¥å£å°†tx_hashä¿¡æ¯å¼‚æ­¥å‘é€åˆ°nä¸ªèŠ‚ç‚¹æœåŠ¡å™¨ã€‚
-2. é€šè¿‡get_tx_by_txidæ¥å£è¿”å›å€¼åˆ¤æ–­è¯¥äº¤æ˜“æ˜¯å¦åœ¨nä¸ªèŠ‚ç‚¹ä¸­éƒ½ä¸Šé“¾æˆåŠŸï¼Œè‹¥å¤§éƒ¨åˆ†ï¼ˆçº¦75%ä»¥ä¸Šï¼‰èŠ‚ç‚¹æœ‰è¯¥äº¤æ˜“ï¼Œåˆ™è¯¥è¡¨ç¤ºäº¤æ˜“å‘é€æˆåŠŸï¼Œå¦åˆ™äº¤æ˜“å¯èƒ½å¤±è´¥ã€‚
-
-### éªŒè¯äº¤æ˜“æ˜¯å¦ä¸Šé“¾
-1.é€šè¿‡get_heightæ¥å£å‘æœåŠ¡ç«¯è¯·æ±‚è·å–åˆ°æœ€é«˜é«˜åº¦ï¼Œæœ€é«˜é«˜åº¦å‡å»20ï¼Œå¾—åˆ°ä¸€ä¸ªheightçš„å€¼ç„¶åé€šè¿‡get_txids_by_heightæ¥å£å‘æœåŠ¡å™¨å‘èµ·è¯·æ±‚ï¼Œå‚æ•°ä¸ºheightï¼Œè·å–åˆ°æ‰€æœ‰äº¤æ˜“hashåˆ—è¡¨ä¿¡æ¯ã€‚
-2.é€šè¿‡get_tx_by_txidæ¥å£å‘æœåŠ¡å™¨å‘èµ·è¯·æ±‚ï¼Œå‚æ•°ä¸ºhashï¼Œè·å–åˆ°äº¤æ˜“è¯¦æƒ…åŒ…æ‹¬äº¤æ˜“hashã€äº¤æ˜“æ—¶é—´timeã€äº¤æ˜“çš„vinã€äº¤æ˜“çš„voutï¼Œé€šè¿‡äº¤æ˜“çš„voutä¿¡æ¯å¯ä»¥æŸ¥çœ‹è‡ªèº«è´¦å·å’Œäº¤æ˜“é‡‘é¢æ˜¯å¦åœ¨äº¤æ˜“è¯¦æƒ…é‡Œè¾¹å³å¯ç¡®è®¤æ˜¯å¦ä¸Šé“¾ã€‚
-3.ä»æœ€é«˜é«˜åº¦å‡å»20å¾—åˆ°ä¸€ä¸ªheihtå€¼ä¾æ¬¡åŠ ä¸€ä¸ªé«˜åº¦é€ä¸€è°ƒç”¨get_txids_by_heightæ¥å£å‘æœåŠ¡å™¨è¯·æ±‚ï¼Œè·å–åˆ°hashåˆ—è¡¨ï¼Œå†é€šè¿‡get_tx_by_txidæ¥å£è·å–åˆ°äº¤æ˜“è¯¦æƒ…å°±å¯ä»¥ç¡®è®¤æ˜¯å¦ä¸Šé“¾ã€‚
-

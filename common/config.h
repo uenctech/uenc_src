@@ -8,15 +8,20 @@
 #include "../utils/json.hpp"
 #include "../utils/singleton.h"
 #include "../include/clientType.h"
+#include "../common/devicepwd.h"
+#include<string.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<sys/types.h>
+#include<dirent.h>
+#include<stdlib.h>
 
-typedef enum emConfigEnabelType
+typedef enum ProxyType
 {
-    kConfigEnabelTypeTx,
-    kConfigEnabelTypeGetBlock,
-    kConfigEnabelTypeGetTxInfo,
-    kConfigEnabelTypeGetAmount,
-    kConfigEnabelTypeGetMoney,
-}ConfigEnabelType;
+    kNONE = 0,     // 默认
+    kMANUAL   = 1,    // 手动代理
+    kAUTOMUTIC = 2,   // 自动代理   
+} Type;
 
 //存储版本服务器节点信息的结构体
 struct node_info
@@ -45,11 +50,16 @@ public:
     void Reload(const std::string &name = "config.json");
     //根据m_Json写入配置文件
     void WriteFile(const std::string &name = "config.json");
+    void WriteServerToFile(const std::string &name = "config.json");
+    //根据m_Json写入配置文件
+   // void WriteDevPwdFile(const std::string &name = "devpwd.json");
     //初始化配置文件
     bool InitFile(const std::string &name = "config.json");
+    //初始化设备密码文件
+  //  bool InitPWDFile(const std::string &name = "devpwd.json");
+   // bool NewDevPWDFile(std::string strFile);
     //创建配置文件
     bool NewFile(std::string strFile);
-
 
     //******************net层相关的配置*******************
     //获取是否为外网节点 is_public_node
@@ -68,35 +78,31 @@ public:
 
     //获取、设置节点的内网ip地址
     std::string GetLocalIP();
+    std::string GetBucket();
     bool SetLocalIP(std::string strIP);
     int GetLocalPort();
     int GetHttpPort();
     std::vector<std::tuple<std::string,int>> GetServerList();
 
     //******************ca层相关的配置***************************
-    /**
-     * @description: 获得是否启用
-     * @param enable 返回是否启用标志 
-     * @return: 操作是否成功，若返回false则enable不可用
-     */
-    bool GetEnable(ConfigEnabelType type, bool * enable);
 
     /**
-     * @description: 设置是否启用
-     * @param 是否启用
-     * @return: 操作成功返回true，失败返回false
-     * @mark: 仅修改内存值，不修改配置文件
+     * @description: 获得代理服务器的ID
+     * @return: 操作是否成功，成功返回对应的ID值，失败返回空字符串
      */
-    bool SetEnable(ConfigEnabelType tpye, bool enable);
-
+    
+    std::string GetProxyID();
+  /**
+     * @description: 获得代理服务器的类型
+     * @return: 操作是否成功，成功返回不同类型(kAUTOMUTIC = 0,kMANUAL   = 1, kNONE = 2)
+     */
+   Type  GetProxyTypeStatus();
     /**
      * @description: 返回配置文件版本
      * @param 无 
      * @return: 返回配置文件版本
      */
     std::string GetVersion();
-
-
 
     /**
      * @description: 获取更新目标版本号
@@ -111,6 +117,7 @@ public:
     //获取之前请求更新的对应版本服务器ip
     std::string GetVersionServer();
 
+    void UpdateNewConfig(const std::string &name = "newconfig.json");
 
     /**
      * @description: 根据clientType返回所支持客户端版本号
@@ -141,7 +148,7 @@ public:
      * @return: 返回JSON读取块数，默认为10
      */
     unsigned int GetSyncDataCount();
-
+    unsigned int SetSyncDataCount(unsigned int data);
     /**
      * @description: 获取同步时间间隔
      * @param 
@@ -182,7 +189,13 @@ public:
 
     int ClearServer();
     int AddNewServer(const std::string& ip, unsigned short port);
+    
+     bool Removefile();
+     bool RenameConfig();
 
+    std::string GetHttpCallbackIp();
+    int GetHttpCallbackPort();
+    bool HasHttpCallback();
 
 private:
     std::string GetAbsopath();
@@ -190,6 +203,7 @@ private:
 
 private:
 	nlohmann::json m_Json;
+    nlohmann::json m_UpdateJson;
     std::vector<nlohmann::json> m_servers;
 };
 

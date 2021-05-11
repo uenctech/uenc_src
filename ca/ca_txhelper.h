@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-09-18 18:01:27
- * @LastEditTime: 2020-10-14 10:08:56
+ * @LastEditTime: 2021-01-28 10:39:35
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ebpc\ca\ca_txhelper.h
@@ -45,9 +45,13 @@ public:
      * 0，创建交易成功
      * -1，参数错误
      * -2，交易地址错误（地址不正确或是接收方中有交易方地址）
-     * -3，获取交易信息失败
-     * -4，获取交易信息失败
-     * -5，余额不足
+     * -3，有之前交易挂起
+     * -4，打开数据库错误
+     * -5，获得打包费失败
+     * -6，获得交易信息失败
+     * -7，余额不足
+     * -8, 手续费过高或过低
+     * 
      */
     static int CreateTxMessage(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees, CTransaction & outTx, bool is_local = true);
     static void DoCreateTx(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees);

@@ -2,7 +2,8 @@ syntax                  = "proto3";
 
 /**********通用消息体********/
 
-message CommonMsg {
+message CommonMsg 
+{
   string version         = 1;
   string type           = 2;
   int32 encrypt         = 3;

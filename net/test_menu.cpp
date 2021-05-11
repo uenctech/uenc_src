@@ -23,6 +23,7 @@ void TestMenu::main_menu()
 		cout << "e.Show My MD5_ID" << endl;
 		cout << "f.Show My PublicNode" << endl;
 		cout << "g.GetSelfID" << endl;
+		cout << "h.Switch Public Node" << endl;
 		cout << "0.Quit" << endl;
 		cout << "Please input your choice:" << endl;
 
@@ -65,7 +66,7 @@ void TestMenu::main_menu()
 		{
 			EchoReq echoReq;
 			echoReq.set_id(Singleton<PeerNode>::get_instance()->get_self_id());
-			net_com::broadcast_message(echoReq);
+			net_com::broadcast_message(echoReq, net_com::Compress::kCompress_False, net_com::Encrypt::kEncrypt_False, net_com::Priority::kPriority_Low_0);
 			break;
 		}		
 		case '5':
@@ -73,6 +74,21 @@ void TestMenu::main_menu()
 			net_com::test_broadcast_message();
 			break;
 		}
+
+		case '6':
+        {
+			double total = .0f;
+            std::cout << "------------------------------------------" << std::endl;
+            for (auto & item : global::reqCntMap)
+            {
+				total += (double)item.second.second;
+                std::cout.precision(3);
+                std::cout << item.first << ": " << item.second.first << " size: " << (double)item.second.second / 1024 / 1024 << " MB" << std::endl;
+            }
+            std::cout << "------------------------------------------" << std::endl;
+			std::cout << "Total: " << total / 1024 / 1024 <<" MB" << std::endl;
+            break;
+        }
 
 		case '7':
 		{
@@ -86,13 +102,19 @@ void TestMenu::main_menu()
 		}
 		case 'f':
 		{
-			auto list = Singleton<PeerNode>::get_instance()->get_nodelist(NODE_PUBLIC);
+			// auto list = Singleton<PeerNode>::get_instance()->get_nodelist(NODE_PUBLIC);
+			auto list = Singleton<PeerNode>::get_instance()->get_public_node();
 			Singleton<PeerNode>::get_instance()->print(list);
 			break;
 		}
 		case 'g':
 		{
 			printf("MyID : %s\n", Singleton<Config>::get_instance()->GetKID().c_str());
+			break;
+		}
+		case 'h':
+		{
+			net_com::RegisteToPublic();
 			break;
 		}
 		default:

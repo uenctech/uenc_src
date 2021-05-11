@@ -257,20 +257,20 @@ message SetServiceFeeAck
 }
 
 // 获取特定节点打包费
-message GetPacketFeeReq 
+message GetPackageFeeReq 
 {
 	string version				= 1;						// 版本
 	string password				= 2;						// 密码
 	string public_net_ip		= 3;						// 当前连接的的公网的ip
 }
 
-message GetPacketFeeAck 
+message GetPackageFeeAck 
 {
     string version = 1;
     sint32 code = 2;
     string description = 3;
 
-    string packet_fee = 4;
+    string package_fee = 4;
 }
 
 // 设置特定节点打包费
@@ -287,30 +287,6 @@ message SetPacketFeeAck
     string version = 1;
     sint32 code = 2;
     string description = 3;
-}
-
-
-//获取最高交易块数 矿机端
-message GetBlockTopReq 
-{
-    string version = 1;
-
-    uint32 fd = 2;
-    uint32 port = 3;
-    uint32 ip = 4;
-}
-
-//服务节点返回
-message TApiGetBlockTopAck 
-{
-    string version = 1;
-    sint32 code = 2;
-    string description = 3;
-
-    uint32 top = 4;
-    uint32 fd = 5;
-    uint32 port = 6;
-    uint32 ip = 7;
 }
 
 //获得全网节点矿费
@@ -528,7 +504,7 @@ message CreatePledgeTxMsgAck
 {
 	string       version      = 1;						    // 版本号
 	int32        code			= 2;						// 返回错误码
-	string		 description		= 3;					// 返回错误信息
+	string		 message		= 3;					// 返回错误信息
 	string 		 txData			= 4;						// 交易信息体
 	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
@@ -562,7 +538,7 @@ message CreateRedeemTxMsgAck
 {
 	string       version      = 1;						    // 版本号
 	int32        code			= 2;						// 返回错误码
-	string		 description		= 3;					// 返回错误信息
+	string		 message		= 3;					// 返回错误信息
 	string 		 txData			= 4;						// 交易信息体
 	string       txEncodeHash         = 5;					// 交易信息体base64之后sha256的hash值
 }
@@ -608,7 +584,7 @@ message GetPledgeListReq
 {
     string version = 1; // 版本
     string addr = 2; // 查询地址
-    uint32 index = 3; // 索引
+    string txhash = 3; // 该hash的下一个为起始块
     uint32 count = 4; // 查询数量
 }
 
@@ -632,6 +608,7 @@ message GetPledgeListAck
     string description = 3;// 返回错误信息
     repeated PledgeItem list = 4; // 质押信息列表
     uint32 total = 5; // 质押条目总数量
+    string lasthash = 6; // 最后的交易hash
 }
 
 ///*****************************交易列表************************************************
@@ -641,7 +618,7 @@ message GetTxInfoListReq
 {
     string version = 1; // 版本
     string addr = 2; // 地址
-    uint32 index = 3; // 索引
+    string txhash = 3; // 该hash的下一个为起始块
     uint32 count = 4; // 查询数量
 }
 
@@ -673,7 +650,7 @@ message GetTxInfoListAck
     string description = 3;// 返回错误信息
     repeated TxInfoItem list = 4; // 交易信息列表
     uint32 total = 5; // 交易条目总数量
-    uint32 index = 6; // 已查到索引数
+    string lasthash = 6; // 最后的交易hash
 }
 
 ///*****************************交易详情************************************************
@@ -876,7 +853,7 @@ message GetTxFailureListReq
 {
     string version = 1; // 版本
     string addr = 2; // 查询地址
-    uint32 index = 3; // 索引
+    string txhash = 3; // 该hash的下一个为起始块
     uint32 count = 4; // 查询数量
 }
 
@@ -901,6 +878,7 @@ message GetTxFailureListAck
     string description = 3; // 返回错误信息
     uint32 total = 4; // 失败交易总数量
     repeated TxFailureItem list = 5; // 失败交易信息列表
+    string lasthash = 6; // 最后的交易hash
 }
 
 
@@ -936,3 +914,18 @@ message GetTxByHashAck
     repeated string echotxhash = 5; // 交易hash
 }
 
+
+// 验证节点高度是否和全网大部分节点在同一范围内（高度范围差为上下5个高度）
+message CheckNodeHeightReq
+{
+    string version = 1;
+}
+
+message CheckNodeHeightAck
+{
+    string version = 1; // 版本
+    int32 code = 2; // 返回错误码
+    uint32 total = 3; // 统计总数
+    double percent = 4; // 符合百分比
+    uint32 height = 5; // 当前矿机高度
+}

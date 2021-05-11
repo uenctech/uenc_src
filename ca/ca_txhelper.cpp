@@ -179,6 +179,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	if (fromAddr.size() == 0 || toAddr.size() == 0)
 	{
 		error("CreateTxMessage fromAddr toAddr ==0");
+		cout<<"CreateTxMessage test1"<<endl;
 		return -1;
 	}
 
@@ -189,6 +190,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	{
 		if (to.first != VIRTUAL_ACCOUNT_PLEDGE && ! CheckBase58Addr(to.first))
 		{
+			cout<<"CreateTxMessage test2"<<endl;
 			return -2;
 		}
 
@@ -198,6 +200,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 		{
 			if (! CheckBase58Addr(from))
 			{
+				cout<<"CreateTxMessage test3"<<endl;
 				return -2;
 			}
 
@@ -211,17 +214,16 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 
 	if (fromSet.size() != fromAddr.size() || toSet.size() != toAddr.size())
 	{
+		cout<<"CreateTxMessage test4"<<endl;
 		return -2;
 	}
 
-	//{{ Check pending transaction in Cache, 20201215
 	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(fromAddr))
 	{
 		error("Pending transaction is in Cache!");
 		std::cout << "Pending transaction is in Cache!" << std::endl;
-		return -20;
+		return -3;
 	}
-	//}}
 
     int db_status = 0;
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
@@ -229,7 +231,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	if( txn == NULL )
 	{
 		std::cout << "(CreateTxMessage) TransactionInit failed !" << std::endl;
-		return -3;
+		return -4;
 	}
 
 	ON_SCOPE_EXIT{
@@ -254,7 +256,8 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 		if ( 0 != pRocksDb->GetDevicePackageFee(publicNodePackageFee) )
 		{
 			error("CreateTxMessage GetDevicePackageFee failed");
-			return -6;
+			cout<<"CreateTxMessage test6"<<endl;
+			return -5;
 		}
 
 		amount += publicNodePackageFee;
@@ -267,7 +270,8 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 		db_status = pRocksDb->GetUtxoHashsByAddress(txn, addr, tmp);
 		if (db_status != 0) {
 			error("CreateTxMessage GetUtxoHashsByAddress");
-			return -4;
+			cout<<"CreateTxMessage test7"<<endl;
+			return -6;
 		}
 		utxoHashs[addr] = tmp;
 	}
@@ -307,7 +311,9 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 						std::string strPub;
 						g_AccountInfo.GetPubKeyStr(txout.scriptpubkey().c_str(), strPub);
 						txin->mutable_scriptsig()->set_pub(strPub);
-					}else{
+					}
+					else
+					{
 						txin->mutable_scriptsig()->set_pub(addr);
 						std::cout << "CreateTxMessage:" << "vin addr:" << addr << std::endl;
 					}
@@ -328,7 +334,13 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	if (total < amount)
 	{
 		error("CreateTxMessage total < amount");
-		return -5;
+		cout<<"CreateTxMessage test8"<<endl;
+		return -7;
+	}
+
+	if((uint64_t)minerFees < g_minSignFee || (uint64_t)minerFees > g_maxSignFee)
+	{
+		return -15;
 	}
 
 	for(auto& i:toAddr)
@@ -342,7 +354,7 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	txoutFromAddr->set_value(total - amount);
 	txoutFromAddr->set_scriptpubkey(change_addr);
 
-	uint64_t time = Singleton<TimeUtil>::get_instance()->getNtpTimestamp();
+	uint64_t time = Singleton<TimeUtil>::get_instance()->getlocalTimestamp();
 	outTx.set_time(time);
 
 	std::string tmpAddr;
@@ -352,11 +364,8 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 		tmpAddr += "_";
 	}
 	
-	// if((*tmpAddr.end()) == '-')
-	{
-		tmpAddr.erase(tmpAddr.end() -1);
-	}
-
+	tmpAddr.erase(tmpAddr.end() -1);
+	
 	outTx.set_txowner(tmpAddr);
 
 	outTx.set_ip(net_get_self_node_id());
@@ -368,22 +377,6 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	extra["TransactionType"] = TXTYPE_TX;
 	outTx.set_extra(extra.dump());
 
-	//========test print==================
-	/*
-	for(int j = 0; j < outTx.vin_size(); j++)
-	{
-		CTxin vin = outTx.vin(j);
-		std::string hash = vin.prevout().hash();
-		std::cout << "prevout hash:" << hash << std::endl;
-	}
-	for(int j = 0; j < outTx.vout_size(); j++)
-	{
-		CTxout vout = outTx.vout(j);
-	
-		std::cout << "vout:" << vout.scriptpubkey() << "--" << vout.value() << std::endl;
-	}
-	std::cout << "extra:" << extra.dump() << std::endl;
-	*/
 	return 0;
 }
 
@@ -403,6 +396,7 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 	if(ret != 0)
 	{
 		error("DoCreateTx: TxHelper::CreateTxMessage error!!!\n");
+		cout<<"pending DoCreateTx: TxHelper::CreateTxMessage error!!!\n"<<endl;
 		return;
 	}
 
@@ -441,13 +435,10 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 	}
 	
 	serTx = outTx.SerializeAsString();
-	// TX的头部带有签名过的网络节点的id，格式为 num [id,id,...]
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
 
 	TxMsg txMsg;
 	txMsg.set_version(getVersion());
-	txMsg.set_tx( txstrtmp );
+	txMsg.set_tx( serTx );
 	txMsg.set_txencodehash( encodeStrHash );
 
 	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
@@ -459,14 +450,20 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 	unsigned int top = 0;
 	pRocksDb->GetBlockTop(txn, top);	
 	txMsg.set_top(top);
-	// msgdata是为了方便调用接口，没有实际意义
-	net_pack pack;
-	const MsgData msgdata = {E_READ, 0, 0, 0, "", pack, ""};
+
+	std::string blockHash;
+    if ( 0 != pRocksDb->GetBestChainHash(txn, blockHash) )
+    {
+        std::cout << __LINE__ << std::endl;
+        return;
+    }
+    txMsg.set_prevblkhash(blockHash);	
+    txMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
+
 	auto msg = make_shared<TxMsg>(txMsg);
-	HandleTx( msg, msgdata );
-	// using namespace andrivet::ADVobfuscator;
-	// using namespace andrivet::ADVobfuscator::Machine1;
-	// OBFUSCATED_CALL(HandleTx, msg, msgdata);
+
+	std::string txHash;
+	ret = DoHandleTx(msg, txHash);
+	std::cout << "交易处理结果，ret: "<< ret <<" txHash：" << txHash << std::endl;
 	
-	cstr_free(txstr, true);
 }

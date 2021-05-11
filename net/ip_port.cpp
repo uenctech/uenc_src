@@ -14,9 +14,6 @@
 #include <unistd.h>
 #include "../utils/util.h"
 
-
-
-
 char g_localhost_ip[16];
 char g_public_net_ip[16];
 char g_publicIP[30];             //存储公网IP
@@ -49,19 +46,13 @@ bool IpPort::get_localhost_ip(char* g_localhost_ip)
 	return false;
 }
 
-
-
 //获取本地Ip
 bool IpPort::get_localhost_ip()
 {
 	struct ifaddrs* if_addr_ptr = NULL;
 	void* tmp_addr_ptr = NULL;
-	
-	char* locla_ip = new char[IP_LEN];
-	
-	bzero(locla_ip, IP_LEN * sizeof(char));
 
-	ExitCaller ec([=] { delete[] locla_ip; });
+	char locla_ip[IP_LEN] = {0};
 
 	getifaddrs(&if_addr_ptr);
 
@@ -97,9 +88,6 @@ bool IpPort::get_localhost_ip()
 
 		if_addr_ptr = if_addr_ptr->ifa_next;
 	}
-
-	//释放内存
-	freeifaddrs(if_addr_ptr);
 
 	return false;
 }

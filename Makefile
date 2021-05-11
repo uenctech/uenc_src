@@ -15,16 +15,12 @@ PROTOBUF_DIR = ./protobuf
 PROTOBUF_TARGET = /src/.libs/libprotobuf.a
 PROTOBUF_LIB = $(PROTOBUF_DIR)/$(PROTOBUF_TARGET)
 
-CA_DIR = ./ca
-CA_TARGET = libca.a
-CA_LIB = $(CA_DIR)/$(CA_TARGET)
-
 BOOST_DIR = ./boost
 
 CC = gcc
 CPP = g++ -std=c++17
 INCLUDES += -I./ -I../include -I$(ROCKSDB_DIR)/include/ -I$(PROTOBUF_DIR)/src -I ./proto
-LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) $(CA_LIB) /usr/lib64/libpthread.so 
+LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) /usr/lib64/libpthread.so 
 
 G = -g
 CFLAGS :=-Wall  -Wno-unknown-pragmas $(G) 
@@ -94,9 +90,9 @@ cleand:
 	find ./objs -name *.d | xargs rm -rf
 
 testnet:
-	sed -i "s/g_testflag.*;/g_testflag = 1;/g" ./ca/ca_global.cpp
+	sed -i "s/g_testflag.*;/g_testflag = 1;/g" ./common/global.cpp
 primarynet:
-	sed -i "s/g_testflag.*;/g_testflag = 0;/g" ./ca/ca_global.cpp
+	sed -i "s/g_testflag.*;/g_testflag = 0;/g" ./common/global.cpp
 
 cleanall:subdirs_clean
 	rm -rf $(OBJ_PATH)

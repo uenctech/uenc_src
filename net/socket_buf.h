@@ -14,7 +14,6 @@
 #include "../utils/singleton.h"
 #include "./msg_queue.h"
 #include "./net_api.h"
-#include "./pack.h"
 
 
 extern std::unordered_map<int, std::unique_ptr<std::mutex>> fds_mutex;
@@ -98,11 +97,7 @@ public:
     void pop_n_write_buffer_queue(uint64_t port_and_ip, int n);
     void pop_n_write_buffer_queue(std::string ip, uint16_t port, int n);
     void pop_n_write_buffer_queue(uint32_t ip, uint16_t port, int n);
-
-	bool add_write_pack(uint64_t port_and_ip, const net_pack& pack);
-	bool add_write_pack(std::string ip, uint16_t port, const net_pack& pack);
-	bool add_write_pack(uint32_t ip, uint16_t port, const net_pack& pack);
-
+	
     bool add_write_pack(uint64_t port_and_ip, const std::string ios_msg);
 	bool add_write_pack(std::string ip, uint16_t port, const std::string ios_msg);
 	bool add_write_pack(uint32_t ip, uint16_t port, const std::string ios_msg);

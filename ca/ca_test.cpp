@@ -250,6 +250,17 @@ std::string printBlocks(int num)
 {
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
+
+    if (txn == NULL)
+    {
+        std::cout << "printBlocks create txn fail! " <<  __LINE__ << std::endl;
+        return "";
+    }
+
+    ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
     unsigned int top = 0;
     pRocksDb->GetBlockTop(txn, top);
     std::string str = "top:\n";

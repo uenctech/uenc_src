@@ -1,16 +1,18 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-21 14:54:56
+ * @LastEditTime: 2021-03-27 14:29:22
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \ebpc\ca\ca_global.cpp
+ */
 #include "ca_global.h"
 #include "ca_coredefs.h"
 #include "Crypto_ECDSA.h"
 #include "ca_synchronization.h"
-#include "../utils/time_task.h"
 #include <mutex>
+#include "../common/version.h"
 
-int g_testflag = 1;
-
-std::string g_LinuxCompatible = "1.3";
-std::string g_WindowsCompatible = "1.0";
-std::string g_IOSCompatible = "4.0.3";
-std::string g_AndroidCompatible = "3.0.17";
 
 const int64_t g_compatMinHeight = 50000;
 
@@ -21,7 +23,6 @@ struct chain_info g_chain_metadata = { CHAIN_BITCOIN, "bitcoin", PUBKEY_ADDRESS,
 ECDSA<ECP, SHA1>::PrivateKey g_privateKey;
 ECDSA<ECP, SHA1>::PublicKey g_publicKey;
 accountinfo g_AccountInfo;
-bool g_phone;
 char g_ip[NETWORKID_LEN];
 
 const int g_MinNeedVerifyPreHashCount = 6;  //最小共识数
@@ -32,7 +33,6 @@ std::vector<GetDevInfoAck> g_nodeinfo;
 const uint64_t g_minSignFee = 1000;
 const uint64_t g_maxSignFee = 100000;
 
-
 const char * build_time = "20200706-10:52";
 string  build_commit_hash = "a018f71";
 
@@ -40,14 +40,10 @@ CTimer g_blockpool_timer;
 CTimer g_synch_timer; 
 CTimer g_deviceonline_timer;
 CTimer g_public_node_refresh_timer; // public node refresh to config
-CTimer g_device2pubnet_timer;
 
-int g_VerifyPasswordCount = 0;
-int minutescount = 7200;
-bool g_ready = false;
 
-std::vector<string>   g_random_normal_node;
-std::vector<string>   g_random_public_node;
+std::vector<Node> g_localnode;
+//bool g_proxy;
 std::mutex mu_return;
 std::atomic_int64_t echo_counter = 5; 
 
@@ -59,36 +55,7 @@ std::string g_InitAccount;
 
 uint64_t g_minPledgeNodeNum = 10;
 
-string getEbpcVersion()
-{
-    static string version = g_LinuxCompatible;
-    return version;
-}
+std::mutex rollbackLock;
+int rollbackCount = 0;
+TransactionConfirmTimer g_RpcTransactionConfirm;
 
-string  getVersion()
-{
-    string versionNum = getEbpcVersion();
-    std::ostringstream ss;
-    ss << getSystem();
-    std::string version = ss.str() + "_" + versionNum ; 
-    if(g_testflag == 1)
-    {
-        g_InitAccount = "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu";
-        version = version + "_" + "t";
-    }
-    else 
-    {
-        g_InitAccount = "16psRip78QvUruQr9fMzr8EomtFS1bVaXk";
-        version = version + "_" + "p";
-    }
-    return version;
-}
-
-Version getSystem()
-{
-#if WINDOWS
-    return kWINDOWS;
-#else
-    return kLINUX;
-#endif 
-}

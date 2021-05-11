@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-14 17:59:45
+ * @LastEditTime: 2021-02-25 09:44:45
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \ebpc\net\pack.cpp
+ */
 #include <string>
 #include <random>
 #include <chrono>
@@ -9,34 +17,13 @@
 
 using namespace std;
 
-const net_pack Pack::pack_to_pack(const char* data, const int data_len)
-{
-	net_pack pack;
-
-	pack.len = data_len;
-	pack.data = string(data, data_len);
-	pack.len = sizeof(int)*2 + pack.data.size() + 32;
-
-	return pack;
-}
-
-const net_pack Pack::pack_to_pack(const std::string& data)
-{
-	net_pack pack;
-
-	pack.len = (int)data.size();
-	pack.data = data;
-	pack.len = sizeof(int)*2 + pack.data.size() + 32;
-
-	return pack;
-}
-
 void Pack::packag_to_buff(const net_pack & pack, char* buff, int buff_len)
 {
 	memcpy(buff, &pack.len, 4);
 	memcpy(buff + 4, pack.data.data(), pack.data.size());
 	memcpy(buff + 4 + pack.data.size(), &pack.checksum, 4);
-	memcpy(buff + 4 + pack.data.size() + 4, &pack.end_flag, 4);
+	memcpy(buff + 4 + pack.data.size() + 4, &pack.flag, 4);
+	memcpy(buff + 4 + pack.data.size() + 4 + 4, &pack.end_flag, 4);
 }
 
 string Pack::packag_to_str(const net_pack& pack)
@@ -49,9 +36,6 @@ string Pack::packag_to_str(const net_pack& pack)
 	return msg;
 }
 
-
-
-
 bool Pack::apart_pack( net_pack& pk, const char* pack, int pack_len)
 {
 	if (NULL == pack)
@@ -59,27 +43,29 @@ bool Pack::apart_pack( net_pack& pk, const char* pack, int pack_len)
 		error("apart_pack is NULL");
 		return false;
 	}
-	if(pack_len < 8)
+	if(pack_len < 12)
 	{	
-		error("apart_pack len < 8\n");
+		error("apart_pack len < 12\n");
 		return false;
 	}
 
 	pk.len = pack_len;
-	pk.data = std::string(pack , pack_len - sizeof(uint32_t) * 2); //减去checksum 和 flag
+	pk.data = std::string(pack , pack_len - sizeof(uint32_t) * 3); //减去checksum, flag和end_flag
 
-	memcpy(&pk.checksum, pack + pk.data.size(),     4);
-	memcpy(&pk.end_flag, pack + pk.data.size() + 4, 4);
+	memcpy(&pk.checksum, pack + pk.data.size(),   	  4);
+	memcpy(&pk.flag, pack + pk.data.size() + 4,     	4);
+	memcpy(&pk.end_flag, pack + pk.data.size() + 4 + 4, 4);
 
 	return true;
 }
 
 
-bool Pack::common_msg_to_pack(const CommonMsg& msg, net_pack& pack)
+bool Pack::common_msg_to_pack(const CommonMsg& msg, const int8_t priority, net_pack& pack)
 {
 	pack.data = msg.SerializeAsString();
-	pack.len = pack.data.size() + sizeof(int) + sizeof(int);
-	pack.checksum = Util::adler32(pack.data.data(), pack.data.size());
+	pack.len = pack.data.size() + sizeof(int) + sizeof(int) + sizeof(int);
+	pack.checksum = Util::adler32((unsigned char *)pack.data.data(), pack.data.size());
+	pack.flag = priority & 0xF;
 
 	return true;
 }

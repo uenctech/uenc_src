@@ -3,7 +3,6 @@
 #include "./pack.h"
 #include "./ip_port.h"
 #include "peer_node.h"
-#include "utils/time_task.h"
 #include "../include/net_interface.h"
 #include "global.h"
 #include "../version_update/TcpSocket.h"
@@ -110,7 +109,7 @@ void WorkThreads::work_write(int id)
 		switch (data.type)
 		{
 		case E_WRITE:
-			// std::cout << "global::queue_write:" << global::queue_write.msg_list_.size() << std::endl; 
+			// std::cout << "global::queue_write:" << global::queue_write.msg_queue_.size() << std::endl; 
 			WorkThreads::handle_net_write(data);
 			break;
 		default:
@@ -133,7 +132,7 @@ void WorkThreads::work_read(int id) //读套接字专用线程
 		switch (data.type)
 		{
 		case E_READ:
-			// std::cout << "global::queue_read:" << global::queue_read.msg_list_.size() << std::endl; 
+			// std::cout << "global::queue_read:" << global::queue_read.msg_queue_.size() << std::endl; 
 			WorkThreads::handle_net_read(data);
 			break;
 		default:
@@ -189,13 +188,7 @@ int WorkThreads::handle_net_read(const MsgData &data)
 		}		
 		if (nread == 0 && errno != EAGAIN)
 		{
-			bool res = Singleton<PeerNode>::get_instance()->delete_by_fd(data.fd);
-			if(!res)
-			{
-				close(data.fd);
-				Singleton<BufferCrol>::get_instance()->delete_buffer(data.ip, data.port);
-				Singleton<EpollMode>::get_instance()->delete_epoll_event(data.fd);
-			}
+			Singleton<PeerNode>::get_instance()->delete_by_fd(data.fd);
 			return -1;
 		}
 		if (nread < 0)
@@ -219,7 +212,6 @@ int WorkThreads::handle_net_read(const MsgData &data)
 
 bool WorkThreads::handle_net_write(const MsgData &data)
 {
-
 	auto port_and_ip = net_com::pack_port_and_ip(data.port, data.ip);
 
 	if (!Singleton<BufferCrol>::get_instance()->is_exists(port_and_ip))
@@ -246,6 +238,7 @@ bool WorkThreads::handle_net_write(const MsgData &data)
 
 	if (ret == -1)
 	{
+		std::cout << "if (ret == -1)" << std::endl;
 		return false;
 	}
 	if (ret > 0 && ret < (int)buff.size())

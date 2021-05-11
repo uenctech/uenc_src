@@ -116,60 +116,16 @@ bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, cha
 
 void interface_NetMessage(const void *inData, void **outData, int *outDataLen);
 
-void Init(const char *path);
-
 int CreateTx(const char* From, const char * To, const char * amt, const char *ip, uint32_t needVerifyPreHashCount, std::string minerFees);
 
 int free_buf(char **buf);
 
 void interface_testdevice_mac();
 // net_pack packTmp;
-/**
- * @description: 质押资产 
- * @param fromAddr 质押资产的账号 
- * @param amount_str 质押资产的金额
- * @param needVerifyPreHashCount 共识数 
- * @param gasFeeStr 签名费  
- * @param password 矿机密码
- * @param msgdata 网络传输所必须的信息体,手机端交易时使用
- * @param pledgeType 质押类型
- * @return 成功返回0;
- *         失败：-1, 参数错误   -2, UTXO不足
- */
-int CreatePledgeTransaction(const std::string & fromAddr,  
-                            const std::string & amount_str, 
-                            uint32_t needVerifyPreHashCount, 
-                            std::string password,
-                            std::string gasFeeStr, 
-                            const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""}, 
-                            std::string pledgeType = PLEDGE_NET_LICENCE);
 
 
-/**
- * @description: 解质押资产
- * @param fromAddr 解质押资产的账号
- * @param needVerifyPreHashCount 共识数 
- * @param GasFeeStr 签名费
- * @param blockHeaderStr 要解质押的那笔交易所在块的块头
- * @param password 矿机密码
- * @param msgdata 网络传输所必须的信息体,手机端交易时使用
- * @return 成功返回0；
- *         失败：-1， 参数错误； 
- *               -2，数据库事务创建失败；
- *               -3，查询账号是否已经质押资产失败
- *               -4，账号未质押资产
- *               -5，获取质押资产余额失败
- *               -6，质押资产为0
- *               -7，质押资产总额小于解质押资产值
- *               -8，创建交易体失败
- */
-int CreateRedeemTransaction(const std::string & fromAddr, 
-                            uint32_t needVerifyPreHashCount, 
-                            std::string GasFeeStr, 
-                            std::string blockHeaderStr, 
-                            std::string password,
-                            const MsgData &msgdata = {E_READ, 0, 0, 0, "", {0, "", 0, 0}, ""});
 
-int IsMoreThan30DaysForRedeem(const std::string& utxo);
+
+
 
 #endif

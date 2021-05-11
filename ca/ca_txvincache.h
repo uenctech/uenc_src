@@ -13,6 +13,7 @@
 #define CA_TXWINCACHE_H
 
 #include "../utils/CTimer.hpp"
+#include "proto/transaction.pb.h"
 
 #include <string>
 #include <vector>
@@ -37,9 +38,12 @@ public:
         string gas;
         std::vector<std::string> toAmount;
         uint32_t type;
+        int isBroadcast = 0;
+        uint64_t txBroadcastTime = 0;
     };
 
     static string TxToString(const TxVinCache::Tx& tx);
+    static string TxToString(const CTransaction& tx);
 
 public:
     TxVinCache();
@@ -50,10 +54,13 @@ public:
     ~TxVinCache();
 
 public:
+    void SetBroadcastFlag(const string& txhash);
+    bool IsBroadcast(const string& txhash);
+
+    void UpdateTransactionBroadcastTime(const string& txhash);
 
     // 添加交易
-    int Add(const TxVinCache::Tx & tx);
-    int Add(const string& hash, const vector<string>& vin, const vector<string>& fromAddr, const vector<string>& toAddr, uint64_t amount);
+    int Add(const CTransaction& tx, bool broadcast = true);
 
     // 去除交易
     int Remove(const TxVinCache::Tx& tx);
@@ -85,6 +92,14 @@ public:
 
     // 定时任务
     static int CheckExpire(TxVinCache * txVinCache);
+
+private:
+    int Add(const TxVinCache::Tx & tx);
+    int Add(const string& hash, const vector<string>& vin, const vector<string>& fromAddr, const vector<string>& toAddr, uint64_t amount);
+
+    bool VerifySign(const CTransaction& tx);
+    void ConvertTx(const CTransaction& tx, TxVinCache::Tx& newTx);
+    void BroadcastTxPending(const CTransaction& tx);
 
 
 private:

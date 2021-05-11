@@ -8,13 +8,13 @@
 
 3. 请求协议的数据格式如下：
 
-   | 协议总长度 |     通用协议     | 校验和 | 结束标志位 |
-   | :--------: | :--------------: | :----: | :--------: |
-   |   4bytes   | 序列化后的字符串 | 4bytes |   4bytes   |
+    | 协议总长度 |     通用协议     | 校验和 | 标志位 | 结束标志 |
+    | :--------: | :--------------: | :----: | :----: | :------: |
+    |   4bytes   | 序列化后的字符串 | 4bytes | 4bytes | 4bytes   |
 
    - 协议总长度
 
-     - 该字段4字节，记录接下来的“通用协议”+“校验和”+“结束标记”的总长度。假设通用协议100个字节，校验和4个字节，结束标记4个字节，则总长度为100 + 4 + 4 = 108字节。
+     - 该字段4字节，记录接下来的 **通用协议** + **校验和** + **标志位** + **结束标记**的总长度。假设通用协议100个字节，校验和4个字节，标志位4个字节，结束标记4个字节，则总长度为100 + 4 + 4 + 4 = 112字节。
 
    - 通用协议
 
@@ -39,18 +39,30 @@
           | compress |            是否压缩，1为压缩，0为不压缩，默认为0             |
           |   data   | 子协议接口protobuf数据体序列化后的数据,请求时需要将子协议接口的protobuf类型数据序列化后，填充到data中后进行发送。 |
 
-    - 校验和
+
+   - 标志位
+        
+        - 标志位长度为4字节，结构如下：
+
+        |    3     |     2    |    1     |    0     |
+        | :------: | :------: | :------: | :------: |
+        |   保留   |   保留   |   保留   |  优先级  |
+
+        
+        优先级：默认为0。
+          
+   - 校验和
 
         - 校验和长度为4字节，是通用协议序列化后，通过Adler32算法计算出来的校验和信息。
 
-    - 结束标志位
+   - 结束标志
 
         - 结束标记长度为4字节，其内容为7777777。
 
 4. 将请求协议发送到主网后，主网也按照请求协议格式封装回传信息传送给请求方，请求方收到信息后：
 
     1. 根据协议总长度获得完整回传信息。
-    2. 根据协议总长度获得通用协议、校验和以及结束标记。
+    2. 根据协议总长度获得通用协议、校验和、标志位以及结束标志。
     3. 根据校验和判断通用协议是否完整。
     4. 通过反序列化通用协议，获取子协议（接口）名称和子协议（接口）的数据内容。
     5. 根据通用协议中的压缩和加密字段，确定是否对子协议（接口）的数据内容进行解压缩或解密操作。
@@ -332,8 +344,7 @@ def GetAmountRequest():
         return json_output
 ```
 
-## 五、获取特定节点打包费接口（GetPacketFeeReq）
-
+## 五、获取特定节点打包费接口（GetPacketFeeReq）已废弃deprecated
 1. 请求
 
    ```dict
@@ -830,23 +841,18 @@ def GetServiceInfoRequest():
    ```
    message CreateTxMsgReq
    {
-   	TxHeaderMsg txHeaderMsg 		= 1;
+   	string version           		= 1;
    	string from 					= 2;
    	string to 						= 3;
    	string amt 						= 4;	
    	string minerFees 				= 5;
    	string needVerifyPreHashCount 	= 6;
    }
-   
-   message TxHeaderMsg
-   {
-   	string version 					= 1;
-   }
    ```
 
    |          字段          |               说明               |
    | :--------------------: | :------------------------------: |
-   |      txHeaderMsg       |   TxHeaderMsg 通用交易头结构体   |
+   |        version         |               版本              |
    |          from          |          发起方钱包地址          |
    |           to           |          接收方钱包地址          |
    |          amt           |             交易金额             |
@@ -1079,7 +1085,8 @@ def GetServiceInfoRequest():
    	string to						= 3;					
    	string amt						= 4;					
    	string minerFees				= 5;						
-   	string needVerifyPreHashCount 	= 6;						
+   	string needVerifyPreHashCount 	= 6;
+    string password                 = 7;						
    }
    ```
 
@@ -1091,6 +1098,7 @@ def GetServiceInfoRequest():
    |          amt           |             交易金额             |
    |       minerFees        | 发起交易方支付的单个签名的矿工费 |
    | needVerifyPreHashCount |              共识数              |
+   |        password        |              矿机密码              |
 
 2. 响应
 
@@ -1124,7 +1132,8 @@ def GetServiceInfoRequest():
    	repeated string from			= 2;						
    	repeated ToAddr to		    	= 3;						
    	string gasFees			    	= 4;						
-   	string needVerifyPreHashCount 	= 5;						
+   	string needVerifyPreHashCount 	= 5;
+    string password                 = 6;
    }
    ```
 
@@ -1135,6 +1144,7 @@ def GetServiceInfoRequest():
    |           to           |          交易接收方地址          |
    |        gasFees         | 发起交易方支付的单个签名的矿工费 |
    | needVerifyPreHashCount |              共识数              |
+   |        password        |              矿机密码              |
 
 2. 响应
 
@@ -1549,7 +1559,7 @@ def GetAddrInfoRequest():
    {
    	string       version      	= 1;
    	int32        code			= 2;
-   	string		 description	= 3;
+   	string		 message	= 3;
    	string 		 txData			= 4;
    	string       txEncodeHash   = 5;
    }
@@ -1714,7 +1724,8 @@ def GetAddrInfoRequest():
        string addr                   = 2;                    
        string amt                    = 3;                     
        string needVerifyPreHashCount = 4;                      
-       string gasFees                = 5;                      
+       string gasFees                = 5;
+       string password               = 6;                      
    }
    ```
 
@@ -1725,6 +1736,7 @@ def GetAddrInfoRequest():
    |          amt           |  质押金额  |
    | needVerifyPreHashCount | 共识数个数 |
    |        gasFees         |   燃料费   |
+   |        password        |    密码   |
 
 2. 响应
 
@@ -1802,7 +1814,7 @@ def GetAddrInfoRequest():
    {
        string version 	= 1;
        string addr 	= 2;
-       uint32 index 	= 3; 
+       string txhash = 3; 
        uint32 count 	= 4;
    }
    ```
@@ -1811,7 +1823,7 @@ def GetAddrInfoRequest():
    | :-----: | :------: |
    | version |  版本号  |
    |  addr   | 查询地址 |
-   |  index  |   索引   |
+   |  txhash | 该hash的下一个为起始交易,第一次使用时，使用空字符串   |
    |  count  | 查询数量 |
 
 2. 响应
@@ -1823,7 +1835,8 @@ def GetAddrInfoRequest():
        int32 code 					= 2; 
        string description 			= 3;
        repeated PledgeItem list 	= 4; 
-       uint32 total 				= 5; 
+       uint32 total 				= 5;
+       string lasthash              = 6; 
    }
    message PledgeItem
    {
@@ -1845,6 +1858,7 @@ def GetAddrInfoRequest():
    | description |                         返回错误信息                         |
    |    list     |                         质押信息列表                         |
    |    total    |                        质押条目总数量                        |
+   |  lashhash   |                      最后一个交易哈希                        |
    |  blockhash  |                           区块哈希                           |
    | blockheight |                           区块高度                           |
    |    utxo     |                             utox                             |
@@ -1865,7 +1879,7 @@ def GetAddrInfoRequest():
    {
        string version = 1; 
        string addr = 2; 
-       uint32 index = 3; 
+       string txhash = 3; 
        uint32 count = 4; 
    }
    ```
@@ -1874,7 +1888,7 @@ def GetAddrInfoRequest():
    | :-----: | :------: |
    | version |  版本号  |
    |  addr   |   地址   |
-   |  index  |   索引   |
+   |  txhash |  该hash的下一个为起始交易,第一次使用时，使用空字符串 |
    |  count  | 查询数量 |
 
 2. 响应
@@ -1886,7 +1900,8 @@ def GetAddrInfoRequest():
        int32 code = 2;
        string description = 3;
        repeated TxInfoItem list = 4; 
-       uint32 total = 5; 
+       uint32 total = 5;
+       string lasthash = 6; 
    }
    message TxInfoItem
    {
@@ -1902,7 +1917,8 @@ def GetAddrInfoRequest():
        TxInfoType_Gas = 3;
        TxInfoType_Award = 4; 
        TxInfoType_Pledge = 5;
-       TxInfoType_RedeemPledge = 6; 
+       TxInfoType_RedeemPledge = 6;
+       TxInfoType_PledgedAndRedeemed  = 7; 
    }
    ```
 
@@ -1913,7 +1929,8 @@ def GetAddrInfoRequest():
    |       description       |                         返回错误信息                         |
    |          list           |                         交易信息列表                         |
    |          total          |                        交易条目总数量                        |
-   |          type           |            交易类型，详见enum TxInfoType类型说明             |
+   |         lasthash        |                          最后一个交易哈希                    |
+   |          type           |            交易类型，详见enum TxInfoType类型说明              |
    |         txhash          |                           交易哈希                           |
    |          time           |                            时间戳                            |
    |         amount          |                            交易额                            |
@@ -1924,6 +1941,7 @@ def GetAddrInfoRequest():
    |    TxInfoType_Award     |                           区块奖励                           |
    |    TxInfoType_Pledge    |                             质押                             |
    | TxInfoType_RedeemPledge |                           解除质押                           |
+   | TxInfoType_PledgedAndRedeemed |                     质押但已解除                        |
 
 3.代码示例
 
@@ -1935,7 +1953,7 @@ def GetTxInfoListRequest():
     PORT = 11187
     VERSION = '1_1.3_p'
     ADDRESS = '13C4UmhB7tKGdXiJrp2GKsJtmCoJeqGJQz'
-    INDEX = 1
+    TXHASH = ''
     COUNT = 5
 
     # 创建socket请求
@@ -1947,7 +1965,7 @@ def GetTxInfoListRequest():
     addr = protobuf_pb2.GetTxInfoListReq()
     addr.version = VERSION
     addr.addr = ADDRESS
-    addr.index = INDEX
+    addr.txhash = TXHASH
     addr.count = COUNT
 
     common = protobuf_pb2.CommonMsg()
@@ -2021,8 +2039,9 @@ def GetTxInfoListRequest():
    
        string gas = 10; 
        string amount = 11;
-       string awardGas = 12; 
-       string awardAmount = 13;
+       string award = 12;
+       string awardGas = 13; 
+       string awardAmount = 14;
    }
    ```
 
@@ -2039,6 +2058,7 @@ def GetTxInfoListRequest():
    |   toaddr    |                           接收地址                           |
    |     gas     |                         付出交易Gas                          |
    |   amount    |                            交易额                            |
+   |     award   |                           奖励额                             |
    |  awardGas   |                         获得奖励Gas                          |
    | awardAmount |                           区块奖励                           |
 
@@ -2332,3 +2352,71 @@ def GetBlockInfoDetailRequest():
         # 返回json数据
         return json_output
 ```
+
+
+##  二十七、获取交易失败列表请求（GetTxFailureListReq）
+
+1. 请求
+
+   ```
+   message GetTxFailureListReq 
+   {
+       string version = 1;
+       string addr = 2;
+       string txhash = 3; 
+       uint32 count = 4;
+   }
+   ```
+
+   |  字段   |   说明   |
+   | :-----: | :------: |
+   | version |  版本号  |
+   |  addr   | 查询地址 |
+   |  txhash | 该hash的下一个为起始交易,第一次使用时，使用空字符串   |
+   |  count  | 查询数量 |
+
+2. 响应
+
+   ```
+    message GetTxFailureListAck
+    {
+        string version = 1;
+        int32 code = 2;
+        string description = 3;
+        uint32 total = 4;
+        repeated TxFailureItem list = 5;
+        string lasthash = 6;
+    }
+    message TxFailureItem
+    {
+        string txHash = 1;
+        repeated string vins = 2;
+        repeated string fromaddr = 3;
+        repeated string toaddr = 4;
+        string amount = 5;
+        uint64 time  = 6;
+        string detail = 7;
+        string gas = 8;
+        repeated string toAmount = 9;
+        TxType type = 10;
+    }
+   ```
+
+   |    字段     |                             说明                             |
+   | :---------: | :----------------------------------------------------------: |
+   |   version   |                            版本号                            |
+   |    code     | 返回错误码 0 成功; -1 地址为空; -2 失败列表信息为空; -3 索引越界; -4 没有找到哈希; |
+   | description |                         返回错误信息                         |   
+   |    total    |                        失败列表条目总数量                     |
+   |    list     |                         失败信息列表                          |
+   |  lashhash   |                      最后一个交易哈希                         |
+   |  txHash     |                           交易哈希                           |
+   |    vins     |                           vins                              |
+   |  fromaddr   |                           发起地址                           |
+   |   toaddr    |                           接收地址                           |
+   |   amount    |                          金额资产值                          |
+   |    time     |                            时间戳                            |
+   |   detail    |                           详情描述                           |
+   |     gas     |                           签名费                             |
+   |   toAmount  |                           每账户金额                         |
+   |    type     |                           交易类型                           |

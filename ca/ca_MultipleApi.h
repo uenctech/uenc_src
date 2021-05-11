@@ -4,7 +4,7 @@
 /*
  * @Author: your name
  * @Date: 2020-09-11 10:29:55
- * @LastEditTime: 2020-09-25 08:55:22
+ * @LastEditTime: 2021-04-26 09:48:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ebpc\ca\ca_MultipleApi.h
@@ -25,14 +25,13 @@
 #include "ca_test.h"
 #include "unistd.h"
 #include "ca_hexcode.h"
-#include "../include/cJSON.h"
 #include "../include/net_interface.h"
 #include "ca_message.h"
 #include "ca_coredefs.h"
 #include "ca_console.h"
 #include "ca_base64.h"
 #include "ca_blockpool.h"
-
+#include "../common/devicepwd.h"
 #include <iostream>
 #include <string>
 #include <map>
@@ -56,13 +55,6 @@ void assign(const std::shared_ptr<Message> &, const MsgData &, const std::string
 
 void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &, GetNodeServiceFeeAck &);
 
-
-/* ==================================================================================== 
- # @description: 手机端连接矿机发起质押交易
- # @param msg    手机端发送的交易数据
- # @param phoneControlDevicePledgeTxAck  发送回手机端的回执
- ==================================================================================== */
-void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTxMsgReq>& msg, const MsgData &msgdata );
 
 /**
  * @description: 处理获得质押列表请求
@@ -102,5 +94,6 @@ void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, 
 void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgData& msgdata);
 bool  GetTxByTxHashFromRocksdb(vector<string>txhash,vector<CTransaction> & outTx);
 
+void handleCheckNodeHeightReq(const std::shared_ptr<CheckNodeHeightReq>& req, const MsgData& msgdata);
 
 #endif // !__CA_MULTIPLEAPI_H__

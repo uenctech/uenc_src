@@ -1,19 +1,21 @@
 
-#include "ca_blockpool.h"
-#include "ca_console.h"
-#include "../include/logging.h"
-#include "ca_transaction.h"
 #include <algorithm>
 #include <iterator>
 #include <pthread.h>
+
+#include "ca_transaction.h"
 #include "ca_global.h"
 #include "ca_hexcode.h"
 #include "ca_rocksdb.h"
-#include "MagicSingleton.h"
-#include "../include/ScopeGuard.h"
+#include "ca_blockpool.h"
+#include "ca_console.h"
 #include "ca_synchronization.h"
 #include "ca_base58.h"
-#include "ca_verify.h"
+#include "ca_rollback.h"
+
+#include "MagicSingleton.h"
+#include "../include/logging.h"
+#include "../include/ScopeGuard.h"
 
 bool BlockPoll::CheckConflict(const CBlock& block1, const CBlock& block2)
 {
@@ -113,7 +115,7 @@ bool BlockPoll::Add(const Block& block)
 	{
 		error("BlockPoll:VerifyHeight fail!!");
 		return false;
-	}
+	}  
 
 	//检查utxo是否有冲突
 	for (auto it = blocks_.begin(); it != blocks_.end(); ++it) 
@@ -126,7 +128,9 @@ bool BlockPoll::Add(const Block& block)
 			if(curr_block.blockheader_.time() < blockheader.time())   //预留块中的早
 			{
 				return false;
-			}else{     //预留块中的晚
+			}
+			else
+			{     //预留块中的晚
 				it = blocks_.erase(it);
 				blocks_.push_back(block);
 				return true;
@@ -166,13 +170,45 @@ void BlockPoll::Process()
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-    for (auto it = sync_blocks_.begin(); it != sync_blocks_.end(); ++it) {
+	// 同步数据起始高度
+	uint64_t startHeight = 0;
+	uint64_t endHeight = 0;
+
+    for (auto it = sync_blocks_.begin(); it != sync_blocks_.end(); ++it) 
+	{
 		g_synch->sync_adding = true;
         auto &block = *it;
 		if(frist_hash == block.blockheader_.prevhash())
 		{
 			frist_hash_num++;
 		}
+
+		// 取出同步数据中起始块高度
+		if (startHeight == 0)
+		{
+			startHeight = block.blockheader_.height();
+		}
+		else
+		{
+			if ( (uint64_t)block.blockheader_.height() < startHeight )
+			{
+				startHeight = block.blockheader_.height();
+			}
+		}
+
+		// 取出同步数据中结束块高度
+		if (endHeight == 0) 
+		{ 
+			endHeight = block.blockheader_.height(); 
+		}
+		else
+		{
+			if ( (uint64_t)block.blockheader_.height() > startHeight )
+			{
+				endHeight = block.blockheader_.height();
+			}
+		}
+		
 		if(VerifyBlockHeader(block.blockheader_))
 		{
 			bool ret = AddBlock(block.blockheader_);
@@ -211,35 +247,89 @@ void BlockPoll::Process()
 	
 	if((success_num + frist_hash_num) >= sync_cnt)
 	{
-		g_synch->DataSynch(g_synch->verifying_node.id);
-		std::cout << "sync not voer, continue sync,id:" << g_synch->verifying_node.id << std::endl;
+		int sync_cnt = Singleton<Config>::get_instance()->GetSyncDataCount();
+		g_synch->DataSynch(g_synch->verifying_node.id, sync_cnt);
+		std::cout << "sync not over, continue sync,id:" << g_synch->verifying_node.id << std::endl;
 	}
+
+	unsigned int blockHeight = 0;
+	if (0 != pRocksDb->GetBlockTop(txn, blockHeight))
+	{
+		processing_ = false;
+		return ;
+	}
+
+	// std::cout << "g_synch->conflict_height : " << g_synch->conflict_height << std::endl;
+ 
 	if(sync_blocks_.size() >= SYNC_ADD_FAIL_LIMIT && !sync_add_success)
 	{
+		// 同步失败计次
 		sync_add_fail_times_++;
-		std::cout << "sync_add_fail_times_:" << sync_add_fail_times_ << std::endl;
-	}else if(sync_blocks_.size() > 0 && sync_add_success)
+		std::cout << "sync fail - sync_add_fail_times_:" << sync_add_fail_times_ << std::endl;
+	}
+	else if(sync_blocks_.size() > 0 && sync_add_success)
 	{
+		// 同步成功时清零
 		sync_add_fail_times_ = 0;
 	}
+
+	if ( (sync_blocks_.size() > 0) && 
+		(g_synch->conflict_height > -1) && 
+		(g_synch->conflict_height < (int)blockHeight - SYNC_ADD_FAIL_LIMIT) )
+	{
+		// 有分叉点的时候计次
+		sync_fork_fail_times_++;
+		std::cout << "fork fail - sync_fork_fail_times_:" << sync_fork_fail_times_ << std::endl;
+	}
+
+	std::vector<Block> syncBlockTmp = sync_blocks_;
 	sync_blocks_.clear();
-	if(sync_add_fail_times_ >= SYNC_ADD_FAIL_TIME)
+
+	if(sync_add_fail_times_ >= SYNC_ADD_FAIL_TIME || sync_fork_fail_times_ >= SYNC_ADD_FAIL_TIME)
 	{
 		error("BlockPoll::Process rollback");
 		unsigned int top = 0;
 		pRocksDb->GetBlockTop(txn, top);
 
+		uint32_t rollbackHight = top;
 		if(g_synch->conflict_height > -1 && (unsigned)g_synch->conflict_height < top)
 		{
-			RollbackToHeight(g_synch->conflict_height);
+			rollbackHight = startHeight > (uint64_t)g_synch->conflict_height ? startHeight : g_synch->conflict_height;
 		}
 		else
 		{
-			RollbackToHeight(top - ROLLBACK_HEIGHT);
+			rollbackHight = top - ROLLBACK_HEIGHT;
+		}
+
+		if (syncBlockTmp.size() != 0)
+		{
+			if (startHeight < top)
+			{
+				if ( 0 != MagicSingleton<Rollback>::GetInstance()->RollbackToHeight(startHeight) )
+				{
+					processing_ = false;
+					return;
+				}
+			}
+
+			if ( 0 != MagicSingleton<Rollback>::GetInstance()->RollbackBlockBySyncBlock(rollbackHight, syncBlockTmp) )
+			{
+				processing_ = false;
+				return;
+			}
+
+			// 更新top
+			Singleton<PeerNode>::get_instance()->set_self_chain_height();
+
+			std::lock_guard<std::mutex> lck(rollbackLock);
+			rollbackCount++;
 		}
 		sync_add_fail_times_ = 0;
+		sync_fork_fail_times_ = 0;
 	}
-	
+
+	// g_synch->conflict_height = -1; // need to lock
+
     for (auto it = blocks_.begin(); it != blocks_.end(); ) 
 	{ 
         auto &block = *it;
@@ -334,7 +424,6 @@ void BlockPoll::Process()
 		}
 		it = pending_block_.erase(it);
     }
-
 	processing_ = false;
 }
 
@@ -343,7 +432,8 @@ std::string BlockPoll::GetBlock()
 {
 	std::lock_guard<std::mutex> lck(mu_block_);
 	std::vector<std::string> ser_block;
-	for (auto &block:blocks_) {
+	for (auto &block:blocks_) 
+	{
         ser_block.push_back(block.blockheader_.SerializeAsString());
 	}
     
@@ -377,12 +467,13 @@ bool BlockPoll::VerifyHeight(const CBlock& block)
 
 	unsigned int preheight;
 	db_status = pRocksDb->GetBlockHeightByBlockHash(txn, block.prevhash(), preheight);
-    if (db_status == 0) {
-		if(ownblockHeight > (preheight + 5) ){
+    if (db_status == 0) 
+	{
+		if(ownblockHeight > (preheight + 5) )
+		{
 			return false;
 		}
     }
-
 	return true;
 }
 

@@ -8,23 +8,26 @@
 #include "net/msg_queue.h"
 #include "../include/net_interface.h"
 #include "ca_global.h"
+#include "../utils/util.h"
 
 const int SYNCNUM = 5;      //同步寻找节点数
-const int CHECKNUM = 15;    //漏块检查的段数
-const int CHECK_HEIGHT = 100;  //漏块检查的段数每段个数
+const int CHECKNUM = 50;    //漏块检查的段数
+const int CHECK_HEIGHT = 10;  //漏块检查的段数每段个数
 const int HASH_LEN = 6;       // hash长度
 const int SYNC_NUM_LIMIT = 500;   // 最多同步多少块
 
-
 struct SyncNode
 {
-    std::string id = "";          // 节点id
-    int64_t height = 0;          // 最高块的高度
-    std::string hash = "";        // 块hash
+    std::string id = "";            // 节点id
+    int64_t height = 0;             // 最高块的高度
+    std::string hash = "";          // 块hash
+    std::string forwardHash = "";   // 请求高度前n块分组hash
+    std::string backwardHash = "";  // 请求高度后n块分组hash
     
     SyncNode(){
     }
-    SyncNode(std::string id_, int64_t height_, std::string hash_):id(id_),height(height_),hash(hash_){
+    SyncNode(std::string id_, int64_t height_, std::string hash_, std::string forward_, std::string backward_)
+            :id(id_), height(height_), hash(hash_), forwardHash(forward_), backwardHash(backward_){
 
     }
     bool operator <(const SyncNode& other)
@@ -44,20 +47,30 @@ public:
     Sync() = default;
     ~Sync()  = default;
 
-    bool SetPotentialNodes(const std::string &id, const int64_t &height, const std::string &hash);
+    bool SetPotentialNodes(const std::string &id, 
+							const int64_t &height, 
+							const std::string &hash, 
+							const std::string & forwardHash, 
+							const std::string & backwardHash);
+
     void SetPledgeNodes(const std::vector<std::string> & ids);
 
     void Process();
-    bool DataSynch(std::string id);
+    bool DataSynch(std::string id, const int syncNum);
+    int GetSyncInfo(std::vector<std::string> & reliables, int64_t & syncHeight);
+    void ReliableNode();
+    int SyncDataFromPubNode();
 
     std::vector<std::string> pledgeNodes;     // 已经质押的节点
     SyncNode verifying_node;                  // 正在验证的节点
     std::vector<SyncNode> verifying_result;   // 正在验证的节点返回的结果
     std::vector<SyncNode> potential_nodes;    // 潜在可靠节点
+    uint32_t reliableCount = 0;               // 查找可靠节点失败计次
     bool is_sync = false;
     std::mutex mu_potential_nodes;
     std::mutex mu_verifying_result;
     std::mutex mu_get_pledge;
+    std::mutex reliableLock;                  // 可靠节点查找失败计次锁
     int conflict_height = -1;
     bool sync_adding = false;
 };
@@ -66,7 +79,7 @@ public:
 
 void SendSyncGetnodeInfoReq(std::string id);
 void SendVerifyReliableNodeReq(std::string id, int64_t height);
-void SendSyncBlockInfoReq(std::string id);
+void SendSyncBlockInfoReq(std::string id, const int syncNum);
 void SendSyncGetPledgeNodeReq(std::string id);
 int SendVerifyPledgeNodeReq(std::vector<std::string> ids);
 

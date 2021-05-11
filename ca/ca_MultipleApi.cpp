@@ -1,11 +1,13 @@
 #include "ca_MultipleApi.h"
 #include "ca_txhelper.h"
-#include "ca_phonetx.h"
 #include "ca.h"
 #include  "ca_timefuc.h"
 #include  "ca_pwdattackchecker.h"
 #include "ca_txvincache.h"
 #include "ca_txfailurecache.h"
+#include <regex>
+#include "../net/node_cache.h"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -100,13 +102,13 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
     return;
 }
 
-void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFeeAck &fee_ack) 
+int SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFeeAck &fee_ack) 
 {
     using namespace std;
     fee_ack.set_version(getVersion());
     std::string dev_pass = fee_req->password();
     std::string hashOriPass = generateDeviceHashPassword(dev_pass);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
     uint32_t minutescount ;
     bool retval = pCPwdAttackChecker->IsOk(minutescount);
@@ -117,7 +119,7 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
         fee_ack.set_code(-31);
         fee_ack.set_description(minutescountStr);
         cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
-        return;
+        return -1;
     }
     if(hashOriPass.compare(targetPassword))
     {
@@ -127,14 +129,14 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
             cout<<"前两次输入密码错误"<<endl;
             fee_ack.set_code(-6);
             fee_ack.set_description("密码输入错误");
-            return;
+            return -2;
        } 
        else 
        {
             cout<<"第三次输入密码错误返回倒计时时间"<<endl;
             fee_ack.set_code(-30);
             fee_ack.set_description("第三次输入密码错误");
-            return;
+            return -3;
        }
     }
     else 
@@ -149,35 +151,44 @@ void SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceF
     {
         fee_ack.set_code(-6);
         fee_ack.set_description("密码错误");
-        return;
+        return -4;
     }
 
     cout << "fee_req->service_fee() =" << fee_req->service_fee() << endl;
+
+    std::regex partten("-[0-9]+(.[0-9]+)?|[0-9]+(.[0-9]+)?");
+    if (!std::regex_match(fee_req->service_fee(), partten))
+    {
+        fee_ack.set_code(-8);
+        fee_ack.set_description("Fee输入不正确");
+        cout << "invalid fee param" << endl;
+        return -5;
+    }
+
     double nodesignfee = stod(fee_req->service_fee());
     if(nodesignfee < 0.001 || nodesignfee > 0.1)
     {
         fee_ack.set_code(-7);
         fee_ack.set_description("滑动条数值显示错误");
         cout<<"return num show nodesignfee = "<<nodesignfee<<endl;
-        return;
+        return -6;
     }
     uint64_t service_fee = (uint64_t)(stod(fee_req->service_fee()) * DECIMAL_NUM);
     cout << "fee " << service_fee << endl;
     //设置手续费 SET
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     auto status = rdb_ptr->SetDeviceSignatureFee(service_fee);
-    if (!status) 
+    if (status) 
     {
-        cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee4 =" << service_fee << endl;
-        net_update_fee_and_broadcast(service_fee);
         fee_ack.set_code(status);
-        fee_ack.set_description("燃料费设置成功");
-        return;
+        fee_ack.set_description("燃料费设置失败"); 
+        return -7;
     }
 
+    cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee4 =" << service_fee << endl;
     fee_ack.set_code(status);
-    fee_ack.set_description("燃料费设置失败"); 
-    return;
+    fee_ack.set_description("燃料费设置成功");
+    return 0;
 }
 
 
@@ -493,20 +504,20 @@ void HandleGetServiceInfoReq(const std::shared_ptr<GetServiceInfoReq>& msg,const
         getInfoAck.set_code(is_version);
         getInfoAck.set_description("版本错误");
 
-        net_send_message<GetServiceInfoAck>(msgdata, getInfoAck);
+        net_send_message<GetServiceInfoAck>(msgdata, getInfoAck, net_com::Priority::kPriority_Middle_1);
         return;
     }
    
     GetServiceInfo(msg,getInfoAck);
-    net_send_message<GetServiceInfoAck>(msgdata, getInfoAck);
+    net_send_message<GetServiceInfoAck>(msgdata, getInfoAck, net_com::Priority::kPriority_Middle_1);
     return;
 }
 
-void GetPacketFee(const std::shared_ptr<GetPacketFeeReq> &packet_req, GetPacketFeeAck &packet_ack) 
+void GetPackageFee(const std::shared_ptr<GetPackageFeeReq> &package_req, GetPackageFeeAck &package_ack) 
 {
     using namespace std;
 
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GetPacketFee " << packet_req->public_net_ip() << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GetPackageFee " << package_req->public_net_ip() << endl;
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
@@ -519,16 +530,16 @@ void GetPacketFee(const std::shared_ptr<GetPacketFeeReq> &packet_req, GetPacketF
         rdb_ptr->TransactionDelete(txn, false);
     };
 
-    uint64_t packet_fee {0};
-    rdb_ptr->GetDevicePackageFee(packet_fee);
+    uint64_t package_fee {0};
+    rdb_ptr->GetDevicePackageFee(package_fee);
   
-    packet_ack.set_version(getVersion());
-    packet_ack.set_code(0);
-    packet_ack.set_description("获取成功");
+    package_ack.set_version(getVersion());
+    package_ack.set_code(0);
+    package_ack.set_description("获取成功");
 
-    double d_fee = ((double)packet_fee) / DECIMAL_NUM;
+    double d_fee = ((double)package_fee) / DECIMAL_NUM;
     std::string s_fee= to_string(d_fee);
-    packet_ack.set_packet_fee(s_fee);
+    package_ack.set_package_fee(s_fee);
 
     return;
 }
@@ -667,27 +678,30 @@ uint64_t GetBalanceByAddress(const std::string & address)
 
 void GetAmount(const std::shared_ptr<GetAmountReq> &amount_req, GetAmountAck &amount_ack) 
 {
-    bool enable = false;
-    Singleton<Config>::get_instance()->GetEnable(kConfigEnabelTypeGetAmount, &enable);
-    if (!enable) {
-        amount_ack.set_version(getVersion());
-        amount_ack.set_code(-1);
-        amount_ack.set_description("Disable Get Amount");
-        error("Disable Get Amount");
+    amount_ack.set_version(getVersion());
+    
+    std::string addr = amount_req->address();
+    if(addr.size() == 0)
+    {
+        amount_ack.set_code(-2);
+        amount_ack.set_description("addr is empty");
+        return;
+    } 
+
+    if (!CheckBase58Addr(addr))
+    {
+        amount_ack.set_code(-3);
+        amount_ack.set_description("not base58 addr");
         return;
     }
 
-    std::string addr = amount_req->address();
     uint64_t balance = GetBalanceByAddress(addr);
     std::string s_balance = to_string(((double)balance) / DECIMAL_NUM);
 
-    amount_ack.set_version(getVersion());
     amount_ack.set_code(0);
     amount_ack.set_description("Get Amount Success");
-
     amount_ack.set_address(addr);
     amount_ack.set_balance(s_balance);
-    //mData["fee"] = fee;
 
     return;
 }
@@ -817,7 +831,7 @@ void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetD
 
     Singleton<StringUtil>::get_instance()->Trim(password, true, true);
     std::string originPass = generateDeviceHashPassword(password);
-    std::string targetPass = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPass = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
    
     uint32_t minutescount ;
@@ -918,7 +932,7 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
     }
 
     std::string hashOriPass = generateDeviceHashPassword(old_pass);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
    
     uint32_t minutescount ;
@@ -966,7 +980,7 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
     }
 
     std::string hashNewPass = generateDeviceHashPassword(new_pass);
-    if (!Singleton<Config>::get_instance()->SetDevPassword(hashNewPass)) 
+    if (!Singleton<DevicePwd>::get_instance()->SetDevPassword(hashNewPass)) 
     {
         pass_ack.set_code(-7);
         pass_ack.set_description("Unknown error");
@@ -1086,7 +1100,7 @@ void GetNodInfo(GetNodeInfoAck& node_ack)
     node_ack.set_version(getVersion());
     node_ack.set_code(0);
     node_ack.set_description("获取成功");
-    
+    Singleton<Config>::get_instance()->InitFile();
     std::string node_string = Singleton<Config>::get_instance()->GetNodeInfo();
     if (node_string.empty()) 
     {
@@ -1203,7 +1217,7 @@ void GetClientInfo(const std::shared_ptr<GetClientInfoReq> &clnt_req, GetClientI
 
     std::string sMinVersion = Singleton<Config>::get_instance()->GetClientVersion(phone_type);
     std::string sClientVersion = phone_version;
-
+   
     std::vector<std::string> vMin;
     std::vector<std::string> vCleint;
 
@@ -1228,7 +1242,12 @@ void GetClientInfo(const std::shared_ptr<GetClientInfoReq> &clnt_req, GetClientI
             int nMin = atoi(sMin.c_str());
             int nClient = atoi(sClient.c_str());
 
-            if (nMin < nClient) 
+            if (nMin > nClient) 
+            {
+                isUpdate = true;
+                break;
+            } 
+            else if (nMin < nClient)
             {
                 isUpdate = false;
                 break;
@@ -1301,7 +1320,7 @@ void HandleGetDevPrivateKeyReq(const std::shared_ptr<GetDevPrivateKeyReq>& msg, 
     }
 
     std::string hashOriPass = generateDeviceHashPassword(passwd);
-    std::string targetPassword = Singleton<Config>::get_instance()->GetDevPassword();
+    std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     auto pCPwdAttackChecker = MagicSingleton<CPwdAttackChecker>::GetInstance(); 
    
     uint32_t minutescount ;
@@ -1386,526 +1405,6 @@ void HandleGetDevPrivateKeyReq(const std::shared_ptr<GetDevPrivateKeyReq>& msg, 
     }    
 }
 
-
-void HandleCreatePledgeTxMsgReq(const std::shared_ptr<CreatePledgeTxMsgReq>& msg, const MsgData &msgdata)
-{
-    // 判断版本是否兼容
-    CreatePledgeTxMsgAck createPledgeTxMsgAck; 
-	if( 0 != IsVersionCompatible( getVersion() ) )
-	{
-        createPledgeTxMsgAck.set_version(getVersion());
-		createPledgeTxMsgAck.set_code(-1);
-		createPledgeTxMsgAck.set_description("version error!");
-        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-		error("HandleCreatePledgeTxMsgReq IsVersionCompatible");
-		return ;
-	}
-   
-    uint64_t gasFee = std::stod(msg->gasfees().c_str()) * DECIMAL_NUM;
-    uint64_t amount = std::stod(msg->amt().c_str()) * DECIMAL_NUM;
-    uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
-  
-    if(msg->addr().size()<= 0 || amount <= 0 || needverifyprehashcount < (uint32_t)g_MinNeedVerifyPreHashCount || gasFee <= 0)
-    {
-        createPledgeTxMsgAck.set_version(getVersion());
-        createPledgeTxMsgAck.set_code(-2);
-		createPledgeTxMsgAck.set_description("parameter  error!");
-        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-        error("CreatePledgeFromAddr parameter error!");
-        return ;
-    }
-
-    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if ( txn == NULL )
-	{
-        createPledgeTxMsgAck.set_version(getVersion());
-        createPledgeTxMsgAck.set_code(-3);
-		createPledgeTxMsgAck.set_description("TransactionInit failed!");
-        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-        error("(HandleCreatePledgeTxMsgReq) TransactionInit failed !");
-		return ;
-	}
-
-	ON_SCOPE_EXIT
-    {
-		pRocksDb->TransactionDelete(txn, false);
-	};
-
-    std::vector<std::string> fromAddr;
-    fromAddr.push_back(msg->addr());
-
-    std::map<std::string, int64_t> toAddr;
-    toAddr[VIRTUAL_ACCOUNT_PLEDGE] = amount;
-
-    CTransaction outTx;
-    int ret = TxHelper::CreateTxMessage(fromAddr, toAddr,needverifyprehashcount , gasFee, outTx);
-    if(ret == -20 )
-    {
-        createPledgeTxMsgAck.set_version(getVersion());
-        createPledgeTxMsgAck.set_code(-20);
-		createPledgeTxMsgAck.set_description("IsConflict!");
-        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-		error("CreateTransaction Error ...\n");
-		return ;
-    }
-    for(int i = 0;i <outTx.vin_size();i++)
-    {
-        CTxin *txin = outTx.mutable_vin(i);
-        txin->clear_scriptsig();
-    }
-
-	if(ret != 0)
-	{
-        createPledgeTxMsgAck.set_version(getVersion());
-        createPledgeTxMsgAck.set_code(-5);
-		createPledgeTxMsgAck.set_description("CreateTransaction  error!");
-        net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-		error("CreateTransaction Error ...\n");
-		return ;
-	}
-
-    nlohmann::json txInfo;
-    txInfo["PledgeType"] = PLEDGE_NET_LICENCE;
-    txInfo["PledgeAmount"] = amount;
-
-    auto extra = nlohmann::json::parse(outTx.extra());
-    extra["TransactionType"] = TXTYPE_PLEDGE;
-	extra["TransactionInfo"] = txInfo;
-	outTx.set_extra(extra.dump());
-    std::string txData = outTx.SerializePartialAsString();
-
-    size_t encodeLen = txData.size() * 2 + 1;
-	unsigned char encode[encodeLen] = {0};
-	memset(encode, 0, encodeLen);
-	long codeLen = base64_encode((unsigned char *)txData.data(), txData.size(), encode);
-
-    std::string encodeStr((char *)encode, codeLen);
-	std::string txEncodeHash = getsha256hash(encodeStr);
-
-    createPledgeTxMsgAck.set_version(getVersion());
-    createPledgeTxMsgAck.set_code(0);
-    createPledgeTxMsgAck.set_description("success");
-    createPledgeTxMsgAck.set_txdata(encodeStr);
-    createPledgeTxMsgAck.set_txencodehash(txEncodeHash);
-    net_send_message<CreatePledgeTxMsgAck>(msgdata, createPledgeTxMsgAck);
-    return ;
-}
-
-void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgData &msgdata)
-{
-    TxMsgAck PledgeTxMsgAck;
-    PledgeTxMsgAck.set_version(getVersion());
-   
-	//判断版本是否兼容
-	if( 0 != IsVersionCompatible(msg->version() ) )
-	{
-		PledgeTxMsgAck.set_code(-101);
-		PledgeTxMsgAck.set_message("Version incompatible!");
-        net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
-		return ;
-	}
-
-    if (msg->sertx().data() == nullptr || msg->sertx().size() == 0 || 
-        msg->strsignature().data() == nullptr || msg->strsignature().size() == 0 || 
-        msg->strpub().data() == nullptr || msg->strpub().size() == 0)
-    {
-   		PledgeTxMsgAck.set_code(-102);
-		PledgeTxMsgAck.set_message("param error");
-        net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
-		return ;
-    }
-
-	// 将交易信息体，公钥，签名信息反base64
-	unsigned char serTxCstr[msg->sertx().size()] = {0};
-	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
-	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
-
-	CTransaction tx;
-	tx.ParseFromString(serTxStr);
-
-	unsigned char strsignatureCstr[msg->strsignature().size()] = {0};
-	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)msg->strsignature().data(), msg->strsignature().size(), strsignatureCstr);
-
-	unsigned char strpubCstr[msg->strsignature().size()] = {0};
-	unsigned long strpubCstrLen = base64_decode((unsigned char *)msg->strpub().data(), msg->strpub().size(), strpubCstr);
-
-	for (int i = 0; i < tx.vin_size(); i++)
-	{
-		CTxin * txin = tx.mutable_vin(i);
-		txin->mutable_scriptsig()->set_sign( std::string( (char *)strsignatureCstr, strsignatureCstrLen ) );
-		txin->mutable_scriptsig()->set_pub( std::string( (char *)strpubCstr, strpubCstrLen ) );  
-	}
-
-    std::string serTx = tx.SerializeAsString();
-	cJSON * root = cJSON_Parse( tx.extra().data() );
-	cJSON * needVerifyPreHashCountTmp = cJSON_GetObjectItem(root, "NeedVerifyPreHashCount");
-	int needVerifyPreHashCount = needVerifyPreHashCountTmp->valueint;
-	cJSON_Delete(root);
-
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
-	
-	TxMsg phoneToTxMsg;
-    phoneToTxMsg.set_version(getVersion());
-	phoneToTxMsg.set_tx(txstrtmp);
-	phoneToTxMsg.set_txencodehash(msg->txencodehash());
-
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if( txn == NULL )
-	{
-        PledgeTxMsgAck.set_code(-103);
-		PledgeTxMsgAck.set_message(" TransactionInit failed !");
-        net_send_message<TxMsgAck>(msgdata, PledgeTxMsgAck);
-        return;
-	}
-
-	bool bRollback = true;
-	ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, bRollback);
-	};
-
-	unsigned int top = 0;
-	int db_status = pRocksDb->GetBlockTop(txn, top);
-    if (db_status) 
-    {
-        std::cout << __LINE__ << std::endl;
-        return;
-    }	
-	phoneToTxMsg.set_top(top);
-
-	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
-	HandleTx( txmsg, msgdata );
-    cstr_free(txstr, true);
-    return ;
-}
-
-void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg,const MsgData &msgdata)
-{
-    CreateRedeemTxMsgAck createRedeemTxMsgAck;
-    // 判断版本是否兼容
-	if( 0 != IsVersionCompatible( getVersion() ) )
-	{
-        createRedeemTxMsgAck.set_version(getVersion());
-		createRedeemTxMsgAck.set_code(-1);
-		createRedeemTxMsgAck.set_description("version error!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"HandleCreateRedeemTxMsgReq IsVersionCompatible"<<endl;
-		error("HandleCreateRedeemTxMsgReq IsVersionCompatible");
-		return ;
-	}
-    
-    string fromAddr = msg->addr();
-    uint64_t gasFee = std::stod(msg->gasfees().c_str()) * DECIMAL_NUM;
-    uint64_t amount = std::stod(msg->amt().c_str()) * DECIMAL_NUM;
-    uint32_t needverifyprehashcount  = std::stoi(msg->needverifyprehashcount()) ;
-    string txhash = msg->txhash();
-   
-    vector<string> Addr;
-	Addr.push_back(fromAddr);
-	if (MagicSingleton<TxVinCache>::GetInstance()->IsConflict(Addr))
-	{
-		cout<<"IsConflict HandleCreateDeviceTxMsgReq"<<endl;
-		createRedeemTxMsgAck.set_code(-20);
-		createRedeemTxMsgAck.set_description("The addr has being pengding IsConflict !");
-		net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"HandleCreateRedeemTxMsgReq  failed!!"<<endl;
-		error("HandleCreateRedeemTxMsgReq  failed!!");
-		return ;
-	}
-
-    if(fromAddr.size()<= 0 || amount <= 0 || needverifyprehashcount < (uint32_t)g_MinNeedVerifyPreHashCount || gasFee <= 0||txhash.empty())
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-2);
-		createRedeemTxMsgAck.set_description("parameter  error!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"HandleCreateRedeemTxMsgReq parameter error"<<endl;
-        error("HandleCreateRedeemTxMsgReq parameter error!");
-        return ;
-    }
-
-    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if ( txn == NULL )
-	{
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-3);
-		createRedeemTxMsgAck.set_description("TransactionInit failed!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"(HandleCreateRedeemTxMsgReq) TransactionInit failed !"<<endl;
-        error("(HandleCreateRedeemTxMsgReq) TransactionInit failed !");
-		return ;
-	}
-
-	ON_SCOPE_EXIT
-    {
-		pRocksDb->TransactionDelete(txn, false);
-	};
-    // 查询账号是否已经质押资产
-    std::vector<string> addresses;
-    int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
-    if(db_status != 0)
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-4);
-		createRedeemTxMsgAck.set_description("GetPledgeAddress error!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"HandleCreateRedeemTxMsgReq error!"<<endl;
-        error("HandleCreateRedeemTxMsgReq error!");
-        return ;
-    }
-
-    auto iter = find(addresses.begin(), addresses.end(), fromAddr);
-    if( iter == addresses.end() )
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-5);
-		createRedeemTxMsgAck.set_description("account:no Pledge !");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"account: %s no Pledge !"<<endl;
-        error( "account: %s no Pledge !", fromAddr.c_str() );
-        return ;
-    }
-
-    CBlock cblock;
-    string blockHeaderStr ;
-    std::vector<string> utxoes;
-    pRocksDb->GetPledgeAddressUtxo(txn,fromAddr, utxoes);
-    if (utxoes.size() > 0)
-    {
-        std::string blockHash;
-        pRocksDb->GetBlockHashByTransactionHash(txn, utxoes[0], blockHash); 
-        int db_status1 = pRocksDb->GetBlockByBlockHash(txn,blockHash,blockHeaderStr);
-    
-        if(db_status1 != 0)
-        {
-            createRedeemTxMsgAck.set_version(getVersion());
-            createRedeemTxMsgAck.set_code(-6);
-		    createRedeemTxMsgAck.set_description("GetBlockByBlockHash error!");
-            net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-            cout<<"HandleCreateRedeemTxMsgReq error!"<<endl;
-            error("HandleCreateRedeemTxMsgReq error!");
-            return ;
-        }
-     }
-    cblock.ParseFromString(blockHeaderStr);
-
-    std::string utxoStr = msg->txhash();
-    if (utxoStr.empty())
-    {
-        for (int i = 0; i < cblock.txs_size(); i++)
-        {
-            CTransaction tx = cblock.txs(i);
-            if (CheckTransactionType(tx) == kTransactionType_Tx)
-            {
-                for (int j = 0; j < tx.vout_size(); j++)
-                {   
-                    CTxout vout = tx.vout(j);
-                    if (vout.scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE)
-                    {
-                        utxoStr = tx.hash();
-                    }
-                }
-            }
-        }
-    }
-
-    if (utxoStr.empty())
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-7);
-		createRedeemTxMsgAck.set_description("blockHeaderStr error !");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"(HandleCreateRedeemTxMsgReq) blockHeaderStr error !"<<endl;
-        error("(HandleCreateRedeemTxMsgReq) blockHeaderStr error !");
-		return ;   
-    }
-
-    //{{ Check redeem time, it must be more than 30 days, 20201209
-    int result = IsMoreThan30DaysForRedeem(utxoStr);
-    if (result != 0)
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-20);
-		createRedeemTxMsgAck.set_description("Redeem time is less than 30 days, error!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"Redeem time is less than 30 days, error!"<<endl;
-        error("Redeem time is less than 30 days, error!");
-        return ;
-    }
-    //}}
-
-    std::vector<string> utxos;
-    db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, utxos);
-    if (db_status != 0)
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-8);
-		createRedeemTxMsgAck.set_description("GetPledgeAddressUtxo error!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"HandleCreateRedeemTxMsgReq error!"<<endl;
-        error("HandleCreateRedeemTxMsgReq error!");
-        return ;
-    }
-
-    auto utxoIter = find(utxos.begin(), utxos.end(), utxoStr);
-    if (utxoIter == utxos.end())
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-9);
-		createRedeemTxMsgAck.set_description("not found pledge UTXO!");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"not found pledge UTXO!"<<endl;
-        error("not found pledge UTXO!");
-        return ;
-    }
-    CTransaction outTx;
-    bool isTrue = FindUtxosFromRocksDb(fromAddr, fromAddr, 0, needverifyprehashcount, gasFee, outTx, utxoStr);
-    for(int i = 0;i <outTx.vin_size();i++)
-    {
-        CTxin *txin = outTx.mutable_vin(i);
-        txin->clear_scriptsig();
-    }
-    
-	for (int i = 0; i != outTx.vin_size(); ++i)
-	{
-			CTxin * txin = outTx.mutable_vin(i);
-			txin->clear_scriptsig();
-	}
-
-	outTx.clear_signprehash();
-	outTx.clear_hash();
-
-	if(!isTrue)
-	{
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-10);
-		createRedeemTxMsgAck.set_description("CreateReleaseTransaction Error ...");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"CreateReleaseTransaction Error ...\n"<<endl;
-		error("CreateReleaseTransaction Error ...\n");
-		return ;
-	}
-
-    uint64_t packageFee = 0;
-    if ( 0 != pRocksDb->GetDevicePackageFee(packageFee) )
-    {
-        createRedeemTxMsgAck.set_version(getVersion());
-        createRedeemTxMsgAck.set_code(-11);
-		createRedeemTxMsgAck.set_description("GetDevicePackageFee Error ...");
-        net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-        cout<<"(HandleCreateRedeemTxMsgReq) GetDevicePackageFee Error ...\n"<<endl;
-		error("(HandleCreateRedeemTxMsgReq) GetDevicePackageFee Error ...\n");
-		return ;
-    }
-
-    nlohmann::json txInfo;
-    txInfo["RedeemptionUTXO"] = txhash;
-    txInfo["ReleasePledgeAmount"] = amount;
-
-	nlohmann::json extra;
-    extra["fromaddr"] = fromAddr;
-	extra["NeedVerifyPreHashCount"] = needverifyprehashcount;
-	extra["SignFee"] = gasFee;
-    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
-	extra["TransactionType"] = TXTYPE_REDEEM;
-    extra["TransactionInfo"] = txInfo;
-
-	outTx.set_extra(extra.dump());
-    std::string txData = outTx.SerializePartialAsString();
-
-    size_t encodeLen = txData.size() * 2 + 1;
-	unsigned char encode[encodeLen] = {0};
-	memset(encode, 0, encodeLen);
-	long codeLen = base64_encode((unsigned char *)txData.data(), txData.size(), encode);
-
-    std::string encodeStr((char *)encode, codeLen);
-	std::string txEncodeHash = getsha256hash(encodeStr);
-    createRedeemTxMsgAck.set_version(getVersion());
-    createRedeemTxMsgAck.set_code(0);
-    createRedeemTxMsgAck.set_description("success");
-    createRedeemTxMsgAck.set_txdata(encodeStr);
-    createRedeemTxMsgAck.set_txencodehash(txEncodeHash);
-    net_send_message<CreateRedeemTxMsgAck>(msgdata, createRedeemTxMsgAck);
-}
-
-void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgData &msgdata )
-{
-    TxMsgAck txMsgAck; 
-    txMsgAck.set_version(getVersion());
-
-    // 判断版本是否兼容
-	if( 0 != IsVersionCompatible(getVersion() ) )
-	{
-		txMsgAck.set_code(-101);
-		txMsgAck.set_message("Version incompatible!");
-        net_send_message<TxMsgAck>(msgdata, txMsgAck);
-		return ;
-	}
-	// 将交易信息体，公钥，签名信息反base64
-	unsigned char serTxCstr[msg->sertx().size()] = {0};
-	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
-	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
-
-	CTransaction tx;
-	tx.ParseFromString(serTxStr);
-
-	unsigned char strsignatureCstr[msg->strsignature().size()] = {0};
-	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)msg->strsignature().data(), msg->strsignature().size(), strsignatureCstr);
-
-	unsigned char strpubCstr[msg->strsignature().size()] = {0};
-	unsigned long strpubCstrLen = base64_decode((unsigned char *)msg->strpub().data(), msg->strpub().size(), strpubCstr);
-
-	for (int i = 0; i < tx.vin_size(); i++)
-	{
-		CTxin * txin = tx.mutable_vin(i);
-		txin->mutable_scriptsig()->set_sign( std::string( (char *)strsignatureCstr, strsignatureCstrLen ) );
-		txin->mutable_scriptsig()->set_pub( std::string( (char *)strpubCstr, strpubCstrLen ) );
-	}
-
-    std::string serTx = tx.SerializeAsString();
-	cJSON * root = cJSON_Parse( tx.extra().data() );
-	cJSON * needVerifyPreHashCountTmp = cJSON_GetObjectItem(root, "NeedVerifyPreHashCount");
-	int needVerifyPreHashCount = needVerifyPreHashCountTmp->valueint;
-	cJSON_Delete(root);
-
-	cstring *txstr = txstr_append_signid(serTx.c_str(), serTx.size(), needVerifyPreHashCount );
-	std::string txstrtmp(txstr->str, txstr->len);
-
-	TxMsg phoneToTxMsg;
-    phoneToTxMsg.set_version(getVersion());
-	phoneToTxMsg.set_tx(txstrtmp);
-	phoneToTxMsg.set_txencodehash(msg->txencodehash());
-
-	auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
-	Transaction* txn = pRocksDb->TransactionInit();
-	if( txn == NULL )
-	{
-		std::cout << "(HandleRedeemTxMsgReq) TransactionInit failed !" << std::endl;
-        return;
-	}
-
-	bool bRollback = true;
-	ON_SCOPE_EXIT{
-		pRocksDb->TransactionDelete(txn, bRollback);
-	};
-
-	unsigned int top = 0;
-	int db_status = pRocksDb->GetBlockTop(txn, top);	
-    if (db_status) 
-    {
-        std::cout << __LINE__ << std::endl;
-        return;
-    }
-	phoneToTxMsg.set_top(top);
-
-	auto txmsg = make_shared<TxMsg>(phoneToTxMsg);
-	HandleTx( txmsg, msgdata );
-    cstr_free(txstr, true);
-    return; 
-}
 void HandleGetPledgeListReq(const std::shared_ptr<GetPledgeListReq>& req,  GetPledgeListAck& ack)
 {
     ack.set_version(getVersion());
@@ -1945,7 +1444,31 @@ void HandleGetPledgeListReq(const std::shared_ptr<GetPledgeListReq>& req,  GetPl
 
     reverse(utxoes.begin(), utxoes.end());
 
-    uint32 index = req->index();
+    uint32 index = 0;
+    string txhash = req->txhash();
+    if (txhash.empty())
+    {
+        index = 0;
+    }
+    else
+    {
+        size_t i = 0;
+        for (; i < utxoes.size(); i++)
+        {
+            if (utxoes[i] == txhash)
+            {
+                break ;
+            }
+        }
+        if (i == utxoes.size())
+        {
+            ack.set_code(-5);
+            ack.set_description("Not found the hash");
+            return ;
+        }
+        index = i + 1;
+    }
+    string lasthash;
     uint32 count = req->count();
 
     if (index > (size - 1))
@@ -2041,8 +1564,10 @@ void HandleGetPledgeListReq(const std::shared_ptr<GetPledgeListReq>& req,  GetPl
             }
         }
         pItem->set_detail("");        
+        lasthash = strUtxo;
     }
 
+    ack.set_lasthash(lasthash);
     ack.set_code(0);
     ack.set_description("success");
 }
@@ -2125,7 +1650,31 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
     });
 
     size = txHashs.size();
-    uint32 index = req->index();
+    uint32 index = 0;
+    string hash = req->txhash();
+    if (hash.empty())
+    {
+        index = 0;
+    }
+    else
+    {
+        size_t i = 0;
+        for (; i < txHashs.size(); i++)
+        {
+            if (txHashs[i] == hash)
+            {
+                break ;
+            }
+        }
+        if (i == txHashs.size())
+        {
+            ack.set_code(-10);
+            ack.set_description("Not found the hash!");
+            return ;
+        }
+        index = i + 1;
+    }
+    string lastHash;
     uint32 count = 0;
 
     if (index > (size - 1))
@@ -2212,6 +1761,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 continue;
             }
 
+            lastHash = txHashs[i];
             TxInfoItem * pItem = ack.add_list();
             pItem->set_txhash(tx.hash());
             pItem->set_time(tx.time());
@@ -2245,6 +1795,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
         }
         else
         {
+            lastHash = txHashs[i];
             // 主交易
             TxInfoItem * pItem = ack.add_list();
             pItem->set_txhash(tx.hash());
@@ -2430,7 +1981,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
     }
 
     ack.set_total(total);
-    ack.set_index(i);
+    ack.set_lasthash(lastHash);
     
     ack.set_code(0);
     ack.set_description("success");
@@ -2445,11 +1996,11 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
     getBlockInfoListAck.set_version( getVersion() );
 
     // 版本判断
-    if( 0 != IsVersionCompatible( msg->version() ) )
+    if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
         getBlockInfoListAck.set_code(-1);
         getBlockInfoListAck.set_description("version error! ");
-        net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+        net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoListReq) IsVersionCompatible error!");
 		return ;
 	}
@@ -2460,7 +2011,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
 	{
 		getBlockInfoListAck.set_code(-2);
 		getBlockInfoListAck.set_description("TransactionInit failed !");
-		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoListReq) TransactionInit failed !");
 		return ;
 	}
@@ -2474,7 +2025,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
     {
         getBlockInfoListAck.set_code(-3);
 		getBlockInfoListAck.set_description("GetBlockTop failed !");
-		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoListReq) GetBlockTop failed !");
 		return ;
     }
@@ -2486,7 +2037,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
     {
         getBlockInfoListAck.set_code(-4);
 		getBlockInfoListAck.set_description("GetTxCount failed!");
-		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoListReq) GetTxCount failed!");
         return ;
     }
@@ -2497,7 +2048,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
     {
         getBlockInfoListAck.set_code(-5);
 		getBlockInfoListAck.set_description("count cannot be less than 0!");
-		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+		net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoListReq) count cannot be less than 0!");
         return ;
     }
@@ -2523,7 +2074,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
         {
             getBlockInfoListAck.set_code(-7);
             getBlockInfoListAck.set_description("GetBlockHashsByBlockHeight failed !");
-            net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+            net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
             error("(HandleGetBlockInfoListReq) GetBlockHashsByBlockHeight failed !");
             return ;
         }
@@ -2536,7 +2087,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
             {
                 getBlockInfoListAck.set_code(-8);
                 getBlockInfoListAck.set_description("GetBlockHeaderByBlockHash failed !");
-                net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+                net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
                 error("(HandleGetBlockInfoListReq) GetBlockHeaderByBlockHash failed !");
                 return ;
             }
@@ -2595,7 +2146,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
                 {
                     getBlockInfoListAck.set_code(-9);
                     getBlockInfoListAck.set_description("GetTransactionByHash failed !");
-                    net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+                    net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
                     error("(HandleGetBlockInfoListReq) GetTransactionByHash failed !");
                 }
 
@@ -2636,7 +2187,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
 
     getBlockInfoListAck.set_code(0);
     getBlockInfoListAck.set_description("successful");
-    net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck);
+    net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 }
 
 // 处理手机端块详情请求
@@ -2651,11 +2202,11 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     getBlockInfoDetailAck.set_code(0);
 
     // 版本判断
-    if( 0 != IsVersionCompatible( msg->version() ) )
+    if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
         getBlockInfoDetailAck.set_code(-1);
         getBlockInfoDetailAck.set_description("version error! ");
-        net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+        net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoDetailReq) IsVersionCompatible error!");
 		return ;
 	}
@@ -2666,7 +2217,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
 	{
 		getBlockInfoDetailAck.set_code(-2);
 		getBlockInfoDetailAck.set_description("TransactionInit failed !");
-		net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+		net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoDetailReq) TransactionInit failed !");
 		return ;
 	}
@@ -2680,7 +2231,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     {
         getBlockInfoDetailAck.set_code(-3);
 		getBlockInfoDetailAck.set_description("GetBlockByBlockHash failed !");
-		net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+		net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck, net_com::Priority::kPriority_Middle_1);
 		error("(HandleGetBlockInfoDetailReq) GetBlockByBlockHash failed !");
 		return ;
     }
@@ -2729,7 +2280,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
         {
             getBlockInfoDetailAck.set_code(-4);
             getBlockInfoDetailAck.set_description("txowner empty !");
-            net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+            net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck, net_com::Priority::kPriority_Middle_1);
             
             return ;
         }
@@ -2832,7 +2383,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     std::string totalAmountStr = std::to_string( (double)totalAmount / DECIMAL_NUM );
     getBlockInfoDetailAck.set_tatalamount(totalAmountStr);
 
-    net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck);
+    net_send_message<GetBlockInfoDetailAck>(msgdata, getBlockInfoDetailAck, net_com::Priority::kPriority_Middle_1);
 }
 
 
@@ -3077,27 +2628,9 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
     ack.set_description("success");
 }
 
-// string version = 1;
-// sint32 code = 2;
-// string description = 3;
-// 手机连接矿机发起质押交易
-void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTxMsgReq>& msg, const MsgData &msgdata )
-{
-    CreatePledgeTransaction(msg->addr(), msg->amt(), std::stoi(msg->needverifyprehashcount()), msg->gasfees(), msg->password(), msgdata );
-    return ;
-}
-
-// 手机连接矿机发起解质押交易
-void HandleCreateDeviceRedeemTxReq(const std::shared_ptr<CreateDeviceRedeemTxReq> &msg, const MsgData &msgdata )
-{
-    CreateRedeemTransaction(msg->addr(), std::stoi(msg->needverifyprehashcount()), msg->gasfees(), msg->utxo(), msg->password(), msgdata );
-    return ;
-}
-
-
 void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const std::string msg_name) 
 {
-    // cout << "msg_name " << msg_name << endl;
+     cout << "msg_name " << msg_name << endl;
 
     if (msg_name == "GetNodeServiceFeeReq") 
     {
@@ -3121,10 +2654,11 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
     {
         const std::shared_ptr<SetServiceFeeReq>ack_msg = dynamic_pointer_cast<SetServiceFeeReq>(msg);
 
+        int ret = 0;
         SetServiceFeeAck amount_ack;
         if (!is_version) 
         {
-            SetServiceFee(ack_msg, amount_ack);
+            ret = SetServiceFee(ack_msg, amount_ack);
         } 
         else 
         {
@@ -3134,6 +2668,20 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         }
 
         net_send_message<SetServiceFeeAck>(msgdata, amount_ack);
+
+        if (ret == 0)
+        {
+            uint64_t service_fee = 0;
+            auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
+            auto status = rdb_ptr->GetDeviceSignatureFee(service_fee);
+            if (!status) 
+            {
+                net_update_fee_and_broadcast(service_fee);
+                cout << "update_fee_and_broadcast ServiceFee = " << service_fee << endl;
+                return;
+            }
+        }
+
     } 
     else if (msg_name == "GetServiceInfoReq") 
     {
@@ -3141,26 +2689,14 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
 
        HandleGetServiceInfoReq(ack_msg, msgdata);
     } 
-    else if (msg_name == "GetBlockTopReq") 
+    else if (msg_name == "GetPackageFeeReq") 
     {
-        const std::shared_ptr<GetBlockTopReq>ack_msg = dynamic_pointer_cast<GetBlockTopReq>(msg);
+        const std::shared_ptr<GetPackageFeeReq>ack_msg = dynamic_pointer_cast<GetPackageFeeReq>(msg);
 
-       // HandleGetBlockTopReq(ack_msg, msgdata);
-    } 
-    else if (msg_name == "TApiGetBlockTopAck") 
-    {
-        const std::shared_ptr<TApiGetBlockTopAck>ack_msg = dynamic_pointer_cast<TApiGetBlockTopAck>(msg);
-
-        //TApiGetBlockTopAckFunc(ack_msg, msgdata);
-    } 
-    else if (msg_name == "GetPacketFeeReq") 
-    {
-        const std::shared_ptr<GetPacketFeeReq>ack_msg = dynamic_pointer_cast<GetPacketFeeReq>(msg);
-
-        GetPacketFeeAck amount_ack;
+        GetPackageFeeAck amount_ack;
         if (!is_version) 
         {
-            GetPacketFee(ack_msg, amount_ack);
+            GetPackageFee(ack_msg, amount_ack);
         } 
         else 
         {
@@ -3169,7 +2705,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             amount_ack.set_description("版本错误");
         }
 
-        net_send_message<GetPacketFeeAck>(msgdata, amount_ack);
+        net_send_message<GetPackageFeeAck>(msgdata, amount_ack);
     } 
     else if (msg_name == "GetAmountReq") 
     {
@@ -3187,7 +2723,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             amount_ack.set_description("版本错误");
         }
 
-        net_send_message<GetAmountAck>(msgdata, amount_ack);
+        net_send_message<GetAmountAck>(msgdata, amount_ack, net_com::Priority::kPriority_Middle_1);
     } 
     else if (msg_name == "GetBlockInfoReq") 
     {
@@ -3208,7 +2744,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             block_info_ack.set_description("版本错误");
         }
 
-        net_send_message<GetBlockInfoAck>(msgdata, block_info_ack);
+        net_send_message<GetBlockInfoAck>(msgdata, block_info_ack, net_com::Priority::kPriority_Middle_1);
     } 
     else if (msg_name == "GetDevPasswordReq") 
     {
@@ -3319,36 +2855,6 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         }
         net_send_message<GetDevPrivateKeyAck>(msgdata, devprikey_ack);
     }
-    else if(msg_name == "CreatePledgeTxMsgReq")
-    {
-        const std::shared_ptr<CreatePledgeTxMsgReq>ack_msg = dynamic_pointer_cast<CreatePledgeTxMsgReq>(msg);
-        HandleCreatePledgeTxMsgReq(ack_msg,  msgdata);
-    }
-    else if(msg_name == "PledgeTxMsgReq")
-    {
-        const std::shared_ptr<PledgeTxMsgReq>ack_msg = dynamic_pointer_cast<PledgeTxMsgReq>(msg);
-        HandlePledgeTxMsgReq(ack_msg, msgdata);
-    }
-    else if(msg_name == "CreateRedeemTxMsgReq")
-    {
-        const std::shared_ptr<CreateRedeemTxMsgReq>ack_msg = dynamic_pointer_cast<CreateRedeemTxMsgReq>(msg);
-        HandleCreateRedeemTxMsgReq(ack_msg, msgdata);
-    }
-    else if(msg_name == "RedeemTxMsgReq")
-    {
-        const std::shared_ptr<RedeemTxMsgReq>ack_msg = dynamic_pointer_cast<RedeemTxMsgReq>(msg);
-        HandleRedeemTxMsgReq(ack_msg, msgdata);
-    }
-    else if (msg_name == "CreateDevicePledgeTxMsgReq")
-    {
-        const std::shared_ptr<CreateDevicePledgeTxMsgReq>ack_msg = dynamic_pointer_cast<CreateDevicePledgeTxMsgReq>(msg);
-        HandleCreateDevicePledgeTxMsgReq(ack_msg, msgdata);
-    }
-    else if (msg_name == "CreateDeviceRedeemTxReq")
-    {
-        const std::shared_ptr<CreateDeviceRedeemTxReq>ack_msg = dynamic_pointer_cast<CreateDeviceRedeemTxReq>(msg);
-        HandleCreateDeviceRedeemTxReq(ack_msg, msgdata);
-    }
     else if (msg_name == "GetPledgeListReq")
     {
         const std::shared_ptr<GetPledgeListReq> req = dynamic_pointer_cast<GetPledgeListReq>(msg);
@@ -3364,7 +2870,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             ack.set_description("版本错误");
         }
 
-        net_send_message<GetPledgeListAck>(msgdata, ack);
+        net_send_message<GetPledgeListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
     }
     else if (msg_name == "GetTxInfoListReq")
     {
@@ -3381,7 +2887,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             ack.set_description("版本错误");
         }
 
-        net_send_message<GetTxInfoListAck>(msgdata, ack);
+        net_send_message<GetTxInfoListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
         
     }
     else if (msg_name == "GetBlockInfoListReq")
@@ -3411,25 +2917,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
             ack.set_description("版本错误");
         }
         
-        net_send_message<GetTxInfoDetailAck>(msgdata, ack);
-    }
-    else if (msg_name == "CreateDeviceMultiTxMsgReq")
-    {
-        const std::shared_ptr<CreateDeviceMultiTxMsgReq> req = dynamic_pointer_cast<CreateDeviceMultiTxMsgReq>(msg);
-
-        HandleCreateDeviceMultiTxMsgReq(req, msgdata);
-    }
-    else if (msg_name == "CreateMultiTxMsgReq")
-    {
-        const std::shared_ptr<CreateMultiTxMsgReq> req = dynamic_pointer_cast<CreateMultiTxMsgReq>(msg);
-
-        HandleCreateMultiTxReq(req, msgdata);
-    }
-    else if (msg_name == "MultiTxMsgReq")
-    {
-        const std::shared_ptr<MultiTxMsgReq> req = dynamic_pointer_cast<MultiTxMsgReq>(msg);
-
-        HandlePreMultiTxRaw(req, msgdata);
+        net_send_message<GetTxInfoDetailAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
     }
     else if (msg_name == "TestConnectReq")
     {
@@ -3449,13 +2937,19 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         const std::shared_ptr<GetTxFailureListReq> req = dynamic_pointer_cast<GetTxFailureListReq>(msg);
         GetTxFailureListAck ack;
         HandleGetTxFailureListReq(req, ack);
-        net_send_message<GetTxFailureListAck>(msgdata, ack);
+        net_send_message<GetTxFailureListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
     }
     else if (msg_name == "GetTxByHashReq")
     {
         const std::shared_ptr<GetTxByHashReq> req = dynamic_pointer_cast<GetTxByHashReq>(msg);
 
        HandleGetTxByHashReq(req, msgdata);
+    }
+    else if (msg_name == "CheckNodeHeightReq")
+    {
+        const std::shared_ptr<CheckNodeHeightReq> req = dynamic_pointer_cast<CheckNodeHeightReq>(msg);
+
+       handleCheckNodeHeightReq(req, msgdata);
     }
 
     // TODO
@@ -3477,7 +2971,7 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
     std::string version = reflection->GetString(*msg, field);
     // cout << "version=" << version << endl;
 
-    is_version = IsVersionCompatible(version);
+    is_version = Util::IsVersionCompatible(version);
     // cout << "is version=" << is_version << endl;
 
     assign(msg, msgdata, descriptor->name());
@@ -3509,20 +3003,7 @@ void MuiltipleApi()
         m_api::verify(msg, msgdata);
     });
 
-    //获取服务节点块高度信息
-    net_register_callback<GetBlockTopReq>([](const std::shared_ptr<GetBlockTopReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<TApiGetBlockTopAck>([](const std::shared_ptr<TApiGetBlockTopAck>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<GetPacketFeeReq>([](const std::shared_ptr<GetPacketFeeReq>& msg, 
+    net_register_callback<GetPackageFeeReq>([](const std::shared_ptr<GetPackageFeeReq>& msg, 
     const MsgData& msgdata) 
     {
         m_api::verify(msg, msgdata);
@@ -3576,36 +3057,7 @@ void MuiltipleApi()
         m_api::verify(msg, msgdata);
     });
 
-    net_register_callback<CreatePledgeTxMsgReq>([](const std::shared_ptr<CreatePledgeTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<PledgeTxMsgReq>([](const std::shared_ptr<PledgeTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-     net_register_callback<CreateRedeemTxMsgReq>([](const std::shared_ptr<CreateRedeemTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-     net_register_callback<RedeemTxMsgReq>([](const std::shared_ptr<RedeemTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<CreateDevicePledgeTxMsgReq>([](const std::shared_ptr<CreateDevicePledgeTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
+    
     net_register_callback<GetPledgeListReq>([](const std::shared_ptr<GetPledgeListReq>& msg, 
     const MsgData& msgdata) 
     {
@@ -3641,31 +3093,6 @@ void MuiltipleApi()
         m_api::verify(msg, msgdata);
     });
 
-    net_register_callback<CreateDeviceMultiTxMsgReq>([](const std::shared_ptr<CreateDeviceMultiTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-
-        m_api::verify(msg, msgdata);
-    });
-    
-    net_register_callback<CreateDeviceRedeemTxReq>([](const std::shared_ptr<CreateDeviceRedeemTxReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<CreateMultiTxMsgReq>([](const std::shared_ptr<CreateMultiTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
-    net_register_callback<MultiTxMsgReq>([](const std::shared_ptr<MultiTxMsgReq>& msg, 
-    const MsgData& msgdata) 
-    {
-        m_api::verify(msg, msgdata);
-    });
-
     net_register_callback<TestConnectReq>([](const std::shared_ptr<TestConnectReq>& msg, 
     const MsgData& msgdata) 
     {
@@ -3683,7 +3110,14 @@ void MuiltipleApi()
     {
         m_api::verify(msg, msgdata);
     });
+    
     net_register_callback<GetTxByHashReq>([](const std::shared_ptr<GetTxByHashReq>& msg, 
+    const MsgData& msgdata) 
+    {
+        m_api::verify(msg, msgdata);
+    });
+
+    net_register_callback<CheckNodeHeightReq>([](const std::shared_ptr<CheckNodeHeightReq>& msg, 
     const MsgData& msgdata) 
     {
         m_api::verify(msg, msgdata);
@@ -3754,7 +3188,7 @@ void HandleGetTxPendingListReq(const std::shared_ptr<GetTxPendingListReq>& req, 
         }
     }
 
-    net_send_message<GetTxPendingListAck>(msgdata, ack);
+    net_send_message<GetTxPendingListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
 }
 
 void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, GetTxFailureListAck& ack)
@@ -3764,9 +3198,10 @@ void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, 
     ack.set_description("Failure Transaction");
 
     string addr = req->addr();
-    uint32 index = req->index();
+    uint32 index = 0;
+    string txhash = req->txhash();
     uint32 count = req->count();
-    cout << "In HandleGetTxFailureListReq " << addr << " " << index << " " << count << endl;
+    cout << "In HandleGetTxFailureListReq " << addr << " " << txhash << " " << count << endl;
 
     if (addr.empty())
     {
@@ -3787,6 +3222,30 @@ void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, 
         return ;
     }
 
+    if (txhash.empty())
+    {
+        index = 0;
+    }
+    else
+    {
+        size_t i = 0;
+        for (; i < vectTx.size(); i++)
+        {
+            if (vectTx[i].txHash == txhash)
+            {
+                break ;
+            }
+        }
+        if (i == vectTx.size())
+        {
+            ack.set_code(-4);
+            ack.set_description("Not found the txhash.");
+            return ;
+        }
+        index = i + 1;
+    }
+    string lasthash;    
+
     if (index > (size - 1))
     {
         //index = std::max(size - 1, 0);
@@ -3795,13 +3254,13 @@ void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, 
         return ;
     }
 
-    size_t range = index + count;
-    if (range > size)
+    size_t end = index + count;
+    if (end > size)
     {
-        range = size;
+        end = size;
     }
 
-    for (size_t i = index; i < range; i++)
+    for (size_t i = index; i < end; i++)
     {
         TxVinCache::Tx& iter = vectTx[i];
 
@@ -3837,7 +3296,11 @@ void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, 
             txItem->set_type(TxTypeRedeem);
         else
             txItem->set_type(TxTypeNormal);
+
+        lasthash = iter.txHash;
     }
+
+    ack.set_lasthash(lasthash);
 
 }  // TODO add address
 
@@ -3873,7 +3336,7 @@ void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgD
         std::cout << "(HandleGetTxByHashReq) GetTxByTxHashFromRocksdb failed !" << std::endl;
         TxByHashAck.set_code(-1);
         TxByHashAck.set_description("GetTxByTxHashFromRocksdb failed!");
-        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck, net_com::Priority::kPriority_Middle_1);
         return;  
     }
     TxItem *pTxItem =  TxByHashAck.add_list();
@@ -3923,7 +3386,7 @@ void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgD
 			std::cout << "(HandleGetTxByHashReq) GetBlockHashByTransactionHash failed !" << std::endl;
 			TxByHashAck.set_code(db_status);
 			TxByHashAck.set_description("GetBlockHashByTransactionHash failed!");
-            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck, net_com::Priority::kPriority_Middle_1);
 			return ;
 		}
 
@@ -3933,7 +3396,7 @@ void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgD
 			std::cout << "(HandleGetTxByHashReq) GetBlockHeightByBlockHash failed !" << std::endl;
 			TxByHashAck.set_code(db_status);
 			TxByHashAck.set_description("GetBlockHeightByBlockHash failed!");
-            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck, net_com::Priority::kPriority_Middle_1);
 			return ;
 		}
 		pTxItem->set_blockhash(blockhash);
@@ -3949,7 +3412,7 @@ void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgD
 			std::cout << "(HandleGetTxByHashReq) GetBlockByBlockHash failed !" << std::endl;
 			TxByHashAck.set_code(db_status);
 			TxByHashAck.set_description("GetBlockByBlockHash failed!");
-            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+            net_send_message<GetTxByHashAck>(msgdata, TxByHashAck, net_com::Priority::kPriority_Middle_1);
 			return ;
 		}
 		
@@ -4003,7 +3466,7 @@ void HandleGetTxByHashReq(const std::shared_ptr<GetTxByHashReq>& req, const MsgD
        // cout<<"set_totalaward = "<< std::to_string(totalAward)<<endl;
         TxByHashAck.set_code(0);
         TxByHashAck.set_description("Tx info success");
-        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck);
+        net_send_message<GetTxByHashAck>(msgdata, TxByHashAck, net_com::Priority::kPriority_Middle_1);
     }
     return; 
 }
@@ -4047,5 +3510,108 @@ bool  GetTxByTxHashFromRocksdb(vector<string>txhash,vector<CTransaction> & outTx
         }	
     }
 	return false;
+}
+
+void handleCheckNodeHeightReq(const std::shared_ptr<CheckNodeHeightReq>& req, const MsgData& msgdata)
+{
+    // 回执
+    CheckNodeHeightAck ack;
+    ack.set_version(getVersion());
+
+    // 版本判断
+    if( 0 != Util::IsVersionCompatible( req->version() ) )
+	{
+        ack.set_code(-1);
+        net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
+		return ;
+	}
+
+    auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
+	Transaction * txn = pRocksDb->TransactionInit();
+	if( txn == NULL )
+	{
+		ack.set_code(-2);
+		net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
+		return ;
+	}
+
+    ON_SCOPE_EXIT{
+		pRocksDb->TransactionDelete(txn, true);
+	};
+
+    unsigned int top = 0;
+    if (0 != pRocksDb->GetBlockTop(txn, top) )
+    {
+        ack.set_code(-3);
+		net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
+		return ;
+    }
+
+    ack.set_height(top);
+
+    std::vector<Node> allNodeList;
+	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
+	{
+		allNodeList = Singleton<PeerNode>::get_instance()->get_nodelist();
+	}
+	else
+	{
+		allNodeList = Singleton<NodeCache>::get_instance()->get_nodelist();
+	}
+
+    static const int kCheckNodeHeightMax = 100;
+    std::vector<Node> nodelist;
+    if (allNodeList.size() > kCheckNodeHeightMax)
+    {
+        std::random_device rd;
+        std::default_random_engine rng {rd()};
+        std::uniform_int_distribution<int> dist {0, (int)allNodeList.size() - 1};
+
+        std::vector<int> rand;
+        for ( size_t i = 0; i != kCheckNodeHeightMax; ++i )
+        {
+            rand.push_back(dist(rng));
+        }
+
+        for (size_t i = 0; i != rand.size(); ++i)
+        {
+            nodelist.push_back(allNodeList[i]);
+        }
+    }
+    else
+    {
+        nodelist = allNodeList;
+    }
+
+    if(nodelist.size() == 0)
+    {
+        ack.set_code(-4);
+		net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
+        return;
+    }
+
+    int minHeight = top - 5;
+    if (minHeight < 0)
+    {
+        minHeight = 0;
+    }
+
+    int maxHeight = top + 5;
+
+    uint32 count = 0;
+    for (auto & node : nodelist)
+    {
+        int height = node.chain_height;
+        if (height >= minHeight && height <= maxHeight)
+        {
+            count++;
+        }
+    }
+    
+    ack.set_total(nodelist.size());
+    ack.set_percent((double)count / nodelist.size());
+    ack.set_code(0);
+    
+    net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
 }
 

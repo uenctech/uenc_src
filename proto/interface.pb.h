@@ -64,6 +64,12 @@ extern BlockInfoItemDefaultTypeInternal _BlockInfoItem_default_instance_;
 class BlockInfoOutAddr;
 class BlockInfoOutAddrDefaultTypeInternal;
 extern BlockInfoOutAddrDefaultTypeInternal _BlockInfoOutAddr_default_instance_;
+class CheckNodeHeightAck;
+class CheckNodeHeightAckDefaultTypeInternal;
+extern CheckNodeHeightAckDefaultTypeInternal _CheckNodeHeightAck_default_instance_;
+class CheckNodeHeightReq;
+class CheckNodeHeightReqDefaultTypeInternal;
+extern CheckNodeHeightReqDefaultTypeInternal _CheckNodeHeightReq_default_instance_;
 class CreateDeviceMultiTxMsgReq;
 class CreateDeviceMultiTxMsgReqDefaultTypeInternal;
 extern CreateDeviceMultiTxMsgReqDefaultTypeInternal _CreateDeviceMultiTxMsgReq_default_instance_;
@@ -145,9 +151,6 @@ extern GetBlockInfoListReqDefaultTypeInternal _GetBlockInfoListReq_default_insta
 class GetBlockInfoReq;
 class GetBlockInfoReqDefaultTypeInternal;
 extern GetBlockInfoReqDefaultTypeInternal _GetBlockInfoReq_default_instance_;
-class GetBlockTopReq;
-class GetBlockTopReqDefaultTypeInternal;
-extern GetBlockTopReqDefaultTypeInternal _GetBlockTopReq_default_instance_;
 class GetClientInfoAck;
 class GetClientInfoAckDefaultTypeInternal;
 extern GetClientInfoAckDefaultTypeInternal _GetClientInfoAck_default_instance_;
@@ -184,12 +187,12 @@ extern GetNodeServiceFeeAckDefaultTypeInternal _GetNodeServiceFeeAck_default_ins
 class GetNodeServiceFeeReq;
 class GetNodeServiceFeeReqDefaultTypeInternal;
 extern GetNodeServiceFeeReqDefaultTypeInternal _GetNodeServiceFeeReq_default_instance_;
-class GetPacketFeeAck;
-class GetPacketFeeAckDefaultTypeInternal;
-extern GetPacketFeeAckDefaultTypeInternal _GetPacketFeeAck_default_instance_;
-class GetPacketFeeReq;
-class GetPacketFeeReqDefaultTypeInternal;
-extern GetPacketFeeReqDefaultTypeInternal _GetPacketFeeReq_default_instance_;
+class GetPackageFeeAck;
+class GetPackageFeeAckDefaultTypeInternal;
+extern GetPackageFeeAckDefaultTypeInternal _GetPackageFeeAck_default_instance_;
+class GetPackageFeeReq;
+class GetPackageFeeReqDefaultTypeInternal;
+extern GetPackageFeeReqDefaultTypeInternal _GetPackageFeeReq_default_instance_;
 class GetPledgeListAck;
 class GetPledgeListAckDefaultTypeInternal;
 extern GetPledgeListAckDefaultTypeInternal _GetPledgeListAck_default_instance_;
@@ -277,9 +280,6 @@ extern SetServiceFeeReqDefaultTypeInternal _SetServiceFeeReq_default_instance_;
 class SignInfo;
 class SignInfoDefaultTypeInternal;
 extern SignInfoDefaultTypeInternal _SignInfo_default_instance_;
-class TApiGetBlockTopAck;
-class TApiGetBlockTopAckDefaultTypeInternal;
-extern TApiGetBlockTopAckDefaultTypeInternal _TApiGetBlockTopAck_default_instance_;
 class TestConnectAck;
 class TestConnectAckDefaultTypeInternal;
 extern TestConnectAckDefaultTypeInternal _TestConnectAck_default_instance_;
@@ -329,6 +329,8 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::BlockInfo* Arena::CreateMaybeMessage<::BlockInfo>(Arena*);
 template<> ::BlockInfoItem* Arena::CreateMaybeMessage<::BlockInfoItem>(Arena*);
 template<> ::BlockInfoOutAddr* Arena::CreateMaybeMessage<::BlockInfoOutAddr>(Arena*);
+template<> ::CheckNodeHeightAck* Arena::CreateMaybeMessage<::CheckNodeHeightAck>(Arena*);
+template<> ::CheckNodeHeightReq* Arena::CreateMaybeMessage<::CheckNodeHeightReq>(Arena*);
 template<> ::CreateDeviceMultiTxMsgReq* Arena::CreateMaybeMessage<::CreateDeviceMultiTxMsgReq>(Arena*);
 template<> ::CreateDevicePledgeTxMsgReq* Arena::CreateMaybeMessage<::CreateDevicePledgeTxMsgReq>(Arena*);
 template<> ::CreateDeviceRedeemTxReq* Arena::CreateMaybeMessage<::CreateDeviceRedeemTxReq>(Arena*);
@@ -356,7 +358,6 @@ template<> ::GetBlockInfoDetailReq* Arena::CreateMaybeMessage<::GetBlockInfoDeta
 template<> ::GetBlockInfoListAck* Arena::CreateMaybeMessage<::GetBlockInfoListAck>(Arena*);
 template<> ::GetBlockInfoListReq* Arena::CreateMaybeMessage<::GetBlockInfoListReq>(Arena*);
 template<> ::GetBlockInfoReq* Arena::CreateMaybeMessage<::GetBlockInfoReq>(Arena*);
-template<> ::GetBlockTopReq* Arena::CreateMaybeMessage<::GetBlockTopReq>(Arena*);
 template<> ::GetClientInfoAck* Arena::CreateMaybeMessage<::GetClientInfoAck>(Arena*);
 template<> ::GetClientInfoReq* Arena::CreateMaybeMessage<::GetClientInfoReq>(Arena*);
 template<> ::GetDevInfoListAcK* Arena::CreateMaybeMessage<::GetDevInfoListAcK>(Arena*);
@@ -369,8 +370,8 @@ template<> ::GetNodeInfoAck* Arena::CreateMaybeMessage<::GetNodeInfoAck>(Arena*)
 template<> ::GetNodeInfoReq* Arena::CreateMaybeMessage<::GetNodeInfoReq>(Arena*);
 template<> ::GetNodeServiceFeeAck* Arena::CreateMaybeMessage<::GetNodeServiceFeeAck>(Arena*);
 template<> ::GetNodeServiceFeeReq* Arena::CreateMaybeMessage<::GetNodeServiceFeeReq>(Arena*);
-template<> ::GetPacketFeeAck* Arena::CreateMaybeMessage<::GetPacketFeeAck>(Arena*);
-template<> ::GetPacketFeeReq* Arena::CreateMaybeMessage<::GetPacketFeeReq>(Arena*);
+template<> ::GetPackageFeeAck* Arena::CreateMaybeMessage<::GetPackageFeeAck>(Arena*);
+template<> ::GetPackageFeeReq* Arena::CreateMaybeMessage<::GetPackageFeeReq>(Arena*);
 template<> ::GetPledgeListAck* Arena::CreateMaybeMessage<::GetPledgeListAck>(Arena*);
 template<> ::GetPledgeListReq* Arena::CreateMaybeMessage<::GetPledgeListReq>(Arena*);
 template<> ::GetServiceInfoAck* Arena::CreateMaybeMessage<::GetServiceInfoAck>(Arena*);
@@ -400,7 +401,6 @@ template<> ::SetPacketFeeReq* Arena::CreateMaybeMessage<::SetPacketFeeReq>(Arena
 template<> ::SetServiceFeeAck* Arena::CreateMaybeMessage<::SetServiceFeeAck>(Arena*);
 template<> ::SetServiceFeeReq* Arena::CreateMaybeMessage<::SetServiceFeeReq>(Arena*);
 template<> ::SignInfo* Arena::CreateMaybeMessage<::SignInfo>(Arena*);
-template<> ::TApiGetBlockTopAck* Arena::CreateMaybeMessage<::TApiGetBlockTopAck>(Arena*);
 template<> ::TestConnectAck* Arena::CreateMaybeMessage<::TestConnectAck>(Arena*);
 template<> ::TestConnectReq* Arena::CreateMaybeMessage<::TestConnectReq>(Arena*);
 template<> ::ToAddr* Arena::CreateMaybeMessage<::ToAddr>(Arena*);
@@ -5241,23 +5241,23 @@ class SetServiceFeeAck :
 };
 // -------------------------------------------------------------------
 
-class GetPacketFeeReq :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetPacketFeeReq) */ {
+class GetPackageFeeReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetPackageFeeReq) */ {
  public:
-  GetPacketFeeReq();
-  virtual ~GetPacketFeeReq();
+  GetPackageFeeReq();
+  virtual ~GetPackageFeeReq();
 
-  GetPacketFeeReq(const GetPacketFeeReq& from);
-  GetPacketFeeReq(GetPacketFeeReq&& from) noexcept
-    : GetPacketFeeReq() {
+  GetPackageFeeReq(const GetPackageFeeReq& from);
+  GetPackageFeeReq(GetPackageFeeReq&& from) noexcept
+    : GetPackageFeeReq() {
     *this = ::std::move(from);
   }
 
-  inline GetPacketFeeReq& operator=(const GetPacketFeeReq& from) {
+  inline GetPackageFeeReq& operator=(const GetPackageFeeReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline GetPacketFeeReq& operator=(GetPacketFeeReq&& from) noexcept {
+  inline GetPackageFeeReq& operator=(GetPackageFeeReq&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -5275,37 +5275,37 @@ class GetPacketFeeReq :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const GetPacketFeeReq& default_instance();
+  static const GetPackageFeeReq& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const GetPacketFeeReq* internal_default_instance() {
-    return reinterpret_cast<const GetPacketFeeReq*>(
-               &_GetPacketFeeReq_default_instance_);
+  static inline const GetPackageFeeReq* internal_default_instance() {
+    return reinterpret_cast<const GetPackageFeeReq*>(
+               &_GetPackageFeeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     25;
 
-  friend void swap(GetPacketFeeReq& a, GetPacketFeeReq& b) {
+  friend void swap(GetPackageFeeReq& a, GetPackageFeeReq& b) {
     a.Swap(&b);
   }
-  inline void Swap(GetPacketFeeReq* other) {
+  inline void Swap(GetPackageFeeReq* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline GetPacketFeeReq* New() const final {
-    return CreateMaybeMessage<GetPacketFeeReq>(nullptr);
+  inline GetPackageFeeReq* New() const final {
+    return CreateMaybeMessage<GetPackageFeeReq>(nullptr);
   }
 
-  GetPacketFeeReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<GetPacketFeeReq>(arena);
+  GetPackageFeeReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetPackageFeeReq>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const GetPacketFeeReq& from);
-  void MergeFrom(const GetPacketFeeReq& from);
+  void CopyFrom(const GetPackageFeeReq& from);
+  void MergeFrom(const GetPackageFeeReq& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -5319,10 +5319,10 @@ class GetPacketFeeReq :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(GetPacketFeeReq* other);
+  void InternalSwap(GetPackageFeeReq* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "GetPacketFeeReq";
+    return "GetPackageFeeReq";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -5399,7 +5399,7 @@ class GetPacketFeeReq :
   std::string* _internal_mutable_public_net_ip();
   public:
 
-  // @@protoc_insertion_point(class_scope:GetPacketFeeReq)
+  // @@protoc_insertion_point(class_scope:GetPackageFeeReq)
  private:
   class _Internal;
 
@@ -5412,23 +5412,23 @@ class GetPacketFeeReq :
 };
 // -------------------------------------------------------------------
 
-class GetPacketFeeAck :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetPacketFeeAck) */ {
+class GetPackageFeeAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetPackageFeeAck) */ {
  public:
-  GetPacketFeeAck();
-  virtual ~GetPacketFeeAck();
+  GetPackageFeeAck();
+  virtual ~GetPackageFeeAck();
 
-  GetPacketFeeAck(const GetPacketFeeAck& from);
-  GetPacketFeeAck(GetPacketFeeAck&& from) noexcept
-    : GetPacketFeeAck() {
+  GetPackageFeeAck(const GetPackageFeeAck& from);
+  GetPackageFeeAck(GetPackageFeeAck&& from) noexcept
+    : GetPackageFeeAck() {
     *this = ::std::move(from);
   }
 
-  inline GetPacketFeeAck& operator=(const GetPacketFeeAck& from) {
+  inline GetPackageFeeAck& operator=(const GetPackageFeeAck& from) {
     CopyFrom(from);
     return *this;
   }
-  inline GetPacketFeeAck& operator=(GetPacketFeeAck&& from) noexcept {
+  inline GetPackageFeeAck& operator=(GetPackageFeeAck&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -5446,37 +5446,37 @@ class GetPacketFeeAck :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const GetPacketFeeAck& default_instance();
+  static const GetPackageFeeAck& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const GetPacketFeeAck* internal_default_instance() {
-    return reinterpret_cast<const GetPacketFeeAck*>(
-               &_GetPacketFeeAck_default_instance_);
+  static inline const GetPackageFeeAck* internal_default_instance() {
+    return reinterpret_cast<const GetPackageFeeAck*>(
+               &_GetPackageFeeAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     26;
 
-  friend void swap(GetPacketFeeAck& a, GetPacketFeeAck& b) {
+  friend void swap(GetPackageFeeAck& a, GetPackageFeeAck& b) {
     a.Swap(&b);
   }
-  inline void Swap(GetPacketFeeAck* other) {
+  inline void Swap(GetPackageFeeAck* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline GetPacketFeeAck* New() const final {
-    return CreateMaybeMessage<GetPacketFeeAck>(nullptr);
+  inline GetPackageFeeAck* New() const final {
+    return CreateMaybeMessage<GetPackageFeeAck>(nullptr);
   }
 
-  GetPacketFeeAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<GetPacketFeeAck>(arena);
+  GetPackageFeeAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetPackageFeeAck>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const GetPacketFeeAck& from);
-  void MergeFrom(const GetPacketFeeAck& from);
+  void CopyFrom(const GetPackageFeeAck& from);
+  void MergeFrom(const GetPackageFeeAck& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -5490,10 +5490,10 @@ class GetPacketFeeAck :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(GetPacketFeeAck* other);
+  void InternalSwap(GetPackageFeeAck* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "GetPacketFeeAck";
+    return "GetPackageFeeAck";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -5520,7 +5520,7 @@ class GetPacketFeeAck :
   enum : int {
     kVersionFieldNumber = 1,
     kDescriptionFieldNumber = 3,
-    kPacketFeeFieldNumber = 4,
+    kPackageFeeFieldNumber = 4,
     kCodeFieldNumber = 2,
   };
   // string version = 1;
@@ -5555,20 +5555,20 @@ class GetPacketFeeAck :
   std::string* _internal_mutable_description();
   public:
 
-  // string packet_fee = 4;
-  void clear_packet_fee();
-  const std::string& packet_fee() const;
-  void set_packet_fee(const std::string& value);
-  void set_packet_fee(std::string&& value);
-  void set_packet_fee(const char* value);
-  void set_packet_fee(const char* value, size_t size);
-  std::string* mutable_packet_fee();
-  std::string* release_packet_fee();
-  void set_allocated_packet_fee(std::string* packet_fee);
+  // string package_fee = 4;
+  void clear_package_fee();
+  const std::string& package_fee() const;
+  void set_package_fee(const std::string& value);
+  void set_package_fee(std::string&& value);
+  void set_package_fee(const char* value);
+  void set_package_fee(const char* value, size_t size);
+  std::string* mutable_package_fee();
+  std::string* release_package_fee();
+  void set_allocated_package_fee(std::string* package_fee);
   private:
-  const std::string& _internal_packet_fee() const;
-  void _internal_set_packet_fee(const std::string& value);
-  std::string* _internal_mutable_packet_fee();
+  const std::string& _internal_package_fee() const;
+  void _internal_set_package_fee(const std::string& value);
+  std::string* _internal_mutable_package_fee();
   public:
 
   // sint32 code = 2;
@@ -5580,14 +5580,14 @@ class GetPacketFeeAck :
   void _internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:GetPacketFeeAck)
+  // @@protoc_insertion_point(class_scope:GetPackageFeeAck)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr packet_fee_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr package_fee_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
@@ -5947,382 +5947,6 @@ class SetPacketFeeAck :
 };
 // -------------------------------------------------------------------
 
-class GetBlockTopReq :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetBlockTopReq) */ {
- public:
-  GetBlockTopReq();
-  virtual ~GetBlockTopReq();
-
-  GetBlockTopReq(const GetBlockTopReq& from);
-  GetBlockTopReq(GetBlockTopReq&& from) noexcept
-    : GetBlockTopReq() {
-    *this = ::std::move(from);
-  }
-
-  inline GetBlockTopReq& operator=(const GetBlockTopReq& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetBlockTopReq& operator=(GetBlockTopReq&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const GetBlockTopReq& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const GetBlockTopReq* internal_default_instance() {
-    return reinterpret_cast<const GetBlockTopReq*>(
-               &_GetBlockTopReq_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    29;
-
-  friend void swap(GetBlockTopReq& a, GetBlockTopReq& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(GetBlockTopReq* other) {
-    if (other == this) return;
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline GetBlockTopReq* New() const final {
-    return CreateMaybeMessage<GetBlockTopReq>(nullptr);
-  }
-
-  GetBlockTopReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<GetBlockTopReq>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const GetBlockTopReq& from);
-  void MergeFrom(const GetBlockTopReq& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(GetBlockTopReq* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "GetBlockTopReq";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
-    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kVersionFieldNumber = 1,
-    kFdFieldNumber = 2,
-    kPortFieldNumber = 3,
-    kIpFieldNumber = 4,
-  };
-  // string version = 1;
-  void clear_version();
-  const std::string& version() const;
-  void set_version(const std::string& value);
-  void set_version(std::string&& value);
-  void set_version(const char* value);
-  void set_version(const char* value, size_t size);
-  std::string* mutable_version();
-  std::string* release_version();
-  void set_allocated_version(std::string* version);
-  private:
-  const std::string& _internal_version() const;
-  void _internal_set_version(const std::string& value);
-  std::string* _internal_mutable_version();
-  public:
-
-  // uint32 fd = 2;
-  void clear_fd();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fd() const;
-  void set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fd() const;
-  void _internal_set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 port = 3;
-  void clear_port();
-  ::PROTOBUF_NAMESPACE_ID::uint32 port() const;
-  void set_port(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_port() const;
-  void _internal_set_port(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 ip = 4;
-  void clear_ip();
-  ::PROTOBUF_NAMESPACE_ID::uint32 ip() const;
-  void set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_ip() const;
-  void _internal_set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:GetBlockTopReq)
- private:
-  class _Internal;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fd_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 port_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 ip_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_interface_2eproto;
-};
-// -------------------------------------------------------------------
-
-class TApiGetBlockTopAck :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TApiGetBlockTopAck) */ {
- public:
-  TApiGetBlockTopAck();
-  virtual ~TApiGetBlockTopAck();
-
-  TApiGetBlockTopAck(const TApiGetBlockTopAck& from);
-  TApiGetBlockTopAck(TApiGetBlockTopAck&& from) noexcept
-    : TApiGetBlockTopAck() {
-    *this = ::std::move(from);
-  }
-
-  inline TApiGetBlockTopAck& operator=(const TApiGetBlockTopAck& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline TApiGetBlockTopAck& operator=(TApiGetBlockTopAck&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const TApiGetBlockTopAck& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const TApiGetBlockTopAck* internal_default_instance() {
-    return reinterpret_cast<const TApiGetBlockTopAck*>(
-               &_TApiGetBlockTopAck_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    30;
-
-  friend void swap(TApiGetBlockTopAck& a, TApiGetBlockTopAck& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(TApiGetBlockTopAck* other) {
-    if (other == this) return;
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline TApiGetBlockTopAck* New() const final {
-    return CreateMaybeMessage<TApiGetBlockTopAck>(nullptr);
-  }
-
-  TApiGetBlockTopAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<TApiGetBlockTopAck>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const TApiGetBlockTopAck& from);
-  void MergeFrom(const TApiGetBlockTopAck& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(TApiGetBlockTopAck* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "TApiGetBlockTopAck";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
-    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kVersionFieldNumber = 1,
-    kDescriptionFieldNumber = 3,
-    kCodeFieldNumber = 2,
-    kTopFieldNumber = 4,
-    kFdFieldNumber = 5,
-    kPortFieldNumber = 6,
-    kIpFieldNumber = 7,
-  };
-  // string version = 1;
-  void clear_version();
-  const std::string& version() const;
-  void set_version(const std::string& value);
-  void set_version(std::string&& value);
-  void set_version(const char* value);
-  void set_version(const char* value, size_t size);
-  std::string* mutable_version();
-  std::string* release_version();
-  void set_allocated_version(std::string* version);
-  private:
-  const std::string& _internal_version() const;
-  void _internal_set_version(const std::string& value);
-  std::string* _internal_mutable_version();
-  public:
-
-  // string description = 3;
-  void clear_description();
-  const std::string& description() const;
-  void set_description(const std::string& value);
-  void set_description(std::string&& value);
-  void set_description(const char* value);
-  void set_description(const char* value, size_t size);
-  std::string* mutable_description();
-  std::string* release_description();
-  void set_allocated_description(std::string* description);
-  private:
-  const std::string& _internal_description() const;
-  void _internal_set_description(const std::string& value);
-  std::string* _internal_mutable_description();
-  public:
-
-  // sint32 code = 2;
-  void clear_code();
-  ::PROTOBUF_NAMESPACE_ID::int32 code() const;
-  void set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_code() const;
-  void _internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
-  public:
-
-  // uint32 top = 4;
-  void clear_top();
-  ::PROTOBUF_NAMESPACE_ID::uint32 top() const;
-  void set_top(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_top() const;
-  void _internal_set_top(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fd = 5;
-  void clear_fd();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fd() const;
-  void set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fd() const;
-  void _internal_set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 port = 6;
-  void clear_port();
-  ::PROTOBUF_NAMESPACE_ID::uint32 port() const;
-  void set_port(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_port() const;
-  void _internal_set_port(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 ip = 7;
-  void clear_ip();
-  ::PROTOBUF_NAMESPACE_ID::uint32 ip() const;
-  void set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_ip() const;
-  void _internal_set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:TApiGetBlockTopAck)
- private:
-  class _Internal;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
-  ::PROTOBUF_NAMESPACE_ID::int32 code_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 top_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fd_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 port_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 ip_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_interface_2eproto;
-};
-// -------------------------------------------------------------------
-
 class GetNodeServiceFeeReq :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GetNodeServiceFeeReq) */ {
  public:
@@ -6365,7 +5989,7 @@ class GetNodeServiceFeeReq :
                &_GetNodeServiceFeeReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    29;
 
   friend void swap(GetNodeServiceFeeReq& a, GetNodeServiceFeeReq& b) {
     a.Swap(&b);
@@ -6500,7 +6124,7 @@ class GetNodeServiceFeeAck :
                &_GetNodeServiceFeeAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    30;
 
   friend void swap(GetNodeServiceFeeAck& a, GetNodeServiceFeeAck& b) {
     a.Swap(&b);
@@ -6684,7 +6308,7 @@ class GetDevInfoListReq :
                &_GetDevInfoListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    31;
 
   friend void swap(GetDevInfoListReq& a, GetDevInfoListReq& b) {
     a.Swap(&b);
@@ -6884,7 +6508,7 @@ class GetDevInfoListAcK :
                &_GetDevInfoListAcK_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    32;
 
   friend void swap(GetDevInfoListAcK& a, GetDevInfoListAcK& b) {
     a.Swap(&b);
@@ -7144,7 +6768,7 @@ class GetDevPrivateKeyReq :
                &_GetDevPrivateKeyReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    33;
 
   friend void swap(GetDevPrivateKeyReq& a, GetDevPrivateKeyReq& b) {
     a.Swap(&b);
@@ -7315,7 +6939,7 @@ class DevPrivateKeyInfo :
                &_DevPrivateKeyInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    34;
 
   friend void swap(DevPrivateKeyInfo& a, DevPrivateKeyInfo& b) {
     a.Swap(&b);
@@ -7486,7 +7110,7 @@ class GetDevPrivateKeyAck :
                &_GetDevPrivateKeyAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    35;
 
   friend void swap(GetDevPrivateKeyAck& a, GetDevPrivateKeyAck& b) {
     a.Swap(&b);
@@ -7670,7 +7294,7 @@ class CreateTxMsgReq :
                &_CreateTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    36;
 
   friend void swap(CreateTxMsgReq& a, CreateTxMsgReq& b) {
     a.Swap(&b);
@@ -7895,7 +7519,7 @@ class CreateTxMsgAck :
                &_CreateTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    37;
 
   friend void swap(CreateTxMsgAck& a, CreateTxMsgAck& b) {
     a.Swap(&b);
@@ -8095,7 +7719,7 @@ class TxMsgReq :
                &_TxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    38;
 
   friend void swap(TxMsgReq& a, TxMsgReq& b) {
     a.Swap(&b);
@@ -8302,7 +7926,7 @@ class TxMsgAck :
                &_TxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    39;
 
   friend void swap(TxMsgAck& a, TxMsgAck& b) {
     a.Swap(&b);
@@ -8484,7 +8108,7 @@ class ToAddr :
                &_ToAddr_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    40;
 
   friend void swap(ToAddr& a, ToAddr& b) {
     a.Swap(&b);
@@ -8637,7 +8261,7 @@ class CreateMultiTxMsgReq :
                &_CreateMultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    41;
 
   friend void swap(CreateMultiTxMsgReq& a, CreateMultiTxMsgReq& b) {
     a.Swap(&b);
@@ -8854,7 +8478,7 @@ class CreateMultiTxMsgAck :
                &_CreateMultiTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    42;
 
   friend void swap(CreateMultiTxMsgAck& a, CreateMultiTxMsgAck& b) {
     a.Swap(&b);
@@ -9054,7 +8678,7 @@ class SignInfo :
                &_SignInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    43;
 
   friend void swap(SignInfo& a, SignInfo& b) {
     a.Swap(&b);
@@ -9207,7 +8831,7 @@ class MultiTxMsgReq :
                &_MultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    44;
 
   friend void swap(MultiTxMsgReq& a, MultiTxMsgReq& b) {
     a.Swap(&b);
@@ -9398,7 +9022,7 @@ class VerifyDevicePasswordReq :
                &_VerifyDevicePasswordReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    45;
 
   friend void swap(VerifyDevicePasswordReq& a, VerifyDevicePasswordReq& b) {
     a.Swap(&b);
@@ -9551,7 +9175,7 @@ class VerifyDevicePasswordAck :
                &_VerifyDevicePasswordAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    46;
 
   friend void swap(VerifyDevicePasswordAck& a, VerifyDevicePasswordAck& b) {
     a.Swap(&b);
@@ -9715,7 +9339,7 @@ class CreateDeviceTxMsgReq :
                &_CreateDeviceTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    47;
 
   friend void swap(CreateDeviceTxMsgReq& a, CreateDeviceTxMsgReq& b) {
     a.Swap(&b);
@@ -9958,7 +9582,7 @@ class CreateDeviceMultiTxMsgReq :
                &_CreateDeviceMultiTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    50;
+    48;
 
   friend void swap(CreateDeviceMultiTxMsgReq& a, CreateDeviceMultiTxMsgReq& b) {
     a.Swap(&b);
@@ -10193,7 +9817,7 @@ class CreatePledgeTxMsgReq :
                &_CreatePledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    51;
+    49;
 
   friend void swap(CreatePledgeTxMsgReq& a, CreatePledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -10400,7 +10024,7 @@ class CreatePledgeTxMsgAck :
                &_CreatePledgeTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    52;
+    50;
 
   friend void swap(CreatePledgeTxMsgAck& a, CreatePledgeTxMsgAck& b) {
     a.Swap(&b);
@@ -10465,7 +10089,7 @@ class CreatePledgeTxMsgAck :
 
   enum : int {
     kVersionFieldNumber = 1,
-    kDescriptionFieldNumber = 3,
+    kMessageFieldNumber = 3,
     kTxDataFieldNumber = 4,
     kTxEncodeHashFieldNumber = 5,
     kCodeFieldNumber = 2,
@@ -10486,20 +10110,20 @@ class CreatePledgeTxMsgAck :
   std::string* _internal_mutable_version();
   public:
 
-  // string description = 3;
-  void clear_description();
-  const std::string& description() const;
-  void set_description(const std::string& value);
-  void set_description(std::string&& value);
-  void set_description(const char* value);
-  void set_description(const char* value, size_t size);
-  std::string* mutable_description();
-  std::string* release_description();
-  void set_allocated_description(std::string* description);
+  // string message = 3;
+  void clear_message();
+  const std::string& message() const;
+  void set_message(const std::string& value);
+  void set_message(std::string&& value);
+  void set_message(const char* value);
+  void set_message(const char* value, size_t size);
+  std::string* mutable_message();
+  std::string* release_message();
+  void set_allocated_message(std::string* message);
   private:
-  const std::string& _internal_description() const;
-  void _internal_set_description(const std::string& value);
-  std::string* _internal_mutable_description();
+  const std::string& _internal_message() const;
+  void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
   public:
 
   // string txData = 4;
@@ -10549,7 +10173,7 @@ class CreatePledgeTxMsgAck :
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txdata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txencodehash_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
@@ -10600,7 +10224,7 @@ class PledgeTxMsgReq :
                &_PledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    53;
+    51;
 
   friend void swap(PledgeTxMsgReq& a, PledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -10807,7 +10431,7 @@ class CreateRedeemTxMsgReq :
                &_CreateRedeemTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    54;
+    52;
 
   friend void swap(CreateRedeemTxMsgReq& a, CreateRedeemTxMsgReq& b) {
     a.Swap(&b);
@@ -11032,7 +10656,7 @@ class CreateRedeemTxMsgAck :
                &_CreateRedeemTxMsgAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    55;
+    53;
 
   friend void swap(CreateRedeemTxMsgAck& a, CreateRedeemTxMsgAck& b) {
     a.Swap(&b);
@@ -11097,7 +10721,7 @@ class CreateRedeemTxMsgAck :
 
   enum : int {
     kVersionFieldNumber = 1,
-    kDescriptionFieldNumber = 3,
+    kMessageFieldNumber = 3,
     kTxDataFieldNumber = 4,
     kTxEncodeHashFieldNumber = 5,
     kCodeFieldNumber = 2,
@@ -11118,20 +10742,20 @@ class CreateRedeemTxMsgAck :
   std::string* _internal_mutable_version();
   public:
 
-  // string description = 3;
-  void clear_description();
-  const std::string& description() const;
-  void set_description(const std::string& value);
-  void set_description(std::string&& value);
-  void set_description(const char* value);
-  void set_description(const char* value, size_t size);
-  std::string* mutable_description();
-  std::string* release_description();
-  void set_allocated_description(std::string* description);
+  // string message = 3;
+  void clear_message();
+  const std::string& message() const;
+  void set_message(const std::string& value);
+  void set_message(std::string&& value);
+  void set_message(const char* value);
+  void set_message(const char* value, size_t size);
+  std::string* mutable_message();
+  std::string* release_message();
+  void set_allocated_message(std::string* message);
   private:
-  const std::string& _internal_description() const;
-  void _internal_set_description(const std::string& value);
-  std::string* _internal_mutable_description();
+  const std::string& _internal_message() const;
+  void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
   public:
 
   // string txData = 4;
@@ -11181,7 +10805,7 @@ class CreateRedeemTxMsgAck :
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txdata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txencodehash_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
@@ -11232,7 +10856,7 @@ class RedeemTxMsgReq :
                &_RedeemTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    56;
+    54;
 
   friend void swap(RedeemTxMsgReq& a, RedeemTxMsgReq& b) {
     a.Swap(&b);
@@ -11439,7 +11063,7 @@ class CreateDevicePledgeTxMsgReq :
                &_CreateDevicePledgeTxMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    57;
+    55;
 
   friend void swap(CreateDevicePledgeTxMsgReq& a, CreateDevicePledgeTxMsgReq& b) {
     a.Swap(&b);
@@ -11664,7 +11288,7 @@ class CreateDeviceRedeemTxReq :
                &_CreateDeviceRedeemTxReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    58;
+    56;
 
   friend void swap(CreateDeviceRedeemTxReq& a, CreateDeviceRedeemTxReq& b) {
     a.Swap(&b);
@@ -11889,7 +11513,7 @@ class GetPledgeListReq :
                &_GetPledgeListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    59;
+    57;
 
   friend void swap(GetPledgeListReq& a, GetPledgeListReq& b) {
     a.Swap(&b);
@@ -11955,7 +11579,7 @@ class GetPledgeListReq :
   enum : int {
     kVersionFieldNumber = 1,
     kAddrFieldNumber = 2,
-    kIndexFieldNumber = 3,
+    kTxhashFieldNumber = 3,
     kCountFieldNumber = 4,
   };
   // string version = 1;
@@ -11990,13 +11614,20 @@ class GetPledgeListReq :
   std::string* _internal_mutable_addr();
   public:
 
-  // uint32 index = 3;
-  void clear_index();
-  ::PROTOBUF_NAMESPACE_ID::uint32 index() const;
-  void set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // string txhash = 3;
+  void clear_txhash();
+  const std::string& txhash() const;
+  void set_txhash(const std::string& value);
+  void set_txhash(std::string&& value);
+  void set_txhash(const char* value);
+  void set_txhash(const char* value, size_t size);
+  std::string* mutable_txhash();
+  std::string* release_txhash();
+  void set_allocated_txhash(std::string* txhash);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_index() const;
-  void _internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_txhash() const;
+  void _internal_set_txhash(const std::string& value);
+  std::string* _internal_mutable_txhash();
   public:
 
   // uint32 count = 4;
@@ -12015,7 +11646,7 @@ class GetPledgeListReq :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr addr_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 index_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txhash_;
   ::PROTOBUF_NAMESPACE_ID::uint32 count_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
@@ -12064,7 +11695,7 @@ class PledgeItem :
                &_PledgeItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    60;
+    58;
 
   friend void swap(PledgeItem& a, PledgeItem& b) {
     a.Swap(&b);
@@ -12311,7 +11942,7 @@ class GetPledgeListAck :
                &_GetPledgeListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    61;
+    59;
 
   friend void swap(GetPledgeListAck& a, GetPledgeListAck& b) {
     a.Swap(&b);
@@ -12378,6 +12009,7 @@ class GetPledgeListAck :
     kListFieldNumber = 4,
     kVersionFieldNumber = 1,
     kDescriptionFieldNumber = 3,
+    kLasthashFieldNumber = 6,
     kCodeFieldNumber = 2,
     kTotalFieldNumber = 5,
   };
@@ -12431,6 +12063,22 @@ class GetPledgeListAck :
   std::string* _internal_mutable_description();
   public:
 
+  // string lasthash = 6;
+  void clear_lasthash();
+  const std::string& lasthash() const;
+  void set_lasthash(const std::string& value);
+  void set_lasthash(std::string&& value);
+  void set_lasthash(const char* value);
+  void set_lasthash(const char* value, size_t size);
+  std::string* mutable_lasthash();
+  std::string* release_lasthash();
+  void set_allocated_lasthash(std::string* lasthash);
+  private:
+  const std::string& _internal_lasthash() const;
+  void _internal_set_lasthash(const std::string& value);
+  std::string* _internal_mutable_lasthash();
+  public:
+
   // int32 code = 2;
   void clear_code();
   ::PROTOBUF_NAMESPACE_ID::int32 code() const;
@@ -12457,6 +12105,7 @@ class GetPledgeListAck :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::PledgeItem > list_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr lasthash_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
   ::PROTOBUF_NAMESPACE_ID::uint32 total_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -12506,7 +12155,7 @@ class GetTxInfoListReq :
                &_GetTxInfoListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    62;
+    60;
 
   friend void swap(GetTxInfoListReq& a, GetTxInfoListReq& b) {
     a.Swap(&b);
@@ -12572,7 +12221,7 @@ class GetTxInfoListReq :
   enum : int {
     kVersionFieldNumber = 1,
     kAddrFieldNumber = 2,
-    kIndexFieldNumber = 3,
+    kTxhashFieldNumber = 3,
     kCountFieldNumber = 4,
   };
   // string version = 1;
@@ -12607,13 +12256,20 @@ class GetTxInfoListReq :
   std::string* _internal_mutable_addr();
   public:
 
-  // uint32 index = 3;
-  void clear_index();
-  ::PROTOBUF_NAMESPACE_ID::uint32 index() const;
-  void set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // string txhash = 3;
+  void clear_txhash();
+  const std::string& txhash() const;
+  void set_txhash(const std::string& value);
+  void set_txhash(std::string&& value);
+  void set_txhash(const char* value);
+  void set_txhash(const char* value, size_t size);
+  std::string* mutable_txhash();
+  std::string* release_txhash();
+  void set_allocated_txhash(std::string* txhash);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_index() const;
-  void _internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_txhash() const;
+  void _internal_set_txhash(const std::string& value);
+  std::string* _internal_mutable_txhash();
   public:
 
   // uint32 count = 4;
@@ -12632,7 +12288,7 @@ class GetTxInfoListReq :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr addr_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 index_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txhash_;
   ::PROTOBUF_NAMESPACE_ID::uint32 count_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
@@ -12681,7 +12337,7 @@ class TxInfoItem :
                &_TxInfoItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    63;
+    61;
 
   friend void swap(TxInfoItem& a, TxInfoItem& b) {
     a.Swap(&b);
@@ -12856,7 +12512,7 @@ class GetTxInfoListAck :
                &_GetTxInfoListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    64;
+    62;
 
   friend void swap(GetTxInfoListAck& a, GetTxInfoListAck& b) {
     a.Swap(&b);
@@ -12923,9 +12579,9 @@ class GetTxInfoListAck :
     kListFieldNumber = 4,
     kVersionFieldNumber = 1,
     kDescriptionFieldNumber = 3,
+    kLasthashFieldNumber = 6,
     kCodeFieldNumber = 2,
     kTotalFieldNumber = 5,
-    kIndexFieldNumber = 6,
   };
   // repeated .TxInfoItem list = 4;
   int list_size() const;
@@ -12977,6 +12633,22 @@ class GetTxInfoListAck :
   std::string* _internal_mutable_description();
   public:
 
+  // string lasthash = 6;
+  void clear_lasthash();
+  const std::string& lasthash() const;
+  void set_lasthash(const std::string& value);
+  void set_lasthash(std::string&& value);
+  void set_lasthash(const char* value);
+  void set_lasthash(const char* value, size_t size);
+  std::string* mutable_lasthash();
+  std::string* release_lasthash();
+  void set_allocated_lasthash(std::string* lasthash);
+  private:
+  const std::string& _internal_lasthash() const;
+  void _internal_set_lasthash(const std::string& value);
+  std::string* _internal_mutable_lasthash();
+  public:
+
   // int32 code = 2;
   void clear_code();
   ::PROTOBUF_NAMESPACE_ID::int32 code() const;
@@ -12995,15 +12667,6 @@ class GetTxInfoListAck :
   void _internal_set_total(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 index = 6;
-  void clear_index();
-  ::PROTOBUF_NAMESPACE_ID::uint32 index() const;
-  void set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_index() const;
-  void _internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
   // @@protoc_insertion_point(class_scope:GetTxInfoListAck)
  private:
   class _Internal;
@@ -13012,9 +12675,9 @@ class GetTxInfoListAck :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxInfoItem > list_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr lasthash_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
   ::PROTOBUF_NAMESPACE_ID::uint32 total_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 index_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -13062,7 +12725,7 @@ class GetTxInfoDetailReq :
                &_GetTxInfoDetailReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    65;
+    63;
 
   friend void swap(GetTxInfoDetailReq& a, GetTxInfoDetailReq& b) {
     a.Swap(&b);
@@ -13233,7 +12896,7 @@ class GetTxInfoDetailAck :
                &_GetTxInfoDetailAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    66;
+    64;
 
   friend void swap(GetTxInfoDetailAck& a, GetTxInfoDetailAck& b) {
     a.Swap(&b);
@@ -13591,7 +13254,7 @@ class GetBlockInfoListReq :
                &_GetBlockInfoListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    67;
+    65;
 
   friend void swap(GetBlockInfoListReq& a, GetBlockInfoListReq& b) {
     a.Swap(&b);
@@ -13748,7 +13411,7 @@ class BlockInfoItem :
                &_BlockInfoItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    68;
+    66;
 
   friend void swap(BlockInfoItem& a, BlockInfoItem& b) {
     a.Swap(&b);
@@ -13993,7 +13656,7 @@ class GetBlockInfoListAck :
                &_GetBlockInfoListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    69;
+    67;
 
   friend void swap(GetBlockInfoListAck& a, GetBlockInfoListAck& b) {
     a.Swap(&b);
@@ -14199,7 +13862,7 @@ class GetBlockInfoDetailReq :
                &_GetBlockInfoDetailReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    70;
+    68;
 
   friend void swap(GetBlockInfoDetailReq& a, GetBlockInfoDetailReq& b) {
     a.Swap(&b);
@@ -14352,7 +14015,7 @@ class BlockInfoOutAddr :
                &_BlockInfoOutAddr_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    71;
+    69;
 
   friend void swap(BlockInfoOutAddr& a, BlockInfoOutAddr& b) {
     a.Swap(&b);
@@ -14505,7 +14168,7 @@ class GetBlockInfoDetailAck :
                &_GetBlockInfoDetailAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    72;
+    70;
 
   friend void swap(GetBlockInfoDetailAck& a, GetBlockInfoDetailAck& b) {
     a.Swap(&b);
@@ -14809,7 +14472,7 @@ class TestConnectReq :
                &_TestConnectReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    73;
+    71;
 
   friend void swap(TestConnectReq& a, TestConnectReq& b) {
     a.Swap(&b);
@@ -14944,7 +14607,7 @@ class TestConnectAck :
                &_TestConnectAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    74;
+    72;
 
   friend void swap(TestConnectAck& a, TestConnectAck& b) {
     a.Swap(&b);
@@ -15090,7 +14753,7 @@ class Device2PubNetRandomReq :
                &_Device2PubNetRandomReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    75;
+    73;
 
   friend void swap(Device2PubNetRandomReq& a, Device2PubNetRandomReq& b) {
     a.Swap(&b);
@@ -15243,7 +14906,7 @@ class RandomPubNet2DeviceAck :
                &_RandomPubNet2DeviceAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    76;
+    74;
 
   friend void swap(RandomPubNet2DeviceAck& a, RandomPubNet2DeviceAck& b) {
     a.Swap(&b);
@@ -15414,7 +15077,7 @@ class Device2AllDevReq :
                &_Device2AllDevReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    77;
+    75;
 
   friend void swap(Device2AllDevReq& a, Device2AllDevReq& b) {
     a.Swap(&b);
@@ -15567,7 +15230,7 @@ class Feedback2DeviceAck :
                &_Feedback2DeviceAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    78;
+    76;
 
   friend void swap(Feedback2DeviceAck& a, Feedback2DeviceAck& b) {
     a.Swap(&b);
@@ -15720,7 +15383,7 @@ class DataTransReq :
                &_DataTransReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    79;
+    77;
 
   friend void swap(DataTransReq& a, DataTransReq& b) {
     a.Swap(&b);
@@ -15873,7 +15536,7 @@ class TransData :
                &_TransData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    80;
+    78;
 
   friend void swap(TransData& a, TransData& b) {
     a.Swap(&b);
@@ -16080,7 +15743,7 @@ class GetTxPendingListReq :
                &_GetTxPendingListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    81;
+    79;
 
   friend void swap(GetTxPendingListReq& a, GetTxPendingListReq& b) {
     a.Swap(&b);
@@ -16241,7 +15904,7 @@ class TxPendingItem :
                &_TxPendingItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    82;
+    80;
 
   friend void swap(TxPendingItem& a, TxPendingItem& b) {
     a.Swap(&b);
@@ -16556,7 +16219,7 @@ class GetTxPendingListAck :
                &_GetTxPendingListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    83;
+    81;
 
   friend void swap(GetTxPendingListAck& a, GetTxPendingListAck& b) {
     a.Swap(&b);
@@ -16766,7 +16429,7 @@ class GetTxFailureListReq :
                &_GetTxFailureListReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    84;
+    82;
 
   friend void swap(GetTxFailureListReq& a, GetTxFailureListReq& b) {
     a.Swap(&b);
@@ -16832,7 +16495,7 @@ class GetTxFailureListReq :
   enum : int {
     kVersionFieldNumber = 1,
     kAddrFieldNumber = 2,
-    kIndexFieldNumber = 3,
+    kTxhashFieldNumber = 3,
     kCountFieldNumber = 4,
   };
   // string version = 1;
@@ -16867,13 +16530,20 @@ class GetTxFailureListReq :
   std::string* _internal_mutable_addr();
   public:
 
-  // uint32 index = 3;
-  void clear_index();
-  ::PROTOBUF_NAMESPACE_ID::uint32 index() const;
-  void set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // string txhash = 3;
+  void clear_txhash();
+  const std::string& txhash() const;
+  void set_txhash(const std::string& value);
+  void set_txhash(std::string&& value);
+  void set_txhash(const char* value);
+  void set_txhash(const char* value, size_t size);
+  std::string* mutable_txhash();
+  std::string* release_txhash();
+  void set_allocated_txhash(std::string* txhash);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_index() const;
-  void _internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_txhash() const;
+  void _internal_set_txhash(const std::string& value);
+  std::string* _internal_mutable_txhash();
   public:
 
   // uint32 count = 4;
@@ -16892,7 +16562,7 @@ class GetTxFailureListReq :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr addr_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 index_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr txhash_;
   ::PROTOBUF_NAMESPACE_ID::uint32 count_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
@@ -16941,7 +16611,7 @@ class TxFailureItem :
                &_TxFailureItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    85;
+    83;
 
   friend void swap(TxFailureItem& a, TxFailureItem& b) {
     a.Swap(&b);
@@ -17256,7 +16926,7 @@ class GetTxFailureListAck :
                &_GetTxFailureListAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    86;
+    84;
 
   friend void swap(GetTxFailureListAck& a, GetTxFailureListAck& b) {
     a.Swap(&b);
@@ -17323,6 +16993,7 @@ class GetTxFailureListAck :
     kListFieldNumber = 5,
     kVersionFieldNumber = 1,
     kDescriptionFieldNumber = 3,
+    kLasthashFieldNumber = 6,
     kCodeFieldNumber = 2,
     kTotalFieldNumber = 4,
   };
@@ -17376,6 +17047,22 @@ class GetTxFailureListAck :
   std::string* _internal_mutable_description();
   public:
 
+  // string lasthash = 6;
+  void clear_lasthash();
+  const std::string& lasthash() const;
+  void set_lasthash(const std::string& value);
+  void set_lasthash(std::string&& value);
+  void set_lasthash(const char* value);
+  void set_lasthash(const char* value, size_t size);
+  std::string* mutable_lasthash();
+  std::string* release_lasthash();
+  void set_allocated_lasthash(std::string* lasthash);
+  private:
+  const std::string& _internal_lasthash() const;
+  void _internal_set_lasthash(const std::string& value);
+  std::string* _internal_mutable_lasthash();
+  public:
+
   // int32 code = 2;
   void clear_code();
   ::PROTOBUF_NAMESPACE_ID::int32 code() const;
@@ -17402,6 +17089,7 @@ class GetTxFailureListAck :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxFailureItem > list_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr lasthash_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
   ::PROTOBUF_NAMESPACE_ID::uint32 total_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -17451,7 +17139,7 @@ class GetTxByHashReq :
                &_GetTxByHashReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    87;
+    85;
 
   friend void swap(GetTxByHashReq& a, GetTxByHashReq& b) {
     a.Swap(&b);
@@ -17612,7 +17300,7 @@ class TxItem :
                &_TxItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    88;
+    86;
 
   friend void swap(TxItem& a, TxItem& b) {
     a.Swap(&b);
@@ -17971,7 +17659,7 @@ class GetTxByHashAck :
                &_GetTxByHashAck_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    89;
+    87;
 
   friend void swap(GetTxByHashAck& a, GetTxByHashAck& b) {
     a.Swap(&b);
@@ -18134,6 +17822,320 @@ class GetTxByHashAck :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
   ::PROTOBUF_NAMESPACE_ID::int32 code_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CheckNodeHeightReq :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CheckNodeHeightReq) */ {
+ public:
+  CheckNodeHeightReq();
+  virtual ~CheckNodeHeightReq();
+
+  CheckNodeHeightReq(const CheckNodeHeightReq& from);
+  CheckNodeHeightReq(CheckNodeHeightReq&& from) noexcept
+    : CheckNodeHeightReq() {
+    *this = ::std::move(from);
+  }
+
+  inline CheckNodeHeightReq& operator=(const CheckNodeHeightReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CheckNodeHeightReq& operator=(CheckNodeHeightReq&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CheckNodeHeightReq& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CheckNodeHeightReq* internal_default_instance() {
+    return reinterpret_cast<const CheckNodeHeightReq*>(
+               &_CheckNodeHeightReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    88;
+
+  friend void swap(CheckNodeHeightReq& a, CheckNodeHeightReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CheckNodeHeightReq* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CheckNodeHeightReq* New() const final {
+    return CreateMaybeMessage<CheckNodeHeightReq>(nullptr);
+  }
+
+  CheckNodeHeightReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CheckNodeHeightReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CheckNodeHeightReq& from);
+  void MergeFrom(const CheckNodeHeightReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CheckNodeHeightReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "CheckNodeHeightReq";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // @@protoc_insertion_point(class_scope:CheckNodeHeightReq)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_interface_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CheckNodeHeightAck :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CheckNodeHeightAck) */ {
+ public:
+  CheckNodeHeightAck();
+  virtual ~CheckNodeHeightAck();
+
+  CheckNodeHeightAck(const CheckNodeHeightAck& from);
+  CheckNodeHeightAck(CheckNodeHeightAck&& from) noexcept
+    : CheckNodeHeightAck() {
+    *this = ::std::move(from);
+  }
+
+  inline CheckNodeHeightAck& operator=(const CheckNodeHeightAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CheckNodeHeightAck& operator=(CheckNodeHeightAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CheckNodeHeightAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CheckNodeHeightAck* internal_default_instance() {
+    return reinterpret_cast<const CheckNodeHeightAck*>(
+               &_CheckNodeHeightAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    89;
+
+  friend void swap(CheckNodeHeightAck& a, CheckNodeHeightAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CheckNodeHeightAck* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CheckNodeHeightAck* New() const final {
+    return CreateMaybeMessage<CheckNodeHeightAck>(nullptr);
+  }
+
+  CheckNodeHeightAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CheckNodeHeightAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CheckNodeHeightAck& from);
+  void MergeFrom(const CheckNodeHeightAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CheckNodeHeightAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "CheckNodeHeightAck";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_interface_2eproto);
+    return ::descriptor_table_interface_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVersionFieldNumber = 1,
+    kCodeFieldNumber = 2,
+    kTotalFieldNumber = 3,
+    kPercentFieldNumber = 4,
+    kHeightFieldNumber = 5,
+  };
+  // string version = 1;
+  void clear_version();
+  const std::string& version() const;
+  void set_version(const std::string& value);
+  void set_version(std::string&& value);
+  void set_version(const char* value);
+  void set_version(const char* value, size_t size);
+  std::string* mutable_version();
+  std::string* release_version();
+  void set_allocated_version(std::string* version);
+  private:
+  const std::string& _internal_version() const;
+  void _internal_set_version(const std::string& value);
+  std::string* _internal_mutable_version();
+  public:
+
+  // int32 code = 2;
+  void clear_code();
+  ::PROTOBUF_NAMESPACE_ID::int32 code() const;
+  void set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_code() const;
+  void _internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // uint32 total = 3;
+  void clear_total();
+  ::PROTOBUF_NAMESPACE_ID::uint32 total() const;
+  void set_total(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_total() const;
+  void _internal_set_total(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // double percent = 4;
+  void clear_percent();
+  double percent() const;
+  void set_percent(double value);
+  private:
+  double _internal_percent() const;
+  void _internal_set_percent(double value);
+  public:
+
+  // uint32 height = 5;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::uint32 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:CheckNodeHeightAck)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr version_;
+  ::PROTOBUF_NAMESPACE_ID::int32 code_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 total_;
+  double percent_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_interface_2eproto;
 };
@@ -23292,390 +23294,390 @@ inline void SetServiceFeeAck::set_allocated_description(std::string* description
 
 // -------------------------------------------------------------------
 
-// GetPacketFeeReq
+// GetPackageFeeReq
 
 // string version = 1;
-inline void GetPacketFeeReq::clear_version() {
+inline void GetPackageFeeReq::clear_version() {
   version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeReq::version() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeReq.version)
+inline const std::string& GetPackageFeeReq::version() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeReq.version)
   return _internal_version();
 }
-inline void GetPacketFeeReq::set_version(const std::string& value) {
+inline void GetPackageFeeReq::set_version(const std::string& value) {
   _internal_set_version(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeReq.version)
+  // @@protoc_insertion_point(field_set:GetPackageFeeReq.version)
 }
-inline std::string* GetPacketFeeReq::mutable_version() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeReq.version)
+inline std::string* GetPackageFeeReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeReq.version)
   return _internal_mutable_version();
 }
-inline const std::string& GetPacketFeeReq::_internal_version() const {
+inline const std::string& GetPackageFeeReq::_internal_version() const {
   return version_.GetNoArena();
 }
-inline void GetPacketFeeReq::_internal_set_version(const std::string& value) {
+inline void GetPackageFeeReq::_internal_set_version(const std::string& value) {
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeReq::set_version(std::string&& value) {
+inline void GetPackageFeeReq::set_version(std::string&& value) {
   
   version_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeReq.version)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeReq.version)
 }
-inline void GetPacketFeeReq::set_version(const char* value) {
+inline void GetPackageFeeReq::set_version(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeReq.version)
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeReq.version)
 }
-inline void GetPacketFeeReq::set_version(const char* value, size_t size) {
+inline void GetPackageFeeReq::set_version(const char* value, size_t size) {
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeReq.version)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeReq.version)
 }
-inline std::string* GetPacketFeeReq::_internal_mutable_version() {
+inline std::string* GetPackageFeeReq::_internal_mutable_version() {
   
   return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeReq::release_version() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeReq.version)
+inline std::string* GetPackageFeeReq::release_version() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeReq.version)
   
   return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeReq::set_allocated_version(std::string* version) {
+inline void GetPackageFeeReq::set_allocated_version(std::string* version) {
   if (version != nullptr) {
     
   } else {
     
   }
   version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeReq.version)
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeReq.version)
 }
 
 // string password = 2;
-inline void GetPacketFeeReq::clear_password() {
+inline void GetPackageFeeReq::clear_password() {
   password_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeReq::password() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeReq.password)
+inline const std::string& GetPackageFeeReq::password() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeReq.password)
   return _internal_password();
 }
-inline void GetPacketFeeReq::set_password(const std::string& value) {
+inline void GetPackageFeeReq::set_password(const std::string& value) {
   _internal_set_password(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeReq.password)
+  // @@protoc_insertion_point(field_set:GetPackageFeeReq.password)
 }
-inline std::string* GetPacketFeeReq::mutable_password() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeReq.password)
+inline std::string* GetPackageFeeReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeReq.password)
   return _internal_mutable_password();
 }
-inline const std::string& GetPacketFeeReq::_internal_password() const {
+inline const std::string& GetPackageFeeReq::_internal_password() const {
   return password_.GetNoArena();
 }
-inline void GetPacketFeeReq::_internal_set_password(const std::string& value) {
+inline void GetPackageFeeReq::_internal_set_password(const std::string& value) {
   
   password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeReq::set_password(std::string&& value) {
+inline void GetPackageFeeReq::set_password(std::string&& value) {
   
   password_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeReq.password)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeReq.password)
 }
-inline void GetPacketFeeReq::set_password(const char* value) {
+inline void GetPackageFeeReq::set_password(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeReq.password)
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeReq.password)
 }
-inline void GetPacketFeeReq::set_password(const char* value, size_t size) {
+inline void GetPackageFeeReq::set_password(const char* value, size_t size) {
   
   password_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeReq.password)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeReq.password)
 }
-inline std::string* GetPacketFeeReq::_internal_mutable_password() {
+inline std::string* GetPackageFeeReq::_internal_mutable_password() {
   
   return password_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeReq::release_password() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeReq.password)
+inline std::string* GetPackageFeeReq::release_password() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeReq.password)
   
   return password_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeReq::set_allocated_password(std::string* password) {
+inline void GetPackageFeeReq::set_allocated_password(std::string* password) {
   if (password != nullptr) {
     
   } else {
     
   }
   password_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeReq.password)
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeReq.password)
 }
 
 // string public_net_ip = 3;
-inline void GetPacketFeeReq::clear_public_net_ip() {
+inline void GetPackageFeeReq::clear_public_net_ip() {
   public_net_ip_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeReq::public_net_ip() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeReq.public_net_ip)
+inline const std::string& GetPackageFeeReq::public_net_ip() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeReq.public_net_ip)
   return _internal_public_net_ip();
 }
-inline void GetPacketFeeReq::set_public_net_ip(const std::string& value) {
+inline void GetPackageFeeReq::set_public_net_ip(const std::string& value) {
   _internal_set_public_net_ip(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeReq.public_net_ip)
+  // @@protoc_insertion_point(field_set:GetPackageFeeReq.public_net_ip)
 }
-inline std::string* GetPacketFeeReq::mutable_public_net_ip() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeReq.public_net_ip)
+inline std::string* GetPackageFeeReq::mutable_public_net_ip() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeReq.public_net_ip)
   return _internal_mutable_public_net_ip();
 }
-inline const std::string& GetPacketFeeReq::_internal_public_net_ip() const {
+inline const std::string& GetPackageFeeReq::_internal_public_net_ip() const {
   return public_net_ip_.GetNoArena();
 }
-inline void GetPacketFeeReq::_internal_set_public_net_ip(const std::string& value) {
+inline void GetPackageFeeReq::_internal_set_public_net_ip(const std::string& value) {
   
   public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeReq::set_public_net_ip(std::string&& value) {
+inline void GetPackageFeeReq::set_public_net_ip(std::string&& value) {
   
   public_net_ip_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeReq.public_net_ip)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeReq.public_net_ip)
 }
-inline void GetPacketFeeReq::set_public_net_ip(const char* value) {
+inline void GetPackageFeeReq::set_public_net_ip(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeReq.public_net_ip)
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeReq.public_net_ip)
 }
-inline void GetPacketFeeReq::set_public_net_ip(const char* value, size_t size) {
+inline void GetPackageFeeReq::set_public_net_ip(const char* value, size_t size) {
   
   public_net_ip_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeReq.public_net_ip)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeReq.public_net_ip)
 }
-inline std::string* GetPacketFeeReq::_internal_mutable_public_net_ip() {
+inline std::string* GetPackageFeeReq::_internal_mutable_public_net_ip() {
   
   return public_net_ip_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeReq::release_public_net_ip() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeReq.public_net_ip)
+inline std::string* GetPackageFeeReq::release_public_net_ip() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeReq.public_net_ip)
   
   return public_net_ip_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeReq::set_allocated_public_net_ip(std::string* public_net_ip) {
+inline void GetPackageFeeReq::set_allocated_public_net_ip(std::string* public_net_ip) {
   if (public_net_ip != nullptr) {
     
   } else {
     
   }
   public_net_ip_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), public_net_ip);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeReq.public_net_ip)
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeReq.public_net_ip)
 }
 
 // -------------------------------------------------------------------
 
-// GetPacketFeeAck
+// GetPackageFeeAck
 
 // string version = 1;
-inline void GetPacketFeeAck::clear_version() {
+inline void GetPackageFeeAck::clear_version() {
   version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeAck::version() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeAck.version)
+inline const std::string& GetPackageFeeAck::version() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeAck.version)
   return _internal_version();
 }
-inline void GetPacketFeeAck::set_version(const std::string& value) {
+inline void GetPackageFeeAck::set_version(const std::string& value) {
   _internal_set_version(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeAck.version)
+  // @@protoc_insertion_point(field_set:GetPackageFeeAck.version)
 }
-inline std::string* GetPacketFeeAck::mutable_version() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeAck.version)
+inline std::string* GetPackageFeeAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeAck.version)
   return _internal_mutable_version();
 }
-inline const std::string& GetPacketFeeAck::_internal_version() const {
+inline const std::string& GetPackageFeeAck::_internal_version() const {
   return version_.GetNoArena();
 }
-inline void GetPacketFeeAck::_internal_set_version(const std::string& value) {
+inline void GetPackageFeeAck::_internal_set_version(const std::string& value) {
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeAck::set_version(std::string&& value) {
+inline void GetPackageFeeAck::set_version(std::string&& value) {
   
   version_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeAck.version)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeAck.version)
 }
-inline void GetPacketFeeAck::set_version(const char* value) {
+inline void GetPackageFeeAck::set_version(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeAck.version)
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeAck.version)
 }
-inline void GetPacketFeeAck::set_version(const char* value, size_t size) {
+inline void GetPackageFeeAck::set_version(const char* value, size_t size) {
   
   version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeAck.version)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeAck.version)
 }
-inline std::string* GetPacketFeeAck::_internal_mutable_version() {
+inline std::string* GetPackageFeeAck::_internal_mutable_version() {
   
   return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeAck::release_version() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeAck.version)
+inline std::string* GetPackageFeeAck::release_version() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeAck.version)
   
   return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeAck::set_allocated_version(std::string* version) {
+inline void GetPackageFeeAck::set_allocated_version(std::string* version) {
   if (version != nullptr) {
     
   } else {
     
   }
   version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeAck.version)
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeAck.version)
 }
 
 // sint32 code = 2;
-inline void GetPacketFeeAck::clear_code() {
+inline void GetPackageFeeAck::clear_code() {
   code_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 GetPacketFeeAck::_internal_code() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetPackageFeeAck::_internal_code() const {
   return code_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 GetPacketFeeAck::code() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeAck.code)
+inline ::PROTOBUF_NAMESPACE_ID::int32 GetPackageFeeAck::code() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeAck.code)
   return _internal_code();
 }
-inline void GetPacketFeeAck::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void GetPackageFeeAck::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
   code_ = value;
 }
-inline void GetPacketFeeAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void GetPackageFeeAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_code(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeAck.code)
+  // @@protoc_insertion_point(field_set:GetPackageFeeAck.code)
 }
 
 // string description = 3;
-inline void GetPacketFeeAck::clear_description() {
+inline void GetPackageFeeAck::clear_description() {
   description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeAck::description() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeAck.description)
+inline const std::string& GetPackageFeeAck::description() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeAck.description)
   return _internal_description();
 }
-inline void GetPacketFeeAck::set_description(const std::string& value) {
+inline void GetPackageFeeAck::set_description(const std::string& value) {
   _internal_set_description(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeAck.description)
+  // @@protoc_insertion_point(field_set:GetPackageFeeAck.description)
 }
-inline std::string* GetPacketFeeAck::mutable_description() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeAck.description)
+inline std::string* GetPackageFeeAck::mutable_description() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeAck.description)
   return _internal_mutable_description();
 }
-inline const std::string& GetPacketFeeAck::_internal_description() const {
+inline const std::string& GetPackageFeeAck::_internal_description() const {
   return description_.GetNoArena();
 }
-inline void GetPacketFeeAck::_internal_set_description(const std::string& value) {
+inline void GetPackageFeeAck::_internal_set_description(const std::string& value) {
   
   description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeAck::set_description(std::string&& value) {
+inline void GetPackageFeeAck::set_description(std::string&& value) {
   
   description_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeAck.description)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeAck.description)
 }
-inline void GetPacketFeeAck::set_description(const char* value) {
+inline void GetPackageFeeAck::set_description(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeAck.description)
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeAck.description)
 }
-inline void GetPacketFeeAck::set_description(const char* value, size_t size) {
+inline void GetPackageFeeAck::set_description(const char* value, size_t size) {
   
   description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeAck.description)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeAck.description)
 }
-inline std::string* GetPacketFeeAck::_internal_mutable_description() {
+inline std::string* GetPackageFeeAck::_internal_mutable_description() {
   
   return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeAck::release_description() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeAck.description)
+inline std::string* GetPackageFeeAck::release_description() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeAck.description)
   
   return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeAck::set_allocated_description(std::string* description) {
+inline void GetPackageFeeAck::set_allocated_description(std::string* description) {
   if (description != nullptr) {
     
   } else {
     
   }
   description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeAck.description)
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeAck.description)
 }
 
-// string packet_fee = 4;
-inline void GetPacketFeeAck::clear_packet_fee() {
-  packet_fee_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// string package_fee = 4;
+inline void GetPackageFeeAck::clear_package_fee() {
+  package_fee_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GetPacketFeeAck::packet_fee() const {
-  // @@protoc_insertion_point(field_get:GetPacketFeeAck.packet_fee)
-  return _internal_packet_fee();
+inline const std::string& GetPackageFeeAck::package_fee() const {
+  // @@protoc_insertion_point(field_get:GetPackageFeeAck.package_fee)
+  return _internal_package_fee();
 }
-inline void GetPacketFeeAck::set_packet_fee(const std::string& value) {
-  _internal_set_packet_fee(value);
-  // @@protoc_insertion_point(field_set:GetPacketFeeAck.packet_fee)
+inline void GetPackageFeeAck::set_package_fee(const std::string& value) {
+  _internal_set_package_fee(value);
+  // @@protoc_insertion_point(field_set:GetPackageFeeAck.package_fee)
 }
-inline std::string* GetPacketFeeAck::mutable_packet_fee() {
-  // @@protoc_insertion_point(field_mutable:GetPacketFeeAck.packet_fee)
-  return _internal_mutable_packet_fee();
+inline std::string* GetPackageFeeAck::mutable_package_fee() {
+  // @@protoc_insertion_point(field_mutable:GetPackageFeeAck.package_fee)
+  return _internal_mutable_package_fee();
 }
-inline const std::string& GetPacketFeeAck::_internal_packet_fee() const {
-  return packet_fee_.GetNoArena();
+inline const std::string& GetPackageFeeAck::_internal_package_fee() const {
+  return package_fee_.GetNoArena();
 }
-inline void GetPacketFeeAck::_internal_set_packet_fee(const std::string& value) {
+inline void GetPackageFeeAck::_internal_set_package_fee(const std::string& value) {
   
-  packet_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  package_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPacketFeeAck::set_packet_fee(std::string&& value) {
+inline void GetPackageFeeAck::set_package_fee(std::string&& value) {
   
-  packet_fee_.SetNoArena(
+  package_fee_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetPacketFeeAck.packet_fee)
+  // @@protoc_insertion_point(field_set_rvalue:GetPackageFeeAck.package_fee)
 }
-inline void GetPacketFeeAck::set_packet_fee(const char* value) {
+inline void GetPackageFeeAck::set_package_fee(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  packet_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetPacketFeeAck.packet_fee)
+  package_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetPackageFeeAck.package_fee)
 }
-inline void GetPacketFeeAck::set_packet_fee(const char* value, size_t size) {
+inline void GetPackageFeeAck::set_package_fee(const char* value, size_t size) {
   
-  packet_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  package_fee_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetPacketFeeAck.packet_fee)
+  // @@protoc_insertion_point(field_set_pointer:GetPackageFeeAck.package_fee)
 }
-inline std::string* GetPacketFeeAck::_internal_mutable_packet_fee() {
+inline std::string* GetPackageFeeAck::_internal_mutable_package_fee() {
   
-  return packet_fee_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return package_fee_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GetPacketFeeAck::release_packet_fee() {
-  // @@protoc_insertion_point(field_release:GetPacketFeeAck.packet_fee)
+inline std::string* GetPackageFeeAck::release_package_fee() {
+  // @@protoc_insertion_point(field_release:GetPackageFeeAck.package_fee)
   
-  return packet_fee_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return package_fee_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GetPacketFeeAck::set_allocated_packet_fee(std::string* packet_fee) {
-  if (packet_fee != nullptr) {
+inline void GetPackageFeeAck::set_allocated_package_fee(std::string* package_fee) {
+  if (package_fee != nullptr) {
     
   } else {
     
   }
-  packet_fee_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), packet_fee);
-  // @@protoc_insertion_point(field_set_allocated:GetPacketFeeAck.packet_fee)
+  package_fee_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), package_fee);
+  // @@protoc_insertion_point(field_set_allocated:GetPackageFeeAck.package_fee)
 }
 
 // -------------------------------------------------------------------
@@ -24064,354 +24066,6 @@ inline void SetPacketFeeAck::set_allocated_description(std::string* description)
   }
   description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
   // @@protoc_insertion_point(field_set_allocated:SetPacketFeeAck.description)
-}
-
-// -------------------------------------------------------------------
-
-// GetBlockTopReq
-
-// string version = 1;
-inline void GetBlockTopReq::clear_version() {
-  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& GetBlockTopReq::version() const {
-  // @@protoc_insertion_point(field_get:GetBlockTopReq.version)
-  return _internal_version();
-}
-inline void GetBlockTopReq::set_version(const std::string& value) {
-  _internal_set_version(value);
-  // @@protoc_insertion_point(field_set:GetBlockTopReq.version)
-}
-inline std::string* GetBlockTopReq::mutable_version() {
-  // @@protoc_insertion_point(field_mutable:GetBlockTopReq.version)
-  return _internal_mutable_version();
-}
-inline const std::string& GetBlockTopReq::_internal_version() const {
-  return version_.GetNoArena();
-}
-inline void GetBlockTopReq::_internal_set_version(const std::string& value) {
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void GetBlockTopReq::set_version(std::string&& value) {
-  
-  version_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:GetBlockTopReq.version)
-}
-inline void GetBlockTopReq::set_version(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:GetBlockTopReq.version)
-}
-inline void GetBlockTopReq::set_version(const char* value, size_t size) {
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:GetBlockTopReq.version)
-}
-inline std::string* GetBlockTopReq::_internal_mutable_version() {
-  
-  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* GetBlockTopReq::release_version() {
-  // @@protoc_insertion_point(field_release:GetBlockTopReq.version)
-  
-  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void GetBlockTopReq::set_allocated_version(std::string* version) {
-  if (version != nullptr) {
-    
-  } else {
-    
-  }
-  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
-  // @@protoc_insertion_point(field_set_allocated:GetBlockTopReq.version)
-}
-
-// uint32 fd = 2;
-inline void GetBlockTopReq::clear_fd() {
-  fd_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::_internal_fd() const {
-  return fd_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::fd() const {
-  // @@protoc_insertion_point(field_get:GetBlockTopReq.fd)
-  return _internal_fd();
-}
-inline void GetBlockTopReq::_internal_set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fd_ = value;
-}
-inline void GetBlockTopReq::set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fd(value);
-  // @@protoc_insertion_point(field_set:GetBlockTopReq.fd)
-}
-
-// uint32 port = 3;
-inline void GetBlockTopReq::clear_port() {
-  port_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::_internal_port() const {
-  return port_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::port() const {
-  // @@protoc_insertion_point(field_get:GetBlockTopReq.port)
-  return _internal_port();
-}
-inline void GetBlockTopReq::_internal_set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  port_ = value;
-}
-inline void GetBlockTopReq::set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_port(value);
-  // @@protoc_insertion_point(field_set:GetBlockTopReq.port)
-}
-
-// uint32 ip = 4;
-inline void GetBlockTopReq::clear_ip() {
-  ip_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::_internal_ip() const {
-  return ip_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetBlockTopReq::ip() const {
-  // @@protoc_insertion_point(field_get:GetBlockTopReq.ip)
-  return _internal_ip();
-}
-inline void GetBlockTopReq::_internal_set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  ip_ = value;
-}
-inline void GetBlockTopReq::set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_ip(value);
-  // @@protoc_insertion_point(field_set:GetBlockTopReq.ip)
-}
-
-// -------------------------------------------------------------------
-
-// TApiGetBlockTopAck
-
-// string version = 1;
-inline void TApiGetBlockTopAck::clear_version() {
-  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& TApiGetBlockTopAck::version() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.version)
-  return _internal_version();
-}
-inline void TApiGetBlockTopAck::set_version(const std::string& value) {
-  _internal_set_version(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.version)
-}
-inline std::string* TApiGetBlockTopAck::mutable_version() {
-  // @@protoc_insertion_point(field_mutable:TApiGetBlockTopAck.version)
-  return _internal_mutable_version();
-}
-inline const std::string& TApiGetBlockTopAck::_internal_version() const {
-  return version_.GetNoArena();
-}
-inline void TApiGetBlockTopAck::_internal_set_version(const std::string& value) {
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void TApiGetBlockTopAck::set_version(std::string&& value) {
-  
-  version_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:TApiGetBlockTopAck.version)
-}
-inline void TApiGetBlockTopAck::set_version(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:TApiGetBlockTopAck.version)
-}
-inline void TApiGetBlockTopAck::set_version(const char* value, size_t size) {
-  
-  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:TApiGetBlockTopAck.version)
-}
-inline std::string* TApiGetBlockTopAck::_internal_mutable_version() {
-  
-  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* TApiGetBlockTopAck::release_version() {
-  // @@protoc_insertion_point(field_release:TApiGetBlockTopAck.version)
-  
-  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void TApiGetBlockTopAck::set_allocated_version(std::string* version) {
-  if (version != nullptr) {
-    
-  } else {
-    
-  }
-  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
-  // @@protoc_insertion_point(field_set_allocated:TApiGetBlockTopAck.version)
-}
-
-// sint32 code = 2;
-inline void TApiGetBlockTopAck::clear_code() {
-  code_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 TApiGetBlockTopAck::_internal_code() const {
-  return code_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 TApiGetBlockTopAck::code() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.code)
-  return _internal_code();
-}
-inline void TApiGetBlockTopAck::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  code_ = value;
-}
-inline void TApiGetBlockTopAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_code(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.code)
-}
-
-// string description = 3;
-inline void TApiGetBlockTopAck::clear_description() {
-  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& TApiGetBlockTopAck::description() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.description)
-  return _internal_description();
-}
-inline void TApiGetBlockTopAck::set_description(const std::string& value) {
-  _internal_set_description(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.description)
-}
-inline std::string* TApiGetBlockTopAck::mutable_description() {
-  // @@protoc_insertion_point(field_mutable:TApiGetBlockTopAck.description)
-  return _internal_mutable_description();
-}
-inline const std::string& TApiGetBlockTopAck::_internal_description() const {
-  return description_.GetNoArena();
-}
-inline void TApiGetBlockTopAck::_internal_set_description(const std::string& value) {
-  
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void TApiGetBlockTopAck::set_description(std::string&& value) {
-  
-  description_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:TApiGetBlockTopAck.description)
-}
-inline void TApiGetBlockTopAck::set_description(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:TApiGetBlockTopAck.description)
-}
-inline void TApiGetBlockTopAck::set_description(const char* value, size_t size) {
-  
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:TApiGetBlockTopAck.description)
-}
-inline std::string* TApiGetBlockTopAck::_internal_mutable_description() {
-  
-  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* TApiGetBlockTopAck::release_description() {
-  // @@protoc_insertion_point(field_release:TApiGetBlockTopAck.description)
-  
-  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void TApiGetBlockTopAck::set_allocated_description(std::string* description) {
-  if (description != nullptr) {
-    
-  } else {
-    
-  }
-  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
-  // @@protoc_insertion_point(field_set_allocated:TApiGetBlockTopAck.description)
-}
-
-// uint32 top = 4;
-inline void TApiGetBlockTopAck::clear_top() {
-  top_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::_internal_top() const {
-  return top_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::top() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.top)
-  return _internal_top();
-}
-inline void TApiGetBlockTopAck::_internal_set_top(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  top_ = value;
-}
-inline void TApiGetBlockTopAck::set_top(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_top(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.top)
-}
-
-// uint32 fd = 5;
-inline void TApiGetBlockTopAck::clear_fd() {
-  fd_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::_internal_fd() const {
-  return fd_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::fd() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.fd)
-  return _internal_fd();
-}
-inline void TApiGetBlockTopAck::_internal_set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fd_ = value;
-}
-inline void TApiGetBlockTopAck::set_fd(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fd(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.fd)
-}
-
-// uint32 port = 6;
-inline void TApiGetBlockTopAck::clear_port() {
-  port_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::_internal_port() const {
-  return port_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::port() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.port)
-  return _internal_port();
-}
-inline void TApiGetBlockTopAck::_internal_set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  port_ = value;
-}
-inline void TApiGetBlockTopAck::set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_port(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.port)
-}
-
-// uint32 ip = 7;
-inline void TApiGetBlockTopAck::clear_ip() {
-  ip_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::_internal_ip() const {
-  return ip_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 TApiGetBlockTopAck::ip() const {
-  // @@protoc_insertion_point(field_get:TApiGetBlockTopAck.ip)
-  return _internal_ip();
-}
-inline void TApiGetBlockTopAck::_internal_set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  ip_ = value;
-}
-inline void TApiGetBlockTopAck::set_ip(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_ip(value);
-  // @@protoc_insertion_point(field_set:TApiGetBlockTopAck.ip)
 }
 
 // -------------------------------------------------------------------
@@ -29484,64 +29138,64 @@ inline void CreatePledgeTxMsgAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value)
   // @@protoc_insertion_point(field_set:CreatePledgeTxMsgAck.code)
 }
 
-// string description = 3;
-inline void CreatePledgeTxMsgAck::clear_description() {
-  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// string message = 3;
+inline void CreatePledgeTxMsgAck::clear_message() {
+  message_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& CreatePledgeTxMsgAck::description() const {
-  // @@protoc_insertion_point(field_get:CreatePledgeTxMsgAck.description)
-  return _internal_description();
+inline const std::string& CreatePledgeTxMsgAck::message() const {
+  // @@protoc_insertion_point(field_get:CreatePledgeTxMsgAck.message)
+  return _internal_message();
 }
-inline void CreatePledgeTxMsgAck::set_description(const std::string& value) {
-  _internal_set_description(value);
-  // @@protoc_insertion_point(field_set:CreatePledgeTxMsgAck.description)
+inline void CreatePledgeTxMsgAck::set_message(const std::string& value) {
+  _internal_set_message(value);
+  // @@protoc_insertion_point(field_set:CreatePledgeTxMsgAck.message)
 }
-inline std::string* CreatePledgeTxMsgAck::mutable_description() {
-  // @@protoc_insertion_point(field_mutable:CreatePledgeTxMsgAck.description)
-  return _internal_mutable_description();
+inline std::string* CreatePledgeTxMsgAck::mutable_message() {
+  // @@protoc_insertion_point(field_mutable:CreatePledgeTxMsgAck.message)
+  return _internal_mutable_message();
 }
-inline const std::string& CreatePledgeTxMsgAck::_internal_description() const {
-  return description_.GetNoArena();
+inline const std::string& CreatePledgeTxMsgAck::_internal_message() const {
+  return message_.GetNoArena();
 }
-inline void CreatePledgeTxMsgAck::_internal_set_description(const std::string& value) {
+inline void CreatePledgeTxMsgAck::_internal_set_message(const std::string& value) {
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void CreatePledgeTxMsgAck::set_description(std::string&& value) {
+inline void CreatePledgeTxMsgAck::set_message(std::string&& value) {
   
-  description_.SetNoArena(
+  message_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:CreatePledgeTxMsgAck.description)
+  // @@protoc_insertion_point(field_set_rvalue:CreatePledgeTxMsgAck.message)
 }
-inline void CreatePledgeTxMsgAck::set_description(const char* value) {
+inline void CreatePledgeTxMsgAck::set_message(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:CreatePledgeTxMsgAck.description)
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreatePledgeTxMsgAck.message)
 }
-inline void CreatePledgeTxMsgAck::set_description(const char* value, size_t size) {
+inline void CreatePledgeTxMsgAck::set_message(const char* value, size_t size) {
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:CreatePledgeTxMsgAck.description)
+  // @@protoc_insertion_point(field_set_pointer:CreatePledgeTxMsgAck.message)
 }
-inline std::string* CreatePledgeTxMsgAck::_internal_mutable_description() {
+inline std::string* CreatePledgeTxMsgAck::_internal_mutable_message() {
   
-  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return message_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* CreatePledgeTxMsgAck::release_description() {
-  // @@protoc_insertion_point(field_release:CreatePledgeTxMsgAck.description)
+inline std::string* CreatePledgeTxMsgAck::release_message() {
+  // @@protoc_insertion_point(field_release:CreatePledgeTxMsgAck.message)
   
-  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return message_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void CreatePledgeTxMsgAck::set_allocated_description(std::string* description) {
-  if (description != nullptr) {
+inline void CreatePledgeTxMsgAck::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
     
   } else {
     
   }
-  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
-  // @@protoc_insertion_point(field_set_allocated:CreatePledgeTxMsgAck.description)
+  message_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message);
+  // @@protoc_insertion_point(field_set_allocated:CreatePledgeTxMsgAck.message)
 }
 
 // string txData = 4;
@@ -30416,64 +30070,64 @@ inline void CreateRedeemTxMsgAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value)
   // @@protoc_insertion_point(field_set:CreateRedeemTxMsgAck.code)
 }
 
-// string description = 3;
-inline void CreateRedeemTxMsgAck::clear_description() {
-  description_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// string message = 3;
+inline void CreateRedeemTxMsgAck::clear_message() {
+  message_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& CreateRedeemTxMsgAck::description() const {
-  // @@protoc_insertion_point(field_get:CreateRedeemTxMsgAck.description)
-  return _internal_description();
+inline const std::string& CreateRedeemTxMsgAck::message() const {
+  // @@protoc_insertion_point(field_get:CreateRedeemTxMsgAck.message)
+  return _internal_message();
 }
-inline void CreateRedeemTxMsgAck::set_description(const std::string& value) {
-  _internal_set_description(value);
-  // @@protoc_insertion_point(field_set:CreateRedeemTxMsgAck.description)
+inline void CreateRedeemTxMsgAck::set_message(const std::string& value) {
+  _internal_set_message(value);
+  // @@protoc_insertion_point(field_set:CreateRedeemTxMsgAck.message)
 }
-inline std::string* CreateRedeemTxMsgAck::mutable_description() {
-  // @@protoc_insertion_point(field_mutable:CreateRedeemTxMsgAck.description)
-  return _internal_mutable_description();
+inline std::string* CreateRedeemTxMsgAck::mutable_message() {
+  // @@protoc_insertion_point(field_mutable:CreateRedeemTxMsgAck.message)
+  return _internal_mutable_message();
 }
-inline const std::string& CreateRedeemTxMsgAck::_internal_description() const {
-  return description_.GetNoArena();
+inline const std::string& CreateRedeemTxMsgAck::_internal_message() const {
+  return message_.GetNoArena();
 }
-inline void CreateRedeemTxMsgAck::_internal_set_description(const std::string& value) {
+inline void CreateRedeemTxMsgAck::_internal_set_message(const std::string& value) {
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void CreateRedeemTxMsgAck::set_description(std::string&& value) {
+inline void CreateRedeemTxMsgAck::set_message(std::string&& value) {
   
-  description_.SetNoArena(
+  message_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:CreateRedeemTxMsgAck.description)
+  // @@protoc_insertion_point(field_set_rvalue:CreateRedeemTxMsgAck.message)
 }
-inline void CreateRedeemTxMsgAck::set_description(const char* value) {
+inline void CreateRedeemTxMsgAck::set_message(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:CreateRedeemTxMsgAck.description)
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CreateRedeemTxMsgAck.message)
 }
-inline void CreateRedeemTxMsgAck::set_description(const char* value, size_t size) {
+inline void CreateRedeemTxMsgAck::set_message(const char* value, size_t size) {
   
-  description_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  message_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:CreateRedeemTxMsgAck.description)
+  // @@protoc_insertion_point(field_set_pointer:CreateRedeemTxMsgAck.message)
 }
-inline std::string* CreateRedeemTxMsgAck::_internal_mutable_description() {
+inline std::string* CreateRedeemTxMsgAck::_internal_mutable_message() {
   
-  return description_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return message_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* CreateRedeemTxMsgAck::release_description() {
-  // @@protoc_insertion_point(field_release:CreateRedeemTxMsgAck.description)
+inline std::string* CreateRedeemTxMsgAck::release_message() {
+  // @@protoc_insertion_point(field_release:CreateRedeemTxMsgAck.message)
   
-  return description_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return message_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void CreateRedeemTxMsgAck::set_allocated_description(std::string* description) {
-  if (description != nullptr) {
+inline void CreateRedeemTxMsgAck::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
     
   } else {
     
   }
-  description_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), description);
-  // @@protoc_insertion_point(field_set_allocated:CreateRedeemTxMsgAck.description)
+  message_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message);
+  // @@protoc_insertion_point(field_set_allocated:CreateRedeemTxMsgAck.message)
 }
 
 // string txData = 4;
@@ -31752,24 +31406,64 @@ inline void GetPledgeListReq::set_allocated_addr(std::string* addr) {
   // @@protoc_insertion_point(field_set_allocated:GetPledgeListReq.addr)
 }
 
-// uint32 index = 3;
-inline void GetPledgeListReq::clear_index() {
-  index_ = 0u;
+// string txhash = 3;
+inline void GetPledgeListReq::clear_txhash() {
+  txhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetPledgeListReq::_internal_index() const {
-  return index_;
+inline const std::string& GetPledgeListReq::txhash() const {
+  // @@protoc_insertion_point(field_get:GetPledgeListReq.txhash)
+  return _internal_txhash();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetPledgeListReq::index() const {
-  // @@protoc_insertion_point(field_get:GetPledgeListReq.index)
-  return _internal_index();
+inline void GetPledgeListReq::set_txhash(const std::string& value) {
+  _internal_set_txhash(value);
+  // @@protoc_insertion_point(field_set:GetPledgeListReq.txhash)
 }
-inline void GetPledgeListReq::_internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline std::string* GetPledgeListReq::mutable_txhash() {
+  // @@protoc_insertion_point(field_mutable:GetPledgeListReq.txhash)
+  return _internal_mutable_txhash();
+}
+inline const std::string& GetPledgeListReq::_internal_txhash() const {
+  return txhash_.GetNoArena();
+}
+inline void GetPledgeListReq::_internal_set_txhash(const std::string& value) {
   
-  index_ = value;
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetPledgeListReq::set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_index(value);
-  // @@protoc_insertion_point(field_set:GetPledgeListReq.index)
+inline void GetPledgeListReq::set_txhash(std::string&& value) {
+  
+  txhash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetPledgeListReq.txhash)
+}
+inline void GetPledgeListReq::set_txhash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetPledgeListReq.txhash)
+}
+inline void GetPledgeListReq::set_txhash(const char* value, size_t size) {
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetPledgeListReq.txhash)
+}
+inline std::string* GetPledgeListReq::_internal_mutable_txhash() {
+  
+  return txhash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetPledgeListReq::release_txhash() {
+  // @@protoc_insertion_point(field_release:GetPledgeListReq.txhash)
+  
+  return txhash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetPledgeListReq::set_allocated_txhash(std::string* txhash) {
+  if (txhash != nullptr) {
+    
+  } else {
+    
+  }
+  txhash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txhash);
+  // @@protoc_insertion_point(field_set_allocated:GetPledgeListReq.txhash)
 }
 
 // uint32 count = 4;
@@ -32399,6 +32093,66 @@ inline void GetPledgeListAck::set_total(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:GetPledgeListAck.total)
 }
 
+// string lasthash = 6;
+inline void GetPledgeListAck::clear_lasthash() {
+  lasthash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetPledgeListAck::lasthash() const {
+  // @@protoc_insertion_point(field_get:GetPledgeListAck.lasthash)
+  return _internal_lasthash();
+}
+inline void GetPledgeListAck::set_lasthash(const std::string& value) {
+  _internal_set_lasthash(value);
+  // @@protoc_insertion_point(field_set:GetPledgeListAck.lasthash)
+}
+inline std::string* GetPledgeListAck::mutable_lasthash() {
+  // @@protoc_insertion_point(field_mutable:GetPledgeListAck.lasthash)
+  return _internal_mutable_lasthash();
+}
+inline const std::string& GetPledgeListAck::_internal_lasthash() const {
+  return lasthash_.GetNoArena();
+}
+inline void GetPledgeListAck::_internal_set_lasthash(const std::string& value) {
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetPledgeListAck::set_lasthash(std::string&& value) {
+  
+  lasthash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetPledgeListAck.lasthash)
+}
+inline void GetPledgeListAck::set_lasthash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetPledgeListAck.lasthash)
+}
+inline void GetPledgeListAck::set_lasthash(const char* value, size_t size) {
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetPledgeListAck.lasthash)
+}
+inline std::string* GetPledgeListAck::_internal_mutable_lasthash() {
+  
+  return lasthash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetPledgeListAck::release_lasthash() {
+  // @@protoc_insertion_point(field_release:GetPledgeListAck.lasthash)
+  
+  return lasthash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetPledgeListAck::set_allocated_lasthash(std::string* lasthash) {
+  if (lasthash != nullptr) {
+    
+  } else {
+    
+  }
+  lasthash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), lasthash);
+  // @@protoc_insertion_point(field_set_allocated:GetPledgeListAck.lasthash)
+}
+
 // -------------------------------------------------------------------
 
 // GetTxInfoListReq
@@ -32523,24 +32277,64 @@ inline void GetTxInfoListReq::set_allocated_addr(std::string* addr) {
   // @@protoc_insertion_point(field_set_allocated:GetTxInfoListReq.addr)
 }
 
-// uint32 index = 3;
-inline void GetTxInfoListReq::clear_index() {
-  index_ = 0u;
+// string txhash = 3;
+inline void GetTxInfoListReq::clear_txhash() {
+  txhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxInfoListReq::_internal_index() const {
-  return index_;
+inline const std::string& GetTxInfoListReq::txhash() const {
+  // @@protoc_insertion_point(field_get:GetTxInfoListReq.txhash)
+  return _internal_txhash();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxInfoListReq::index() const {
-  // @@protoc_insertion_point(field_get:GetTxInfoListReq.index)
-  return _internal_index();
+inline void GetTxInfoListReq::set_txhash(const std::string& value) {
+  _internal_set_txhash(value);
+  // @@protoc_insertion_point(field_set:GetTxInfoListReq.txhash)
 }
-inline void GetTxInfoListReq::_internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline std::string* GetTxInfoListReq::mutable_txhash() {
+  // @@protoc_insertion_point(field_mutable:GetTxInfoListReq.txhash)
+  return _internal_mutable_txhash();
+}
+inline const std::string& GetTxInfoListReq::_internal_txhash() const {
+  return txhash_.GetNoArena();
+}
+inline void GetTxInfoListReq::_internal_set_txhash(const std::string& value) {
   
-  index_ = value;
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetTxInfoListReq::set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_index(value);
-  // @@protoc_insertion_point(field_set:GetTxInfoListReq.index)
+inline void GetTxInfoListReq::set_txhash(std::string&& value) {
+  
+  txhash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxInfoListReq.txhash)
+}
+inline void GetTxInfoListReq::set_txhash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxInfoListReq.txhash)
+}
+inline void GetTxInfoListReq::set_txhash(const char* value, size_t size) {
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxInfoListReq.txhash)
+}
+inline std::string* GetTxInfoListReq::_internal_mutable_txhash() {
+  
+  return txhash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxInfoListReq::release_txhash() {
+  // @@protoc_insertion_point(field_release:GetTxInfoListReq.txhash)
+  
+  return txhash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxInfoListReq::set_allocated_txhash(std::string* txhash) {
+  if (txhash != nullptr) {
+    
+  } else {
+    
+  }
+  txhash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txhash);
+  // @@protoc_insertion_point(field_set_allocated:GetTxInfoListReq.txhash)
 }
 
 // uint32 count = 4;
@@ -32930,24 +32724,64 @@ inline void GetTxInfoListAck::set_total(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:GetTxInfoListAck.total)
 }
 
-// uint32 index = 6;
-inline void GetTxInfoListAck::clear_index() {
-  index_ = 0u;
+// string lasthash = 6;
+inline void GetTxInfoListAck::clear_lasthash() {
+  lasthash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxInfoListAck::_internal_index() const {
-  return index_;
+inline const std::string& GetTxInfoListAck::lasthash() const {
+  // @@protoc_insertion_point(field_get:GetTxInfoListAck.lasthash)
+  return _internal_lasthash();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxInfoListAck::index() const {
-  // @@protoc_insertion_point(field_get:GetTxInfoListAck.index)
-  return _internal_index();
+inline void GetTxInfoListAck::set_lasthash(const std::string& value) {
+  _internal_set_lasthash(value);
+  // @@protoc_insertion_point(field_set:GetTxInfoListAck.lasthash)
 }
-inline void GetTxInfoListAck::_internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline std::string* GetTxInfoListAck::mutable_lasthash() {
+  // @@protoc_insertion_point(field_mutable:GetTxInfoListAck.lasthash)
+  return _internal_mutable_lasthash();
+}
+inline const std::string& GetTxInfoListAck::_internal_lasthash() const {
+  return lasthash_.GetNoArena();
+}
+inline void GetTxInfoListAck::_internal_set_lasthash(const std::string& value) {
   
-  index_ = value;
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetTxInfoListAck::set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_index(value);
-  // @@protoc_insertion_point(field_set:GetTxInfoListAck.index)
+inline void GetTxInfoListAck::set_lasthash(std::string&& value) {
+  
+  lasthash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxInfoListAck.lasthash)
+}
+inline void GetTxInfoListAck::set_lasthash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxInfoListAck.lasthash)
+}
+inline void GetTxInfoListAck::set_lasthash(const char* value, size_t size) {
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxInfoListAck.lasthash)
+}
+inline std::string* GetTxInfoListAck::_internal_mutable_lasthash() {
+  
+  return lasthash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxInfoListAck::release_lasthash() {
+  // @@protoc_insertion_point(field_release:GetTxInfoListAck.lasthash)
+  
+  return lasthash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxInfoListAck::set_allocated_lasthash(std::string* lasthash) {
+  if (lasthash != nullptr) {
+    
+  } else {
+    
+  }
+  lasthash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), lasthash);
+  // @@protoc_insertion_point(field_set_allocated:GetTxInfoListAck.lasthash)
 }
 
 // -------------------------------------------------------------------
@@ -37566,24 +37400,64 @@ inline void GetTxFailureListReq::set_allocated_addr(std::string* addr) {
   // @@protoc_insertion_point(field_set_allocated:GetTxFailureListReq.addr)
 }
 
-// uint32 index = 3;
-inline void GetTxFailureListReq::clear_index() {
-  index_ = 0u;
+// string txhash = 3;
+inline void GetTxFailureListReq::clear_txhash() {
+  txhash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxFailureListReq::_internal_index() const {
-  return index_;
+inline const std::string& GetTxFailureListReq::txhash() const {
+  // @@protoc_insertion_point(field_get:GetTxFailureListReq.txhash)
+  return _internal_txhash();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 GetTxFailureListReq::index() const {
-  // @@protoc_insertion_point(field_get:GetTxFailureListReq.index)
-  return _internal_index();
+inline void GetTxFailureListReq::set_txhash(const std::string& value) {
+  _internal_set_txhash(value);
+  // @@protoc_insertion_point(field_set:GetTxFailureListReq.txhash)
 }
-inline void GetTxFailureListReq::_internal_set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline std::string* GetTxFailureListReq::mutable_txhash() {
+  // @@protoc_insertion_point(field_mutable:GetTxFailureListReq.txhash)
+  return _internal_mutable_txhash();
+}
+inline const std::string& GetTxFailureListReq::_internal_txhash() const {
+  return txhash_.GetNoArena();
+}
+inline void GetTxFailureListReq::_internal_set_txhash(const std::string& value) {
   
-  index_ = value;
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void GetTxFailureListReq::set_index(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_index(value);
-  // @@protoc_insertion_point(field_set:GetTxFailureListReq.index)
+inline void GetTxFailureListReq::set_txhash(std::string&& value) {
+  
+  txhash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxFailureListReq.txhash)
+}
+inline void GetTxFailureListReq::set_txhash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxFailureListReq.txhash)
+}
+inline void GetTxFailureListReq::set_txhash(const char* value, size_t size) {
+  
+  txhash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxFailureListReq.txhash)
+}
+inline std::string* GetTxFailureListReq::_internal_mutable_txhash() {
+  
+  return txhash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxFailureListReq::release_txhash() {
+  // @@protoc_insertion_point(field_release:GetTxFailureListReq.txhash)
+  
+  return txhash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxFailureListReq::set_allocated_txhash(std::string* txhash) {
+  if (txhash != nullptr) {
+    
+  } else {
+    
+  }
+  txhash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), txhash);
+  // @@protoc_insertion_point(field_set_allocated:GetTxFailureListReq.txhash)
 }
 
 // uint32 count = 4;
@@ -38387,6 +38261,66 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TxFailureItem >&
 GetTxFailureListAck::list() const {
   // @@protoc_insertion_point(field_list:GetTxFailureListAck.list)
   return list_;
+}
+
+// string lasthash = 6;
+inline void GetTxFailureListAck::clear_lasthash() {
+  lasthash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& GetTxFailureListAck::lasthash() const {
+  // @@protoc_insertion_point(field_get:GetTxFailureListAck.lasthash)
+  return _internal_lasthash();
+}
+inline void GetTxFailureListAck::set_lasthash(const std::string& value) {
+  _internal_set_lasthash(value);
+  // @@protoc_insertion_point(field_set:GetTxFailureListAck.lasthash)
+}
+inline std::string* GetTxFailureListAck::mutable_lasthash() {
+  // @@protoc_insertion_point(field_mutable:GetTxFailureListAck.lasthash)
+  return _internal_mutable_lasthash();
+}
+inline const std::string& GetTxFailureListAck::_internal_lasthash() const {
+  return lasthash_.GetNoArena();
+}
+inline void GetTxFailureListAck::_internal_set_lasthash(const std::string& value) {
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void GetTxFailureListAck::set_lasthash(std::string&& value) {
+  
+  lasthash_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:GetTxFailureListAck.lasthash)
+}
+inline void GetTxFailureListAck::set_lasthash(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:GetTxFailureListAck.lasthash)
+}
+inline void GetTxFailureListAck::set_lasthash(const char* value, size_t size) {
+  
+  lasthash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:GetTxFailureListAck.lasthash)
+}
+inline std::string* GetTxFailureListAck::_internal_mutable_lasthash() {
+  
+  return lasthash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* GetTxFailureListAck::release_lasthash() {
+  // @@protoc_insertion_point(field_release:GetTxFailureListAck.lasthash)
+  
+  return lasthash_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void GetTxFailureListAck::set_allocated_lasthash(std::string* lasthash) {
+  if (lasthash != nullptr) {
+    
+  } else {
+    
+  }
+  lasthash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), lasthash);
+  // @@protoc_insertion_point(field_set_allocated:GetTxFailureListAck.lasthash)
 }
 
 // -------------------------------------------------------------------
@@ -39496,6 +39430,214 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 GetTxByHashAck::mutable_echotxhash() {
   // @@protoc_insertion_point(field_mutable_list:GetTxByHashAck.echotxhash)
   return &echotxhash_;
+}
+
+// -------------------------------------------------------------------
+
+// CheckNodeHeightReq
+
+// string version = 1;
+inline void CheckNodeHeightReq::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CheckNodeHeightReq::version() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightReq.version)
+  return _internal_version();
+}
+inline void CheckNodeHeightReq::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightReq.version)
+}
+inline std::string* CheckNodeHeightReq::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:CheckNodeHeightReq.version)
+  return _internal_mutable_version();
+}
+inline const std::string& CheckNodeHeightReq::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void CheckNodeHeightReq::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CheckNodeHeightReq::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CheckNodeHeightReq.version)
+}
+inline void CheckNodeHeightReq::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CheckNodeHeightReq.version)
+}
+inline void CheckNodeHeightReq::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CheckNodeHeightReq.version)
+}
+inline std::string* CheckNodeHeightReq::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CheckNodeHeightReq::release_version() {
+  // @@protoc_insertion_point(field_release:CheckNodeHeightReq.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CheckNodeHeightReq::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:CheckNodeHeightReq.version)
+}
+
+// -------------------------------------------------------------------
+
+// CheckNodeHeightAck
+
+// string version = 1;
+inline void CheckNodeHeightAck::clear_version() {
+  version_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CheckNodeHeightAck::version() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightAck.version)
+  return _internal_version();
+}
+inline void CheckNodeHeightAck::set_version(const std::string& value) {
+  _internal_set_version(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightAck.version)
+}
+inline std::string* CheckNodeHeightAck::mutable_version() {
+  // @@protoc_insertion_point(field_mutable:CheckNodeHeightAck.version)
+  return _internal_mutable_version();
+}
+inline const std::string& CheckNodeHeightAck::_internal_version() const {
+  return version_.GetNoArena();
+}
+inline void CheckNodeHeightAck::_internal_set_version(const std::string& value) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CheckNodeHeightAck::set_version(std::string&& value) {
+  
+  version_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:CheckNodeHeightAck.version)
+}
+inline void CheckNodeHeightAck::set_version(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:CheckNodeHeightAck.version)
+}
+inline void CheckNodeHeightAck::set_version(const char* value, size_t size) {
+  
+  version_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:CheckNodeHeightAck.version)
+}
+inline std::string* CheckNodeHeightAck::_internal_mutable_version() {
+  
+  return version_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CheckNodeHeightAck::release_version() {
+  // @@protoc_insertion_point(field_release:CheckNodeHeightAck.version)
+  
+  return version_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CheckNodeHeightAck::set_allocated_version(std::string* version) {
+  if (version != nullptr) {
+    
+  } else {
+    
+  }
+  version_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), version);
+  // @@protoc_insertion_point(field_set_allocated:CheckNodeHeightAck.version)
+}
+
+// int32 code = 2;
+inline void CheckNodeHeightAck::clear_code() {
+  code_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CheckNodeHeightAck::_internal_code() const {
+  return code_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CheckNodeHeightAck::code() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightAck.code)
+  return _internal_code();
+}
+inline void CheckNodeHeightAck::_internal_set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  code_ = value;
+}
+inline void CheckNodeHeightAck::set_code(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightAck.code)
+}
+
+// uint32 total = 3;
+inline void CheckNodeHeightAck::clear_total() {
+  total_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CheckNodeHeightAck::_internal_total() const {
+  return total_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CheckNodeHeightAck::total() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightAck.total)
+  return _internal_total();
+}
+inline void CheckNodeHeightAck::_internal_set_total(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  total_ = value;
+}
+inline void CheckNodeHeightAck::set_total(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_total(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightAck.total)
+}
+
+// double percent = 4;
+inline void CheckNodeHeightAck::clear_percent() {
+  percent_ = 0;
+}
+inline double CheckNodeHeightAck::_internal_percent() const {
+  return percent_;
+}
+inline double CheckNodeHeightAck::percent() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightAck.percent)
+  return _internal_percent();
+}
+inline void CheckNodeHeightAck::_internal_set_percent(double value) {
+  
+  percent_ = value;
+}
+inline void CheckNodeHeightAck::set_percent(double value) {
+  _internal_set_percent(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightAck.percent)
+}
+
+// uint32 height = 5;
+inline void CheckNodeHeightAck::clear_height() {
+  height_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CheckNodeHeightAck::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CheckNodeHeightAck::height() const {
+  // @@protoc_insertion_point(field_get:CheckNodeHeightAck.height)
+  return _internal_height();
+}
+inline void CheckNodeHeightAck::_internal_set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  height_ = value;
+}
+inline void CheckNodeHeightAck::set_height(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:CheckNodeHeightAck.height)
 }
 
 #ifdef __GNUC__

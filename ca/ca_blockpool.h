@@ -14,7 +14,7 @@
 #include "./proto/block.pb.h"
 
 const int PROCESS_TIME = 10;
-const int SYNC_ADD_FAIL_TIME = 5;
+const int SYNC_ADD_FAIL_TIME = 3;
 const int SYNC_ADD_FAIL_LIMIT = 10;
 const int ROLLBACK_HEIGHT = 10;
 const int PENDING_EXPIRE_TIME = 120;
@@ -22,7 +22,8 @@ const int PENDING_EXPIRE_TIME = 120;
 class Block
 {
 public:
-    Block(const CBlock& block, bool isSync = false):blockheader_(block),time_(time(NULL)),isSync_(isSync){
+    Block(const CBlock& block, bool isSync = false):blockheader_(block),time_(time(NULL)),isSync_(isSync)
+    {
 
     };
     ~Block() = default;
@@ -54,6 +55,7 @@ public:
 
 private:
     int sync_add_fail_times_ = 0;
+    int sync_fork_fail_times_ = 0;
 	std::mutex mu_block_;
 	std::mutex mu_pending_block_;
 

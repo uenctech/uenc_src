@@ -3,7 +3,7 @@
 #define _MSG_QUEUE_H_
 
 #include <memory>
-#include <list>
+#include <queue>
 #include <string>
 #include <utility>
 #include <condition_variable>
@@ -31,27 +31,35 @@ typedef struct msg_data
     id_type id;
 }MsgData;
 
+
+struct MsgDataCompare
+{
+	bool operator () (MsgData & a, MsgData & b)
+	{
+		return (a.pack.flag & 0xF) < (b.pack.flag & 0xF);
+	}
+};
+
+
 class MsgQueue
 {
 public:
-  
     std::string str_info_;
-    std::atomic<i64> msg_cnt_;
-	std::list<MsgData> msg_list_;
+    std::priority_queue<MsgData, std::vector<MsgData>, MsgDataCompare> msg_queue_;
 	std::mutex mutex_for_list_;
 
 	std::condition_variable_any m_notEmpty;	
 	std::condition_variable_any m_notFull;	
 	size_t max_size_;						
 
-private:
+public:
 	bool IsFull() const
 	{
-		return msg_list_.size() == max_size_;
+		return msg_queue_.size() == max_size_;
 	}
 	bool IsEmpty() const
 	{
-		return msg_list_.empty();
+		return msg_queue_.empty();
 	}
 
 public:
@@ -63,33 +71,23 @@ public:
 			debug(" %s the blocking queue is full,waiting...",str_info_.c_str());
 			m_notFull.wait(mutex_for_list_);
 		}
-		msg_list_.push_back(std::move(data));
+		msg_queue_.push(std::move(data));
 		m_notEmpty.notify_one();
-		++msg_cnt_;
-		// debug("%s ++ msg_cnt_(%ld) ip(%s) port(%u) size(%u)",str_info_.c_str(),
-		//  (i64)msg_cnt_, std::string(IpPort::ipsz(data.ip)).c_str(), data.port, (u32)msg_list_.size());
+
 		return true;
-
     };
-	
-
 
     bool try_wait_pop(MsgData & out)
     {
 		std::lock_guard<std::mutex> lck(mutex_for_list_);
 		while (IsEmpty())
 		{
-			// debug("%s the blocking queue is empty,wating...",str_info_.c_str());
 			m_notEmpty.wait(mutex_for_list_);
 		}
 
-		out = std::move(msg_list_.front());
-		msg_list_.pop_front();
+		out = std::move(msg_queue_.top());
+		msg_queue_.pop();
 		m_notFull.notify_one();
-		--msg_cnt_;
-		// debug("%s -- msg_cnt_(%ld) ip(%s) port(%u) size(%u)",str_info_.c_str(),
-		// 	(i64)msg_cnt_, std::string(IpPort::ipsz(out.ip)).c_str(), out.port, (u32)msg_list_.size());
-
 		return true;
     };
     
@@ -97,11 +95,18 @@ public:
     {
 	    return ret;
     };
-    MsgQueue() :str_info_(""),msg_cnt_(0), max_size_(10000*5){}
-	MsgQueue(std::string strInfo) :msg_cnt_(0), max_size_(10000*5){
+
+    MsgQueue() : str_info_(""), max_size_(10000 * 5)
+	{
+
+	}
+	
+	MsgQueue(std::string strInfo) : max_size_(10000 * 5)
+	{
          str_info_ = strInfo;
     }
-    ~MsgQueue() = default;
+    
+	~MsgQueue() = default;
 };
 
 
