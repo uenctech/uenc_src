@@ -97,7 +97,7 @@ void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq> &registerNode,
 			std::cout << "if(tem_node.fd != from.fd )" << std::endl;
 			close(tem_node.fd);
 			Singleton<BufferCrol>::get_instance()->delete_buffer(tem_node.public_ip, tem_node.public_port);
-			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, from.port, from.fd);
+			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, SERVERMAINPORT, from.fd);
 		}
 		Singleton<PeerNode>::get_instance()->update(node);
 		if (node.is_public_node)
@@ -296,6 +296,18 @@ void handleConnectNodeReq(const std::shared_ptr<ConnectNodeReq> &connectNodeReq,
 		// node.public_port    =  nodeinfo->public_port();
 	}
 
+	if (nodeinfo->is_public_node())
+	{
+		if (from.port == SERVERMAINPORT)
+		{
+			node.public_port = from.port;
+		}
+		else
+		{
+			node.public_port = SERVERMAINPORT;
+		}
+	}
+
 	Node tem_node;
 	auto find = Singleton<PeerNode>::get_instance()->find_node(node.id, tem_node);
 	if (find)
@@ -304,7 +316,7 @@ void handleConnectNodeReq(const std::shared_ptr<ConnectNodeReq> &connectNodeReq,
 		{
 			close(tem_node.fd);
 			Singleton<BufferCrol>::get_instance()->delete_buffer(tem_node.public_ip, tem_node.public_port);
-			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, from.port, from.fd);
+			Singleton<BufferCrol>::get_instance()->add_buffer(from.ip, SERVERMAINPORT, from.fd);
 		}
 		else if (node.conn_kind == BYSERV && tem_node.fd > 0)
 		{
