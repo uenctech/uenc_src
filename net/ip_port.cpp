@@ -16,7 +16,7 @@
 
 char g_localhost_ip[16];
 char g_public_net_ip[16];
-char g_publicIP[30];             //存储公网IP
+char g_publicIP[30];             //Store public network IP 
 int g_my_port;
 
 
@@ -46,7 +46,7 @@ bool IpPort::get_localhost_ip(char* g_localhost_ip)
 	return false;
 }
 
-//获取本地Ip
+//Get local IP 
 bool IpPort::get_localhost_ip()
 {
 	struct ifaddrs* if_addr_ptr = NULL;
@@ -61,10 +61,10 @@ bool IpPort::get_localhost_ip()
 		if (if_addr_ptr->ifa_addr->sa_family == AF_INET)
 		{
 			tmp_addr_ptr = &((struct sockaddr_in*)if_addr_ptr->ifa_addr)->sin_addr;
-			//最后一个参数32与定义的locla大小不符
+			//The last parameter 32 does not match the defined locla size 
 			//inet_ntop(AF_INET, tmp_addr_ptr, locla_ip, 32);
 			inet_ntop(AF_INET, tmp_addr_ptr, locla_ip, IP_LEN);
-			info("获取到本地IP");
+			info("Get local IP ");
 			info("===========%s==============", locla_ip);
 			if ((strlen(locla_ip)) > 9)
 			{
@@ -74,7 +74,7 @@ bool IpPort::get_localhost_ip()
 					Singleton<PeerNode>::get_instance()->set_self_ip_l(local_ip);
 					Singleton<PeerNode>::get_instance()->set_self_port_l(SERVERMAINPORT);
 		
-					info("属于本地IP");
+					info("Belong to local IP");
 					info("===========%s==============", locla_ip);
 					Singleton<Config>::get_instance()->SetLocalIP(string(locla_ip));
 					return true;
@@ -261,12 +261,10 @@ bool IpPort::isLAN(std::string const& ipString)
 	}
 }
 
-/*获取节点公网ip地址*/
+/*Get the node's public network IP address */
 /*char* IpPort::getPublicIP(char *url)
 {
-
 	 int BUF_SIZE = 512;
-
     struct sockaddr_in pin;
     struct hostent *nlp_host;
     int sd = 0;
@@ -277,7 +275,6 @@ bool IpPort::isLAN(std::string const& ipString)
     char GET[100] =  {0};
     char header[240] =  {0};
     char *pHost = 0;
-
     ///get the host name and the relative address from url name!!!
     strcpy(myurl, url);
     for (pHost = myurl; *pHost != '/' && *pHost != '\0'; ++pHost) ;
@@ -287,20 +284,17 @@ bool IpPort::isLAN(std::string const& ipString)
         strcpy(GET, pHost);
     *pHost = '\0';
     strcpy(host, myurl);
-
     ///setting socket param
     if ((nlp_host = gethostbyname(host)) == 0)
     {
         perror("error get host\n");
         return NULL;
     }
-
     bzero(&pin, sizeof(pin));
     pin.sin_family = AF_INET;
     pin.sin_addr.s_addr = htonl(INADDR_ANY);
     pin.sin_addr.s_addr = ((struct in_addr *)(nlp_host->h_addr))->s_addr;
     pin.sin_port = htons(80);
-
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Error opening socket!!!\n");
@@ -327,7 +321,6 @@ bool IpPort::isLAN(std::string const& ipString)
 		printf("error connect to socket\n");
 		return NULL;
 	}
-
 	if (send(sd, header, strlen(header), 0) == -1) {
 		::close(sd);
 		perror("error in send \n");
@@ -341,8 +334,8 @@ bool IpPort::isLAN(std::string const& ipString)
 		return NULL;
 	} else {
 		memset(g_publicIP, 0, sizeof(g_publicIP));
-		//buf中存储的数据并不只是公网IP，还有其它数据，需要将公网IP解析出来
-		//不同的环境中，数据格式可能不同，具体情况具体分析
+		//The data stored in buf is not only the public network IP, but also other data, which needs to be parsed out 
+		//In different environments, the data format may be different, and the specific conditions are analyzed in detail 
 		sscanf(strstr(buf, "utf-8") + 9, "%*[^\n]\n%[^\n]", g_publicIP);
 		//printf("ip = %s\n", publicIP);
 		::close(sd);
@@ -359,7 +352,6 @@ bool IpPort::isLAN(std::string const& ipString)
    str+=ip_port;
    debug(YELLOW "str is : %s" RESET,str.c_str());
 	status = system(str.c_str());
-
 	if (-1 == status)
 	{
 	    printf("system error!");
@@ -368,7 +360,6 @@ bool IpPort::isLAN(std::string const& ipString)
 	else
 	{
 	    printf("exit status value = [0x%x]\n", status);
-
 	    if (WIFEXITED(status))
 	     {
 	        if (0 == WEXITSTATUS(status))
@@ -387,8 +378,6 @@ bool IpPort::isLAN(std::string const& ipString)
 	         printf("exit status = [%d]\n", WEXITSTATUS(status));
 	     }
 	}
-
-
 	if(status == -1)
 	{
 	    printf("system error... \n");
@@ -416,4 +405,3 @@ bool IpPort::isLAN(std::string const& ipString)
 	}
 	return i;
 }*/
-

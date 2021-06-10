@@ -78,11 +78,9 @@ namespace ca_phoneAPI {
 
     int setPriKey(const string& sPriStr);
 
-    /* aes加解密 */
+    /* aes encryption and decryption  */
     void initKV();
     string encrypt(string plainText);
     string decrypt(string cipherTextHex);
     void te();
 }
-
-

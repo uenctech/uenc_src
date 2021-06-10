@@ -6,7 +6,7 @@
 #include "peer_node.h"
 #include "../include/net_interface.h"
 #include "./global.h"
-#include "../version_update/TcpSocket.h"
+//#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "common.pb.h"
 #include "dispatcher.h"
@@ -66,7 +66,7 @@ void handleRegisterNodeReq(const std::shared_ptr<RegisterNodeReq> &registerNode,
 	node.chain_height = nodeinfo->chain_height();
 	node.public_node_id = node.is_public_node ? "" : public_self_id;
 
-	// 修正某些公网外网端口不正确
+	// Fix some public network and external network ports are incorrect 
 	if (nodeinfo->is_public_node())
 	{
 		if (from.port == SERVERMAINPORT)
@@ -203,13 +203,12 @@ void handleRegisterNodeAck(const std::shared_ptr<RegisterNodeAck> &registerNodeA
 		{
 			u32 & localIp = node.local_ip;
 			u32 & publicIp = node.public_ip;
-
 			if (localIp != publicIp || IpPort::is_public_ip(localIp) == false)
 			{
 				continue;
 			}
 		}	*/
-		//处理公网节点的信息
+		//Process the information of public network nodes 
 		if (from.ip == node.public_ip && from.port == node.public_port)
 		{
 			node.fd = from.fd;
@@ -360,12 +359,12 @@ void handleBroadcastNodeReq(const std::shared_ptr<BroadcastNodeReq> &broadcastNo
 	node.base58address = nodeinfo->base58addr();
 	node.public_node_id = nodeinfo->public_node_id();
 
-	//根据节点id，从k桶中查找
+	//According to node id, search from k bucket 
 	Node tmp_node;
 	bool find = Singleton<PeerNode>::get_instance()->find_node(node.id, tmp_node);
 	if (!find)
 	{
-		//将节点存入k桶中
+		//Store the node in k bucket 
 		Singleton<PeerNode>::get_instance()->add(node);
 		if (node.is_public_node)
 		{
@@ -382,7 +381,7 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq> &transMsgReq, const Ms
 	std::string msg = transMsgReq->data();
 
 	{
-		// 统计转发数据
+		// Statistics forwarding data 
 		std::string data = transMsgReq->data();
 		CommonMsg common_msg;
 		std::string tmp(data.begin() + 4, data.end() - sizeof(uint32_t) * 3);
@@ -396,16 +395,16 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq> &transMsgReq, const Ms
 		global::reqCntMap[type].second += common_msg.data().size();
 	}
 
-	//获取自身节点信息
+	//Get own node information 
 	auto self_node = Singleton<PeerNode>::get_instance()->get_self_node();
-	//将自身节点id与目标节点public_node_id进行比较
+	//Compare its own node id with the target node public_node_id 
 	if (self_node.id == public_nodeid)
 	{
 		Node dest;
 		bool find = Singleton<PeerNode>::get_instance()->find_node(nodeid, dest);
 		if (find)
 		{
-			transMsgReq->set_priority(transMsgReq->priority() & 0xE); // 转发数据不能达到最高优先级
+			transMsgReq->set_priority(transMsgReq->priority() & 0xE); // Forwarding data cannot reach the highest priority 
 			net_com::send_one_message(dest, std::move(transMsgReq->data()), transMsgReq->priority());
 		}
 		else
@@ -429,7 +428,7 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq> &transMsgReq, const Ms
 		}
 		else
 		{
-			// 尝试根据id找到节点后再次转发
+			// Try to forward again after finding the node based on id
 			Node targetNode;
 			if (!Singleton<PeerNode>::get_instance()->find_node(nodeid, targetNode))
 			{
@@ -443,13 +442,13 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq> &transMsgReq, const Ms
 
 			if (targetNode.public_node_id == self_node.id || (self_node.is_public_node && targetNode.is_public_node))
 			{
-				// 直接发送
-				transMsgReq->set_priority(transMsgReq->priority() & 0xE); // 转发数据不能达到最高优先级
+				// Send directly 
+				transMsgReq->set_priority(transMsgReq->priority() & 0xE); // Forwarding data cannot reach the highest priority 
 				net_com::send_one_message(targetNode, std::move(transMsgReq->data()), transMsgReq->priority());
 			}
 			else
 			{
-				// 找到负责的公网然后发送
+				// Find the responsible public network and send it 
 				Node targetPublicNode;
 				if (!Singleton<PeerNode>::get_instance()->find_node(targetNode.public_node_id, targetPublicNode))
 				{
@@ -471,7 +470,7 @@ void handleTransMsgReq(const std::shared_ptr<TransMsgReq> &transMsgReq, const Ms
 void handleBroadcastMsgReq(const std::shared_ptr<BroadcaseMsgReq> &broadcaseMsgReq, const MsgData &from)
 {
 	// std::cout << "handleBroadcaseMsgReq" << std::endl;
-	// 向自身节点发送处理
+	// Send processing to own node 
 	std::string data = broadcaseMsgReq->data();
 	CommonMsg common_msg;
 	int r = common_msg.ParseFromString(data);
@@ -490,7 +489,7 @@ void handleBroadcastMsgReq(const std::shared_ptr<BroadcaseMsgReq> &broadcaseMsgR
 	const Node &selfNode = Singleton<PeerNode>::get_instance()->get_self_node();
 	if (req.from().is_public_node())
 	{
-		// 来源是公网，向所属子节点发送
+		// The source is the public network, sent to the sub-nodes 
 		const std::vector<Node> subNodeList = Singleton<PeerNode>::get_instance()->get_sub_nodelist(selfNode.id);
 		for (auto &item : subNodeList)
 		{
@@ -502,8 +501,8 @@ void handleBroadcastMsgReq(const std::shared_ptr<BroadcaseMsgReq> &broadcaseMsgR
 	}
 	else
 	{
-		// 来源是子网节点，根据需要向其他公网节点转发
-		std::string originNodeId = req.mutable_from()->node_id(); // 记下原先的节点
+		// The source is the subnet node, and it is forwarded to other public network nodes as needed 
+		std::string originNodeId = req.mutable_from()->node_id(); // Write down the original node 
 		req.mutable_from()->set_is_public_node(selfNode.is_public_node);
 		req.mutable_from()->set_node_id(selfNode.id);
 
@@ -516,7 +515,7 @@ void handleBroadcastMsgReq(const std::shared_ptr<BroadcaseMsgReq> &broadcaseMsgR
 			}
 		}
 
-		/// 并且也要向其所属的子节点发送
+		/// And also send to the child node to which it belongs 
 		const std::vector<Node> subNodeList = Singleton<PeerNode>::get_instance()->get_sub_nodelist(selfNode.id);
 		for (auto &item : subNodeList)
 		{
@@ -650,11 +649,11 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq> &syncNodeReq, const Ms
 	auto node_size = syncNodeReq->nodes_size();
 	if (node_size > 0)
 	{
-		//删除public_node_id == ids的内网节点
+		//Delete the intranet node with public_node_id == ids 
 		Singleton<PeerNode>::get_instance()->delete_node_by_public_node_id(id);
 	}
 
-	//将内网节点重新加入到自己k桶
+	//Re-add the intranet node to its own k bucket 
 
 	for (int i = 0; i < node_size; i++)
 	{
@@ -682,15 +681,15 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq> &syncNodeReq, const Ms
 		}
 	}
 	SyncNodeAck syncNodeAck;
-	//获取连接自己的所有内网节点
+	//Get all intranet nodes connected to yourself 
 	vector<Node> nodelist = Singleton<PeerNode>::get_instance()->get_sub_nodelist(selfid);
 	if (nodelist.size() == 0)
 	{
 		return;
 	}
-	//将自己的id放入syncNodeAck->ids中
+	//Put your own id into syncNodeAck->ids 
 	syncNodeAck.add_ids(std::move(selfid));
-	//将nodelist中的节点放入syncNodeAck->nodes中
+	//Put the nodes in nodelist into syncNodeAck->nodes 
 	for (auto &node : nodelist)
 	{
 		if (node.is_public_node && node.fd < 0) //liuzg
@@ -723,7 +722,7 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq> &syncNodeReq, const Ms
 		nodeinfo->set_chain_height(node.chain_height);
 		nodeinfo->set_public_node_id(node.public_node_id);
 	}
-	//公网节点有的,矿机节点没有的
+	//Some public network nodes, but not mining machine nodes 
 	// std::unordered_set<std::string> my_ids;
 	// for(auto& node:nodelist)
 	// {
@@ -748,7 +747,7 @@ void handleSyncNodeReq(const std::shared_ptr<SyncNodeReq> &syncNodeReq, const Ms
 	// 	my_ids.insert(std::move(node.id));
 	// }
 
-	// 矿机节点有的，公网节点没有的
+	// Some mining machine nodes, but not public network nodes 
 	// for(auto& id:ids)
 	// {
 	// 	auto result = my_ids.find(id);
@@ -765,19 +764,19 @@ void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck> &syncNodeAck, const Ms
 {
 	std::cout << "handleSyncNodeAck ======" << std::endl;
 	auto self_id = Singleton<PeerNode>::get_instance()->get_self_id();
-	//从syncNodeAck中获取id数量
+	//Get the number of IDs from syncNodeAck 
 	//auto id_size = syncNodeAck->ids_size();
-	//从syncNodeAck中获取id
+	//Get id from syncNodeAck 
 	auto id = syncNodeAck->ids(0);
 	std::cout << "handleSyncNodeAck id 661:" << id << std::endl;
 	int nodeSize = syncNodeAck->nodes_size();
 	if (nodeSize > 0)
 	{
-		//将自身节点public_node_id == id的节点删除
+		//Delete the node whose own node public_node_id == id 
 		Singleton<PeerNode>::get_instance()->delete_node_by_public_node_id(id);
 	}
 
-	//将syncNodeAck中的节点信息重新加入到k桶中
+	//Re-add the node information in syncNodeAck to the k bucket 
 	for (int i = 0; i < syncNodeAck->nodes_size(); i++)
 	{
 		const NodeInfo &nodeinfo = syncNodeAck->nodes(i);
@@ -801,14 +800,13 @@ void handleSyncNodeAck(const std::shared_ptr<SyncNodeAck> &syncNodeAck, const Ms
 		    {
 			    u32 & localIp = node.local_ip;
 			    u32 & publicIp = node.public_ip;
-
 			    if (localIp != publicIp || IpPort::is_public_ip(localIp) == false)
 			    {
 				    continue;
 			    }
 		    }		
               */
-			//根据node.id查找节点
+			//Find the node according to node.id 
 			Node temp_node;
 			bool find_result = Singleton<PeerNode>::get_instance()->find_node(node.id, temp_node);
 			//std::cout << "handleSyncNodeAck node.id:" << node.id << std::endl;
@@ -962,7 +960,7 @@ void handleGetHeightAck(const std::shared_ptr<GetHeightAck> &heightAck, const Ms
 		const Node &selfNode = Singleton<PeerNode>::get_instance()->get_self_node();
 		std::vector<Node> oldNodeList = Singleton<PeerNode>::get_instance()->get_public_node();
 
-		// 添加自身所连接公网
+		// Add the public network to which you are connected 
 		for (auto &node : oldNodeList)
 		{
 			if (selfNode.public_node_id == node.id)
@@ -971,13 +969,13 @@ void handleGetHeightAck(const std::shared_ptr<GetHeightAck> &heightAck, const Ms
 			}
 		}
 
-		// 清除原有公网节点
+		// Clear the original public network node 
 		for (auto &node : oldNodeList)
 		{
 			Singleton<PeerNode>::get_instance()->delete_public_node(node);
 		}
 
-		// 更新公网节点
+		// Update public network node 
 		for (auto &node : newNodeList)
 		{
 			Singleton<PeerNode>::get_instance()->add_public_node(node);

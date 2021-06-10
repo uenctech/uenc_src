@@ -2,8 +2,8 @@
 //  ca_ios.h
 //  UENCCA
 //
-//  Created by 盛嘉炜 on 2019/8/19.
-//  Copyright © 2019 盛嘉炜. All rights reserved.
+//  Created by Sheng Jiawei  on 2019/8/19.
+//  Copyright © 2019 Sheng Jiawei . All rights reserved.
 //
 
 #ifndef ca_ios_h
@@ -11,7 +11,7 @@
 
 #include <endian.h>
 
-#if defined(__APPLE__) // 如果是MAC或者iOS
+#if defined(__APPLE__) // If it is MAC or iOS 
     #define E32toh EndianU32_NtoL
     #define E16toh EndianU16_NtoL
     #define E64toh EndianU64_NtoL
@@ -25,7 +25,7 @@
     #define Bswap_16 OSSwapInt16
     #define Bswap_64 OSSwapInt64
 
-#else // 其他情况(可以用宏区分windows和Centos)
+#else // Other situations (Macro can be used to distinguish between windows and Centos) 
     #define E32toh le32toh
     #define E16toh le16toh
     #define E64toh le64toh

@@ -160,7 +160,7 @@ int CreateTx(const char* From, const char * To, const char * amt, const char *ip
     if(From != NULL)
     {
         if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, From)) {
-            std::cout << "非法账号" << std::endl;
+            std::cout << "Illegal account " << std::endl;
             return -2;
         }
     }
@@ -214,7 +214,7 @@ bool net_segment_allip(const char *ip, const char *mask, std::vector<std::string
 	unsigned int b = ntohl(net_ip.s_addr);
     for(temp_min = min + 1; temp_min != max; temp_min++)
     {
-        // 不记录自己的地址
+        // Do not record own address 
         if(temp_min == b)
         {
             continue;
@@ -266,7 +266,7 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
     	fd_set rset;
         fd_set wset; 
       
-		//connect为非阻塞，连接不成功立即返回-1
+		//connect is non-blocking, and immediately returns -1 if the connection is unsuccessful 
 		if (!connect(fd,(struct sockaddr*)&serveraddr,sizeof(struct sockaddr)))
 		{
 			sp=getservbyport(htons(scanport),"tcp");
@@ -284,14 +284,14 @@ bool getuserip_all(std::vector<std::string> * ip_vect, unsigned int scanport, st
 		else 
 		{
             // perror("connect error:");
-            //假如连接不成功，则运行select,直到超时
+            //If the connection is unsuccessful, run select until it times out 
 			FD_ZERO(&rset);
 			FD_ZERO(&wset);
 			FD_SET(fd, &rset);
 			FD_SET(fd, &wset);
-			int error; //错误代码
+			int error; //error code 
 			socklen_t len = sizeof(error); 
-			//5秒后查看socket的状态变化 
+			//Check the status of the socket after 5 seconds 
 			if ( select(fd+1, &rset, &wset, NULL, &tm) > 0 )
             {
 				getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
@@ -457,7 +457,7 @@ int senddata(int fdnum)
 	memcpy(buff + 4 + data.size(), &checksum, 4);
     memcpy(buff + 4 + data.size() + 4, &flag, 4);
 	memcpy(buff + 4 + data.size() + 4 + 4, &end_flag, 4);
-    int s = send(fdnum, buff, len + 4, 0);     //打包发送的数据
+    int s = send(fdnum, buff, len + 4, 0);     //Packaged data 
     cout<<"datas ="<<s<<endl;
     delete buff;
     return s;
@@ -525,8 +525,7 @@ int  recvdata(int fdnum,std::vector<std::string> * ip_vect,std::vector<map<std::
     if (datalen >0)
     {
         char splitdata[datalen - 3 * sizeof(int)] = {0};
-        memcpy(splitdata, mybuf + 4,datalen - 3 * sizeof(int));     //内存recv接收过来的数据mac数据
-
+        memcpy(splitdata, mybuf + 4,datalen - 3 * sizeof(int));     //Data received by memory recv mac data 
         std::string read_data(splitdata, datalen - 3 * sizeof(int));
 
         CommonMsg common_msg;

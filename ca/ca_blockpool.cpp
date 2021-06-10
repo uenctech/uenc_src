@@ -90,7 +90,7 @@ bool BlockPoll::CheckConflict(const CBlock& block)
 	{
 		auto &curr_block = *it;
 		bool ret = CheckConflict(curr_block.blockheader_, block);
-		if(ret)   //有冲突
+		if(ret)   //have conflict 
 		{
 			return true;
 		}
@@ -117,20 +117,20 @@ bool BlockPoll::Add(const Block& block)
 		return false;
 	}  
 
-	//检查utxo是否有冲突
+	//Check if there is a conflict in utxo 
 	for (auto it = blocks_.begin(); it != blocks_.end(); ++it) 
 	{
 		auto &curr_block = *it;
 		bool ret = CheckConflict(curr_block.blockheader_, blockheader);
-		if(ret)   //有冲突
+		if(ret)   //have conflict
 		{
 			error("BlockPoll::Add====has conflict");
-			if(curr_block.blockheader_.time() < blockheader.time())   //预留块中的早
+			if(curr_block.blockheader_.time() < blockheader.time())   //Early in the reserved block 
 			{
 				return false;
 			}
 			else
-			{     //预留块中的晚
+			{     //Late in the reserved block 
 				it = blocks_.erase(it);
 				blocks_.push_back(block);
 				return true;
@@ -170,7 +170,7 @@ void BlockPoll::Process()
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	// 同步数据起始高度
+	// Synchronized data starting height 
 	uint64_t startHeight = 0;
 	uint64_t endHeight = 0;
 
@@ -183,7 +183,7 @@ void BlockPoll::Process()
 			frist_hash_num++;
 		}
 
-		// 取出同步数据中起始块高度
+		// Get the height of the starting block in the synchronized data 
 		if (startHeight == 0)
 		{
 			startHeight = block.blockheader_.height();
@@ -196,7 +196,7 @@ void BlockPoll::Process()
 			}
 		}
 
-		// 取出同步数据中结束块高度
+		// Get the height of the end block in the synchronized data 
 		if (endHeight == 0) 
 		{ 
 			endHeight = block.blockheader_.height(); 
@@ -214,18 +214,18 @@ void BlockPoll::Process()
 			bool ret = AddBlock(block.blockheader_);
 			if(ret)
 			{
-                /* 交易统计增加 */
-                // 交易
+                /* Increase in transaction statistics  */
+                // transaction 
                 uint64_t counts{0};
                 pRocksDb->GetTxCount(txn, counts);
                 counts++;
                 pRocksDb->SetTxCount(txn, counts);
-                // 燃料费
+                // Fuel cost 
                 counts = 0;
                 pRocksDb->GetGasCount(txn, counts);
                 counts++;
                 pRocksDb->SetGasCount(txn, counts);
-                // 额外奖励
+                // Additional rewards 
                 counts = 0;
                 pRocksDb->GetAwardCount(txn, counts);
                 counts++;
@@ -263,13 +263,13 @@ void BlockPoll::Process()
  
 	if(sync_blocks_.size() >= SYNC_ADD_FAIL_LIMIT && !sync_add_success)
 	{
-		// 同步失败计次
+		// Sync failure count 
 		sync_add_fail_times_++;
 		std::cout << "sync fail - sync_add_fail_times_:" << sync_add_fail_times_ << std::endl;
 	}
 	else if(sync_blocks_.size() > 0 && sync_add_success)
 	{
-		// 同步成功时清零
+		// Cleared when synchronization is successful 
 		sync_add_fail_times_ = 0;
 	}
 
@@ -277,7 +277,7 @@ void BlockPoll::Process()
 		(g_synch->conflict_height > -1) && 
 		(g_synch->conflict_height < (int)blockHeight - SYNC_ADD_FAIL_LIMIT) )
 	{
-		// 有分叉点的时候计次
+		// Count when there is a fork 
 		sync_fork_fail_times_++;
 		std::cout << "fork fail - sync_fork_fail_times_:" << sync_fork_fail_times_ << std::endl;
 	}
@@ -318,7 +318,7 @@ void BlockPoll::Process()
 				return;
 			}
 
-			// 更新top
+			// Update top
 			Singleton<PeerNode>::get_instance()->set_self_chain_height();
 
 			std::lock_guard<std::mutex> lck(rollbackLock);
@@ -387,7 +387,7 @@ void BlockPoll::Process()
 			++it;
 			continue;
 		}
-		//过期
+		//Expired 
 		if(time(NULL) - block.time_ >= PENDING_EXPIRE_TIME)
 		{
 			std::cout <<"pending_block_  have expire" << std::endl;
@@ -400,18 +400,18 @@ void BlockPoll::Process()
 			bool ret = AddBlock(block.blockheader_);
 			if(ret)
 			{
-                /* 交易统计增加 */
-                // 交易
+                /* Increase in transaction statistics  */
+                // transaction 
                 uint64_t counts{0};
                 pRocksDb->GetTxCount(txn, counts);
                 counts++;
                 pRocksDb->SetTxCount(txn, counts);
-                // 燃料费
+                // Fuel cost 
                 counts = 0;
                 pRocksDb->GetGasCount(txn, counts);
                 counts++;
                 pRocksDb->SetGasCount(txn, counts);
-                // 额外奖励
+                // Additional rewards 
                 counts = 0;
                 pRocksDb->GetAwardCount(txn, counts);
                 counts++;

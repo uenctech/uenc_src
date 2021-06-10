@@ -23,7 +23,7 @@ public:
 
 	static bool get_localhost_ip(char* localhost_ip);
 
-	//获取本地Ip
+	//Get local IP 
 	static bool get_localhost_ip();
 
 
@@ -56,7 +56,7 @@ public:
 
 	static bool isLAN(std::string const& ipString);
 
-	//获取节点公网ip地址
+	//Get the node's public network IP address 
 	static char* getPublicIP(char *url);
 	static int execute_shell(std::string ip_port);
 };

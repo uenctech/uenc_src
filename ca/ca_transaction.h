@@ -12,7 +12,7 @@
 #include "proto/interface.pb.h"
 #include "net/msg_queue.h"
 
-//获取md5头文件
+//Get md5 header file 
 #include <net/if.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -31,18 +31,17 @@ typedef void (*RECVFUN)(const char *ip, const char *message, char **out, int *ou
 //void Init();
 void InitAccount(accountinfo *acc, const char *path);
 
-// 获得默认的base58地址
+// Get the default base58 address 
 std::string GetDefault58Addr();
 // std::string ser_reqblkinfo(int64_t height);
-unsigned get_extra_award_height(); //根据高度获取额外奖励
+unsigned get_extra_award_height(); //Get extra rewards based on height 
 
 int new_add_ouput_by_signer(CTransaction &tx, bool isExtra = false, const std::shared_ptr<TxMsg>& msg = nullptr);
 
 
 /**
-    consensus: 共识数
-    award_list: 节点奖励列表
-
+    consensus: Consensus number 
+    award_list: Node reward list 
 **/
 int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount = 1000, float coe = 1);
 
@@ -50,15 +49,15 @@ uint64_t CheckBalanceFromRocksDb(const std::string & address);
 
 
 /**
- * @description: 从数据库查询UTXO是否足够，并创建交易体
- * @param fromAddr   交易发起方钱包地址
- * @param toAddr     交易接收方钱包地址
- * @param amount 交易金额
- * @param needVerifyPreHashCount 共识数
- * @param minerFees  单笔签名手续费
- * @param outTx  出参，生成的交易体
- * @param isRedeem  解质押标志
- * @return {bool} 成功返回true，失败返回false
+ * @description: Query whether UTXO is sufficient from the database and create a transaction body 
+ * @param fromAddr   The wallet address of the transaction initiator 
+ * @param toAddr     The wallet address of the transaction recipient 
+ * @param amount Transaction amount 
+ * @param needVerifyPreHashCount Consensus number 
+ * @param minerFees  Single signature fee 
+ * @param outTx  Out of the parameters, the generated transaction body 
+ * @param isRedeem  Unpledged sign 
+ * @return {bool} Return true on success, false on failure 
  */
 bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAddr, uint64_t amount, uint32_t needVerifyPreHashCount, uint64_t minerFees, CTransaction & outTx, std::string utxoStr = "");
 
@@ -71,41 +70,41 @@ std::vector<std::string> randomNode(unsigned int n);
 
 
 CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg = nullptr);
-CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward = false, const std::shared_ptr<TxMsg>& msg = nullptr); //extra_award额外奖励 0否 1是
+CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward = false, const std::shared_ptr<TxMsg>& msg = nullptr); //extra_award Extra reward 0No 1Yes 
 
 bool VerifyBlockHeader(const CBlock & cblock);
 bool AddBlock(const CBlock & cblock, bool isSync = false);
 
 typedef enum emTransactionType{
-	kTransactionType_Unknown = -1,		// 未知
-	kTransactionType_Tx = 0,			// 正常交易
-	kTransactionType_Fee,			// 手续费交易
-	kTransactionType_Award,	// 奖励交易
+	kTransactionType_Unknown = -1,		// unknown 
+	kTransactionType_Tx = 0,			// Normal transaction 
+	kTransactionType_Fee,			// Transaction fee 
+	kTransactionType_Award,	// Reward transaction 
 } TransactionType;
 
 TransactionType CheckTransactionType(const CTransaction & tx);
 
 /* ====================================================================================  
- # @description: 将字符串以分割标识符分割
- # @param dst  : 分割完之后的数据，存放到数组
- # @param src  : 要分割的字符串 
- # @param separator : 分割符 
- # @return separator: 返回分割的数量
+ # @description: Split string with split identifier 
+ # @param dst  : The data after the split is stored in the array 
+ # @param src  : The string to be split  
+ # @param separator : Delimiter  
+ # @return separator: Returns the number of divisions 
  ==================================================================================== */
 int StringSplit(std::vector<std::string>& dst, const std::string& src, const std::string& separator);
 
 /* ==================================================================================== 
- # @description: 退出守护者进程
- # @param 无
- # @return: 成功返回true, 失败返回false
+ # @description: Exit the daemon process 
+ # @param no 
+ # @return: Return true on success, false on failure 
  ==================================================================================== */
 bool ExitGuardian();
 
 /**
- * @description: 建块
- * @param recvTxString 交易的序列化字符串
- * @param SendTxMsg 接受到的交易体
- * @return: 成功返回0；失败返回小于0的值；
+ * @description: Building block 
+ * @param recvTxString The serialized string of the transaction 
+ * @param SendTxMsg Received transaction body 
+ * @return: Return 0 on success; return a value less than 0 on failure ；
  */
 int BuildBlock(std::string &recvTxString, const std::shared_ptr<TxMsg>& msg);
 
@@ -116,92 +115,92 @@ int get_mac_info(std::vector<std::string> &vec);
 
 
 /* ====================================================================================  
- # @description:  处理接收到的交易
- # @param  msg :  其他节点发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  Process the received transaction 
+ # @param  msg :  Message body sent by other nodes 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata );
 
 
 /**
- * @description: 交易处理
- * @param {const std::shared_ptr<TxMsg>& } msg 交易流转信息
- * @param {std::string &}  成功后返回的交易哈希
- * @return {int} 	0 成功
- * 					-1 版本不兼容
- * 					-2 高度不符合
- * 					-3 本节点无该交易的父区块哈希
- * 					-4 交易共识数小于最小共识数
- * 					-5 交易体检查错误
- * 					-6 打开数据库错误
- * 					-7 已签名节点中在线时长错误
- *                  -8 校验流转交易体失败
- * 					-9 验证签名错误（有失败后尝试重发机制）
- * 					-10 交易流转中已经对该交易签过名了（有失败后尝试重发机制）
- * 					-11 非质押交易非默认账户的交易质押金额不足（有失败后尝试重发机制）
- * 					-12 交易接收方不能签名（有失败后尝试重发机制）
- * 					-13 本节点未设置矿费（有失败后尝试重发机制）
- * 					-14 交易发起方所支付的手续费低于本节点设定的签名费（有失败后尝试重发机制）
- * 					-15 交易的签名费超出范围
- * 					-16 交易流转过程中，添加交易流转信息失败，如无足够签名节点等原因
- * 					-17 发送交易失败
- * 					-18 最后一个交易签名时，添加交易流转信息失败，如无足够签名节点等原因
- * 					-19 该交易已在本节点建块
- * 					-20 交易流转中的签名节点和共识数不符
- * 					-21 建块失败
+ * @description: Transaction processing 
+ * @param {const std::shared_ptr<TxMsg>& } msg Transaction flow information 
+ * @param {std::string &}  Transaction hash returned after success 
+ * @return {int} 	0 success
+ * 					-1 Incompatible version 
+ * 					-2 Height does not meet 
+ * 					-3 This node does not have the parent block hash of the transaction 
+ * 					-4 The transaction consensus number is less than the minimum consensus number 
+ * 					-5 Transaction body check error 
+ * 					-6 Open database error 
+ * 					-7 The online duration of the signed node is incorrect 
+ *                  -8 Failed to verify the circulation transaction body 
+ * 					-9 Verify the signature error (there is a mechanism to try to resend after failure) 
+ * 					-10 The transaction has been signed during the transaction (there is a mechanism to try to resend after failure) 
+ * 					-11 Insufficient amount of transaction pledge deposit of non-default account for non-pledged transactions (there is a mechanism to retry after failure) 
+ * 					-12 The recipient of the transaction cannot sign (there is a mechanism to try to resend after failure) 
+ * 					-13 There is no mining fee set on this node (there is a mechanism to try to resend after failure) 
+ * 					-14 The transaction fee paid by the initiator of the transaction is lower than the signature fee set by this node (there is a mechanism to try to resend after failure) 
+ * 					-15 The transaction signature fee is out of range 
+ * 					-16 During the transaction flow process, adding transaction flow information failed due to reasons such as insufficient signature nodes, etc. 
+ * 					-17 Failed to send transaction 
+ * 					-18 Failed to add transaction flow information when signing the last transaction, for example, there are not enough signature nodes, etc. 
+ * 					-19 The transaction has been built on this node 
+ * 					-20 The signature node in the transaction flow does not match the consensus number 
+ * 					-21 Failed to build block 
  * 			
  */
 int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash);
 
 
 /* ====================================================================================  
- # @description:  PC端处理手机交易体和签名信息
- # @param  msg :  手机端发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  PC terminal processing mobile phone transaction body and signature information 
+ # @param  msg :  The body of the message sent from the mobile phone 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdata );
 
 
 /* ====================================================================================  
- # @description:  PC端接收处理手机端发起的交易
- # @param  msg :  手机端发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  The PC terminal receives and processes the transaction initiated by the mobile terminal 
+ # @param  msg :  The body of the message sent from the mobile phone 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const MsgData& msgdata );
 
 
 /* ====================================================================================  
- # @description: 手机端发起交易生成交易体
- # @param msg   手机端发送来的交易相关信息体
- # @param serTx 返回参数，返回生成的交易体
- # @return: 成功: 0;
- # 			失败: -1, 参数错误; 		-2, 查找UTXO失败;
+ # @description: Initiate a transaction on the mobile phone to generate a transaction body 
+ # @param msg   Transaction-related information sent from the mobile phone 
+ # @param serTx Return parameters, return the generated transaction body 
+ # @return: success : 0;
+ # 			fail: -1, Parameter error ; 		-2, Failed to find UTXO ;
  ==================================================================================== */
 int CreateTransactionFromRocksDb( const std::shared_ptr<CreateTxMsgReq>& msg, std::string &serTx);
 
 
 /* ====================================================================================  
- # @description:  建块广播处理接口
- # @param  msg :  其他节点发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  Building block broadcast processing interface 
+ # @param  msg :  Message body sent by other nodes 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>& msg, const MsgData& msgdata );
 
 /* ====================================================================================  
- # @description:  交易挂起广播处理接口
- # @param  msg :  其他节点发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  Transaction pending broadcast processing interface 
+ # @param  msg :  Message body sent by other nodes 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleTxPendingBroadcastMsg(const std::shared_ptr<TxPendingBroadcastMsg>& msg, const MsgData& msgdata);
 
 
 /**
- * @description: 随机查找签名价格合适的节点作为下一个签名节点
- * @param tx: 交易体
- * @param nextNodeNumber: 需要获取的节点个数
- * @param signedNodes: 需要排重的已签名节点
- * @param nextNodes: 返回签名节点
- * @return 成功返回0，失败返回如下
+ * @description: Randomly find the node with the right signature price as the next signature node 
+ * @param tx: Transaction body 
+ * @param nextNodeNumber: The number of nodes that need to be obtained 
+ * @param signedNodes: Signed nodes that need to be deduplicated 
+ * @param nextNodes: Return signature node 
+ * @return Success returns 0 ，The failure return is as follows 
  */ 
 int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vector<std::string> & signedNodes, std::vector<std::string> & nextNodes);
 
@@ -210,32 +209,32 @@ void CalcBlockMerkle(CBlock & cblock);
 
 
 /* ====================================================================================  
- # @description:  手机端连接矿机交易之前，验证矿机密码
- # @param  msg :  手机端发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  Verify the password of the mining machine before connecting to the mining machine on the mobile phone 
+ # @param  msg :  The body of the message sent from the mobile phone 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>& msg, const MsgData& msgdata );
 
 
 /* ====================================================================================  
- # @description:  手机端连接矿机发起交易
- # @param  msg :  手机端发送过来的消息体
- # @param  msgdata： 网络通信所必须的信息
+ # @description:  Connect the mobile phone to the miner to initiate a transaction 
+ # @param  msg :  The body of the message sent from the mobile phone 
+ # @param  msgdata： Information necessary for network communication 
  ==================================================================================== */
 void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& msg, const MsgData& msgdata );
-//获取在线时长
+//Get online time 
 void GetOnLineTime();
-//打印显示在线时长
+//Print display online time 
 int PrintOnLineTime();
 int TestSetOnLineTime();
 
 void test_rocksdb();
 
 /* ==================================================================================== 
- # @description:  查询账号质押资金
- # @param address 要查询的账号
- # @param pledgeamount 出参，质押的资金
- # @return 成功返回0
+ # @description:  Query account pledge funds 
+ # @param address The account to be queried 
+ # @param pledgeamount Participation, pledged funds 
+ # @return Success returns 0 
  ==================================================================================== */
 int SearchPledge(const std::string &address, uint64_t &pledgeamount, std::string pledgeType = PLEDGE_NET_LICENCE);
 
@@ -247,159 +246,159 @@ bool IsNeedPackage(const std::vector<std::string> & fromAddr);
 
 
 /* ==================================================================================== 
- # @description: 获取前100块内奖励值异常的账号
- # @param addrList 出参，异常账号列表
- # @return 成功返回0，失败返回负值
+ # @description: Get accounts with abnormal rewards in the first 100 blocks 
+ # @param addrList Parameter out, list of abnormal accounts 
+ # @return Success returns 0 ，Return a negative value on failure 
  ==================================================================================== */
 int GetAbnormalAwardAddrList(std::vector<std::string> & addrList);
 
 
 /* ==================================================================================== 
- # @description: 检查块是否存在
- # @param  blkHash  块hash
- # @return 存在返回0, 失败返回小于0的值
+ # @description: Check if the block exists 
+ # @param  blkHash  Block hash 
+ # @return Existence returns 0, failure returns a value less than 0 
  ==================================================================================== */
 int IsBlockExist(const std::string & blkHash);
 
 /**
- * @description: 计算交易尝试次数
- * @param {int} needVerifyPreHashCount 共识数
- * @return {int} 返回共识数所对应的失败尝试次数
+ * @description: Count the number of transaction attempts 
+ * @param {int} needVerifyPreHashCount Consensus number 
+ * @return {int} Return the number of failed attempts corresponding to the consensus number 
  */
 int CalcTxTryCountDown(int needVerifyPreHashCount);
 
 /**
- * @description: 根据交易流转信息获得交易失败次数
- * @param {const TxMsg &} 交易流转信息
- * @return {int} 交易失败次数
+ * @description: Obtain the number of failed transactions based on transaction flow information 
+ * @param {const TxMsg &} Transaction flow information 
+ * @return {int} Number of failed transactions 
  */
 int GetTxTryCountDwon(const TxMsg & txMsg);
 
 
 /**
- * @description: 根据质押时间获得设备在线时长
- * @param {double_t &} 在线时长  
- * @return {int} 	0 正常返回时长
- * 					1 未质押，返回默认时长
- * 					-1 打开数据库错误
- * 					-2 获得交易信息失败
+ * @description: Obtain the online duration of the device according to the pledge time 
+ * @param {double_t &} Online Time  
+ * @return {int} 	0 Normal return time 
+ * 					1 Not pledged, return to default duration 
+ * 					-1 Open database error 
+ * 					-2 Failed to obtain transaction information 
  */
 int GetLocalDeviceOnlineTime(double_t & onlinetime);
 
 /**
- * @description: 尝试转发到其他节点
- * @param {const CTransaction &} tx 交易  
- * @param {std::shared_ptr<TxMsg>&} msg 交易流转信息
+ * @description: Try to forward to other nodes 
+ * @param {const CTransaction &} tx transaction 
+ * @param {std::shared_ptr<TxMsg>&} msg Transaction flow information 
  * @param {uint32_t} number
- * @return {int} 	0 转发正常
- * 					-1 未找到可转发的节点
+ * @return {int} 	0 Forwarding is normal 
+ * 					-1 No forwardable node found 
  */
 int SendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg, uint32_t number);
 
 /**
- * @description: 重新尝试发送交易信息
- * @param {const CTransaction &} tx 交易信息体
- * @param {const std::shared_ptr<TxMsg>&} msg 交易流转信息
- * @return {int} 0 成功流转
- * 				-1 尝试失败
+ * @description: Retry sending transaction information 
+ * @param {const CTransaction &} tx Transaction information body 
+ * @param {const std::shared_ptr<TxMsg>&} msg Transaction flow information 
+ * @return {int} 0 Successful circulation
+ * 				-1 failed attempt 
  */
 int RetrySendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg);
 
 /**
- * @description: 添加交易流转信息的节点签名信息
+ * @description: Add node signature information for transaction flow information 
  * @param {const std::shared_ptr<TxMsg>&} 
- * @return {int} 0 成功
- * 				-1 打开数据库错误
- * 				-2 获得在线时长错误
- * 				-3 获得签名费错误
+ * @return {int} 0 success 
+ * 				-1 Open database error 
+ * 				-2 Get online time error 
+ * 				-3 Error in getting the signature fee 
  */
 int AddSignNodeMsg(const std::shared_ptr<TxMsg>& msg);
 
 
 
 /* ==================================================================================== 
- # @description: 检查流转交易体合法性
- # @param msg 流转交易体
- # @return 0, 合法;   不合法返回小于0的值
+ # @description: Check the legality of the circulating transaction body 
+ # @param msg Circulation transaction body 
+ # @return 0, Legal; illegal returns a value less than 0 
  ==================================================================================== */
 int CheckTxMsg( const std::shared_ptr<TxMsg>& msg );
 
 
 /**
- * @description: 手机端连接矿机发起多重交易
- * @param {const std::shared_ptr<CreateDeviceMultiTxMsgReq>& } msg 手机端发送的消息体
- * @param {const MsgData& msgdata} MsgData 网络通信所必须的信息
- * @return {*} 无
+ * @description: Connect the mobile phone to the miner to initiate multiple transactions 
+ * @param {const std::shared_ptr<CreateDeviceMultiTxMsgReq>& } msg Message body sent by mobile phone 
+ * @param {const MsgData& msgdata} MsgData Information necessary for network communication 
+ * @return {*} no 
  */
 void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMsgReq>& msg, const MsgData& msgdata);
 
 
 
 /**
- * @description: 手机端主网账户质押交易(第一步)
- * @param {const std::shared_ptr<CreatePledgeTxMsgReq>& } msg 手机端发送的消息体
- * @param {const MsgData &} msgdata 网络通信所必须的信息
+ * @description: Pledge transaction of mainnet account on mobile terminal (first step) 
+ * @param {const std::shared_ptr<CreatePledgeTxMsgReq>& } msg Message body sent by mobile phone 
+ * @param {const MsgData &} msgdata Information necessary for network communication 
  * @return {*}
  */
 void HandleCreatePledgeTxMsgReq(const std::shared_ptr<CreatePledgeTxMsgReq>& msg, const MsgData &msgdata);
 /**
- * @description: 手机端主网账户质押交易(第二步)
- * @param {const std::shared_ptr<PledgeTxMsgReq>& } msg 手机端发送的消息体
- * @param {const MsgData &} msgdata 网络通信所必须的信息
+ * @description: Pledge transaction of mainnet account on mobile terminal (second step) 
+ * @param {const std::shared_ptr<PledgeTxMsgReq>& } msg Message body sent by mobile phone 
+ * @param {const MsgData &} msgdata Information necessary for network communication 
  * @return {*}
  */
 void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgData &msgdata);
 
 /**
- * @description: 手机端主网账户发起解除质押(第一步)
- * @param {const std::shared_ptr<CreateRedeemTxMsgReq>& } msg 手机端发送的消息体
- * @param {const MsgData &} msgdata 网络通信所必须的信息
+ * @description: Initiation of de-staking of mobile mainnet account (first step) 
+ * @param {const std::shared_ptr<CreateRedeemTxMsgReq>& } msg Message body sent by mobile phone 
+ * @param {const MsgData &} msgdata Information necessary for network communication 
  * @return {*}
  */
 void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg,const MsgData &msgdata);
 /**
- * @description: 手机端主网账户发起解除质押(第二步)
+ * @description: The mobile phone mainnet account initiates the release of pledge (the second step) 
  * @param {const std::shared_ptr<RedeemTxMsgReq>& } msg
- * @param {const MsgData &} msgdata 网络通信所必须的信息
+ * @param {const MsgData &} msgdata Information necessary for network communication 
  * @return {*}
  */
 void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgData &msgdata );
 
 
 /** 
- * @description: 手机端连接矿机发起质押交易
- * @param msg    手机端发送的交易数据
- * @param phoneControlDevicePledgeTxAck  发送回手机端的回执
+ * @description: The mobile terminal connects to the miner to initiate a pledge transaction 
+ * @param msg    Transaction data sent by mobile phone 
+ * @param phoneControlDevicePledgeTxAck  Receipt sent back to the mobile phone 
  */
 void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTxMsgReq>& msg, const MsgData &msgdata );
 
 /**
- * @description: 手机端连接矿机发起解除质押交易
- * @param msg 手机端发送的交易数据
- * @param msgdata 发送回手机端的回执
- * @return 无
+ * @description: The mobile terminal connects to the miner to initiate the unstake transaction 
+ * @param msg Transaction data sent by mobile phone 
+ * @param msgdata Receipt sent back to the mobile phone 
+ * @return no 
  */
 void HandleCreateDeviceRedeemTxMsgReq(const std::shared_ptr<CreateDeviceRedeemTxReq> &msg, const MsgData &msgdata );
 
 
 /**
- * @description: 质押资产 
- * @param fromAddr 质押资产的账号 
- * @param amount_str 质押资产的金额
- * @param needVerifyPreHashCount 共识数 
- * @param gasFeeStr 签名费  
- * @param password 矿机密码
- * @param msgdata 网络传输所必须的信息体,手机端交易时使用
- * @param pledgeType 质押类型
- * @return 成功返回0;
- *         	-1, 参数错误
- *  		-2, 密码不正确
- * 			-3, 有挂起交易	
- * 			-4, 打开数据库错误
- * 			-5, 未找到可用utxo	
- * 			-6, 设置地址错误
- * 			-7, 获得高度错误	
- * 			-8, 获得主链错误
+ * @description: Pledged assets 
+ * @param fromAddr Account of pledged assets 
+ * @param amount_str The amount of pledged assets 
+ * @param needVerifyPreHashCount Consensus number  
+ * @param gasFeeStr Signature fee   
+ * @param password Mining machine password 
+ * @param msgdata Information body necessary for network transmission, used in mobile phone transactions 
+ * @param pledgeType Pledge type 
+ * @return Success returns 0 ;
+ *         	-1, Parameter error 
+ *  		-2, Incorrect password 
+ * 			-3, There are pending transactions 	
+ * 			-4, Open database error 
+ * 			-5, No available utxo found 
+ * 			-6, Set address error 
+ * 			-7, Get height error 	
+ * 			-8, Get the main chain error 
  */
 int CreatePledgeTransaction(const std::string & fromAddr,  
                             const std::string & amount_str, 
@@ -410,27 +409,27 @@ int CreatePledgeTransaction(const std::string & fromAddr,
                             std::string & txHash);
 
 /**
- * @description: 解质押资产
- * @param fromAddr 解质押资产的账号
- * @param needVerifyPreHashCount 共识数 
- * @param GasFeeStr 签名费
- * @param blockHeaderStr 要解质押的那笔交易所在块的块头
- * @param password 矿机密码
- * @param msgdata 网络传输所必须的信息体,手机端交易时使用
- * @return 成功返回0；
- * 				-1 参数不正确
- * 				-2 密码不正确
- * 				-3 有挂起交易
- * 				-4 打开数据库错误
- * 				-5 获得质押列表错误
- * 				-6 发起账户未质押
- * 				-7 获得utxo错误
- * 				-8 解质押交易不存在
- * 				-9 未到解除期限
- * 				-10 交易utxo不存在
- *				-11 设置账户错误
- * 				-12 获得高度错误
- * 				-13 获得主链错误
+ * @description: Depledge assets 
+ * @param fromAddr The account of the pledged assets 
+ * @param needVerifyPreHashCount Consensus number  
+ * @param GasFeeStr Signature fee 
+ * @param blockHeaderStr The exchange to be pledged is in the block head 
+ * @param password Mining machine password 
+ * @param msgdata Information body necessary for network transmission, used in mobile phone transactions 
+ * @return Success returns 0 ；
+ * 				-1 The parameter is incorrect 
+ * 				-2 Incorrect password 
+ * 				-3 There are pending transactions 
+ * 				-4 Open database error 
+ * 				-5 Error obtaining pledge list 
+ * 				-6 Originating account is not pledged 
+ * 				-7 Get utxo error 
+ * 				-8 Depledge transaction does not exist 
+ * 				-9 The cancellation deadline has not expired 
+ * 				-10 Transaction utxo does not exist 
+ *				-11 Setting up account error 
+ * 				-12 Get height error 
+ * 				-13 Get the main chain error 
  */
 int CreateRedeemTransaction(const std::string & fromAddr, 
                             uint32_t needVerifyPreHashCount, 
@@ -446,17 +445,17 @@ bool CheckAllNodeChainHeightInReasonableRange();
 
 
 /* ==================================================================================== 
- # @description:  处理手机端发送的多重交易请求
- # @param msg     手机端发送的消息体
- # @param msgdata 网络通信所必须的信息
+ # @description:  Handle multiple transaction requests sent from the mobile phone 
+ # @param msg     Message body sent by mobile phone 
+ # @param msgdata Information necessary for network communication 
  ==================================================================================== */
 void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, const MsgData& msgdata );
 
 
 /* ==================================================================================== 
- # @description:  处理接受到的手机端交易
- # @param msg     手机端发送的消息体
- # @param msgdata 网络通信所必须的信息
+ # @description:  Process received mobile phone transactions 
+ # @param msg     Message body sent by mobile phone 
+ # @param msgdata Information necessary for network communication 
  ==================================================================================== */
 void HandleMultiTxReq( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgData& msgdata );
 

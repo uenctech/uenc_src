@@ -40,11 +40,11 @@ bool GetBase58Addr(char *b58c, size_t *b58c_sz, uint8_t ver, const void *data, s
 std::string GetBase58Addr(std::string key);
 
 /**
- * @description: 校验base58地址是否合法
- * @param: base58地址
+ * @description: Verify that the base58 address is legal 
+ * @param: base58address 
  * @return: 
- * true 合法
- * false 非法
+ * true legitimate 
+ * false illegal 
  */
 bool CheckBase58Addr(const std::string & base58Addr);
 #endif

@@ -3,20 +3,20 @@
  * <pre>
  * Copyright (c) 2018, Gaaagaa All rights reserved.
  *
- * 文件名称：VxNtpHelper.cpp
- * 创建日期：2018年10月19日
- * 文件标识：
- * 文件摘要：使用 NTP 协议时的一些辅助函数接口以及相关的数据定义。
+ * file name ：VxNtpHelper.cpp
+ * Creation date ：October 19, 2018 
+ * File identification ：
+ * File Summary: Some auxiliary function interfaces and related data definitions when using the NTP protocol. 
  *
- * 当前版本：1.0.0.0
- * 作    者：
- * 完成日期：2018年10月19日
- * 版本摘要：
+ * current version ：1.0.0.0
+ * Author ：
+ * Completion Date ：October 19, 2018 
+ * Version summary ：
  *
- * 取代版本：
- * 原作者  ：
- * 完成日期：
- * 版本摘要：
+ * Superseded version ：
+ * Original author   ：
+ * Completion Date ：
+ * Version summary ：
  * </pre>
  */
 
@@ -44,7 +44,7 @@
 #include <vector>
 
 ////////////////////////////////////////////////////////////////////////////////
-// 定义测试信息输出接口的操作宏
+// Define the operation macro of the test information output interface 
 
 #if NTP_OUTPUT
 
@@ -102,51 +102,51 @@ static inline x_void_t bv_output(x_cstring_t xszt_name, x_uint64_t xut_time)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define JAN_1970     0x83AA7E80             ///< 1900 ~ 1970 年之间的时间 秒数
-#define NS100_1970   116444736000000000LL   ///< 1601 ~ 1970 年之间的时间 百纳秒数
+#define JAN_1970     0x83AA7E80             ///< Time between 1900 and 1970 Seconds 
+#define NS100_1970   116444736000000000LL   ///< Time between 1601 and 1970 Hundred nanoseconds 
 
 /**
  * @enum  em_ntp_mode_t
- * @brief NTP工作模式的相关枚举值。
+ * @brief NTPRelevant enumeration value of working mode 。
  */
 typedef enum em_ntp_mode_t
 {
-    ntp_mode_unknow     = 0,  ///< 未定义
-    ntp_mode_initiative = 1,  ///< 主动对等体模式
-    ntp_mode_passive    = 2,  ///< 被动对等体模式
-    ntp_mode_client     = 3,  ///< 客户端模式
-    ntp_mode_server     = 4,  ///< 服务器模式
-    ntp_mode_broadcast  = 5,  ///< 广播模式或组播模式
-    ntp_mode_control    = 6,  ///< 报文为 NTP 控制报文
-    ntp_mode_reserved   = 7,  ///< 预留给内部使用
+    ntp_mode_unknow     = 0,  ///< Undefined 
+    ntp_mode_initiative = 1,  ///< Active peer mode 
+    ntp_mode_passive    = 2,  ///< Passive peer mode 
+    ntp_mode_client     = 3,  ///< Client mode 
+    ntp_mode_server     = 4,  ///< Server mode 
+    ntp_mode_broadcast  = 5,  ///< Broadcast mode or multicast mode 
+    ntp_mode_control    = 6,  ///< The message is an NTP control message 
+    ntp_mode_reserved   = 7,  ///< Reserved for internal use 
 } em_ntp_mode_t;
 
 /**
  * @struct x_ntp_packet_t
- * @brief  NTP 报文格式。
+ * @brief  NTP Message format 。
  */
 typedef struct x_ntp_packet_t
 {
-    x_uchar_t         xct_li_ver_mode;      ///< 2 bits，飞跃指示器；3 bits，版本号；3 bits，NTP工作模式（参看 em_ntp_mode_t 相关枚举值）
-    x_uchar_t         xct_stratum    ;      ///< 系统时钟的层数，取值范围为1~16，它定义了时钟的准确度。层数为1的时钟准确度最高，准确度从1到16依次递减，层数为16的时钟处于未同步状态，不能作为参考时钟
-    x_uchar_t         xct_poll       ;      ///< 轮询时间，即两个连续NTP报文之间的时间间隔
-    x_uchar_t         xct_percision  ;      ///< 系统时钟的精度
+    x_uchar_t         xct_li_ver_mode;      ///< 2 bits，Fly indicator ；3 bits，version number ；3 bits，NTPOperating mode （See em_ntp_mode_t related enumeration values ）
+    x_uchar_t         xct_stratum    ;      ///< The layer number of the system clock, the value range is 1-16, which defines the accuracy of the clock. The clock with stratum 1 has the highest accuracy, and the accuracy decreases from 1 to 16. The clock with stratum 16 is in an unsynchronized state and cannot be used as a reference clock. 
+    x_uchar_t         xct_poll       ;      ///< Polling time, that is, the time interval between two consecutive NTP messages 
+    x_uchar_t         xct_percision  ;      ///< The accuracy of the system clock 
 
-    x_uint32_t        xut_root_delay     ;  ///< 本地到主参考时钟源的往返时间
-    x_uint32_t        xut_root_dispersion;  ///< 系统时钟相对于主参考时钟的最大误差
-    x_uint32_t        xut_ref_indentifier;  ///< 参考时钟源的标识
+    x_uint32_t        xut_root_delay     ;  ///< Round-trip time from local to primary reference clock source 
+    x_uint32_t        xut_root_dispersion;  ///< The maximum error of the system clock relative to the main reference clock 
+    x_uint32_t        xut_ref_indentifier;  ///< Reference clock source identification 
 
-    x_ntp_timestamp_t xtmst_reference;      ///< 系统时钟最后一次被设定或更新的时间（应答完成后，用于存储 T1）
-    x_ntp_timestamp_t xtmst_originate;      ///< NTP请求报文离开发送端时发送端的本地时间（应答完成后，用于存储 T4）
-    x_ntp_timestamp_t xtmst_receive  ;      ///< NTP请求报文到达接收端时接收端的本地时间（应答完成后，用于存储 T2）
-    x_ntp_timestamp_t xtmst_transmit ;      ///< NTP应答报文离开应答者时应答者的本地时间（应答完成后，用于存储 T3）
+    x_ntp_timestamp_t xtmst_reference;      ///< The last time the system clock was set or updated (after the response is completed, it is used to store T1) 
+    x_ntp_timestamp_t xtmst_originate;      ///< The local time of the sender when the NTP request message leaves the sender (after the response is completed, it is used to store T4) 
+    x_ntp_timestamp_t xtmst_receive  ;      ///< The local time of the receiving end when the NTP request message arrives at the receiving end (after the response is completed, it is used to store T2) 
+    x_ntp_timestamp_t xtmst_transmit ;      ///< The local time of the responder when the NTP response message leaves the responder (after the response is completed, it is used to store T3) 
 } x_ntp_packet_t;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timeval_t 转换为 x_ntp_timestamp_t 。
+ * @brief Convert x_ntp_timeval_t to x_ntp_timestamp_t  。
  */
 static inline x_void_t ntp_timeval_to_timestamp(x_ntp_timestamp_t * xtm_timestamp, const x_ntp_timeval_t * const xtm_timeval)
 {
@@ -158,7 +158,7 @@ static inline x_void_t ntp_timeval_to_timestamp(x_ntp_timestamp_t * xtm_timestam
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timeval_t 转换为 x_ntp_timestamp_t 。
+ * @brief Convert x_ntp_timeval_t to x_ntp_timestamp_t  。
  */
 static inline x_void_t ntp_timestamp_to_timeval(x_ntp_timeval_t * xtm_timeval, const x_ntp_timestamp_t * const xtm_timestamp)
 {
@@ -178,7 +178,7 @@ static inline x_void_t ntp_timestamp_to_timeval(x_ntp_timeval_t * xtm_timeval, c
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timeval_t 转换成 100纳秒为单位的值。
+ * @brief Convert x_ntp_timeval_t to a value in 100 nanoseconds 。
  */
 static inline x_uint64_t ntp_timeval_ns100(const x_ntp_timeval_t * const xtm_timeval)
 {
@@ -187,7 +187,7 @@ static inline x_uint64_t ntp_timeval_ns100(const x_ntp_timeval_t * const xtm_tim
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timeval_t 转换成 毫秒值。
+ * @brief Convert x_ntp_timeval_t to millisecond value。
  */
 static inline x_uint64_t ntp_timeval_ms(const x_ntp_timeval_t * const xtm_timeval)
 {
@@ -196,7 +196,7 @@ static inline x_uint64_t ntp_timeval_ms(const x_ntp_timeval_t * const xtm_timeva
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timestamp_t 转换成 100纳秒为单位的值。
+ * @brief Convert x_ntp_timestamp_t to a value in units of 100 nanoseconds 。
  */
 static inline x_uint64_t ntp_timestamp_ns100(const x_ntp_timestamp_t * const xtm_timestamp)
 {
@@ -207,7 +207,7 @@ static inline x_uint64_t ntp_timestamp_ns100(const x_ntp_timestamp_t * const xtm
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_timestamp_t 转换成 毫秒值。
+ * @brief Convert x_ntp_timestamp_t to millisecond value 。
  */
 static inline x_uint64_t ntp_timestamp_ms(const x_ntp_timestamp_t * const xtm_timestamp)
 {
@@ -220,7 +220,7 @@ static inline x_uint64_t ntp_timestamp_ms(const x_ntp_timestamp_t * const xtm_ti
 
 /**********************************************************/
 /**
- * @brief 获取当前系统的 时间值（以 100纳秒 为单位，1970年1月1日到现在的时间）。
+ * @brief Get the time value of the current system (in 100 nanoseconds, the time from January 1, 1970 to the present) 。
  */
 x_uint64_t ntp_gettimevalue(void)
 {
@@ -243,7 +243,7 @@ x_uint64_t ntp_gettimevalue(void)
 
 /**********************************************************/
 /**
- * @brief 获取当前系统的 timeval 值（1970年1月1日到现在的时间）。
+ * @brief Get the timeval value of the current system (the time from January 1, 1970 to the present) 。
  */
 x_void_t ntp_gettimeofday(x_ntp_timeval_t * xtm_value)
 {
@@ -255,8 +255,8 @@ x_void_t ntp_gettimeofday(x_ntp_timeval_t * xtm_value)
     xtime_value.LowPart  = xtime_file.dwLowDateTime;
     xtime_value.HighPart = xtime_file.dwHighDateTime;
 
-    xtm_value->tv_sec  = (x_long_t)((xtime_value.QuadPart - NS100_1970) / 10000000LL); // 1970年以来的秒数
-    xtm_value->tv_usec = (x_long_t)((xtime_value.QuadPart / 10LL      ) % 1000000LL ); // 微秒
+    xtm_value->tv_sec  = (x_long_t)((xtime_value.QuadPart - NS100_1970) / 10000000LL); // Seconds since 1970 
+    xtm_value->tv_usec = (x_long_t)((xtime_value.QuadPart / 10LL      ) % 1000000LL ); // Microsecond 
 #else // !_MSC_VER
     struct timeval tmval;
     gettimeofday(&tmval, X_NULL);
@@ -268,8 +268,8 @@ x_void_t ntp_gettimeofday(x_ntp_timeval_t * xtm_value)
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_time_context_t 转换为 以 100纳秒
- *        为单位的时间值（1970年1月1日到现在的时间）。
+ * @brief Convert x_ntp_time_context_t to 100 nanoseconds 
+ *        Time value in units (the time from January 1, 1970 to the present) 。
  */
 x_uint64_t ntp_time_value(x_ntp_time_context_t * xtm_context)
 {
@@ -339,15 +339,15 @@ x_uint64_t ntp_time_value(x_ntp_time_context_t * xtm_context)
 
 /**********************************************************/
 /**
- * @brief 转换（以 100纳秒 为单位的）时间值（1970年1月1日到现在的时间）
- *        为具体的时间描述信息（即 x_ntp_time_context_t）。
+ * @brief Convert the time value (in 100 nanoseconds) (the time from January 1, 1970 to the present) 
+ *        For specific time description information (ie x_ntp_time_context_t) 。
  *
- * @param [in ] xut_time    : 时间值（1970年1月1日到现在的时间）。
- * @param [out] xtm_context : 操作成功返回的时间描述信息。
+ * @param [in ] xut_time    : Time value (the time from January 1, 1970 to the present) 。
+ * @param [out] xtm_context : The time description information returned by the operation successfully 。
  *
  * @return x_bool_t
- *         - 成功，返回 X_TRUE；
- *         - 失败，返回 X_FALSE。
+ *         - Success, return  X_TRUE；
+ *         - Fail, return  X_FALSE。
  */
 x_bool_t ntp_tmctxt_bv(x_uint64_t xut_time, x_ntp_time_context_t * xtm_context)
 {
@@ -403,15 +403,15 @@ x_bool_t ntp_tmctxt_bv(x_uint64_t xut_time, x_ntp_time_context_t * xtm_context)
 
 /**********************************************************/
 /**
- * @brief 转换（x_ntp_timeval_t 类型的）时间值
- *        为具体的时间描述信息（即 x_ntp_time_context_t）。
+ * @brief Convert (x_ntp_timeval_t type) time value 
+ *        For specific time description information (ie x_ntp_time_context_t) 。
  *
- * @param [in ] xtm_value   : 时间值。
- * @param [out] xtm_context : 操作成功返回的时间描述信息。
+ * @param [in ] xtm_value   : Time value 。
+ * @param [out] xtm_context : The time description information returned by the operation successfully 。
  *
  * @return x_bool_t
- *         - 成功，返回 X_TRUE；
- *         - 失败，返回 X_FALSE。
+ *         - Success, return X_TRUE ；
+ *         - Failure, return X_FALSE 。
  */
 x_bool_t ntp_tmctxt_tv(const x_ntp_timeval_t * const xtm_value, x_ntp_time_context_t * xtm_context)
 {
@@ -420,15 +420,15 @@ x_bool_t ntp_tmctxt_tv(const x_ntp_timeval_t * const xtm_value, x_ntp_time_conte
 
 /**********************************************************/
 /**
- * @brief 转换（x_ntp_timeval_t 类型的）时间值
- *        为具体的时间描述信息（即 x_ntp_time_context_t）。
+ * @brief Conversion (of x_ntp_timeval_t type) Time value 
+ *        For specific time description information (ie x_ntp_time_context_t) 。
  *
- * @param [in ] xtm_timestamp : 时间值。
- * @param [out] xtm_context   : 操作成功返回的时间描述信息。
+ * @param [in ] xtm_timestamp : Time value 。
+ * @param [out] xtm_context   : The time description information returned by the operation successfully 。
  *
  * @return x_bool_t
- *         - 成功，返回 X_TRUE；
- *         - 失败，返回 X_FALSE。
+ *         - Success, return X_TRUE ；
+ *         - Failure, return X_FALSE 。
  */
 x_bool_t ntp_tmctxt_ts(const x_ntp_timestamp_t * const xtm_timestamp, x_ntp_time_context_t * xtm_context)
 {
@@ -439,14 +439,14 @@ x_bool_t ntp_tmctxt_ts(const x_ntp_timestamp_t * const xtm_timestamp, x_ntp_time
 
 /**********************************************************/
 /**
- * @brief 判断字符串是否为有效的 4 段式 IP 地址格式。
+ * @brief Determine whether the string is a valid 4-segment IP address format 。
  *
- * @param [in ] xszt_vptr : 判断的字符串。
- * @param [out] xut_value : 若入参不为 X_NULL，则操作成功时，返回对应的 IP 地址值。
+ * @param [in ] xszt_vptr :Judged string 。
+ * @param [out] xut_value : If the input parameter is not X_NULL, the corresponding IP address value will be returned when the operation is successful 。
  *
  * @return x_bool_t
- *         - 成功，返回 X_TRUE；
- *         - 失败，返回 X_FALSE。
+ *         - Success, return X_TRUE ；
+ *         - Failure, return X_FALSE 。
  */
 static x_bool_t ntp_ipv4_valid(x_cstring_t xszt_vptr, x_uint32_t * xut_value)
 {
@@ -501,15 +501,15 @@ static x_bool_t ntp_ipv4_valid(x_cstring_t xszt_vptr, x_uint32_t * xut_value)
 
 /**********************************************************/
 /**
- * @brief 获取 域名下的 IP 地址表（取代系统的 gethostbyname() API 调用）。
+ * @brief Get the IP address table under the domain name (replace the system's gethostbyname() API call) 。
  *
- * @param [in ] xszt_dname : 指定的域名（格式如：www.163.com）。
- * @param [in ] xit_family : 期待返回的套接口地址结构的类型。
- * @param [out] xvec_host  : 操作成功返回的地址列表。
+ * @param [in ] xszt_dname : Specified domain name (format such as: www.163.com) 。
+ * @param [in ] xit_family : The type of the socket address structure expected to be returned 。
+ * @param [out] xvec_host  : List of addresses returned after successful operation 。
  *
  * @return x_int32_t
- *         - 成功，返回 0；
- *         - 失败，返回 错误码。
+ *         - Success, return 0 ；
+ *         - Failure, return error code 。
  */
 static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family, std::vector< std::string > & xvec_host)
 {
@@ -574,7 +574,7 @@ static x_int32_t ntp_gethostbyname(x_cstring_t xszt_dname, x_int32_t xit_family,
 
 /**********************************************************/
 /**
- * @brief 返回套接字当前操作失败的错误码。
+ * @brief Returns the error code of the socket's current operation failure 。
  */
 static x_int32_t ntp_sockfd_lasterror()
 {
@@ -587,7 +587,7 @@ static x_int32_t ntp_sockfd_lasterror()
 
 /**********************************************************/
 /**
- * @brief 关闭套接字。
+ * @brief Close socket 。
  */
 static x_int32_t ntp_sockfd_close(x_sockfd_t xfdt_sockfd)
 {
@@ -600,7 +600,7 @@ static x_int32_t ntp_sockfd_close(x_sockfd_t xfdt_sockfd)
 
 /**********************************************************/
 /**
- * @brief 初始化 NTP 的请求数据包。
+ * @brief Initialize NTP request packet 。
  */
 static x_void_t ntp_init_request_packet(x_ntp_packet_t * xnpt_dptr)
 {
@@ -629,7 +629,7 @@ static x_void_t ntp_init_request_packet(x_ntp_packet_t * xnpt_dptr)
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_packet_t 中的 网络字节序 字段转换为 主机字节序。
+ * @brief Convert the network byte order field in x_ntp_packet_t to host byte order 。
  */
 static x_void_t ntp_ntoh_packet(x_ntp_packet_t * xnpt_nptr)
 {
@@ -654,7 +654,7 @@ static x_void_t ntp_ntoh_packet(x_ntp_packet_t * xnpt_nptr)
 
 /**********************************************************/
 /**
- * @brief 将 x_ntp_packet_t 中的 主机字节序 字段转换为 网络字节序。
+ * @brief Convert the host byte order field in x_ntp_packet_t to network byte order 。
  */
 static x_void_t ntp_hton_packet(x_ntp_packet_t * xnpt_nptr)
 {
@@ -679,22 +679,22 @@ static x_void_t ntp_hton_packet(x_ntp_packet_t * xnpt_nptr)
 
 /**********************************************************/
 /**
- * @brief 向 NTP 服务器发送 NTP 请求，获取相关计算所需的时间戳（T1、T2、T3、T4如下所诉）。
+ * @brief Send an NTP request to the NTP server to obtain the timestamp required for related calculations (T1, T2, T3, T4 are described below) 。
  * <pre>
- *     1. 客户端 发送一个NTP报文给 服务端，该报文带有它离开 客户端 时的时间戳，该时间戳为 T1。
- *     2. 当此NTP报文到达 服务端 时，服务端 加上自己的时间戳，该时间戳为 T2。
- *     3. 当此NTP报文离开 服务端 时，服务端 再加上自己的时间戳，该时间戳为 T3。
- *     4. 当 客户端 接收到该应答报文时，客户端 的本地时间戳，该时间戳为 T4。
+ *     1. The client sends an NTP message to the server with the timestamp of when it left the client. The timestamp is T1.
+ *     2. When this NTP message arrives at the server, the server adds its own timestamp, which is T2.
+ *     3. When this NTP message leaves the server, the server adds its own timestamp, which is T3.
+ *     4. When the client receives the response message, the local time stamp of the client is T4. 
  * </pre>
  *
- * @param [in ] xszt_host : NTP 服务器的 IP（四段式 IP 地址）。
- * @param [in ] xut_port  : NTP 服务器的 端口号（可取默认的端口号 NTP_PORT : 123）。
- * @param [in ] xut_tmout : 超时时间（单位 毫秒）。
- * @param [out] xit_tmlst : 操作成功返回的相关计算所需的时间戳（T1、T2、T3、T4）。
+ * @param [in ] xszt_host :The IP of the NTP server (four-segment IP address) 。
+ * @param [in ] xut_port  : The port number of the NTP server (the default port number NTP_PORT: 123 can be used) 。
+ * @param [in ] xut_tmout :Timeout (in milliseconds) 。
+ * @param [out] xit_tmlst : The timestamp (T1, T2, T3, T4) required for the relevant calculations returned by the operation successfully 。
  *
  * @return x_int32_t
- *         - 成功，返回 0；
- *         - 失败，返回 错误码。
+ *         - Success, return 0 ；
+ *         - Failure, return error code 。
  */
 static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xut_tmout, x_int64_t xit_tmlst[4])
 {
@@ -724,7 +724,7 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
             break;
         }
 
-        // 设置 发送/接收 超时时间
+        // Set send/receive timeout time 
 #ifdef _MSC_VER
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_SNDTIMEO, (x_char_t *)&xut_tmout, sizeof(x_uint32_t));
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_RCVTIMEO, (x_char_t *)&xut_tmout, sizeof(x_uint32_t));
@@ -735,7 +735,7 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
         setsockopt(xfdt_sockfd, SOL_SOCKET, SO_RCVTIMEO, (x_char_t *)&xtm_value, sizeof(x_ntp_timeval_t));
 #endif // _MSC_VER
 
-        // 服务端主机地址
+        // Server host address 
         memset(&skaddr_host, 0, sizeof(struct sockaddr_in));
         skaddr_host.sin_family = AF_INET;
         skaddr_host.sin_port   = htons(xut_port);
@@ -743,20 +743,20 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
 
         //======================================
 
-        // 初始化请求数据包
+        // Initialize request packet 
         ntp_init_request_packet(&xnpt_buffer);
 
-        // NTP请求报文离开发送端时发送端的本地时间
+        // The local time of the sender when the NTP request message leaves the sender 
         ntp_gettimeofday(&xtm_value);
         ntp_timeval_to_timestamp(&xnpt_buffer.xtmst_originate, &xtm_value);
 
         // T1
         xit_tmlst[0] = (x_int64_t)ntp_timeval_ns100(&xtm_value);
 
-        // 转成网络字节序
+        // Convert to network byte order 
         ntp_hton_packet(&xnpt_buffer);
 
-        // 投递请求
+        // Delivery request 
         xit_err = sendto(xfdt_sockfd,
                          (x_char_t *)&xnpt_buffer,
                          sizeof(x_ntp_packet_t),
@@ -773,7 +773,7 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
 
         memset(&xnpt_buffer, 0, sizeof(x_ntp_packet_t));
 
-        // 接收应答
+        // Receive reply 
         xit_err = recvfrom(xfdt_sockfd,
                            (x_char_t *)&xnpt_buffer,
                            sizeof(x_ntp_packet_t),
@@ -795,7 +795,7 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
         // T4
         xit_tmlst[3] = (x_int64_t)ntp_gettimevalue();
 
-        // 转成主机字节序
+        // Convert to host byte order 
         ntp_ntoh_packet(&xnpt_buffer);
 
         xit_tmlst[1] = (x_int64_t)ntp_timestamp_ns100(&xnpt_buffer.xtmst_receive ); // T2
@@ -816,16 +816,16 @@ static x_int32_t ntp_get_time_values(x_cstring_t xszt_host, x_uint16_t xut_port,
 
 /**********************************************************/
 /**
- * @brief 向 NTP 服务器发送 NTP 请求，获取服务器时间戳。
+ * @brief Send an NTP request to the NTP server to obtain the server timestamp. 
  * 
- * @param [in ] xszt_host : NTP 服务器的 IP（四段式 IP 地址） 或 域名（如 3.cn.pool.ntp.org）。
- * @param [in ] xut_port  : NTP 服务器的 端口号（可取默认的端口号 NTP_PORT : 123）。
- * @param [in ] xut_tmout : 网络请求的超时时间（单位为毫秒）。
- * @param [out] xut_timev : 操作成功返回的应答时间值（以 100纳秒 为单位，1970年1月1日到现在的时间）。
+ * @param [in ] xszt_host :The IP (four-band IP address) or domain name of the NTP server (such as 3.cn.pool.ntp.org) 。
+ * @param [in ] xut_port  : The port number of the NTP server (the default port number NTP_PORT: 123 can be used) 。
+ * @param [in ] xut_tmout : The timeout period of the network request (in milliseconds) 。
+ * @param [out] xut_timev : The response time value returned by the successful operation (in 100 nanoseconds, the time from January 1, 1970 to the present) 。
  * 
  * @return x_int32_t
- *         - 成功，返回 0；
- *         - 失败，返回 错误码。
+ *         - Success, return 0 ；
+ *         - Failure, return error code 。
  */
 x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xut_tmout, x_uint64_t * xut_timev)
 {
@@ -835,7 +835,7 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
     x_int64_t xit_tmlst[4] = { 0 };
 
     //======================================
-    // 参数验证
+    //Parameter verification 
 
     if ((X_NULL == xszt_host) || (xut_tmout <= 0) || (X_NULL == xut_timev))
     {
@@ -843,7 +843,7 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
     }
 
     //======================================
-    // 获取 IP 地址列表
+    // Get a list of IP addresses 
 
     if (ntp_ipv4_valid(xszt_host, X_NULL))
     {
@@ -880,16 +880,16 @@ x_int32_t ntp_get_time(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xu
 
 /**********************************************************/
 /**
- * @brief 向 NTP 服务器发送 NTP 请求，获取服务器时间戳，用于测试。
+ * @brief Send an NTP request to the NTP server to obtain the server timestamp for testing 。
  * 
- * @param [in ] xszt_host : NTP 服务器的 IP（四段式 IP 地址） 或 域名（如 3.cn.pool.ntp.org）。
- * @param [in ] xut_port  : NTP 服务器的 端口号（可取默认的端口号 NTP_PORT : 123）。
- * @param [in ] xut_tmout : 网络请求的超时时间（单位为毫秒）。
- * @param [out] xut_timev : 操作成功返回的应答时间值（以 100纳秒 为单位，1970年1月1日到现在的时间）。
+ * @param [in ] xszt_host :The IP (four-band IP address) or domain name of the NTP server (such as 3.cn.pool.ntp.org) 。
+ * @param [in ] xut_port  : The port number of the NTP server (the default port number NTP_PORT: 123 can be used) 。
+ * @param [in ] xut_tmout : The timeout period of the network request (in milliseconds) 。
+ * @param [out] xut_timev : The response time value returned by the successful operation (in 100 nanoseconds, the time from January 1, 1970 to the present) 。
  * 
  * @return x_int32_t
- *         - 成功，返回 0；
- *         - 失败，返回 错误码。
+ *         - Success, return 0 ；
+ *         - Failure, return error code 。
  */
 x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32_t xut_tmout, x_uint64_t * xut_timev)
 {
@@ -899,7 +899,7 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
     x_int64_t xit_tmlst[4] = { 0 };
 
     //======================================
-    // 参数验证
+    // Parameter verification 
 
     if ((X_NULL == xszt_host) || (xut_tmout <= 0) || (X_NULL == xut_timev))
     {
@@ -907,7 +907,7 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
     }
 
     //======================================
-    // 获取 IP 地址列表
+    // Get a list of IP addresses 
 
     if (ntp_ipv4_valid(xszt_host, X_NULL))
     {
@@ -957,4 +957,3 @@ x_int32_t ntp_get_time_test(x_cstring_t xszt_host, x_uint16_t xut_port, x_uint32
 
     return xit_err;
 }
-

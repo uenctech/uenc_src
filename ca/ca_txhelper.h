@@ -35,22 +35,22 @@ public:
 
 
     /**
-     * @description: 创建交易信息
-     * @param fromAddr 交易发起方 
-     * @param fromAddr 交易接收方
-     * @param needVerifyPreHashCount 共识数
-     * @param minerFees 矿费
-     * @param outTx 返回的交易信息结构体
+     * @description: Create transaction information 
+     * @param fromAddr Transaction initiator 
+     * @param fromAddr Transaction recipient 
+     * @param needVerifyPreHashCount Consensus number 
+     * @param minerFees Mining fee 
+     * @param outTx Returned transaction information structure 
      * @return 
-     * 0，创建交易成功
-     * -1，参数错误
-     * -2，交易地址错误（地址不正确或是接收方中有交易方地址）
-     * -3，有之前交易挂起
-     * -4，打开数据库错误
-     * -5，获得打包费失败
-     * -6，获得交易信息失败
-     * -7，余额不足
-     * -8, 手续费过高或过低
+     * 0，Successfully created transaction 
+     * -1，Parameter error 
+     * -2，The transaction address is wrong (the address is incorrect or there is a transaction party address in the receiver) 
+     * -3，Previous transaction pending 
+     * -4，Open database error 
+     * -5，Failed to get packing fee 
+     * -6，Failed to obtain transaction information 
+     * -7，Insufficient balance 
+     * -8, The handling fee is too high or too low 
      * 
      */
     static int CreateTxMessage(const std::vector<std::string> & fromAddr, const std::map<std::string, int64_t> toAddr, uint32_t needVerifyPreHashCount, uint64_t minerFees, CTransaction & outTx, bool is_local = true);
@@ -65,10 +65,4 @@ public:
 
 
 #endif
-
-
-
-
-
-
 

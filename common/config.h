@@ -18,12 +18,12 @@
 
 typedef enum ProxyType
 {
-    kNONE = 0,     // 默认
-    kMANUAL   = 1,    // 手动代理
-    kAUTOMUTIC = 2,   // 自动代理   
+    kNONE = 0,     // default 
+    kMANUAL   = 1,    // Manual proxy 
+    kAUTOMUTIC = 2,   // Automatic proxy    
 } Type;
 
-//存储版本服务器节点信息的结构体
+//Structure for storing version server node information 
 struct node_info
 {
     std::string name;
@@ -43,40 +43,40 @@ class Config
 public:
     Config(){};
     ~Config(){};
-    //根据文件名构造配置文件
+    //Construct a configuration file based on the file name 
     Config(const std::string &name){if(!this->InitFile(name)){_Exit(0);}};
 
-    //动态加载配置文件
+    //Dynamically load configuration files 
     void Reload(const std::string &name = "config.json");
-    //根据m_Json写入配置文件
+    //Write configuration file according to m_Json 
     void WriteFile(const std::string &name = "config.json");
     void WriteServerToFile(const std::string &name = "config.json");
-    //根据m_Json写入配置文件
+    //Write configuration file according to m_Json 
    // void WriteDevPwdFile(const std::string &name = "devpwd.json");
-    //初始化配置文件
+    //Initialize the configuration file 
     bool InitFile(const std::string &name = "config.json");
-    //初始化设备密码文件
+    //Initialize the device password file 
   //  bool InitPWDFile(const std::string &name = "devpwd.json");
    // bool NewDevPWDFile(std::string strFile);
-    //创建配置文件
+    //Create a configuration file 
     bool NewFile(std::string strFile);
 
-    //******************net层相关的配置*******************
-    //获取是否为外网节点 is_public_node
+    //******************Net layer related configuration*******************
+    //Get whether it is an external network node  is_public_node
     bool GetIsPublicNode();
 
-    //获取服务器的状态
+    //Get the status of the server 
     bool GetCond(const std::string &cond_name);
 
-    //获取net层定义的变量k_bucket、k_refresh_time、local_ip、work_thread_num
+    //Get the variables defined by the net layer k_bucket、k_refresh_time、local_ip、work_thread_num
     int GetVarInt(const std::string &cond_name);
     std::string GetVarString(const std::string &cond_name);
 
-    //获取、设置k桶节点ID
+    //Get and set the k-bucket node ID 
     std::string GetKID();
     bool SetKID(std::string strKID);
 
-    //获取、设置节点的内网ip地址
+    //Get and set the intranet ip address of the node 
     std::string GetLocalIP();
     std::string GetBucket();
     bool SetLocalIP(std::string strIP);
@@ -84,103 +84,103 @@ public:
     int GetHttpPort();
     std::vector<std::tuple<std::string,int>> GetServerList();
 
-    //******************ca层相关的配置***************************
+    //******************Ca layer related configuration ***************************
 
     /**
-     * @description: 获得代理服务器的ID
-     * @return: 操作是否成功，成功返回对应的ID值，失败返回空字符串
+     * @description: Get the ID of the proxy server 
+     * @return: Whether the operation is successful, the corresponding ID value is returned if successful, and an empty string is returned on failure 
      */
     
     std::string GetProxyID();
   /**
-     * @description: 获得代理服务器的类型
-     * @return: 操作是否成功，成功返回不同类型(kAUTOMUTIC = 0,kMANUAL   = 1, kNONE = 2)
+     * @description: Get the type of proxy server 
+     * @return: Whether the operation is successful, and different types are returned successfully (kAUTOMUTIC = 0,kMANUAL   = 1, kNONE = 2)
      */
    Type  GetProxyTypeStatus();
     /**
-     * @description: 返回配置文件版本
-     * @param 无 
-     * @return: 返回配置文件版本
+     * @description: Return profile version 
+     * @param no 
+     * @return: Return profile version 
      */
     std::string GetVersion();
 
     /**
-     * @description: 获取更新目标版本号
-     * @param 无 
-     * @return: 获取更新目标版本号
+     * @description: Get the update target version number 
+     * @param no 
+     * @return: Get the update target version number 
      */
     std::string GetTargetVersion();
-    //获取四个版本服务器的信息
+    //Get information about four version servers 
     std::vector<node_info> GetNodeInfo_s();
-    //更新配置文件,参数默认值代表不更新该字段
+    //Update the configuration file, the default value of the parameter means not to update the field 
     bool UpdateConfig(int flag = 2,const std::string &target_version = "not", const std::string &ip = "not", const std::string &latest_version = "");
-    //获取之前请求更新的对应版本服务器ip
+    //Get the corresponding version server ip of the previous request to update 
     std::string GetVersionServer();
 
     void UpdateNewConfig(const std::string &name = "newconfig.json");
 
     /**
-     * @description: 根据clientType返回所支持客户端版本号
+     * @description: Return the supported client version number according to clientType 
      * @param clientType
-     * @return: 返回clientType所指示的客户端版本号
-     * @mark 返回的版本号为此ebpc所支持的最小客户端版本
+     * @return: Returns the client version number indicated by clientType 
+     * @mark The version number returned is the minimum client version supported by ebpc 
      */
     std::string GetClientVersion(ClientType clientType);
 
     /**
-     * @description: 获得日志级别
+     * @description: Get log level 
      * @param 
-     * @return: 返回日志级别，若查询失败则返回空字符串
+     * @return: Returns the log level, if the query fails, an empty string is returned 
      */
     std::string GetLogLevel();
 
     /**
-     * @description: 获得日志文件名
+     * @description: Get the log file name 
      * @param 
-     * @return: 返回日志文件名，若查询失败则返回空字符串
+     * @return: Return the log file name, or an empty string if the query fails 
      */
     std::string GetLogFilename();
 
     
     /**
-     * @description: 时间内默认同步块数
+     * @description: Default number of synchronized blocks within time 
      * @param 
-     * @return: 返回JSON读取块数，默认为10
+     * @return: Returns the number of JSON read blocks, the default is 10 
      */
     unsigned int GetSyncDataCount();
     unsigned int SetSyncDataCount(unsigned int data);
     /**
-     * @description: 获取同步时间间隔
+     * @description:Get synchronization interval 
      * @param 
-     * @return:  返回同步时间间隔
+     * @return:  Returns the synchronization interval 
      */
     unsigned int GetSyncDataPollTime();
 
     /**
-     * @description: 获得服务器节点信息
+     * @description: Get server node information 
      * @param 
-     * @return: 节点信息的json字符串
+     * @return: Json string of node information 
      */
     std::string GetNodeInfo();
 
     /**
-     * @description: 获得设备密钥
+     * @description: Get device key 
      * @param 
-     * @return: 返回存储的密钥
+     * @return: Return the stored key 
      */
     std::string GetDevPassword();
 
     /**
-     * @description:  设置设备密钥
-     * @param password 待写入的密钥
-     * @return: 设置成功返回true，否则返回false
+     * @description:  Set device key 
+     * @param password Key to be written 
+     * @return: If the setting is successful, return true, otherwise return false 
      */
     bool SetDevPassword(const std::string & password);
 
     /**
-     * @description:  设置设备密钥获得py脚本服务端ip
+     * @description:  Set device key to get py script server ip 
      * @param
-     * @return: 返回py脚本服务端ip
+     * @return: Return py script server ip 
      */
     std::string GetPyRtPirceIp();
 

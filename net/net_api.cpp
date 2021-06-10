@@ -83,7 +83,7 @@ int net_tcp::Connect(int fd, const struct sockaddr *sa, socklen_t salen)
 	// info("modify socket recv buff size %d !", nBufLen);
 	/////////////////////////////////////////////////////////////////////
 
-	// //关闭所有信号
+	// //Turn off all signals 
 	// int value = 1;
 	// setsockopt(fd,SOL_SOCKET,MSG_NOSIGNAL,&value,sizeof(value));
 
@@ -112,7 +112,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 	if (sockfd < 0)
 	{
 		std::cout << "Send func: file description err..." << std::endl;
-		debug("Send 文件描述符错误...");
+		debug("Send File descriptor error ...");
 		return -1;
 	}
 	int bytes_left;
@@ -147,7 +147,7 @@ int net_tcp::Send(int sockfd, const void *buf, size_t len, int flags)
 		}
 
 		bytes_left -= written_bytes;
-		ptr += written_bytes; /* 从剩下的地方继续写?? */
+		ptr += written_bytes; /* Continue writing from the rest ?? */
 	}
 	return len;
 }
@@ -210,13 +210,13 @@ ssize_t net_tcp::Sendto(int sockfd, const void *buf, size_t len, int flags,
 	return send_result;
 }
 
-/*发送广播*/
+/*Send broadcast */
 ssize_t net_com::SendBroadcastMsg(const std::string &msg)
 {
 	// std::cout << "SendBroadcastMsg----------" << std::endl;
 	int iOptval = 1;
 	struct sockaddr_in Addr;
-	/*创建socket*/
+	/*create socket*/
 	int sockfd = net_tcp::Socket(AF_INET, SOCK_DGRAM, 0);
 	/*setsockopt*/
 	Setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST | SO_REUSEADDR, &iOptval, sizeof(int));
@@ -229,14 +229,14 @@ ssize_t net_com::SendBroadcastMsg(const std::string &msg)
 	return send_value;
 }
 
-/*接收广播数据*/
+/*Receive broadcast data */
 void net_com::RecvfromBroadcastMsg()
 {
 	//std::cout << "RecvfromBroadcastMsg----------" << std::endl;
 	int iOptval = 1;
 	char rgMessage[1024*10] = {0}; 
 	struct sockaddr_in Addr;
-	/*创建socket*/
+	/*create socket*/
 	int sockfd = net_tcp::Socket(AF_INET, SOCK_DGRAM, 0);
 	/*setsockopt*/
 	Setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &iOptval, sizeof(int));
@@ -272,7 +272,7 @@ void net_com::RecvfromBroadcastMsg()
 
 		NodeInfo *nodeinfo = broadcastNodeReq.mutable_mynode();
 		
-		//获取自身节点
+		//Get own node 
 		auto self_node = Singleton<PeerNode>::get_instance()->get_self_node();
 
 		Node node;
@@ -291,7 +291,7 @@ void net_com::RecvfromBroadcastMsg()
 		node.public_node_id = nodeinfo->public_node_id();
 		node.chain_height   = nodeinfo->chain_height();
 
-		//根据节点id，从k桶中查找
+		//According to node id, search from k bucket 
 		Node tmp_node;
 		bool find = Singleton<PeerNode>::get_instance()->find_node(node.id,tmp_node);
 		if(!self_node.is_public_node && (node.local_port == self_node.local_port))
@@ -349,7 +349,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	flags = 1;
 	Setsockopt(confd, SOL_SOCKET, SO_REUSEPORT, &flags, sizeof(int));
 
-	// 绑定端口
+	// Binding port 
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(SERVERMAINPORT);
@@ -358,7 +358,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	if (ret < 0)
 		perror("bind hold port");
 
-	//连接对方
+	//Connect with each other 
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(u16_port);
@@ -366,7 +366,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 	memcpy(&addr, &u32_ip, sizeof(u32_ip));
 	inet_pton(AF_INET, inet_ntoa(addr), &servaddr.sin_addr);
 
-	/*阻塞情况下linux系统默认超时时间为75s*/
+	/*The default timeout period of the Linux system under blocking conditions is 75s */
 	if (set_fd_noblocking(confd) < 0)
 	{
 		debug("setnonblock error");
@@ -422,7 +422,7 @@ int net_com::connect_init(u32 u32_ip, u16 u16_port)
 				return -1;
 			}
 
-			if (retVal == 0)  //成功
+			if (retVal == 0)  //success 
 			{
 				close(epollFD);
 				return confd;
@@ -468,7 +468,7 @@ bool net_com::send_one_message(const Node &to, const std::string &msg, const int
 
 	// if (to.is_public_node && IpPort::is_public_ip(to.public_ip) == false)
 	// {
-	// 	// 阻止公网配置为内网节点时的循环转发
+	// 	// Prevent circular forwarding when the public network is configured as an intranet node 
 	// 	return false;
 	// }
 	
@@ -619,11 +619,11 @@ int net_com::parse_conn_kind(Node &to)
 	{
 		if (to.is_public_node == true)
 		{
-			to.conn_kind = DRTO2O; //外外直连
+			to.conn_kind = DRTO2O; //Direct connection 
 		}
 		else if (to.is_public_node == false)
 		{
-			//to.conn_kind = DRTO2I; //外转内直连
+			//to.conn_kind = DRTO2I; //Outer to inner direct connection 
 		}
 		else
 		{
@@ -636,17 +636,17 @@ int net_com::parse_conn_kind(Node &to)
 	{
 		if (to.is_public_node == true)
 		{
-			to.conn_kind = DRTI2O; //内外直连
+			to.conn_kind = DRTI2O; //Direct connection inside and outside 
 		}
-		//在同一个局域网
+		//In the same local area network
 		else if ((self.public_ip == to.public_ip && self.local_ip != to.local_ip) || (strncmp(IpPort::ipsz(self.public_ip), "192", 3) == 0 && strncmp(IpPort::ipsz(to.public_ip), "192", 3) == 0 && self.local_ip != to.local_ip) ||
 				 (strncmp(IpPort::ipsz(to.public_ip), "192", 3) == 0 && self.local_ip != to.local_ip))
 		{
-			to.conn_kind = DRTI2I; //内内直连
+			to.conn_kind = DRTI2I; //Direct internal connection 
 		}
 		else if (to.is_public_node == false)
 		{
-			to.conn_kind = BYSERV; //内内打洞
+			to.conn_kind = BYSERV; //Hole inside 
 		}
 		else
 		{
@@ -677,12 +677,12 @@ bool net_com::is_need_send_trans_message(const Node & to)
 	{
 		if ((to.conn_kind != NOTYET && to.conn_kind != BYSERV))
 		{
-			// 找到，并且不是未连接或是转发，可直连发送
+			// Found, and not unconnected or forwarded, can be sent directly 
 			return false;
 		}
 		else
 		{
-			// 找到，需要转发
+			// Found, need to forward 
 			return true;
 		}
 	}
@@ -690,7 +690,7 @@ bool net_com::is_need_send_trans_message(const Node & to)
 	{
 		if (to.public_node_id.empty())
 		{
-			//  无连接公网转发服务器，一般是需要第一次连接
+			//  No connection to the public network forwarding server, usually the first connection is required 
 			if (to.local_ip != 0)
 			{
 				return false;
@@ -702,13 +702,13 @@ bool net_com::is_need_send_trans_message(const Node & to)
 		}
 		else
 		{
-			// 依靠公网转发无法看到的节点
+			// Rely on public network forwarding nodes that cannot be seen 
 			return true;
 		}
 	}
 }
 
-// 读取id文件
+// Read id file 
 bool read_id_file()
 {
 	debug(YELLOW "read_id_file start" RESET);
@@ -731,40 +731,40 @@ bool read_id_file()
 
 void handle_pipe(int sig)
 {
-	//啥也不做
+	//Do nothing 
 }
 
 bool net_com::net_init()
 {
-	//获取当前CPU核心数
+	//Get the current number of CPU cores 
 	global::cpu_nums = sysconf(_SC_NPROCESSORS_ONLN);
-	std::cout << "当前cpu核心数：" << global::cpu_nums << std::endl;
+	std::cout << "Current number of cpu cores ：" << global::cpu_nums << std::endl;
 
-	//设置随机数种子
+	//Set random number seed 
 	uint32_t seed[1] = {0};
 	srand((unsigned long)seed);
 
-	//捕捉SIGPIPE信号，防止程序意外退出
+	//Catch the SIGPIPE signal to prevent the program from exiting unexpectedly 
 	struct sigaction sa;
 	sa.sa_handler = handle_pipe;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGPIPE, &sa, NULL);
 
-	//阻塞SIGPIPE信号
+	//Block SIGPIPE signal 
 	sigset_t set;
 	sigemptyset(&set);
 	sigaddset(&set, SIGPIPE);
 	sigprocmask(SIG_BLOCK, &set, NULL);
 
-	//忽略SIGPIPE信号
+	//Ignore SIGPIPE signal 
 	signal(SIGPIPE, SIG_IGN);
 
-	//获取本机所有mac地址的MD5值
+	//Get the MD5 value of all mac addresses of this machine 
 	global::mac_md5 = net_data::get_mac_md5();
 	Singleton<PeerNode>::get_instance()->set_self_mac_md5(global::mac_md5);
 
-	//打开防火墙端口
+	//Open firewall ports 
 	char buf[1024] = {0};
 	sprintf(buf, "firewall-cmd --add-port=%hu/tcp", SERVERMAINPORT);
 	system(buf);
@@ -773,10 +773,10 @@ bool net_com::net_init()
 	sprintf(udpbuf, "firewall-cmd --add-port=%hu/udp", 8899);
 	system(udpbuf);
 
-	//注册回调函数
+	//Register callback function 
 	Singleton<ProtobufDispatcher>::get_instance()->registerAll();
 
-	// 得到K桶刷新时间
+	// Get K bucket refresh time 
 	global::nodelist_refresh_time = Singleton<Config>::get_instance()->GetVarInt("k_refresh_time");
 	global::local_ip = Singleton<Config>::get_instance()->GetVarString("local_ip");
 
@@ -785,32 +785,32 @@ bool net_com::net_init()
 		global::nodelist_refresh_time = K_REFRESH_TIME;
 	}
 
-	// 自己 ID
+	// Own ID 
 	if (false == read_id_file())
 	{
-		debug("创建或者读取自己ID失败");
+		debug("Failed to create or read own ID ");
 		return false;
 	}
 
-	// 获取本机内网IP
+	// Obtain the local network IP 
 	if (global::local_ip == "")
 	{
-		// info("内网IP为空,开始查找内网IP:");
+		// info("Intranet IP is empty, start to search for intranet IP :");
 		if (false == IpPort::get_localhost_ip())
 		{
-			debug("获取本机内网ip失败");
+			debug("Failed to get the local network ip ");
 			return false;
 		}
 	}
 	else
 	{
-		info("内网不为空");
+		info("Intranet is not empty ");
 
         if(!Singleton<Config>::get_instance()->GetIsPublicNode())
         {
 			if (false == IpPort::get_localhost_ip())
 			{
-					debug("获取本机内网ip失败");
+					debug("Failed to get the local network ip ");
 					return false;
 			}
         }
@@ -822,32 +822,32 @@ bool net_com::net_init()
 			Singleton<PeerNode>::get_instance()->set_self_port_p(SERVERMAINPORT);
 		}
 	}
-	//设置本机是否为公网节点
+	//Set whether this machine is a public network node 
 	Singleton<PeerNode>::get_instance()->set_self_public_node(Singleton<Config>::get_instance()->GetIsPublicNode());
 
-	// 工作线程池启动
+	// Worker thread pool start 
 	Singleton<WorkThreads>::get_instance()->start();
 
-	// 创建监听线程
+	// Create a listener thread 
 	Singleton<EpollMode>::get_instance()->start();
 	
-	//获取自身节点信息
+	//Get own node information 
 	//bool is_public_node_value = Singleton<Config>::get_instance()->GetIsPublicNode();
 
-	//启动获取nodelist线程
+	//Start getting nodelist thread 
 	//if(is_public_node_value){
     Singleton<PeerNode>::get_instance()->nodelist_refresh_thread_init();
 	//}
 
-	// 启动心跳
+	// Start heartbeat 
 	global::g_timer.AsyncLoop(HEART_INTVL * 1000, net_com::DealHeart);
 
     global::registe_public_node_timer.AsyncLoop(12 * 60 * 60 * 1000,net_com::RegisteToPublic);//liuzg
 	
-	//启动广播程序
+	//Start the broadcast program 
 	global::broadcast_timer.AsyncLoop(30 * 1000, net_com::SendBroadcastNodeReq);
     //global::registe_public_node_timer.AsyncLoop(5 * 60 * 1000,net_com::RegisteToPublic);//liuzg
-	//启动广播数据接收线程
+	//Start the broadcast data receiving thread 
 	handleBroadcastMsgThread();
 
 	Singleton<NodeCache>::get_instance()->timer_start();
@@ -890,7 +890,7 @@ void net_com::RegisteToPublic() //liuzg
 }
 
 
-// 测试单发信息
+// Test order information 
 int net_com::input_send_one_message()
 {
 	debug(RED "input_send_one_message start" RESET);
@@ -900,7 +900,7 @@ int net_com::input_send_one_message()
 
 	while (true)
 	{
-		//验证id是否合法
+		//Verify that the id is legal 
 		bool result = Singleton<PeerNode>::get_instance()->is_id_valid(id);
 		if (false == result)
 		{
@@ -929,11 +929,11 @@ int net_com::input_send_one_message()
 
 		if (bl)
 		{
-			printf("第 %d 次发送成功\n", i + 1);
+			printf("Successfully sent %d \n", i + 1);
 		}
 		else
 		{
-			printf("第 %d 次发送失败\n", i + 1);
+			printf("Failed to send %d \n", i + 1);
 		}
 
 	}
@@ -947,7 +947,7 @@ bool net_com::handleBroadcastMsgThread()
 	return true;
 }
 
-// 测试广播信息
+// Test broadcast information 
 int net_com::test_broadcast_message()
 {
 	string str_buf = "Hello World!";
@@ -992,13 +992,13 @@ bool net_com::test_send_big_data()
 	cin >> txtnum;
 	for (int i = 0; i < txtnum; i++)
 	{
-		char x, s;									  //x表示这个字符的ascii码 ，s表示这个字符的大小写
-		s = (char)rand() % 2;						  //随机使s为1或0，为1就是大写，为0就是小写
-		if (s == 1)									  //如果s=1
-			x = (char)rand() % ('Z' - 'A' + 1) + 'A'; //将x赋为大写字母的ascii码
+		char x, s;									  //x represents the ascii code of this character, s represents the case of this character 
+		s = (char)rand() % 2;						  //Randomly make s 1 or 0, 1 means uppercase, 0 means lowercase 
+		if (s == 1)									  //If s=1 
+			x = (char)rand() % ('Z' - 'A' + 1) + 'A'; //Assign x to the ascii code of uppercase letters 
 		else
-			x = (char)rand() % ('z' - 'a' + 1) + 'a'; //如果s=0，x赋为小写字母的ascii码
-		tmp_data.push_back(x);						  //将x转换为字符输出
+			x = (char)rand() % ('z' - 'a' + 1) + 'a'; //If s=0, x is assigned ascii code of lowercase letters 
+		tmp_data.push_back(x);						  //Convert x to character output
 	}
 	tmp_data.push_back('z');
 	tmp_data.push_back('z');
@@ -1040,7 +1040,7 @@ void net_com::InitRegisterNode()
 	const Node & selfNode = Singleton<PeerNode>::get_instance()->get_self_node();
 	if (selfNode.is_public_node == false)
 	{
-		// 内网节点
+		// Intranet node 
 		std::random_shuffle(nodelist.begin(), nodelist.end());
 		Node tempNode = nodelist[0];
 		nodelist.clear();
@@ -1049,7 +1049,7 @@ void net_com::InitRegisterNode()
 
 	for (auto & node : nodelist)
 	{	
-		cout << "配置文件公网节点信息： " << IpPort::ipsz(node.public_ip) << endl;
+		cout << "Configuration file public network node information ： " << IpPort::ipsz(node.public_ip) << endl;
 		if (node.is_public_node)
 		{
 			net_com::SendRegisterNodeReq(node, true);
@@ -1189,9 +1189,9 @@ void net_com::SendBroadcastNodeReq()
     auto self_node = Singleton<PeerNode>::get_instance()->get_self_node();
 
 	mynode->set_local_ip( self_node.local_ip);
-	mynode->set_local_port( self_node.local_port); // 广播仅用内内直连，使用内网IP
+	mynode->set_local_port( self_node.local_port); // Broadcasting is only used for direct connection within the internal network, using the internal network IP 
 	mynode->set_public_ip( self_node.local_ip);
-	mynode->set_public_port( self_node.local_port);  // 广播仅用内内直连，使用内网端口
+	mynode->set_public_port( self_node.local_port);  // Broadcasting is only used for direct connection within the internal network, using the internal network port
 	mynode->set_is_public_node(Singleton<Config>::get_instance()->GetIsPublicNode());
 	mynode->set_mac_md5(global::mac_md5);
 	//mynode->set_conn_kind(dest.conn_kind);
@@ -1201,12 +1201,12 @@ void net_com::SendBroadcastNodeReq()
 	mynode->set_node_id(self_id);
 	mynode->set_public_node_id(self_node.public_node_id);
 	mynode->set_chain_height(self_node.chain_height);
-    //组装数据
+    //Assembly data 
 	CommonMsg msg;
 	net_pack pack;
 	Pack::InitCommonMsg(msg, broadcastNodeReq);
 	auto msg1 = msg.SerializeAsString();
-	//开始广播数据
+	//Start broadcasting data 
 	if(!self_node.is_public_node)
 	{
 		ssize_t send_value = SendBroadcastMsg(msg1);
@@ -1234,7 +1234,7 @@ void net_com::SendTransMsgReq(Node dest, const std::string msg, const int8_t pri
 	// :" << destnode->node_id() << std::endl;
 	//std::cout << "SendTransMsgReq destnode->public_node_id :" << destnode->public_node_id() << std::endl;
 	
-	//获取自身节点连接的公网节点ID，即根据public_node_id取出相应的公网节点node
+	//Get the ID of the public network node connected to its own node, that is, take out the corresponding public network node node according to public_node_id 
 	auto self = Singleton<PeerNode>::get_instance()->get_self_node();
 
 	if (self.is_public_node)
@@ -1250,7 +1250,7 @@ void net_com::SendTransMsgReq(Node dest, const std::string msg, const int8_t pri
 	}
 	else
 	{
-		//根据self.public_node_id获取连接的公网节点node信息
+		//Obtain the node information of the connected public network node according to self.public_node_id 
 		Node server_node;
 		auto find = Singleton<PeerNode>::get_instance()->find_node(self.public_node_id, server_node);
 		if(find)
@@ -1344,7 +1344,7 @@ bool net_com::SendSyncNodeReq(const Node& dest)
 {
 	std::cout << "SendSyncNodeReq start ======" << std::endl;
 	SyncNodeReq syncNodeReq;
-	//获取自身节点信息
+	//Get own node information 
 	auto self_node = Singleton<PeerNode>::get_instance()->get_self_node();
 	vector<Node> nodelist = Singleton<PeerNode>::get_instance()->get_sub_nodelist(self_node.id);
 	vector<Node> publicNodeList = Singleton<PeerNode>::get_instance()->get_public_node();
@@ -1354,9 +1354,9 @@ bool net_com::SendSyncNodeReq(const Node& dest)
 	{
 		return false;
 	}
-	//存储自身节点ID
+	//Store its own node ID 
 	syncNodeReq.add_ids(std::move(self_node.id));
-	//将连接自己的内网节点放入syncNodeReq发送给对方
+	//Put the node connected to your own intranet into syncNodeReq and send it to the other party 
 	for(auto& node:nodelist)
 	{	
 		if(node.is_public_node && node.fd < 0) //liuzg

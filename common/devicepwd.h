@@ -18,12 +18,12 @@ class DevicePwd
 public:
     DevicePwd(){};
     ~DevicePwd(){};
-    //根据文件名构造配置文件
+    //Construct a configuration file based on the file name 
     DevicePwd(const std::string &name){if(!this->InitPWDFile(name)){_Exit(0);}};
-    //根据m_Json写入配置文件
+    //Write configuration file according to m_Json 
     void WriteDevPwdFile(const std::string &name = "devpwd.json");
    
-    //初始化设备密码文件
+    //Initialize the device password file 
     bool InitPWDFile(const std::string &name = "devpwd.json");
     bool NewDevPWDFile(std::string strFile);
     std::string GetDevPassword();

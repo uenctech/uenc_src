@@ -20,24 +20,24 @@
 #define YELLOW "\033[33m"	/* Yellow */
 #define BLUE "\033[34m"		/* Blue */
 
-//常量定义 
+//Constant definition  
 //---------------------------------------------------------
 constexpr int END_FLAG              = 7777777;             
-constexpr int IP_LEN				= 16;	//IP 长度
+constexpr int IP_LEN				= 16;	//IP length 
 			  
 constexpr int MAXEPOLLSIZE			= 100000;
 constexpr int MAXLINE				= 10240l;
 			   
-constexpr int K_ID_LEN				= 160;	//I D长度
+constexpr int K_ID_LEN				= 160;	//I D length 
 constexpr int K_REFRESH_TIME		= 5*10;
 
-constexpr int HEART_TIME      =  60;  // 距离上次传送数据多少时间未收到新报文判断为开始检测，
-constexpr int HEART_INTVL     =  100;   // 检测开始每多少时间发送心跳包，
-constexpr int HEART_PROBES    =  6;   // 发送几次心跳包对方未响应则close连接，
+constexpr int HEART_TIME      =  60;  // How much time has passed since the last time the data was transmitted and no new message was received, it is judged to start the detection ，
+constexpr int HEART_INTVL     =  100;   // How often does the test start to send a heartbeat packet ，
+constexpr int HEART_PROBES    =  6;   // Send a few heartbeat packets and the other party does not respond, then close the connection ，
 
 
 
-//别名定义
+//Alias definition 
 //---------------------------------------------------------
 typedef int int32;
 typedef unsigned int uint32;
@@ -56,7 +56,7 @@ using ull = unsigned long long;
 //---------------------------------------------------------
 
 
-//网络包体
+//Network package body 
 typedef struct net_pack
 {
 	uint32_t	len				= 0;

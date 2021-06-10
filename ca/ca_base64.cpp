@@ -20,10 +20,10 @@ unsigned long base64_encode(const unsigned char *text, unsigned long text_len, u
     unsigned long i, j;
     for (i = 0, j = 0; i+3 <= text_len; i+=3)
     {
-        encode[j++] = alphabet_map[text[i]>>2];                             //取出第一个字符的前6位并找出对应的结果字符
-        encode[j++] = alphabet_map[((text[i]<<4)&0x30)|(text[i+1]>>4)];     //将第一个字符的后2位与第二个字符的前4位进行组合并找到对应的结果字符
-        encode[j++] = alphabet_map[((text[i+1]<<2)&0x3c)|(text[i+2]>>6)];   //将第二个字符的后4位与第三个字符的前2位组合并找出对应的结果字符
-        encode[j++] = alphabet_map[text[i+2]&0x3f];                         //取出第三个字符的后6位并找出结果字符
+        encode[j++] = alphabet_map[text[i]>>2];                             //Take the first 6 bits of the first character and find the corresponding result character 
+        encode[j++] = alphabet_map[((text[i]<<4)&0x30)|(text[i+1]>>4)];     //Combine the last 2 digits of the first character with the first 4 digits of the second character and find the corresponding result character 
+        encode[j++] = alphabet_map[((text[i+1]<<2)&0x3c)|(text[i+2]>>6)];   //Combine the last 4 digits of the second character with the first 2 digits of the third character and find the corresponding result character 
+        encode[j++] = alphabet_map[text[i+2]&0x3f];                         //Take out the last 6 digits of the third character and find the resulting character 
     }
 
     if (i < text_len)
@@ -63,24 +63,24 @@ unsigned long base64_decode(const unsigned char *code, unsigned long code_len, u
     {
         for (unsigned long k = 0; k < 4; k++)
         {
-            quad[k] = reverse_map[code[i+k]];//分组，每组四个分别依次转换为base64表内的十进制数
+            quad[k] = reverse_map[code[i+k]];//Group, each group of four are converted to decimal numbers in base64 table in turn 
         }
 
         assert(quad[0]<64 && quad[1]<64);
 
-        plain[j++] = (quad[0]<<2)|(quad[1]>>4); //取出第一个字符对应base64表的十进制数的前6位与第二个字符对应base64表的十进制数的前2位进行组合
+        plain[j++] = (quad[0]<<2)|(quad[1]>>4); //Take out the first 6 digits of the decimal number corresponding to the base64 table of the first character and combine the first 2 digits of the decimal number of the base64 table corresponding to the second character 
 
         if (quad[2] >= 64)
             break;
         else if (quad[3] >= 64)
         {
-            plain[j++] = (quad[1]<<4)|(quad[2]>>2); //取出第二个字符对应base64表的十进制数的后4位与第三个字符对应base64表的十进制数的前4位进行组合
+            plain[j++] = (quad[1]<<4)|(quad[2]>>2); //Take the second character corresponding to the last 4 digits of the decimal number of the base64 table and combine the first 4 digits of the third character corresponding to the decimal number of the base64 table 
             break;
         }
         else
         {
             plain[j++] = (quad[1]<<4)|(quad[2]>>2);
-            plain[j++] = (quad[2]<<6)|quad[3];//取出第三个字符对应base64表的十进制数的后2位与第4个字符进行组合
+            plain[j++] = (quad[2]<<6)|quad[3];//Take the third character corresponding to the last 2 digits of the decimal number of the base64 table and combine it with the 4th character 
         }
     }
     return j;

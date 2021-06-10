@@ -15,26 +15,26 @@ public:
     TimeUtil();
     ~TimeUtil();
     
-    //获取ntp服务器时间戳,单位：微秒     1s = 1000000微秒
+    //Get ntp server timestamp, unit: microsecond 1s = 1000000 microseconds 
     //param:
-    //  is_sync 是否把从ntp获取的时间同步到本地
+    //  is_sync Whether to synchronize the time obtained from ntp to the local 
     x_uint64_t getNtpTimestamp(bool is_sync = false);
 
-    //获取ntp服务器时间戳,从配置文件读取ntp服务器，然后请求 单位：微秒 
+    //Get the ntp server timestamp, read the ntp server from the configuration file, and then request the unit: microseconds 
     x_uint64_t getNtpTimestampConf();
 
-    //获取本地时间戳，单位：微秒    
+    //Get local timestamp, unit: microsecond     
     x_uint64_t getlocalTimestamp();
 
-    //获取时间戳，先从ntp获取，若不成功再去本地获取
+    //Get the timestamp, first get it from ntp, if it fails, get it locally 
     x_uint64_t getTimestamp();
 
-    //设置本地时间
+    //Set local time 
     //param:
-    //  timestamp,单位：微秒
+    //  timestamp,Unit: microsecond 
     bool setLocalTime(x_uint64_t timestamp);
 
-    //测试ntp服务器获得时间的延时
+    //Test the delay of ntp server acquisition time 
     void testNtpDelay();
 
 	

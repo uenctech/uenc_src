@@ -19,7 +19,7 @@ int is_version = -1;
 
 void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req, GetNodeServiceFeeAck &node_fee_ack)
 {
-    int db_status = 0; //数据库返回状态 0为成功
+    int db_status = 0; //The database returns status 0 for success 
     uint64_t max_fee = 0, min_fee = 0, service_fee = 0;
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     db_status = rdb_ptr->GetDeviceSignatureFee(service_fee);
@@ -79,7 +79,7 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
         if( min_fee < 1|| max_fee > 100000)
         {
             node_fee_ack.set_code(-1);
-            node_fee_ack.set_description("单节点签名费错误");
+            node_fee_ack.set_description("Single node signature fee error ");
             // cout<<"min_fee and  max_fee show "<<endl;
             return ;
         }
@@ -97,7 +97,7 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &node_fee_req
     servicep_fee->set_service_fee(to_string(((double)service_fee)/DECIMAL_NUM));
     node_fee_ack.set_version(getVersion());
     node_fee_ack.set_code(0);
-    node_fee_ack.set_description("获取成功");
+    node_fee_ack.set_description("Acquired success ");
 
     return;
 }
@@ -114,43 +114,43 @@ int SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFe
     bool retval = pCPwdAttackChecker->IsOk(minutescount);
     if(retval == false)
     {
-        cout<<"第四次以上输入错误返回时间"<<endl;
+        cout<<"Return time for the fourth or more input error "<<endl;
         std::string minutescountStr = std::to_string(minutescount);
         fee_ack.set_code(-31);
         fee_ack.set_description(minutescountStr);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds "<<endl;
         return -1;
     }
     if(hashOriPass.compare(targetPassword))
     {
-       cout<<"输入密码错误开始记录次数"<<endl;
+       cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"前两次输入密码错误"<<endl;
+            cout<<"The first two passwords were entered incorrectly "<<endl;
             fee_ack.set_code(-6);
-            fee_ack.set_description("密码输入错误");
+            fee_ack.set_description("Incorrect password ");
             return -2;
        } 
        else 
        {
-            cout<<"第三次输入密码错误返回倒计时时间"<<endl;
+            cout<<"Enter the wrong password for the third time and return to the countdown time "<<endl;
             fee_ack.set_code(-30);
-            fee_ack.set_description("第三次输入密码错误");
+            fee_ack.set_description("Incorrect password for the third time ");
             return -3;
        }
     }
     else 
     {
-        cout<<"SetServiceFee密码输入正确重置为0"<<endl;
+        cout<<"SetServiceFee Password input is correct and reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
         fee_ack.set_code(0);
-        fee_ack.set_description("密码输入正确");
+        fee_ack.set_description("Password input is correct ");
     }
 
     if (hashOriPass != targetPassword) 
     {
         fee_ack.set_code(-6);
-        fee_ack.set_description("密码错误");
+        fee_ack.set_description("wrong password ");
         return -4;
     }
 
@@ -160,7 +160,7 @@ int SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFe
     if (!std::regex_match(fee_req->service_fee(), partten))
     {
         fee_ack.set_code(-8);
-        fee_ack.set_description("Fee输入不正确");
+        fee_ack.set_description("Fee Incorrect input ");
         cout << "invalid fee param" << endl;
         return -5;
     }
@@ -169,32 +169,32 @@ int SetServiceFee(const std::shared_ptr<SetServiceFeeReq> &fee_req, SetServiceFe
     if(nodesignfee < 0.001 || nodesignfee > 0.1)
     {
         fee_ack.set_code(-7);
-        fee_ack.set_description("滑动条数值显示错误");
+        fee_ack.set_description("The slider value is displayed incorrectly ");
         cout<<"return num show nodesignfee = "<<nodesignfee<<endl;
         return -6;
     }
     uint64_t service_fee = (uint64_t)(stod(fee_req->service_fee()) * DECIMAL_NUM);
     cout << "fee " << service_fee << endl;
-    //设置手续费 SET
+    //Setup fee  SET
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     auto status = rdb_ptr->SetDeviceSignatureFee(service_fee);
     if (status) 
     {
         fee_ack.set_code(status);
-        fee_ack.set_description("燃料费设置失败"); 
+        fee_ack.set_description("Fuel fee setting failed "); 
         return -7;
     }
 
     cout << ">>>>>>>>>>>>>>>>>>>>>>>> SetServiceFee4 =" << service_fee << endl;
     fee_ack.set_code(status);
-    fee_ack.set_description("燃料费设置成功");
+    fee_ack.set_description("Fuel fee is set successfully ");
     return 0;
 }
 
 
 void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfoAck &response_ack)
 {
-    int db_status = 0; //数据库返回状态 0为成功
+    int db_status = 0; //The database returns status 0 for success 
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
@@ -217,7 +217,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     }
     unsigned int height = top;
 
-    //查询前100块数据
+    //Query the first 100 pieces of data 
     std::vector<std::string> hash;
     db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hash);
     if (db_status) 
@@ -227,7 +227,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
     }
     std::string block_hash = hash[0];
 
-    //查找100范围内所有块
+    //Find all blocks within 100 
 
     uint64_t max_fee, min_fee, def_fee, avg_fee, count;
     uint64_t temp_fee {0};
@@ -250,7 +250,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
             }
             block.ParseFromString(serialize_block);
 
-            //解析块头
+            //Parsing block header 
             string serialize_header;
             db_status =  rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
             if (db_status) 
@@ -336,7 +336,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
   
     response_ack.set_version(getVersion());
     response_ack.set_code(0);
-    response_ack.set_description("获取设备成功");
+    response_ack.set_description("Get the device successfully ");
 
     response_ack.set_mac_hash("test_hash"); //TODO
     response_ack.set_device_version(getEbpcVersion()); //TODO global
@@ -359,7 +359,7 @@ void GetServiceInfo(const std::shared_ptr<GetServiceInfoReq>& msg,GetServiceInfo
 
 int64_t getAvgFee()
 {
-    int db_status = 0; //数据库返回状态 0为成功
+    int db_status = 0; //The database returns status 0 for success 
     auto rdb_ptr = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = rdb_ptr->TransactionInit();
     if (txn == NULL) 
@@ -380,7 +380,7 @@ int64_t getAvgFee()
         std::cout << __LINE__ << std::endl;
         return -2;
     }
-    //查询前100块数据
+    //Query the first 100 pieces of data 
     std::vector<std::string> hash;
     db_status = rdb_ptr->GetBlockHashsByBlockHeight(txn, top, hash);
     if (db_status) 
@@ -390,8 +390,7 @@ int64_t getAvgFee()
     }
     std::string block_hash = hash[0];
 
-    //查找100范围内所有块
-
+    //Find all blocks within 100 
     uint64_t max_fee, min_fee, def_fee, avg_fee, count;
     uint64_t temp_fee {0};
 
@@ -412,7 +411,7 @@ int64_t getAvgFee()
         }
         block.ParseFromString(serialize_block);
 
-        //解析块头
+        //Parsing block header 
         string serialize_header;
         db_status = rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
         if (db_status)
@@ -535,7 +534,7 @@ void GetPackageFee(const std::shared_ptr<GetPackageFeeReq> &package_req, GetPack
   
     package_ack.set_version(getVersion());
     package_ack.set_code(0);
-    package_ack.set_description("获取成功");
+    package_ack.set_description("Acquired success ");
 
     double d_fee = ((double)package_fee) / DECIMAL_NUM;
     std::string s_fee= to_string(d_fee);
@@ -564,13 +563,13 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
         rdb_ptr->TransactionDelete(txn, bRollback);
     };
 
-    //解析块头
+    //Parsing block header 
     string serialize_header;
     rdb_ptr->GetBlockByBlockHash(txn, block.hash(), serialize_header);
     CBlock cblock;
     cblock.ParseFromString(serialize_header);
 
-    //开始拼接block_info_list
+    //Start stitching block_info_list
     auto blocks = block_info_ack.add_block_info_list();
 
     blocks->set_height(block.height());
@@ -583,7 +582,7 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
     {
         CTransaction tx = cblock.txs(i);
 
-        //添加tx_info_list
+        //Add to tx_info_list
         auto tx_info = blocks->add_tx_info_list();
         tx_info->set_tx_hash(tx.hash());
 
@@ -596,7 +595,7 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
             tx_info->add_transaction_signer(buf);
         }
 
-        //添加vin_info
+        //Add to vin_info
         for (int32_t j = 0; j < tx.vin_size(); j++) 
         {
             auto vin_list = tx_info->add_vin_list();
@@ -625,7 +624,7 @@ void AddBlockInfo(T &block_info_ack, CBlockHeader &block)
             delete [] hexStr;
         }
 
-        //添加vout_info
+        //Add to vout_info
         for (int32_t j = 0; j < tx.vout_size(); j++) 
         {
             auto vout_list = tx_info->add_vout_list();
@@ -741,7 +740,7 @@ int BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBloc
     }
     if (bestChainHash.size() == 0) 
     { 
-        //使用默认值
+        //Use default value 
         block_info_ack.set_version(getVersion());
         block_info_ack.set_code(-2);
         block_info_ack.set_description("GetBestChainHash failed ");
@@ -760,16 +759,16 @@ int BlockInfoReq(const std::shared_ptr<GetBlockInfoReq> &block_info_req, GetBloc
         return -3;
     }
 
-    //如为负 则为最高高度和所有块数
+    //If it is negative, it is the highest height and the total number of blocks 
     height = height > static_cast<int32_t>(top) ? top : height;
     height = height < 0 ? top : height;
     count = count > height ? height : count;
     count = count < 0 ? top : count; //FIXME
 
-    //通过高度查块hash
+    //Check block hash by height 
     std::vector<std::string> hash;
 
-    //查找count范围内所有块
+    //Find all blocks in the count range 
     CBlockHeader block;
     std::string serialize_block;
 
@@ -827,7 +826,7 @@ void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetD
 
     std::string version = "1";
     int code {0};
-    std::string description = "成功";
+    std::string description = "success ";
 
     Singleton<StringUtil>::get_instance()->Trim(password, true, true);
     std::string originPass = generateDeviceHashPassword(password);
@@ -842,43 +841,43 @@ void GainDevPasswordReq(const std::shared_ptr<GetDevPasswordReq> &pass_req, GetD
         pass_ack.set_version(getVersion());
         pass_ack.set_code(-31);
         pass_ack.set_description(minutescountStr);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds "<<endl;
         return;
     }
 
     if(originPass.compare(targetPass))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"输入密码错误"<<endl;
+            cout<<"Wrong password "<<endl;
             pass_ack.set_version(getVersion());
             pass_ack.set_code(-2);
-            pass_ack.set_description("密码输入错误");
+            pass_ack.set_description("Incorrect password ");
             return;
        }
        else
        {
             pass_ack.set_version(getVersion());
             pass_ack.set_code(-30);
-            pass_ack.set_description("第三次输入密码错误");
+            pass_ack.set_description("Incorrect password for the third time ");
             return;
        } 
     }
     else 
     {
-        cout<<"GainDevPasswordReq密码输入正确重置为0"<<endl;
+        cout<<"GainDevPasswordReq  Password input is correct and reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
         pass_ack.set_version(getVersion());
         pass_ack.set_code(0);
-        pass_ack.set_description("密码输入正确");
+        pass_ack.set_description("Password input is correct ");
     }
 
     if (originPass != targetPass) 
     {
         pass_ack.set_version(getVersion());
         pass_ack.set_code(-2);
-        pass_ack.set_description("密码错误");
+        pass_ack.set_description("wrong password ");
         return;
     }
 
@@ -942,33 +941,33 @@ void DevPasswordReq(const std::shared_ptr<SetDevPasswordReq> &pass_req, SetDevPa
         std::string minutescountStr = std::to_string(minutescount);
         pass_ack.set_code(-31);
         pass_ack.set_description(minutescountStr);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds "<<endl;
         return;
     }
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"密码输入错误"<<endl;
+            cout<<"Incorrect password "<<endl;
             pass_ack.set_code(-6);
-            pass_ack.set_description("密码输入错误");
+            pass_ack.set_description("Incorrect password ");
             return;
        }
        else
        {
             pass_ack.set_code(-30);
-            pass_ack.set_description("第三次输入密码错误");
+            pass_ack.set_description("Incorrect password for the third time ");
             return;
        }
     }
     else 
     {
-        cout<<"重置为0"<<endl;
+        cout<<"Reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
         pass_ack.set_code(0);
-        pass_ack.set_description("密码输入正确");
+        pass_ack.set_description("Password input is correct ");
     }
 
 
@@ -1000,7 +999,7 @@ void GetTransactionInfo(const std::shared_ptr<GetAddrInfoReq> &addr_req, GetAddr
     uint32_t index = addr_req->index();
     uint32_t count = addr_req->count();
 
-    int db_status = 0; //数据库返回状态 0为成功
+    int db_status = 0; //The database returns status 0 for success 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = pRocksDb->TransactionInit();
     if(!txn) 
@@ -1099,13 +1098,13 @@ void GetNodInfo(GetNodeInfoAck& node_ack)
 
     node_ack.set_version(getVersion());
     node_ack.set_code(0);
-    node_ack.set_description("获取成功");
+    node_ack.set_description("Acquired success ");
     Singleton<Config>::get_instance()->InitFile();
     std::string node_string = Singleton<Config>::get_instance()->GetNodeInfo();
     if (node_string.empty()) 
     {
         node_ack.set_code(-1);
-        node_ack.set_description("配置获取失败");
+        node_ack.set_description("Configuration failed ");
         return;
     }
 
@@ -1174,7 +1173,7 @@ void GetNodInfo(GetNodeInfoAck& node_ack)
         }
     }
 
-    // 自身节点
+    // Own node 
     if (Singleton<Config>::get_instance()->GetIsPublicNode())
     {
         for (int i = 0; i != node_ack.node_list_size(); ++i)
@@ -1330,33 +1329,33 @@ void HandleGetDevPrivateKeyReq(const std::shared_ptr<GetDevPrivateKeyReq>& msg, 
         std::string minutescountStr = std::to_string(minutescount);
         devprikey_ack.set_code(-31);
         devprikey_ack.set_description(minutescountStr);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds"<<endl;
         return;
     }
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"密码输入错误"<<endl;
+            cout<<"Incorrect password "<<endl;
             devprikey_ack.set_code(-3);
-            devprikey_ack.set_description("密码输入错误");
+            devprikey_ack.set_description("Incorrect password ");
             return;
        }
        else
        {
             devprikey_ack.set_code(-30);
-            devprikey_ack.set_description("第三次输入密码错误");
+            devprikey_ack.set_description("Incorrect password for the third time ");
             return;
        }  
     }
     else 
     {
-        cout<<"重置为0"<<endl;
+        cout<<"Reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
         devprikey_ack.set_code(0);
-        devprikey_ack.set_description("密码输入正确");
+        devprikey_ack.set_description("Password input is correct ");
     }
     
     if (hashOriPass != targetPassword) 
@@ -1614,11 +1613,11 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
         return; 
     }
 
-    // 去重
+    // De-duplication 
     std::set<std::string> txHashsSet(txHashs.begin(), txHashs.end());
     txHashs.assign(txHashsSet.begin(), txHashsSet.end());
 
-    // 重新賦值
+    // Reassign 
     txHashs.clear();
     for (auto & txHash : txHashsSet)
     {
@@ -1729,9 +1728,9 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
         if (txIn0.scriptsig().sign() == std::string(FEE_SIGN_STR) || 
             txIn0.scriptsig().sign() == std::string(EXTRA_AWARD_SIGN_STR))
         {
-            // 奖励账号
+            // Reward account 
 
-            // 判断是否是奖励交易中的交易发起方账号
+            // Determine whether it is the transaction initiator account in the reward transaction 
             bool isOriginator = false;
             uint64_t txOutAmount = 0;
 
@@ -1757,7 +1756,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
             
             if (isOriginator)
             {
-                // 如果是发起方的话不进入统计
+                // Do not enter statistics if it is the initiator 
                 continue;
             }
 
@@ -1796,7 +1795,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
         else
         {
             lastHash = txHashs[i];
-            // 主交易
+            // Master transaction 
             TxInfoItem * pItem = ack.add_list();
             pItem->set_txhash(tx.hash());
             pItem->set_time(tx.time());
@@ -1804,7 +1803,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
             std::vector<std::string> owners = TxHelper::GetTxOwner(tx);
             if (owners.size() == 1 && tx.vout_size() == 2)
             {
-                // 质押和解除质押
+                // Pledge and release of pledge 
                 uint64_t gas = 0;
                 for (auto & tmpTx : cblock.txs())
                 {
@@ -1837,7 +1836,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                     owners[0] == tx.vout(0).scriptpubkey() && 
                     tx.vout(0).scriptpubkey() == tx.vout(1).scriptpubkey())
                 {
-                    // 解除质押
+                    //Release pledge 
                     pItem->set_type(TxInfoType_Redeem);
                     pItem->set_amount(to_string(((double_t)tx.vout(0).value() - gas) / DECIMAL_NUM));
 
@@ -1852,7 +1851,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 else if (owners[0] == addr && 
                         (tx.vout(0).scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE || tx.vout(0).scriptpubkey() == VIRTUAL_ACCOUNT_PLEDGE))
                 {
-                    // 质押资产
+                    // Pledged assets 
                     pItem->set_type(TxInfoType_Pledge);
                     pItem->set_amount(to_string(((double_t)tx.vout(0).value() + gas) / DECIMAL_NUM));
 
@@ -1866,7 +1865,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 }
             }
             
-            // 是否是发起方
+            // Is it the initiator 
             bool isOriginator = false;
             for (auto & tmpTxIn : tx.vin())
             {
@@ -1885,7 +1884,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
             {
                 if (isOriginator)
                 {
-                    //  发起方的话找非发起方的交易额
+                    //  If the initiator, find the transaction amount of the non-initiator 
                     if (tmpTxOut.scriptpubkey() != addr)
                     {
                         amount += tmpTxOut.value();
@@ -1893,7 +1892,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
                 }
                 else
                 {
-                    // 非发起方的话直接用该交易额
+                    // If you are not the initiator, use the transaction amount directly 
                     if (tmpTxOut.scriptpubkey() == addr)
                     {
                         amount = tmpTxOut.value();
@@ -1905,7 +1904,7 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
             if (isOriginator)
             {
-                // 如果是主账号需要加上已付的手续费
+                // If it is the main account, you need to add the paid handling fee 
                 for (auto & tmpTx : cblock.txs())
                 {
                     CTxin txIn0 = tmpTx.vin(0);
@@ -1932,10 +1931,10 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
     if (i == size)
     {
-        i--; // 若一次性获得所有数据，索引需要减一
+        i--; //If you get all the data at once, the index needs to be reduced by one 
     }
 
-    // 将已解除质押的交易设置为“质押但已解除”类型
+    // Set the transaction that has been released from the pledge to the “stake but release” type 
     std::vector<std::string> redeemHash;
     for (auto & item : ack.list())
     {
@@ -1988,14 +1987,14 @@ void HandleGetTxInfoListReq(const std::shared_ptr<GetTxInfoListReq>& req, GetTxI
 
 }
 
-// 处理手机端块列表请求
+// Handle the block list request on the mobile phone 
 void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, const MsgData& msgdata)
 {
-    // 回执消息体
+    // Receipt message body 
     GetBlockInfoListAck getBlockInfoListAck;
     getBlockInfoListAck.set_version( getVersion() );
 
-    // 版本判断
+    // Version judgment 
     if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
         getBlockInfoListAck.set_code(-1);
@@ -2101,7 +2100,7 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
             blocks.push_back(cblock);
         }
 
-        // 单层高度所有块按时间倒序
+        // All blocks of a single height are in reverse chronological order 
         std::sort(blocks.begin(), blocks.end(), [](CBlock & a, CBlock & b){
             return a.time() > b.time();
         });
@@ -2190,10 +2189,10 @@ void HandleGetBlockInfoListReq(const std::shared_ptr<GetBlockInfoListReq>& msg, 
     net_send_message<GetBlockInfoListAck>(msgdata, getBlockInfoListAck, net_com::Priority::kPriority_Middle_1);
 }
 
-// 处理手机端块详情请求
+// Handle the request for block details on the mobile phone 
 void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& msg, const MsgData& msgdata)
 {
-    std::cout << "接受数据: " << std::endl;
+    std::cout << "Accept data : " << std::endl;
     std::cout << "version: " << msg->version() <<std::endl;
     std::cout << "blockhash: " << msg->blockhash() << std::endl;
     
@@ -2201,7 +2200,7 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     getBlockInfoDetailAck.set_version( getVersion() );
     getBlockInfoDetailAck.set_code(0);
 
-    // 版本判断
+    // Version judgment 
     if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
         getBlockInfoDetailAck.set_code(-1);
@@ -2266,11 +2265,11 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
 
     int64_t totalAmount = 0;
     
-    // 获取交易的发起方账号
+    // Get the account of the initiator of the transaction 
     std::vector<std::string> txOwners;
     txOwners = TxHelper::GetTxOwner(tx);
     
-    // 判断是否是解除质押情况
+    // Determine whether it is the release of pledge 
     bool isRedeem = false;
     if (tx.vout_size() == 2)
     {
@@ -2344,16 +2343,16 @@ void HandleGetBlockInfoDetailReq(const std::shared_ptr<GetBlockInfoDetailReq>& m
     }
     else
     {
-        // 计算交易总金额,不包括手续费
+        // Calculate the total transaction amount, excluding handling fees 
         for (int j = 0; j < tx.vout_size(); ++j)
         {
             CTxout txout = tx.vout(j);
             if (txOwners.end() == find (txOwners.begin(), txOwners.end(), txout.scriptpubkey() ) )
             {
-                // 累计交易总值
+                // Cumulative total transaction value 
                 totalAmount += txout.value();
 
-                // 分别记录每个账号的接收金额
+                // Record the received amount of each account separately 
                 BlockInfoOutAddr * pBlockInfoOutAddr = getBlockInfoDetailAck.add_blockinfooutaddr();
                 pBlockInfoOutAddr->set_addr(txout.scriptpubkey());
 
@@ -2473,7 +2472,7 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
         ack.add_fromaddr(owner);
     }
 
-    // 超过更多数据需要另行显示
+    // More data needs to be displayed separately
     if (ack.fromaddr_size() > 5)
     {
         auto fromAddr = ack.mutable_fromaddr();
@@ -2483,7 +2482,7 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
 
     int64_t amount = 0;
 
-    // 判断是否是解除质押情况
+    // Determine whether it is the release of pledge 
     bool isRedeem = false;
     if (tx.vout_size() == 2)
     {
@@ -2565,7 +2564,7 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
             }
         }
 
-        // 排除vin中已有的
+        // Exclude existing in vin 
         for (auto iter = toAddrMap.begin(); iter != toAddrMap.end(); ++iter)
         {
             for (auto owner : owners)
@@ -2585,7 +2584,7 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
             toaddr->set_amt(to_string( (double_t)item.second / DECIMAL_NUM));
         }
         
-        // 超过更多数据需要另行显示
+        // More data needs to be displayed separately 
         if (ack.toaddr_size() > 5)
         {
             auto toaddr = ack.mutable_toaddr();
@@ -2596,8 +2595,8 @@ void HandleGetTxInfoDetailReq(const std::shared_ptr<GetTxInfoDetailReq>& req, Ge
  
     ack.set_amount(to_string((double_t)amount / DECIMAL_NUM));
 
-    int64_t totalAward = 0; // 总奖励
-    int64_t awardAmount = 0; // 个人奖励
+    int64_t totalAward = 0; // Total reward 
+    int64_t awardAmount = 0; // Personal reward 
     for (auto & txout : awardTx.vout())
     {
         std::string targetAddr = txout.scriptpubkey();
@@ -2645,7 +2644,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             fee_ack.set_version(getVersion());
             fee_ack.set_code(is_version);
-            fee_ack.set_description("版本错误");
+            fee_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetNodeServiceFeeAck>(msgdata, fee_ack);
@@ -2664,7 +2663,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             amount_ack.set_version(getVersion());
             amount_ack.set_code(is_version);
-            amount_ack.set_description("版本错误");
+            amount_ack.set_description("Wrong version ");
         }
 
         net_send_message<SetServiceFeeAck>(msgdata, amount_ack);
@@ -2702,7 +2701,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             amount_ack.set_version(getVersion());
             amount_ack.set_code(is_version);
-            amount_ack.set_description("版本错误");
+            amount_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetPackageFeeAck>(msgdata, amount_ack);
@@ -2720,7 +2719,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             amount_ack.set_version(getVersion());
             amount_ack.set_code(is_version);
-            amount_ack.set_description("版本错误");
+            amount_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetAmountAck>(msgdata, amount_ack, net_com::Priority::kPriority_Middle_1);
@@ -2741,7 +2740,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             block_info_ack.set_version(getVersion());
             block_info_ack.set_code(is_version);
-            block_info_ack.set_description("版本错误");
+            block_info_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetBlockInfoAck>(msgdata, block_info_ack, net_com::Priority::kPriority_Middle_1);
@@ -2760,7 +2759,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             pass_ack.set_version(getVersion());
             pass_ack.set_code(is_version);
-            pass_ack.set_description("版本错误");
+            pass_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetDevPasswordAck>(msgdata, pass_ack);
@@ -2780,7 +2779,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             pass_ack.set_version(getVersion());
             pass_ack.set_code(is_version);
-            pass_ack.set_description("版本错误");
+            pass_ack.set_description("Wrong version ");
         }
 
         net_send_message<SetDevPasswordAck>(msgdata, pass_ack);
@@ -2798,7 +2797,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             addr_ack.set_version(getVersion());
             addr_ack.set_code(is_version);
-            addr_ack.set_description("版本错误");
+            addr_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetAddrInfoAck>(msgdata, addr_ack);
@@ -2816,7 +2815,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             node_ack.set_version(getVersion());
             node_ack.set_code(is_version);
-            node_ack.set_description("版本错误");
+            node_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetNodeInfoAck>(msgdata, node_ack);
@@ -2834,7 +2833,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             info_ack.set_version(getVersion());
             info_ack.set_code(is_version);
-            info_ack.set_description("版本错误");
+            info_ack.set_description("Wrong version ");
         }
 
         net_send_message<GetClientInfoAck>(msgdata, info_ack);
@@ -2851,7 +2850,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             devprikey_ack.set_version(getVersion());
             devprikey_ack.set_code(is_version);
-            devprikey_ack.set_description("版本错误");
+            devprikey_ack.set_description("Wrong version ");
         }
         net_send_message<GetDevPrivateKeyAck>(msgdata, devprikey_ack);
     }
@@ -2867,7 +2866,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             ack.set_version(getVersion());
             ack.set_code(is_version);
-            ack.set_description("版本错误");
+            ack.set_description("Wrong version ");
         }
 
         net_send_message<GetPledgeListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
@@ -2884,7 +2883,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             ack.set_version(getVersion());
             ack.set_code(is_version);
-            ack.set_description("版本错误");
+            ack.set_description("Wrong version ");
         }
 
         net_send_message<GetTxInfoListAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
@@ -2914,7 +2913,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
         {
             ack.set_version(getVersion());
             ack.set_code(is_version);
-            ack.set_description("版本错误");
+            ack.set_description("Wrong version ");
         }
         
         net_send_message<GetTxInfoDetailAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
@@ -2957,7 +2956,7 @@ void assign(const std::shared_ptr<Message> &msg, const MsgData &msgdata, const s
 }
 
 //version 4-3.0.14
-//效验
+//Effectiveness
 void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata) 
 {
     const google::protobuf::Descriptor *descriptor = msg->GetDescriptor();
@@ -2983,7 +2982,7 @@ void verify(const std::shared_ptr<Message> &msg, const MsgData &msgdata)
 void MuiltipleApi() 
 {
     /** new s **/
-    //获取全网节点矿费 std::map<std::string, uint64_t> net_get_node_ids_and_fees()
+    //Get the node mining fee of the whole network  std::map<std::string, uint64_t> net_get_node_ids_and_fees()
     net_register_callback<GetNodeServiceFeeReq>([](const std::shared_ptr<GetNodeServiceFeeReq> &msg, 
     const MsgData &msgdata) 
     {
@@ -2996,7 +2995,7 @@ void MuiltipleApi()
         m_api::verify(msg, msgdata);
     });
 
-    //获取矿机信息(矿机端 需要请求服务节点接口 异步返回给矿机端 矿机端返回给手机端)
+    //Obtain the miner information (the miner needs to request the service node interface, which is asynchronously returned to the miner, and the miner is returned to the mobile phone) 
     net_register_callback<GetServiceInfoReq>([](const std::shared_ptr<GetServiceInfoReq>& msg, 
     const MsgData& msgdata) 
     {
@@ -3514,11 +3513,11 @@ bool  GetTxByTxHashFromRocksdb(vector<string>txhash,vector<CTransaction> & outTx
 
 void handleCheckNodeHeightReq(const std::shared_ptr<CheckNodeHeightReq>& req, const MsgData& msgdata)
 {
-    // 回执
+    // receipt 
     CheckNodeHeightAck ack;
     ack.set_version(getVersion());
 
-    // 版本判断
+    // Version judgment 
     if( 0 != Util::IsVersionCompatible( req->version() ) )
 	{
         ack.set_code(-1);
@@ -3614,4 +3613,3 @@ void handleCheckNodeHeightReq(const std::shared_ptr<CheckNodeHeightReq>& req, co
     
     net_send_message<CheckNodeHeightAck>(msgdata, ack, net_com::Priority::kPriority_Middle_1);
 }
-

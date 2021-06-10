@@ -12,7 +12,7 @@
 #include "../common/devicepwd.h"
 
 /**
- * @description: 初始化log
+ * @description: Initialize log 
  */
 bool InitConfig();
 
@@ -42,7 +42,7 @@ int init_menu(int argc, char *argv[])
 	 		cout << EBPC_HELP << endl;
 	 		return 0;
 	 	}
-		//加上-m或者-M参数才会调用菜单函数
+		//Add the -m or -M parameter to call the menu function 
 		else if (strcmp(argv[1], "-m") == 0|| strcmp(argv[1], "-M") == 0)
 		{
 			if (true != init())
@@ -64,7 +64,7 @@ int init_menu(int argc, char *argv[])
 	 		cout << EBPC_HELP << endl;
 	 		return 0;
 	 	}
-		//加上-m或者-M参数才会调用菜单函数
+		//Add the -m or -M parameter to call the menu function 
 		if (strcmp(argv[1], "-m") == 0|| strcmp(argv[1], "-M") == 0 || strcmp(argv[2], "-m") == 0|| strcmp(argv[2], "-M") == 0)
 		{
 			if (true != init())
@@ -246,7 +246,7 @@ void menu()
 			std::cout << "input error!!!please try again..." << std::endl;
 		}
 
-		//解决守护进程启动后刷屏问题
+		//Solve the problem of refreshing the screen after the daemon is started 
 		sleep(1);
 	}
 }
@@ -378,7 +378,7 @@ void menu_command()
 
 bool InitConfig()
 {
-	//配置文件初始化
+	//Configuration file initialization 
 	if (false == Singleton<Config>::get_instance()->InitFile())
 	{
 		std::cout << "init Config failed" << std::endl;
@@ -406,7 +406,7 @@ bool InitConfig()
 
 bool InitDevicePwd()
 {
-	//配置文件初始化
+	//Configuration file initialization 
 	if (false == Singleton<DevicePwd>::get_instance()->InitPWDFile())
 	{
 		std::cout << "init Config failed" << std::endl;

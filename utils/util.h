@@ -26,10 +26,10 @@ public:
     static uint32_t adler32(const unsigned char *data, size_t len); 
 
     /* ====================================================================================  
-    # @description: 判断版本是否兼容
-    # @param recvVersion 接收到的数据的版本
-    # @return: 成功: 0;
-    # 			失败: -1, 接收到的数据的版本低于最低兼容版本
+    # @description: Determine whether the version is compatible 
+    # @param recvVersion The version of the received data 
+    # @return: success : 0;
+    # 			Failure: -1, the version of the received data is lower than the minimum compatible version 
     ==================================================================================== */
    static int IsVersionCompatible( std::string recvVersion );
 

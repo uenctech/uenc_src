@@ -156,9 +156,9 @@ namespace net_com
 	bool SendSyncNodeReq(const Node& dest);
 	void InitRegisterNode();
 
-	/*发送广播*/
+	/*Send broadcast */
 	ssize_t SendBroadcastMsg(const std::string &msg);
-	/*接收广播数据线程*/
+	/*Receive broadcast data thread */
 	bool handleBroadcastMsgThread();
 	void RecvfromBroadcastMsg();
 }
@@ -243,7 +243,7 @@ bool net_com::broadcast_message(T& msg, const net_com::Compress isCompress, cons
 	{
 		const Node & selfNode = Singleton<PeerNode>::get_instance()->get_self_node();
 
-		// 向所属子节点发送
+		// Send to its child node 
 		const std::vector<Node> subNodeList = Singleton<PeerNode>::get_instance()->get_sub_nodelist(selfNode.id);
 		for (auto & item : subNodeList)
 		{
@@ -253,7 +253,7 @@ bool net_com::broadcast_message(T& msg, const net_com::Compress isCompress, cons
 			}
 		}
 	
-		// 向其他公网节点转发
+		// Forward to other public network nodes 
 		req.mutable_from()->set_is_public_node(selfNode.is_public_node);
 		req.mutable_from()->set_node_id(selfNode.id);
 

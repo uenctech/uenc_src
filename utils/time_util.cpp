@@ -134,7 +134,7 @@ void TimeUtil::testNtpDelay()
 
     x_uint64_t xut_timev = 0ULL;
 
-    // 常用的 NTP 服务器地址列表
+    // List of commonly used NTP server addresses 
     std::vector< std::string > ntp_host;
     ntp_host.push_back(std::string("ntp1.aliyun.com"));
     ntp_host.push_back(std::string("ntp2.aliyun.com"));

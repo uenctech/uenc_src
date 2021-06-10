@@ -59,10 +59,10 @@ public:
 
     void UpdateTransactionBroadcastTime(const string& txhash);
 
-    // 添加交易
+    // Add transaction 
     int Add(const CTransaction& tx, bool broadcast = true);
 
-    // 去除交易
+    // Remove transaction 
     int Remove(const TxVinCache::Tx& tx);
     int Remove(const std::string& txHash, const vector<string>& from);
 
@@ -74,23 +74,23 @@ public:
 
     void Print();
 
-    // 全部去除
+    // Remove all 
     int Clear();
 
-    // 获得交易
+    // Get a deal 
     int GetAllTx(std::vector<TxVinCache::Tx> & txs);
 
-    // 查询交易
+    // Query transaction 
     int Find(const std::string & txHash, TxVinCache::Tx & tx);
     int Find(const std::string & fromAddr, std::vector<TxVinCache::Tx> & txs);
 
     void DoClearExpire();
     
     
-    // 任务处理
+    // Task processing 
     int Process();
 
-    // 定时任务
+    // Timed task 
     static int CheckExpire(TxVinCache * txVinCache);
 
 private:

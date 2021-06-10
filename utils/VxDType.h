@@ -3,20 +3,20 @@
  * <pre>
  * Copyright (c) 2015, Gaaagaa All rights reserved.
  *
- * 文件名称：VxDType.h
- * 创建日期：2015年6月19日
- * 文件标识：
- * 文件摘要：公共的数据类型声明。
+ * file name ：VxDType.h
+ * Creation date ：June 19, 2015 
+ * File identification ：
+ * File summary: public data type declaration 。
  *
- * 当前版本：1.0.0.0
- * 作    者：
- * 完成日期：2015年6月19日
- * 版本摘要：
+ * current version ：1.0.0.0
+ * Author ：
+ * Completion date: June 19, 2015 
+ * Version summary ：
  *
- * 取代版本：
- * 原作者  ：
- * 完成日期：
- * 版本摘要：
+ * Superseded version ：
+ * Original author   ：
+ * Completion Date ：
+ * Version summary ：
  * </pre>
  */
 

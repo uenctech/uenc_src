@@ -20,7 +20,7 @@ extern std::unordered_map<int, std::unique_ptr<std::mutex>> fds_mutex;
 std::mutex& get_fd_mutex(int fd);
 
 
-/*消息长度为消息的前4个字节，且不包含这4个字节*/
+/*The length of the message is the first 4 bytes of the message, and these 4 bytes are not included */
 class SocketBuf
 {
 public:
@@ -62,8 +62,8 @@ public:
 	bool is_sending_msg();
 	void set_sending_msg(bool is_sending);
 
-    void verify_cache(size_t curr_msg_len);      //验证缓冲区，如果有错则修正
-    void correct_cache();                       //修正缓冲区
+    void verify_cache(size_t curr_msg_len);      //Verify the buffer, correct if there is an error 
+    void correct_cache();                       //Correction buffer 
 };
 
 

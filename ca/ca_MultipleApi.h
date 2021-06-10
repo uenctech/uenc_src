@@ -57,7 +57,7 @@ void GetNodeServiceFee(const std::shared_ptr<GetNodeServiceFeeReq> &, GetNodeSer
 
 
 /**
- * @description: 处理获得质押列表请求
+ * @description: Process the request to obtain the pledge list 
  * @param req
  * @param ack
  * @return {type} 
@@ -78,15 +78,15 @@ int64_t getAvgFee();
 void MuiltipleApi();
 
 /* ==================================================================================== 
- # @description: 请求获取挂起的交易列表
- # @param req :  GetTxPendingListReq 获取挂起交易的协议
+ # @description: Request a list of pending transactions 
+ # @param req :  GetTxPendingListReq Get the agreement for pending transactions 
  # @return :NULL
  ==================================================================================== */
 void HandleGetTxPendingListReq(const std::shared_ptr<GetTxPendingListReq>& req, const MsgData& msgdata);
 
 /* ==================================================================================== 
- # @description: 请求获取失败的交易列表
- # @param req :  GetTxFailureListReq 获取失败交易的协议
+ # @description: Request a list of failed transactions 
+ # @param req :  GetTxFailureListReq  Get the agreement for the failed transaction 
  # @return :NULL
  ==================================================================================== */
 void HandleGetTxFailureListReq(const std::shared_ptr<GetTxFailureListReq>& req, GetTxFailureListAck& ack);

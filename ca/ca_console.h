@@ -24,13 +24,13 @@ public:
                 bool highlight = false);
     ~ca_console();
     
-    const std::string color(); // 返回颜色
+    const std::string color(); // Return color 
     void setColor(const ConsoleColor foregroundColor = kConsoleColor_White, 
                 const ConsoleColor backgroundColor = kConsoleColor_Black, 
                 bool highlight = false);
     
-    const std::string reset(); // 重置
-    void clear(); // 清屏
+    const std::string reset(); // Reset 
+    void clear(); // Clear screen 
 
     operator const char * ();
     operator char * ();

@@ -31,7 +31,7 @@ namespace global
 
     extern std::map<std::string, std::pair<uint32_t, uint64_t>> reqCntMap;
 
-    //存储在其他节点获取的交易信息
+    //Transaction information stored in other nodes 
     extern std::mutex g_mutex_transinfo;
     extern bool g_is_utxo_empty;
     extern GetTransInfoAck g_trans_info;

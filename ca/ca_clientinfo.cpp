@@ -20,12 +20,12 @@ std::string ca_create_clientInfo_JSon_string()
     // chinese
     std::map<std::string, std::string> miOS_zh_CN;
     miOS_zh_CN["ver"] = "3.0.6";
-    miOS_zh_CN["desc"] = "此次版本更新了iOS XXXX";
+    miOS_zh_CN["desc"] = "This version has been updated iOS XXXX";
     miOS_zh_CN["dl"] = "https://www.baidu.com/img/bd_logo1.png";
 
     std::map<std::string, std::string> mAndroid_zh_CN;
     mAndroid_zh_CN["ver"] = "3.0.6";
-    mAndroid_zh_CN["desc"] = "此次版本更新了Android YYYY";
+    mAndroid_zh_CN["desc"] = "This version has been updated Android YYYY";
     mAndroid_zh_CN["dl"] = "https://www.baidu.com/img/bd_logo1.png";
 
     // english

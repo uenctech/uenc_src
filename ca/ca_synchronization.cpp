@@ -28,7 +28,7 @@
 #include "../utils/base64.h"
 
 
-/* 设置获取到的其他节点的最高块信息 */ 
+/* Set the highest block information obtained from other nodes  */ 
 bool Sync::SetPotentialNodes(const std::string &id, 
 							const int64_t &height, 
 							const std::string &hash, 
@@ -41,7 +41,7 @@ bool Sync::SetPotentialNodes(const std::string &id,
         return false;
     }
 
-    // 遍历现有数据，防止重复数据写入
+    // Traverse existing data to prevent duplicate data writing 
     uint64_t size = this->potential_nodes.size();
     for(uint64_t i = 0; i < size; i++)
     {
@@ -160,7 +160,7 @@ int Sync::SyncDataFromPubNode()
 }
 
 
-// 同步开始
+// Sync start 
 void Sync::Process()
 {   
 	if(sync_adding)
@@ -172,7 +172,7 @@ void Sync::Process()
     potential_nodes.clear();
 	verifying_node.id.clear();
 
-	// 连续3次查找可靠节点失败，直接向公网节点请求同步
+	// Failed to find reliable nodes for 3 consecutive times, directly request synchronization from public network nodes 
 	if (reliableCount >= 3 || rollbackCount >= 3)
 	{
 		SyncDataFromPubNode();
@@ -190,7 +190,7 @@ void Sync::Process()
 		return ;
 	}
 
-    // === 1.寻找潜在可靠节点 ===
+    // === 1.Looking for potential reliable nodes  ===
 	std::vector<Node> nodeInfos;
 	if (Singleton<PeerNode>::get_instance()->get_self_node().is_public_node)
 	{
@@ -217,7 +217,7 @@ void Sync::Process()
     }
     int nodesum = std::min(SYNCNUM, (int)nodes.size());
 
-    /* 随机选择节点，保证公平*/
+    /* Randomly select nodes to ensure fairness */
     std::vector<std::string> sendid = randomNode(nodesum);
    	std::cout << "sync send is size :" << sendid.size() << std::endl;
 
@@ -231,7 +231,7 @@ void Sync::Process()
 	else if((type == kAUTOMUTIC)  && (!ispublicid))
 	{
 		g_localnode.clear();
-		vector<Node> allnode = Singleton<PeerNode>::get_instance()->get_nodelist();//打洞的还需要去除掉
+		vector<Node> allnode = Singleton<PeerNode>::get_instance()->get_nodelist();//The holes need to be removed 
 		string self_id = Singleton<Config>::get_instance()->GetKID().c_str();
 		vector<Node> localnode;
 		vector<Node> idsequence;
@@ -273,7 +273,7 @@ void Sync::Process()
 	
 	for(auto& id : sendid)
 	{ 
-		SendSyncGetnodeInfoReq(id); //随机节点节点信息请求
+		SendSyncGetnodeInfoReq(id); //Random node node information request 
 	}
 	
     sleep(3);
@@ -360,7 +360,7 @@ void Sync::Process()
 }
 
 
-/* 发起同步请求*/
+/* Initiate a synchronization request */
 bool Sync::DataSynch(std::string id, const int syncNum)
 {
     if(0 == id.size())
@@ -372,7 +372,7 @@ bool Sync::DataSynch(std::string id, const int syncNum)
     return true;
 }
 
-//============区块同步交互协议================
+//============Block synchronization interaction protocol ================
 
 void SendSyncGetnodeInfoReq(std::string id)
 {
@@ -433,7 +433,7 @@ int SendVerifyPledgeNodeReq(std::vector<std::string> ids)
 
 void HandleSyncVerifyPledgeNodeReq( const std::shared_ptr<SyncVerifyPledgeNodeReq>& msg, const MsgData& msgdata )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if(0 != Util::IsVersionCompatible(HeaderMsg->version()))
 	{
@@ -525,7 +525,7 @@ void SendSyncGetPledgeNodeReq(std::string id)
 
 void HandleSyncGetPledgeNodeReq( const std::shared_ptr<SyncGetPledgeNodeReq>& msg, const MsgData& msgdata )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != Util::IsVersionCompatible( HeaderMsg->version() ) )
 	{
@@ -579,7 +579,7 @@ void HandleSyncGetPledgeNodeAck( const std::shared_ptr<SyncGetPledgeNodeAck>& ms
 	g_synch->SetPledgeNodes(ids);
 }
 
-// 验证潜在可靠节点请求
+// Validate potentially reliable node requests 
 void SendVerifyReliableNodeReq(std::string id, int64_t height)
 {
 	if(id.size() == 0)
@@ -751,7 +751,7 @@ std::vector<std::string> CheckHashToString(const std::vector<CheckHash> & v)
 
 void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, const MsgData& msgdata )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	SyncHeaderMsg * HeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != Util::IsVersionCompatible( HeaderMsg->version() ) )
 	{
@@ -807,7 +807,7 @@ void HandleSyncGetnodeInfoReq( const std::shared_ptr<SyncGetnodeInfoReq>& msg, c
 
 void HandleSyncGetnodeInfoAck( const std::shared_ptr<SyncGetnodeInfoAck>& msg, const MsgData& msgdata )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	SyncHeaderMsg * pSyncHeaderMsg= msg->mutable_syncheadermsg();
 	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
@@ -857,7 +857,7 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 
 	SyncHeaderMsg * pSyncHeaderMsg = msg->mutable_syncheadermsg();
 	
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoReq:IsVersionCompatible");
@@ -874,8 +874,8 @@ void HandleSyncBlockInfoReq( const std::shared_ptr<SyncBlockInfoReq>& msg, const
 	unsigned int ownblockHeight;
 	pRocksDb->GetBlockTop(txn, ownblockHeight);
 
-	unsigned int max_height = msg->max_height();           // 请求节点要同步的最大高度
-	int64_t end = std::min(ownblockHeight, max_height);    // 同步结束高度
+	unsigned int max_height = msg->max_height();           // The maximum height of the request node to be synchronized 
+	int64_t end = std::min(ownblockHeight, max_height);    // Sync end height 
 	
 	if(ownblockHeight < msg->height())
 	{
@@ -941,7 +941,7 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 	Node node;
 	Singleton<PeerNode>::get_instance()->find_node(id, node);
 	cout<<"HandleSyncBlockInfoAck ip = "<<IpPort::ipsz(node.local_ip)<<"syncBlockInfoReq height =" <<node.chain_height<<endl;
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( pSyncHeaderMsg->version() ) )
 	{
 		error("HandleSyncBlockInfoAck:IsOverIt");
@@ -993,7 +993,7 @@ void HandleSyncBlockInfoAck( const std::shared_ptr<SyncBlockInfoAck>& msg, const
 		break;
 	}
 
-	//加块
+	//Add block 
 	std::string blocks = msg->blocks();
 	std::string poolblocks = msg->poolblocks();
 	std::vector<std::string> v_blocks;
@@ -1234,8 +1234,3 @@ int SyncData(std::string &headerstr, bool isSync)
 	MagicSingleton<BlockPoll>::GetInstance()->Add(Block(cblock,isSync));
 	return 0;
 }
-
-
-
-
-

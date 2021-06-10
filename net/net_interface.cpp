@@ -12,7 +12,7 @@
 #define CA_SEND 1
 #define CA_BROADCAST 1
 
-//获取自己节点ID 成功返回0
+//Get own node ID successfully returns 0 
 std::string net_get_self_node_id()
 {
 	return Singleton<PeerNode>::get_instance()->get_self_id();
@@ -23,7 +23,7 @@ Node net_get_self_node()
     return Singleton<PeerNode>::get_instance()->get_self_node();
 }
 
-//设置矿费
+//Set mining fee 
 void net_set_self_fee(uint64_t fee)
 {	
 	Singleton<PeerNode>::get_instance()->set_self_fee(fee);
@@ -36,13 +36,13 @@ void net_set_self_fee(uint64_t fee)
     
 }
 
-//设置自己的base58地址
+//Set your own base58 address 
 void net_set_self_base58_address(string address)
 {
 	Singleton<PeerNode>::get_instance()->set_self_base58_address(address);
 }
 
-//更新矿费并进行全网广播
+//Update the mining fee and broadcast the whole network 
 void net_update_fee_and_broadcast(uint64_t fee)
 {
 	Singleton<PeerNode>::get_instance()->set_self_fee(fee);
@@ -52,7 +52,7 @@ void net_update_fee_and_broadcast(uint64_t fee)
 	net_com::broadcast_message(updateFeeReq, net_com::Compress::kCompress_False, net_com::Encrypt::kEncrypt_False, net_com::Priority::kPriority_Low_0);
 }
 
-//设置打包费
+//Set packing fee 
 void net_set_self_package_fee(uint64_t package_fee)
 {	
 	Singleton<PeerNode>::get_instance()->set_self_package_fee(package_fee);
@@ -66,7 +66,7 @@ void net_set_self_package_fee(uint64_t package_fee)
     
 }
 
-//更新打包费并进行全网广播
+//Update the package fee and broadcast the whole network 
 void net_update_package_fee_and_broadcast(uint64_t package_fee)
 {
 	Singleton<PeerNode>::get_instance()->set_self_package_fee(package_fee);
@@ -76,7 +76,7 @@ void net_update_package_fee_and_broadcast(uint64_t package_fee)
 	net_com::broadcast_message(updatePackageFeeReq, net_com::Compress::kCompress_False, net_com::Encrypt::kEncrypt_False, net_com::Priority::kPriority_Low_0);
 }
 
-//返回K桶所有ID
+//Return all IDs of K bucket 
 std::vector<std::string> net_get_node_ids()
 {
 	std::vector<std::string> ids;
@@ -103,7 +103,7 @@ double net_get_connected_percent()
 	return total_num == 0 ? 0 : num/total_num;
 }
 
-//返回公网节点
+//Return to public network node 
 std::vector<Node> net_get_public_node()
 {
 	std::vector<Node> vnodes;
@@ -118,14 +118,14 @@ std::vector<Node> net_get_public_node()
 	return vnodes;
 }
 
-// 返回所有公网节点，不管是否连接
+// Return all public network nodes, regardless of whether they are connected or not 
 std::vector<Node> net_get_all_public_node()
 {
 	std::vector<Node> vnodes = Singleton<PeerNode>::get_instance()->get_nodelist(NODE_PUBLIC, false);
 	return vnodes;
 }
 
-//返回所有节点ID和fee
+//Return all node IDs and fees 
 std::map<std::string, uint64_t> net_get_node_ids_and_fees()
 {
 	std::vector<Node> nodelist;
@@ -146,7 +146,7 @@ std::map<std::string, uint64_t> net_get_node_ids_and_fees()
 	return res;
 }
 
-//返回所有节点ID和base58address
+//Return all node IDs and base58address 
 std::map<std::string, string> net_get_node_ids_and_base58address()
 {
 	std::vector<Node> nodelist;
@@ -167,7 +167,7 @@ std::map<std::string, string> net_get_node_ids_and_base58address()
 	return res;
 }
 
-//通过ip查找ID
+//Find ID by ip 
 std::string net_get_ID_by_ip(std::string ip)
 {
 	auto nodelist = Singleton<PeerNode>::get_instance()->get_nodelist(NODE_PUBLIC);
@@ -182,5 +182,3 @@ std::string net_get_ID_by_ip(std::string ip)
 
 	return std::string();
 }
-
-

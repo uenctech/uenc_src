@@ -22,30 +22,30 @@ const std::string g_AndroidCompatible = "3.1.0";
 typedef enum CAVERSION
 {
     kUnknown = 0,
-    kLINUX   = 1,        // linux版本前缀
-    kWINDOWS = 2,        // windows版本前缀
-    kIOS     = 3,        // ios版本前缀
-    kANDROID = 4,        // android版本前缀
+    kLINUX   = 1,        // linux version prefix 
+    kWINDOWS = 2,        // windows Version prefix 
+    kIOS     = 3,        // ios Version prefix 
+    kANDROID = 4,        // android Version prefix 
 } Version;
 
 /* ====================================================================================  
- # @description:  获取版本号
+ # @description:  Get the version number 
  # @param  NONE
- # @return 返回版本
- # @Mark 返回结构为3部分组成，以下划线分割，第一部分为系统号，第二部分为版本号，第三部分为运行环境
- # 例如：1_0.3_t,
- # 系统号：1为linux，2为windows，3为iOS，4为Android
- # 版本号： 两级版本号如1.0
- # 运行环境：m为主网，t为测试网
+ # @return Return version 
+ # @Mark The return structure is composed of 3 parts, separated by underscores, the first part is the system number, the second part is the version number, and the third part is the operating environment 
+ # E.g ：1_0.3_t,
+ # System number ：1为linux，2为windows，3为iOS，4为Android
+ # Version number: Two-level version number such as 1.0
+ # Operating environment: m is the main network, t is the test network 
  ==================================================================================== */
 std::string getVersion();
 std::string getEbpcVersion();
 /* ====================================================================================  
- # @description: 获取系统类型
+ # @description: Get system type 
  # @param  NONE
- # @return 返回为系统号
+ # @return Return to the system number
  # @mark
- # 系统号：1为linux，2为windows，3为iOS，4为Android
+ # System number ：1 is linux, 2 is windows, 3 is iOS, 4 is Android 
  ==================================================================================== */
 Version getSystem();
 

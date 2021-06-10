@@ -101,7 +101,7 @@ void printRocksdb(uint64_t start, uint64_t end) {
 
     uint64_t height = 0;
     ca_console bkColor(kConsoleColor_Blue, kConsoleColor_Black, true);
-    size_t b_count {0};//交易总数
+    size_t b_count {0};//Total number of transactions 
     for (auto i = end; i >= start; --i) {
         height = i;
 

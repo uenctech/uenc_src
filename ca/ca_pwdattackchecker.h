@@ -29,42 +29,42 @@ public:
 public:
     
     /**
-     * @description: 判断是否可输入密码
-     * @param limitSecond: 若超过限制，则剩余多少秒后可再次输入
-     * @return true: 没有禁止可输入
-     *          false: 有禁止不可输入
+     * @description: Determine whether you can enter a password 
+     * @param limitSecond: If the limit is exceeded, how many seconds are left to enter again 
+     * @return true: No prohibition can be entered 
+     *          false: No input is forbidden 
      */
     bool IsOk(uint32_t & limitSecond); 
 
     /**
-     * @description: 输入错误
-     * @param 无
-     * @return -1: 尝试次数未超限
-     *          -2: 尝试次数已超限
-     *          0: 尝试次数超限，启动倒计时
+     * @description: input error 
+     * @param no
+     * @return -1: The number of attempts has not exceeded the limit 
+     *          -2: The number of attempts has exceeded the limit 
+     *          0: The number of attempts exceeds the limit, and the countdown starts 
      */
     int Wrong();
 
     /**
-     * @description: 输入正确
-     * @param 无
-     * @return 0 设置成功
+     * @description: Entered correctly 
+     * @param no 
+     * @return 0 Set successfully 
      */
     int Right();
 
 private:
 
     /**
-     * @description: 倒计时
-     * @param check CPwdAttackChecker 类指针
+     * @description: Countdown 
+     * @param check CPwdAttackChecker Class pointer 
      * @return 
      */
     static int Count(CPwdAttackChecker * check);
 
     /**
-     * @description: 重置
-     * @param 无
-     * @return 0 重置成功
+     * @description: Reset 
+     * @param no
+     * @return 0 Reset successfully 
      */
     int Reset();
 
@@ -72,11 +72,11 @@ private:
     CTimer timer_;
     std::mutex mutex_;
 
-    uint32_t tryCount_; // 尝试次数
-    uint32_t limitSecond_; // 倒计时秒数
+    uint32_t tryCount_; // Number of attempts 
+    uint32_t limitSecond_; // Countdown seconds 
 
-    static uint32_t kMaxTryCount; // 最大尝试次数
-    static uint32_t kMaxlimitSecond; // 最大倒计时秒数
+    static uint32_t kMaxTryCount; // Maximum number of attempts 
+    static uint32_t kMaxlimitSecond; // Maximum countdown seconds 
     
 };
 

@@ -89,7 +89,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
 	size_t curr_msg_len = 0;
     if (this->cache.size() >= 4)
     {
-        memcpy(&curr_msg_len, this->cache.data(), 4);  //当前消息的总长度
+        memcpy(&curr_msg_len, this->cache.data(), 4);  //The total length of the current message 
         debug("curr_msg_len:%d cache.size:%d" , (int)curr_msg_len, (int)cache.size() );
         
         SocketBuf::verify_cache(curr_msg_len);
@@ -99,7 +99,7 @@ bool SocketBuf::add_data_to_read_buf(char *data, size_t len)
             this->cache.erase(0, 4);
             std::string read_data(this->cache.begin(), this->cache.begin() + curr_msg_len);
 
-            // 验证checksum
+            // verification checksum
             if (read_data.size() < sizeof(uint32_t) * 3)
             {
                 SocketBuf::correct_cache();

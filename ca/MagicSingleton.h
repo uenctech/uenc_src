@@ -9,7 +9,7 @@ class MagicSingleton
 {
 public:
 
-	//获取全局单例对象
+	//Get global singleton object 
 	template<typename ...Args>
 	static std::shared_ptr<T> GetInstance(Args&&... args) 
     {
@@ -24,7 +24,7 @@ public:
 		return m_pSington;
 	}
 
-	//主动析构单例对象（一般不需要主动析构，除非特殊需求）
+	//Actively destroy singleton objects （Generally do not need active destruction, unless special needs ）
 	static void DesInstance() 
     {
 		if (m_pSington) 

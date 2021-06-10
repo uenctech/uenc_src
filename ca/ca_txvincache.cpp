@@ -54,7 +54,7 @@ int TxVinCache::Add(const CTransaction& tx, bool broadcast/* = true*/)
     return result;
 }
 
-// 添加交易
+// Add transaction 
 int TxVinCache::Add(const TxVinCache::Tx & tx)
 {
     if (IsExist(tx))
@@ -216,7 +216,7 @@ void TxVinCache::BroadcastTxPending(const CTransaction& tx)
     // net_broadcast_message<TxPendingBroadcastMsg>(txPendingMsg);
 }
 
-// 去除交易
+// Remove transaction 
 int TxVinCache::Remove(const TxVinCache::Tx & tx)
 {
     std::lock_guard<std::mutex> lck(mutex_);
@@ -402,7 +402,7 @@ string TxVinCache::TxToString(const CTransaction& tx)
 }
 
 
-// 全部去除
+// Remove all 
 int TxVinCache::Clear()
 {
     std::lock_guard<std::mutex> lck(mutex_);
@@ -411,7 +411,7 @@ int TxVinCache::Clear()
     return 0;
 }
 
-// 获得交易
+// Get a deal 
 int TxVinCache::GetAllTx(std::vector<TxVinCache::Tx> & vectTxs)
 {
     std::lock_guard<std::mutex> lck(mutex_);
@@ -423,7 +423,7 @@ int TxVinCache::GetAllTx(std::vector<TxVinCache::Tx> & vectTxs)
     return 0;
 }
 
-// 查询交易
+// Query transaction 
 int TxVinCache::Find(const std::string & txHash, TxVinCache::Tx & tx)
 {
     std::lock_guard<std::mutex> lck(mutex_);
@@ -497,8 +497,8 @@ int TxVinCache::CheckExpire(TxVinCache * txVinCache)
         return -1;    
     }
     
-    // 定时任务查询时间戳是否超过5分钟
-    // 超过的话将从列表中取消 
+    // Timed task queries whether the time stamp exceeds 5 minutes 
+    // Exceeding will be cancelled from the list 
     txVinCache->DoClearExpire();
 
     return 0;

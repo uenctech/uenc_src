@@ -10,19 +10,19 @@
 #include "ca_global.h"
 #include "../utils/util.h"
 
-const int SYNCNUM = 5;      //同步寻找节点数
-const int CHECKNUM = 50;    //漏块检查的段数
-const int CHECK_HEIGHT = 10;  //漏块检查的段数每段个数
-const int HASH_LEN = 6;       // hash长度
-const int SYNC_NUM_LIMIT = 500;   // 最多同步多少块
+const int SYNCNUM = 5;      //Find the number of nodes synchronously 
+const int CHECKNUM = 50;    //Number of segments for missing block check 
+const int CHECK_HEIGHT = 10;  //Number of segments for missing block inspection Number of segments per segment 
+const int HASH_LEN = 6;       // hash length 
+const int SYNC_NUM_LIMIT = 500;   // How many blocks can be synchronized at most 
 
 struct SyncNode
 {
-    std::string id = "";            // 节点id
-    int64_t height = 0;             // 最高块的高度
-    std::string hash = "";          // 块hash
-    std::string forwardHash = "";   // 请求高度前n块分组hash
-    std::string backwardHash = "";  // 请求高度后n块分组hash
+    std::string id = "";            // Node id 
+    int64_t height = 0;             // The height of the tallest block 
+    std::string hash = "";          // Block hash 
+    std::string forwardHash = "";   // The first n blocks of the requested height are grouped hash 
+    std::string backwardHash = "";  // N block grouping hash after request height 
     
     SyncNode(){
     }
@@ -61,21 +61,21 @@ public:
     void ReliableNode();
     int SyncDataFromPubNode();
 
-    std::vector<std::string> pledgeNodes;     // 已经质押的节点
-    SyncNode verifying_node;                  // 正在验证的节点
-    std::vector<SyncNode> verifying_result;   // 正在验证的节点返回的结果
-    std::vector<SyncNode> potential_nodes;    // 潜在可靠节点
-    uint32_t reliableCount = 0;               // 查找可靠节点失败计次
+    std::vector<std::string> pledgeNodes;     // Nodes that have been pledged 
+    SyncNode verifying_node;                  // Node being verified 
+    std::vector<SyncNode> verifying_result;   // The result returned by the node being verified 
+    std::vector<SyncNode> potential_nodes;    // Potentially reliable node 
+    uint32_t reliableCount = 0;               // Count of failures to find reliable nodes 
     bool is_sync = false;
     std::mutex mu_potential_nodes;
     std::mutex mu_verifying_result;
     std::mutex mu_get_pledge;
-    std::mutex reliableLock;                  // 可靠节点查找失败计次锁
+    std::mutex reliableLock;                  // Reliable node search failure count lock 
     int conflict_height = -1;
     bool sync_adding = false;
 };
 
-//============区块同步交互协议================
+//============Block synchronization interaction protocol ================
 
 void SendSyncGetnodeInfoReq(std::string id);
 void SendVerifyReliableNodeReq(std::string id, int64_t height);

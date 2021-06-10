@@ -246,10 +246,10 @@ int TxHelper::CreateTxMessage(const std::vector<std::string> & fromAddr,
 	}
 	amount += ( (needVerifyPreHashCount - 1) * minerFees );
 
-	// 是否需要打包费
+	// Do you need a packing fee 
 	bool bIsNeedPackage = IsNeedPackage(fromAddr);
 	
-	// 交易发起方支付打包费
+	// The transaction initiator pays the packaging fee 
 	uint64_t publicNodePackageFee = 0;
 	if (bIsNeedPackage)
 	{
@@ -420,11 +420,11 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-	//签名
+	//signature 
 	for (int i = 0; i < outTx.vin_size(); i++)
 	{
 		std::string addr = addrs[i];
-		// std::cout << "DoCreateTx:签名:" << addr << std::endl;
+		// std::cout << "DoCreateTx:signature :" << addr << std::endl;
 		std::string signature;
 		std::string strPub;
 		g_AccountInfo.Sign(addr.c_str(), encodeStrHash, signature);
@@ -464,6 +464,6 @@ void TxHelper::DoCreateTx(const std::vector<std::string> & fromAddr,
 
 	std::string txHash;
 	ret = DoHandleTx(msg, txHash);
-	std::cout << "交易处理结果，ret: "<< ret <<" txHash：" << txHash << std::endl;
+	std::cout << "Transaction processing result ，ret: "<< ret <<" txHash：" << txHash << std::endl;
 	
 }

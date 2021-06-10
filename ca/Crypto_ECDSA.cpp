@@ -23,7 +23,7 @@ using std::make_pair;
 using std::string;
 using namespace CryptoPP;
 
-std::mutex SetKeyLock;        // SetKeyByBs58Addr时防止竞争
+std::mutex SetKeyLock;        // Prevent competition when SetKeyByBs58Addr 
 
 int test_Crypto_ECDSA()
 {
@@ -933,7 +933,6 @@ int accountinfo::GetKeyStore(const char *Bs58Addr, const char *pass, char *buf, 
     string  cipher;
 	StringSource ss2( strEncTxt, true, new HexEncoder( new StringSink( cipher)));
     cout << "cipher text: " << cipher << endl;
-
 **/
 	
 	string macstr;

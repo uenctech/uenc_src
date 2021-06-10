@@ -7,74 +7,74 @@
 
 
 using namespace std;
-// 登录 退出 相关
+// Log in  Log out  Related 
 /**
- * @description: 初始化 指定公私钥文件的路径
- * @param path 初始化路径
- * @return: 无
+ * @description: initialization   Specify the path of the public and private key file 
+ * @param path Initialization path 
+ * @return: no 
  */
 void interface_Init(const char *path);
 
 /**
- * @description: 生成公私钥文件 用于注册时
- * @param 无 
- * @return: 无
+ * @description: Generate public and private key files for registration 
+ * @param no 
+ * @return: no 
  */
 bool interface_GenerateKey();
 
-// 钱包公私密钥相关
+// Wallet public and private key related 
 /**
- * @description: 导出助记词
- * @param: bs58address 钱包地址，若传null则以interface_SetKey设置的地址导出助记词
- * @param: out 输出字符串
- * @param: outLen 输出字符串长度
- * @return: 若导出成功返回助记词个数，out中是以空格分隔的助记词字符串，若返回0表示导出失败
+ * @description: Export mnemonic 
+ * @param: bs58address Wallet address, if null is passed, the mnemonic phrase will be exported with the address set by interface_SetKey 
+ * @param: out Output string 
+ * @param: outLen Output string length 
+ * @return: If the export is successful, the number of mnemonic words will be returned. Out is a string of mnemonic words separated by spaces. If it returns 0, the export failed. 
  */
 int interface_GetMnemonic(const char *bs58address, char *out, int outLen);
 
 /**
- * @description: 导出私钥
- * @param: bs58address 钱包地址，若传null则以interface_SetKey设置的地址导出私钥
- * @param: pridata 输出字符串
- * @param: iLen 输出字符串长度
- * @return: 成功返回true，失败返回false
+ * @description: Export private key 
+ * @param: bs58address Wallet address, if null is passed, the private key will be exported with the address set by interface_SetKey 
+ * @param: pridata Output string 
+ * @param: iLen Output string length 
+ * @return: Return true on success, false on failure 
  */
 bool interface_GetPrivateKeyHex(const char *bs58address, char *pridata, unsigned int iLen);
 
 /**
- * @description: 导入私钥
- * @param: pridata 私钥的十六进制字符串
- * @return: 成功返回true，失败返回false
+ * @description: Import private key 
+ * @param: pridata Hexadecimal string of the private key 
+ * @return: Return true on success, false on failure 
  */
 bool interface_ImportPrivateKeyHex(const char *pridata);
 
 /**
- * @description: 导出keystore
- * @param: bs58address 钱包地址，若传null则以interface_SetKey设置的地址导出keystore
- * @param: pass 密码
- * @param: buf 输出字符串
- * @param: bufLen 输出字符串长度
- * @return: 成功返回true，失败返回false
+ * @description: Export keystore 
+ * @param: bs58address Wallet address, if null is passed, the keystore will be exported with the address set by interface_SetKey 
+ * @param: pass password 
+ * @param: buf Output string 
+ * @param: bufLen Output string length 
+ * @return: Return true on success, false on failure 
  */
 int  interface_GetKeyStore(const char *bs58address, const char *pass, char *buf, unsigned int bufLen);
 
 /**
- * @description: 获取钱包地址
- * @param  bs58address 钱包地址
- * @param iLen 钱包地址长度
- * @mark 函数返回结果将放置到 bs58address 地址中
- * @return: 成功返回ture，失败返回false
+ * @description: Get wallet address 
+ * @param  bs58address Wallet address 
+ * @param iLen Wallet address length 
+ * @mark The result of the function will be placed in the bs58address address 
+ * @return: Return true on success, false on failure 
  */
 bool interface_GetBase58Address(char *bs58address, unsigned int iLen);
 
 /**
- * @description: 获得节点主账户金额
- * @param bs58Address 用户钱包地址
- * @param amount 给予金钱数
- * @param outdata 返回数据指针
- * @param outdataLen 返回数据长度
- * @mark 返回数据指针out_data需要调用free进行释放
- * @return: 操作成功返回true，失败返回false
+ * @description: Get the amount of the node master account 
+ * @param bs58Address User wallet address 
+ * @param amount Give money 
+ * @param outdata Return data pointer 
+ * @param outdataLen Return data length 
+ * @mark The return data pointer out_data needs to be released by calling free 
+ * @return: If the operation succeeds, it returns true, and if it fails, it returns false. 
  */
 bool interface_ShowMeTheMoney(const char * bs58Address, double amount, char *outdata, size_t *outdataLen);
 
@@ -94,22 +94,22 @@ typedef enum emInterfaceClientLanguage
 }InterfaceClientLanguage;
 
 /**
- * @description: 回调函数，实时获得当前进度和总数
- * @param: ip 正在扫描的ip地址
- * @param: current 当前ip的序列号
- * @param: total 扫描的ip的总数
+ * @description: Callback function to get the current progress and total number in real time 
+ * @param: ip The ip address being scanned 
+ * @param: current The serial number of the current ip 
+ * @param: total Total number of scanned ip 
  */
 typedef void (* ScanPortProc)(const char * ip, unsigned int current, unsigned int total);
 
 /**
- * @description: 获得设备的ip列表(json格式)
- * @param: ip 手机端的IP地址
- * @param: mask 子网掩码
- * @param: port 端口号，(默认10091)
- * @param: outdata 返回json格式的ip列表
- * @param: outdatalen 返回ip列表长度
- * @param: spp 回调函数，实时获得当前进度和总数
- * @return: 操作成功返回true，否则返回false
+ * @description: Get the IP list of the device (json format) 
+ * @param: ip IP address of the mobile phone 
+ * @param: mask Subnet mask 
+ * @param: port Port number, (default 10091) 
+ * @param: outdata Return the ip list in json format 
+ * @param: outdatalen Returns the length of the ip list 
+ * @param: spp Callback function to get the current progress and total number in real time 
+ * @return: Return true if the operation is successful, otherwise false 
  */
 bool interface_ScanPort(const char *ip, const char *mask, unsigned int port, char *outdata, size_t *outdatalen, ScanPortProc spp,int i,map<int64_t,string> &i_str);
 

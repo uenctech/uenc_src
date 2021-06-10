@@ -34,7 +34,7 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 {
 	if (vRecvVersion.size() == 0)
 	{
-		std::cout << "(linux)版本错误：-1" << std::endl;
+		std::cout << "(linux)Wrong version ：-1" << std::endl;
 		return -1;
 	}
 	std::string ownerVersion = getVersion();
@@ -43,16 +43,16 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 
 	if (vOwnerVersion.size() != 3)
 	{
-		std::cout << "(linux)版本错误：-2" << std::endl;
+		std::cout << "(linux)Wrong version ：-2" << std::endl;
 		return -2;
 	}
 
-	// 版本号判断
+	// Version number judgment 
 	std::vector<std::string> vOwnerVersionNum;
 	StringUtil::SplitString(vOwnerVersion[1], vOwnerVersionNum, ".");
 	if (vOwnerVersionNum.size() == 0)
 	{
-		std::cout << "(linux)版本错误：-3" << std::endl;
+		std::cout << "(linux)Wrong version ：-3" << std::endl;
 		return -3;
 	}
 
@@ -60,7 +60,7 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 	StringUtil::SplitString(vRecvVersion[1], vRecvVersionNum, ".");
 	if (vRecvVersionNum.size() != vOwnerVersionNum.size())
 	{
-		std::cout << "(linux)版本错误：-4" << std::endl;
+		std::cout << "(linux)Wrong version ：-4" << std::endl;
 		return -4;
 	}
 
@@ -68,7 +68,7 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 	{
 		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
 		{
-			std::cout << "(linux)版本错误：-5" << std::endl;
+			std::cout << "(linux)Wrong version ：-5" << std::endl;
 			return -5;
 		}
 		else if (vRecvVersionNum[i] > vOwnerVersionNum[i])
@@ -81,7 +81,7 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 	{
 		if (vRecvVersion[2] != "t")
 		{
-			std::cout << "(linux)版本错误：-6" << std::endl;
+			std::cout << "(linux)Wrong version ：-6" << std::endl;
 			return -6;
 		}
 	}
@@ -89,7 +89,7 @@ int Util::IsLinuxVersionCompatible(const std::vector<std::string> & vRecvVersion
 	{
 		if (vRecvVersion[2] != "p")
 		{
-			std::cout << "(linux)版本错误：-7" << std::endl;
+			std::cout << "(linux)Wrong version ：-7" << std::endl;
 			return -7;
 		}
 	}
@@ -101,7 +101,7 @@ int Util::IsOtherVersionCompatible(const std::string & vRecvVersion, bool bIsAnd
 {
 	if (vRecvVersion.size() == 0)
 	{
-		std::cout << "(other) 版本错误: -1" << std::endl;
+		std::cout << "(other) Wrong version : -1" << std::endl;
 		return -1;
 	}
 
@@ -109,7 +109,7 @@ int Util::IsOtherVersionCompatible(const std::string & vRecvVersion, bool bIsAnd
 	StringUtil::SplitString(vRecvVersion, vRecvVersionNum, ".");
 	if (vRecvVersionNum.size() != 3)
 	{
-		std::cout << "(other) 版本错误: -2" << std::endl;
+		std::cout << "(other) Wrong version : -2" << std::endl;
 		return -2;
 	}
 
@@ -130,9 +130,9 @@ int Util::IsOtherVersionCompatible(const std::string & vRecvVersion, bool bIsAnd
 	{
 		if (vRecvVersionNum[i] < vOwnerVersionNum[i])
 		{
-			std::cout << "(other) 版本错误: -3" << std::endl;
-			std::cout << "(other) 接收到的版本：" << vRecvVersion << std::endl;
-			std::cout << "(other) 本地的版本：" << ownerVersion << std::endl;
+			std::cout << "(other) Wrong version : -3" << std::endl;
+			std::cout << "(other) Received version ：" << vRecvVersion << std::endl;
+			std::cout << "(other) Local version ：" << ownerVersion << std::endl;
 			return -3;
 		}
 		else if (vRecvVersionNum[i] > vOwnerVersionNum[i])
@@ -148,7 +148,7 @@ int Util::IsVersionCompatible( std::string recvVersion )
 {
 	if (recvVersion.size() == 0)
 	{
-		std::cout << "版本错误：-1" << std::endl;
+		std::cout << "Wrong version ：-1" << std::endl;
 		return -1;
 	}
 
@@ -156,14 +156,14 @@ int Util::IsVersionCompatible( std::string recvVersion )
 	StringUtil::SplitString(recvVersion, vRecvVersion, "_");
 	if (vRecvVersion.size() != 2 && vRecvVersion.size() != 3)
 	{
-		std::cout << "版本错误：-2" << std::endl;
+		std::cout << "Wrong version ：-2" << std::endl;
 		return -2;
 	}
 
 	int versionPrefix = std::stoi(vRecvVersion[0]);
 	if (versionPrefix > 4 || versionPrefix < 1)
 	{
-		std::cout << "版本错误：-3" << std::endl;
+		std::cout << "Wrong version ：-3" << std::endl;
 		return -3;
 	}
 	
@@ -171,7 +171,7 @@ int Util::IsVersionCompatible( std::string recvVersion )
 	{
 		case 1:
 		{
-			// linux  (例：1_0.3_t)
+			// linux  (Example：1_0.3_t)
 			if ( 0 != IsLinuxVersionCompatible(vRecvVersion) )
 			{
 				return -4;
@@ -180,12 +180,12 @@ int Util::IsVersionCompatible( std::string recvVersion )
 		}
 		case 2:
 		{
-			// 暂无windows
+			// No windows 
 			return -5;
 		}
 		case 3:
 		{
-			// Android  (例：4_3.0.14)
+			// Android  (Example：4_3.0.14)
 			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], false) )
 			{
 				return -6;
@@ -194,7 +194,7 @@ int Util::IsVersionCompatible( std::string recvVersion )
 		}
 		case 4:
 		{
-			// IOS  (例：3_3.0.14)
+			// IOS  (Example：3_3.0.14)
 			if ( 0 != IsOtherVersionCompatible(vRecvVersion[1], true) )
 			{
 				return -6;

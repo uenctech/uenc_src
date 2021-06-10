@@ -22,610 +22,611 @@ public:
     ~Rocksdb();
 
 /*====================================================================================  
- # @description: 区块相关的接口
+ # @description: Block related interface 
 ==================================================================================== */
 
 
 /* ====================================================================================  
- # @description: 通过块哈希设置数据块的高度
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串 
- # @param blockHeight : 设置数据块的高度 
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the height of the data block through the block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string 
+ # @param blockHeight : Set the height of the data block 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // // block hash -> block num
     int SetBlockHeightByBlockHash(Transaction* txn, const std::string & blockHash, const unsigned int blockHeight);
  
 /* ====================================================================================  
- # @description: 通过块哈希获取到数据块的高度
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串 
- # @param blockHeight : 获取到的数据块的高度 (只有一个高度)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the height of the data block through the block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string  
+ # @param blockHeight : The height of the obtained data block (only one height) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */   
     int GetBlockHeightByBlockHash(Transaction* txn, const std::string & blockHash, unsigned int & blockHeight);
  
 /* ====================================================================================  
- # @description: 通过块哈希移除数据库当中的块高度
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串 
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove the block height in the database by block hashing 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string  
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */     
     int DeleteBlockHeightByBlockHash(Transaction* txn, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过块高度设置数据块的哈希(在并发的时候同一高度可能有多个块哈希)
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight : 数据块的高度 
- # @param blockHash  :  块哈希字符串 
- # @param is_mainblock : 是否是主链上的块(并发的时候同一高度可能会有多个块)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the hash of the data block by the block height (in concurrency, there may be multiple block hashes at the same height) 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight : The height of the data block 
+ # @param blockHash  :  Block hash string 
+ # @param is_mainblock : Is it a block on the main chain (there may be multiple blocks at the same height when concurrently) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // // block num -> block hash (mutli)
     int SetBlockHashByBlockHeight(Transaction* txn, const unsigned int blockHeight, const std::string & blockHash, bool is_mainblock = false);
 
 /* ====================================================================================  
- # @description: 通过数据块的高度获取单个块的哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight  : 数据块的高度
- # @param hash : 通过块高度获取到块的哈希(单个哈希) 
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the hash of a single block by the height of the data block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight  : The height of the data block 
+ # @param hash : Get the hash of the block by the block height (single hash) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBlockHashByBlockHeight(Transaction* txn, const int blockHeight, std::string &hash);
 
 /* ====================================================================================  
- # @description: 通过数据块的高度获取到多个块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight : 设置数据块的高度 
- # @param hashes  : 块哈希字符串 (多个哈希放入一个std::vector<std::string>里边)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain multiple block hashes based on the height of the data block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight : Set the height of the data block  
+ # @param hashes  : Block hash string (multiple hashes are put into a std::vector<std::string>) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBlockHashsByBlockHeight(Transaction* txn, const unsigned int blockHeight, std::vector<std::string> &hashes);
 
 /* ====================================================================================  
- # @description: 通过块高度移除数据库里边块的哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight : 数据块的高度
- # @param blockHash  : 块哈希字符串 
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove the hash of the block in the database by the block height 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight : The height of the data block 
+ # @param blockHash  : Block hash string 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int RemoveBlockHashByBlockHeight(Transaction* txn, const unsigned int blockHeight, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过块哈希设置块
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串
- # @param block : 需要设置的块数据 (二进制是数据块可以直接放入protobuf里边进行传输的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description:Set block via block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string 
+ # @param block : Block data that needs to be set (binary is a data block that can be directly put into protobuf for transmission) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // block hash -> block 
     int SetBlockByBlockHash(Transaction* txn, const std::string & blockHash, const std::string & block);
 
 /* ====================================================================================  
- # @description: 通过块哈希获取到数据块信息
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串
- # @param block : 获取到的块数据 (二进制是数据块可以直接放入protobuf里边进行传输的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain data block information through block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string 
+ # @param block : Obtained block data (binary data block can be directly put into protobuf for transmission) 
+ # @return :If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */ 
     int GetBlockByBlockHash(Transaction* txn, const std::string & blockHash, std::string & block);
 
 /* ====================================================================================  
- # @description: 通过块哈希移除数据块里边的块
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希字符串
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description:Remove the block in the data block through block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash string 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */  
     int DeleteBlockByBlockHash(Transaction* txn, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 设置最高块
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight  : 需要设置的数据块的高度
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the highest block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight  : The height of the data block that needs to be set 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */ 
     // block Top -> top
     int SetBlockTop(Transaction* txn, const unsigned int blockHeight);
 
 /* ====================================================================================  
- # @description: 获取最高块
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHeight  : 获取到的数据块的高度
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the highest block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHeight  : The height of the acquired data block 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */ 
     int GetBlockTop(Transaction* txn, unsigned int & blockHeight);
 
 /* ====================================================================================  
- # @description: 设置最佳链
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 需要设置的最佳链的块哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the best chain 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : The block hash of the best chain that needs to be set 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */ 
     // best chain
     int SetBestChainHash(Transaction* txn, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 获取到最佳链
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 获取到的最佳链当中的块哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the best chain 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash in the best chain obtained 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum)
  ==================================================================================== */
     int GetBestChainHash(Transaction* txn, std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过块的哈希设置块头信息
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 获取到的最佳链当中的块哈希
- # @param header  : 需要设置的块头信息(二进制数据可以直接进行protobuf里边进行传输的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set block header information through the hash of the block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash in the best chain obtained 
+ # @param header  : The block header information that needs to be set (binary data can be directly transmitted in protobuf) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */ 
     //====
     int SetBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash, const std::string & header);
 
 /* ====================================================================================  
- # @description: 通过块的哈希获取到块头信息
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 获取到的最佳链当中的块哈希
- # @param header  : 获取到的块头信息(二进制数据可以直接进行protobuf里边进行传输的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the block header information through the hash of the block 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash in the best chain obtained 
+ # @param header  : Obtained block header information (binary data can be directly transmitted in protobuf) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash, std::string & header);
  
 /* ====================================================================================  
- # @description: 根据块哈希移除数据库里边的块头信息
- # @param txn  : Rocksdb当中的事务指针
- # @param blockHash  : 块哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove the block header information in the database according to the block hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param blockHash  : Block hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int DeleteBlockHeaderByBlockHash(Transaction* txn, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过地址设置Utxo哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param utxoHash  : 需要设置的utxohash
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set Utxo hash by address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param utxoHash  : Need to set utxohash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // UTXO
     int SetUtxoHashsByAddress(Transaction* txn, const std::string & address, const std::string & utxoHash);
 
 /* ====================================================================================  
- # @description: 通过地址获取Utxo哈希(utxohash有多个)
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param utxoHashs  : 获取到的utxohash(有多个utxo放入std::vector<std::string>当中)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get Utxo hash by address (there are multiple utxohash) 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param utxoHashs  : Obtained utxohash (there are multiple utxo put into std::vector<std::string>) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetUtxoHashsByAddress(Transaction* txn, const std::string & address, std::vector<std::string> & utxoHashs);
 
 /* ====================================================================================  
- # @description: 通过地址移除Utxo哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param utxoHash  : 需要移除的utxohash
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove Utxo hash by address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param utxoHash  : Utxohash that needs to be removed 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */   
     int RemoveUtxoHashsByAddress(Transaction* txn, const std::string & address, const std::string & utxoHash);
 
 /* ====================================================================================  
- # @description: 通过交易哈希设置交易原始数据
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @param txRaw  : 需要的交易原始数据(交易数据是二进制数据可以直接放入protobuf里边进行数据传输)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set transaction raw data through transaction hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @param txRaw  : Raw transaction data required (transaction data is binary data and can be directly put into protobuf for data transmission) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // txhash -> txRaw
     int SetTransactionByHash(Transaction* txn, const std::string & txHash, const std::string & txRaw);
 
 /* ====================================================================================  
- # @description: 通过交易哈希获取交易原始数据
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @param txRaw  : 获取到的交易原始数据(交易数据是二进制数据可以直接放入protobuf里边进行数据传输)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain transaction raw data through Transaction hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @param txRaw  : The obtained raw transaction data (transaction data is binary data and can be directly put into protobuf for data transmission) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetTransactionByHash(Transaction* txn, const std::string & txHash, std::string & txRaw);
 
 /* ====================================================================================  
- # @description: 通过交易哈希移除数据库里边的交易原始数据
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description:Use Transaction hash to remove the original transaction data in the database 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */   
     int DeleteTransactionByHash(Transaction* txn, const std::string & txHash);
 
 /* ====================================================================================  
- # @description: 通过交易哈希设置块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @param blockHash  : 块哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set block hash through Transaction hash 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @param blockHash  : Block hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // txHash -> blockHash
     int SetBlockHashByTransactionHash(Transaction* txn, const std::string & txHash, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过交易哈希获取块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @param blockHash  : 块哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain Block hash through Transaction hash  
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @param blockHash  : Block hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBlockHashByTransactionHash(Transaction* txn, const std::string & txHash, std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过交易哈希移除数据库里边的块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param txHash  : 交易哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove Block hash in the database through Transaction hash  
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param txHash  : Transaction hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int DeleteBlockHashByTransactionHash(Transaction* txn, const std::string & txHash);
 
-//////////////////// TODO: 可能被废弃 start
+//////////////////// TODO: May be deprecated start 
 /* ====================================================================================  
- # @description: 交易查询相关
+ # @description: Transaction query related 
 ==================================================================================== */
 
 /* ====================================================================================  
- # @description: 通过交易地址设置块交易
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @param txRaw  : 交易原始数据(原始数据都是可以直接放入protobuf当中的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set block transaction via Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @param txRaw  : Transaction raw data (raw data can be directly put into protobuf) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
   // addr + tx num -> tx raw
     int SetTransactionByAddress(Transaction* txn, const std::string & address, const uint32_t txNum, const std::string & txRaw);
 
 /* ====================================================================================  
- # @description: 通过交易地址获取块交易
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @param txRaw  : 交易原始数据(原始数据都是可以直接放入protobuf当中的)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Transaction raw data (raw data can be directly put into protobuf) 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @param txRaw  : Transaction raw data (raw data can be directly put into protobuf) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetTransactionByAddress(Transaction* txn, const std::string & address, const uint32_t txNum, std::string & txRaw);
 
 /* ====================================================================================  
- # @description: 通过交易地址移除数据库里边的交易数据
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description:Remove transaction data in the database through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int DeleteTransactionByAddress(Transaction* txn, const std::string & address, const uint32_t txNum);
 
 /* ====================================================================================  
- # @description: 通过交易地址设置块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @param blockHash  : 块哈希值
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set Block hash through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @param blockHash  : Block hash value 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // // addr + tx num -> block hash
     int SetBlockHashByAddress(Transaction* txn, const std::string & address, const uint32_t txNum, const std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过交易地址获取块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @param blockHash  : 块哈希值
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain Block hash through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @param blockHash  : Block hash value 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBlockHashByAddress(Transaction* txn, const std::string & address, const uint32_t txNum, std::string & blockHash);
 
 /* ====================================================================================  
- # @description: 通过交易地址移除数据库里边的块哈希
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txNum  : 交易序列号
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Remove the Block hash in the database through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txNum  : Transaction serial number 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
    int DeleteBlockHashByAddress(Transaction* txn, const std::string & address, const uint32_t txNum);
 
 /* ====================================================================================  
- # @description: 通过交易地址设置交易最高高度
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txIndex  : 交易序列号
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the highest transaction height through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txIndex  : Transaction serial number 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */   
     // addr Top -> addr tx top
     int SetTransactionTopByAddress(Transaction* txn, const std::string & address, const unsigned int txIndex);
 
 /* ====================================================================================  
- # @description: 通过交易地址获取交易最高高度
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txIndex  : 交易序列号
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the highest transaction height through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txIndex  : Transaction serial number 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetTransactionTopByAddress(Transaction* txn, const std::string & address, unsigned int & txIndex);
 
-//////////////////// TODO: 可能被废弃 end
+//////////////////// TODO: May be discarded end 
     
 /* ====================================================================================  
- # @description:  应用层查询
+ # @description: Application layer query 
 ==================================================================================== */
 
 /* ====================================================================================  
- # @description: 通过交易地址设置账号余额
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param balance  : 账号余额
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set account balance through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param balance  : Account balance 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     // addr -> balance
     int SetBalanceByAddress(Transaction* txn, const std::string & address, int64_t balance);
 
 /* ====================================================================================  
- # @description: 通过交易地址获取账号余额
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param balance  : 账号余额
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain Account balance through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param balance  : Account balance 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetBalanceByAddress(Transaction* txn, const std::string & address, int64_t & balance);
 
 /* ====================================================================================  
- # @description: 通过交易地址设置所有交易
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txHash  : 交易哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set up all transactions through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txHash  : Transaction hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */  
     // addr -> transcations
     int SetAllTransactionByAddress(Transaction* txn, const std::string & address, const std::string & txHash);
 
 /* ====================================================================================  
- # @description: 通过交易地址获取所有交易
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txHash  : 交易哈希(交易哈希有多个放入std::vector<std::string>当中)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get all transactions through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txHash  : Transaction hash (Multiple Transaction hashes are put into std::vector<std::string>) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetAllTransactionByAddreess(Transaction* txn, const std::string & address, std::vector<std::string> & txHashs);
 
 /* ====================================================================================  
- # @description: 通过交易地址移数据库里边的所有交易
- # @param txn  : Rocksdb当中的事务指针
- # @param address  : 交易地址
- # @param txHash  : 交易哈希
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Move all transactions in the database through Transaction address 
+ # @param txn  : Transaction pointer in Rocksdb 
+ # @param address  : Transaction address 
+ # @param txHash  : Transaction hash 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int RemoveAllTransactionByAddress(Transaction* txn, const std::string & address, const std::string & txHash);
 
 /* ====================================================================================  
- # @description: 设置设备打包费
- # @param publicNodePackageFee  : 设备打包费
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description:Set up equipment packaging fee 
+ # @param publicNodePackageFee  : Equipment packing fee 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     //  publicnodepackagefee
     int SetDevicePackageFee(const uint64_t publicNodePackageFee);
 
 /* ====================================================================================  
- # @description: 获取设备打包费
- # @param publicNodePackageFee  : 设备打包费
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain Equipment packing fee 
+ # @param publicNodePackageFee  : Equipment packing fee 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetDevicePackageFee(uint64_t & publicNodePackageFee);
 
 /* ====================================================================================  
- # @description: 设置设备签名费
- # @param mineSignatureFee  : 设备签名费
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set device signature fee 
+ # @param mineSignatureFee  : Equipment signature fee 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     //  minesignaturefee
     int SetDeviceSignatureFee(const uint64_t mineSignatureFee);
 
 /* ====================================================================================  
- # @description: 获取设备签名费
- # @param mineSignatureFee  : 设备签名费
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Obtain the Equipment signature fee  
+ # @param mineSignatureFee  : Equipment signature fee 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetDeviceSignatureFee(uint64_t & mineSignatureFee);
 
 /* ====================================================================================  
- # @description: 设置设备在线时长
- # @param minerOnLineTime  : 设备在线时长
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set device online duration 
+ # @param minerOnLineTime  : Device online time 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
-     // 矿机在线时长
+     // Mining machine online time 
     int SetDeviceOnlineTime(const double minerOnLineTime);
 
 /* ====================================================================================  
- # @description: 获取设备在线时长
- # @param minerOnLineTime  : 设备在线时长
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get device online time 
+ # @param minerOnLineTime  : Device online time 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetDeviceOnLineTime(double & minerOnLineTime);
 
 
 /* ====================================================================================  
- # @description: 设置质押地址
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set up a pledge address 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
-    //设置、获取、移除滞押资产账户地址
+    //Set up, get, and remove the account address of the stagnant assets 
     int SetPledgeAddresses(Transaction* txn,  const std::string &address); 
 
 /* ====================================================================================  
- # @description: 获取质押地址
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址(地址有多个用std::vector<string>存放)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the pledge address 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address (There are multiple addresses stored in std::vector<string>) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetPledgeAddress(Transaction* txn,  std::vector<string> &addresses);
 
 /* ====================================================================================  
- # @description: 移除数据库当中的质押地址
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: (There are multiple addresses stored in std::vector<string>) 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int RemovePledgeAddresses(Transaction* txn,  const std::string &address);
 
 /* ====================================================================================  
- # @description: 设置质押地址的Utxo
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址
+ # @description: Utxo to set the staking address 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address 
  # @param utxo  : utxo
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */   
-    //设置、获取、移除滞押资产账户的utxo
+    //Set up, get, and remove the utxo of the stagnant asset account 
     int SetPledgeAddressUtxo(Transaction* txn, const std::string &address, const std::string &utxo); 
 
 /* ====================================================================================  
- # @description: 获取质押地址的Utxo
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址
- # @param utxo  : utxo(utxo有多个用std::vector<string>存放)
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Utxo to get the pledge address 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address 
+ # @param utxo  : utxo(Utxo has multiple storage with std::vector<string>) 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetPledgeAddressUtxo(Transaction* txn, const std::string &address, std::vector<string> &utxos);
 
 /* ====================================================================================  
- # @description:   移除数据当中的Utxo
- # @param txn  : Rocksdb当中的事务
- # @param address  : 交易地址
+ # @description:   Remove Utxo from the data 
+ # @param txn  : Transactions in Rocksdb 
+ # @param address  : Transaction address 
  # @param utxo  : utxo
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
    int RemovePledgeAddressUtxo(Transaction* txn, const std::string &address,const std::string &utxos);
 
 /* ====================================================================================  
- # @description: 设置交易总数
- # @param txn  : Rocksdb当中的事务
- # @param count  : 交易个数
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the total number of transactions 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Number of transactions 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
-    /* 交易统计 */
-    // 获取与设置总交易数
+    /* Transaction statistics */
+    // Get and set the total number of transactions 
     int SetTxCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 获取交易总数
- # @param txn  : Rocksdb当中的事务
- # @param count  : 交易个数
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the total number of transactions 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Number of transactions 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetTxCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 设置总燃料费
- # @param txn  : Rocksdb当中的事务
- # @param count  : 燃料总额
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set total fuel cost 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Total fuel 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
-    // 获取与设置总燃料费
+    // Get and set the total fuel cost 
     int SetGasCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 获取总燃料费
- # @param txn  : Rocksdb当中的事务
- # @param count  : 燃料总额
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the total fuel cost 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Total fuel 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetGasCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 设置总的额外奖励
- # @param txn  : Rocksdb当中的事务
- # @param count  : 总的额外奖励
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Set the total bonus 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Total bonus 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
-    // 获取与设置总额外奖励费
+    // Get and set the total additional reward fee 
     int SetAwardCount(Transaction* txn, uint64_t &count);
 
 /* ====================================================================================  
- # @description: 获取总签名次数
- # @param txn  : Rocksdb当中的事务
- # @param count  : 总的额外奖励
- # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+ # @description: Get the total number of signatures 
+ # @param txn  : Transactions in Rocksdb 
+ # @param count  : Total bonus 
+ # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
  ==================================================================================== */
     int GetAwardCount(Transaction* txn, uint64_t &count);
 
     
 
 
-    // 新增获得矿费和奖励总值接口，待完善
-    int GetGasTotal(Transaction* txn, uint64_t & gasTotal);   // 未调用
+    // Added an interface for obtaining the total value of mining fees and rewards, to be improved 
+    int GetGasTotal(Transaction* txn, uint64_t & gasTotal);   // Not called 
     int SetGasTotal(Transaction* txn, const uint64_t & gasTotal);
     int GetAwardTotal(Transaction* txn, uint64_t &awardTotal);
     int SetAwardTotal(Transaction* txn, const uint64_t &awardTotal);
     
     /* ==================================================================================== 
-     # @description: 通过base58地址获取已获得的总手续费
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param gasTotal : 出参，总手续费
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Get the total handling fee obtained through base58 address 
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param gasTotal : Participation, total handling fee 
+     # @return Return 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int GetGasTotalByAddress(Transaction* txn, const std::string & addr, uint64_t & gasTotal);
 
     /* ==================================================================================== 
-     # @description: 通过base58地址设置已获得的总手续费
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param gasTotal : 总手续费
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Set the total commission received through base58 address 
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param gasTotal : Total fee 
+     # @return Return 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int SetGasTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t & gasTotal);
 
     /* ==================================================================================== 
-     # @description: 通过base58地址获取已获得的总奖励
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param awardTotal : 出参，总奖励
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Get the total rewards obtained through base58 address 
+
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param awardTotal : Participation, total reward 
+     # @return Return 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int GetAwardTotalByAddress(Transaction* txn, const std::string & addr, uint64_t &awardTotal);
 
     /* ==================================================================================== 
-     # @description: 通过base58地址设置已获得的总奖励
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param awardTotal : 总奖励
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Set the total rewards obtained through base58 address 
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param awardTotal : Total reward 
+     # @return Return 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int SetAwardTotalByAddress(Transaction* txn, const std::string & addr, const uint64_t &awardTotal);
 
     /* ==================================================================================== 
-     # @description: 通过base58地址获取已获得的总签名次数
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param awardTotal : 出参，总签名次数
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Get the total number of signatures obtained through base58 address 
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param awardTotal : Participation, the total number of signatures 
+     # @return Return 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int GetSignNumByAddress(Transaction* txn, const std::string & addr, uint64_t &SignNum);
 
     /* ==================================================================================== 
-     # @description: 通过base58地址设置已获得的总签名次数
-     # @param txn  : 创建事务生成的指针
-     # @param addr : base58地址
-     # @param awardTotal : 总签名次数
-     # @return 成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+     # @description: Set the total number of signatures obtained through base58 address 
+     # @param txn  : Create a pointer generated by the transaction 
+     # @param addr : base58 address 
+     # @param awardTotal : Total number of signatures 
+     # @returnReturn 0 on success, and return a number greater than zero on error. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
      ==================================================================================== */
     int SetSignNumByAddress(Transaction* txn, const std::string & addr, const uint64_t &SignNum);
 
     /* ====================================================================================  
-    # @description: 设置数据库程序版本
-    # @param txn  : Rocksdb当中的事务
-    # @param version  : 程序版本
-    # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+    # @description: Set the database Program Version 
+    # @param txn  : Transactions in Rocksdb 
+    # @param version  : Program Version 
+    # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
     ==================================================================================== */
-    // 记录初始化数据库的程序版本
+    // Record the Program Version of the initialization database 
     int SetInitVer(Transaction* txn, const std::string & version);
 
     /* ====================================================================================  
-    # @description: 设置数据库程序版本
-    # @param txn  : Rocksdb当中的事务
-    # @param version  : 程序版本
-    # @return : 设置成功返回0，错误返回大于零的数。ROCKSDB_ERR = 1, //错误 ROCKSDB_PARAM_NULL = 2, //参数不合法(可以在enum当中查看)
+    # @description: Set the database Program Version 
+    # @param txn  : Transactions in Rocksdb 
+    # @param version  : Program Version 
+    # @return : If the setting succeeds, it returns 0. If it fails, it returns a number greater than zero. ROCKSDB_ERR = 1, //Error ROCKSDB_PARAM_NULL = 2, //The parameter is illegal (you can view it in the enum) 
     ==================================================================================== */
    int GetInitVer(Transaction* txn, std::string & version);
     
@@ -656,7 +657,7 @@ private:
     WriteOptions write_options;
     ReadOptions read_options;
 
-/** 前缀 
+/** Prefix  
  * hs = hash
  * ht = height
  * hd = header
@@ -666,7 +667,7 @@ private:
 */
 
 /* ====================================================================================  
- # @description: 区块相关的接口
+ # @description: Block related interface 
 ==================================================================================== */
     const std::string kBlockHash2BlockHeightKey = "blkhs2blkht"; //hash to height
     const std::string kBlockHeight2BlockHashKey = "blkht2blkhs"; // blkht2blkhs 
@@ -678,13 +679,13 @@ private:
     const std::string kTransactionHash2TransactionRawKey = "txhs2txraw"; //txhs2txraw
     const std::string kTransactionHash2BlockHashKey = "txhs2blkhs"; // txhs2blkhs   
 /* ====================================================================================  
- # @description: 交易查询相关
+ # @description: Transaction query related 
 ==================================================================================== */
     const std::string kAddress2TransactionRawKey = "addr2txraw"; // addr2txraw 
     const std::string kAddress2BlcokHashKey = "addr2blkhs"; // addr2blkhs
     const std::string kAddress2TransactionTopKey = "addr2txtop"; // addr2txtop
 /* ====================================================================================  
- # @description:  应用层查询
+ # @description:  Application layer query 
 ==================================================================================== */
     const std::string kAddress2BalanceKey = "addr2bal"; // addr2bal
     const std::string kAddress2AllTransactionKey = "addr2atx"; // addr2atx
@@ -706,10 +707,10 @@ private:
 public:
     enum STATUS
     {
-        ROCKSDB_SUC = 0, //成功
-        ROCKSDB_ERR = 1, //错误
-        ROCKSDB_PARAM_NULL = 2, //参数不合法
-        ROCKSDB_NOT_FOUND = 3, //没找到
+        ROCKSDB_SUC = 0, //success 
+        ROCKSDB_ERR = 1, //error 
+        ROCKSDB_PARAM_NULL = 2, //Invalid parameter 
+        ROCKSDB_NOT_FOUND = 3, //did not find 
         ROCKSDB_IS_EXIST = 4
     };
 

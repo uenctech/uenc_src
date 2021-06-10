@@ -55,7 +55,7 @@ int EpollMode::epoll_loop()
     u16 u16_port;
     int e_fd;
     MsgData data;
-    /* 设置每个进程允许打开的最大文件数 */
+    /* Set the maximum number of files allowed to be opened per process  */
     rt.rlim_max = rt.rlim_cur = MAXEPOLLSIZE;
     if (setrlimit(RLIMIT_NOFILE, &rt) == -1)
     {
@@ -65,14 +65,14 @@ int EpollMode::epoll_loop()
     while (1)
     {
 
-        /* 等待有事件发生 */
+        /* Wait for something to happen  */
         nfds = epoll_wait(this->epoll_fd, events, MAXEPOLLSIZE, -1);
         if (nfds == -1)
         {
             perror("epoll_wait");
             continue;
         }
-        /* 处理所有事件 */
+        /* Handle all events  */
         for (n = 0; n < nfds; ++n)
         {
             if (events[n].events & EPOLLERR)
@@ -84,13 +84,13 @@ int EpollMode::epoll_loop()
                 len = sizeof(err);
                 e_fd = events[n].data.fd;
                 status = getsockopt(e_fd, SOL_SOCKET, SO_ERROR, &err, &len);
-                // 连接失败
+                // Connection failed 
                 if (status == 0)
                 {
                     Singleton<PeerNode>::get_instance()->delete_by_fd(e_fd);
                 }
             }
-            // 处理主连接监听
+            // Handle the main connection monitoring 
             if (events[n].data.fd == this->fd_ser_main)
             {
                 int connfd = 0;
@@ -99,7 +99,7 @@ int EpollMode::epoll_loop()
                 while ((connfd = net_tcp::Accept(lis_fd, (struct sockaddr *)&cliaddr, &socklen)) > 0)
                 {
                     net_tcp::set_fd_noblocking(connfd);
-                    //关闭所有信号
+                    //Turn off all signals 
                     int value = 1;
                     setsockopt(connfd, SOL_SOCKET, MSG_NOSIGNAL, &value, sizeof(value));
 
@@ -113,7 +113,7 @@ int EpollMode::epoll_loop()
                     Singleton<BufferCrol>::get_instance()->add_buffer(u32_ip, u16_port, connfd);
                     Singleton<EpollMode>::get_instance()->add_epoll_event(connfd, EPOLLIN | EPOLLOUT | EPOLLET);
             
-                } //while循环结束
+                } //while End of loop 
                 if (connfd == -1)
                 {
                     if (errno != EAGAIN && errno != ECONNABORTED && errno != EPROTO && errno != EINTR)

@@ -162,7 +162,7 @@ int setPriKey(std::string& sPriStr) {
     return 1;
 }
 
-/* 生成公私钥和bs58地址 参数返回 */
+/* Generate public and private keys and bs58 address Parameter return  */
 int genPairKey(char *out_pri_key, int *out_pri_len, char *out_pub_key, int *out_pub_len) {
     ECDSA<ECP, SHA1>::PrivateKey pri_key;
     GeneratePrivateKey(CryptoPP::ASN1::secp256r1(), pri_key);

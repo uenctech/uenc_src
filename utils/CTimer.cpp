@@ -23,13 +23,13 @@ CTimer::CTimer(const std::string sTimerName):m_bExpired(true), m_bTryExpired(fal
 
 CTimer::~CTimer()
 {
-    m_bTryExpired = true;   //尝试使任务过期
+    m_bTryExpired = true;   //Try to expire the task 
     DeleteThread();
 }
 
 bool CTimer::Start(unsigned int msTime, std::function<void()> task, bool bLoop, bool async)
 {
-    if (!m_bExpired || m_bTryExpired) return false;  //任务未过期(即内部仍在存在或正在运行任务)
+    if (!m_bExpired || m_bTryExpired) return false;  //The task has not expired (i.e. the task still exists or is running internally) 
     m_bExpired = false;
     m_bLoop = bLoop;
     m_nCount = 0;
@@ -38,18 +38,18 @@ bool CTimer::Start(unsigned int msTime, std::function<void()> task, bool bLoop, 
         DeleteThread();
         m_Thread = new std::thread([this, msTime, task]() {
             if (!m_sName.empty()) {
-#if (defined(__ANDROID__) || defined(ANDROID))      //兼容Android
+#if (defined(__ANDROID__) || defined(ANDROID))      //Compatible with Android 
                 pthread_setname_np(pthread_self(), m_sName.c_str());
-#elif defined(__APPLE__)                            //兼容苹果系统
-                pthread_setname_np(m_sName.c_str());    //设置线程(定时器)名称
+#elif defined(__APPLE__)                            //Compatible with Apple system 
+                pthread_setname_np(m_sName.c_str());    //Set thread (timer) name 
 #endif
             }
             
             while (!m_bTryExpired) {
-                m_ThreadCon.wait_for(m_ThreadLock, std::chrono::milliseconds(msTime));  //休眠
+                m_ThreadCon.wait_for(m_ThreadLock, std::chrono::milliseconds(msTime));  //Dormant 
                 if (!m_bTryExpired) {
-                    task();     //执行任务
-
+                    task();     //Perform task 
+					
                     m_nCount ++;
                     if (!m_bLoop) {
                         break;
@@ -57,8 +57,8 @@ bool CTimer::Start(unsigned int msTime, std::function<void()> task, bool bLoop, 
                 }
             }
             
-            m_bExpired = true;      //任务执行完成(表示已有任务已过期)
-            m_bTryExpired = false;  //为了下次再次装载任务
+            m_bExpired = true;      //Task execution completed (indicating that the task has expired) 
+            m_bTryExpired = false;  //To load the task again next time 
         });
     } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(msTime));
@@ -84,10 +84,9 @@ void CTimer::Cancel()
 void CTimer::DeleteThread()
 {
     if (m_Thread) {
-        m_ThreadCon.notify_all();   //休眠唤醒
-        m_Thread->join();           //等待线程退出
+        m_ThreadCon.notify_all();   //Wake up from sleep 
+        m_Thread->join();           //Wait for the thread to exit 
         delete m_Thread;
         m_Thread = nullptr;
     }
 }
-

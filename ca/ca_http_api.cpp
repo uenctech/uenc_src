@@ -60,7 +60,7 @@ void ca_register_http_callbacks()
     HttpServer::registerJsonRpcCallback("get_block_info_list", jsonrpc_get_block_info_list);
     HttpServer::registerJsonRpcCallback("confirm_transaction", jsonrpc_confirm_transaction);
 
-    //启动http服务
+    //Start http service 
     HttpServer::start();
 }
 
@@ -753,7 +753,7 @@ nlohmann::json jsonrpc_get_tx_by_txid_and_nodeid(const nlohmann::json &param)
         ret["error"]["message"] = "hash is invalid";
         return ret;
     }
-    //发送请求获取交易信息
+    //Send request to get transaction information 
     Node node;
     if (nodeid == Singleton<PeerNode>::get_instance()->get_self_id())
     {
@@ -773,13 +773,13 @@ nlohmann::json jsonrpc_get_tx_by_txid_and_nodeid(const nlohmann::json &param)
     req.set_txid(hash);
     req.set_nodeid( Singleton<PeerNode>::get_instance()->get_self_id() );
     net_com::send_message(node, req, net_com::Compress::kCompress_False, net_com::Encrypt::kEncrypt_False, net_com::Priority::kPriority_High_2);
-    //等待 20秒，获取返回信息
+    //Wait for 20 seconds to get the return information
     CTransaction utxo_tx;
     bool is_empty = true;
     int height = 0;
     for (int i = 0; i < 15; i++)
     {
-        sleep(2); //休眠2秒
+        sleep(2); //Sleep for 2 seconds 
         {
             std::lock_guard<std::mutex> lock(global::g_mutex_transinfo);
             if (!global::g_is_utxo_empty)
@@ -792,7 +792,7 @@ nlohmann::json jsonrpc_get_tx_by_txid_and_nodeid(const nlohmann::json &param)
             }
         }
     }
-    //如果30秒内没有返回数据，则查找失败
+    //If no data is returned within 30 seconds, the search fails 
     if (is_empty)
     {
         ret["error"]["code"] = -32000;
@@ -984,7 +984,7 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json &param)
     CTransaction tx;
     tx.ParseFromString(tx_data_str);
 
-    //签名
+    //signature 
     for (int i = 0; i < tx.vin_size(); i++)
     {
         auto vin = tx.mutable_vin(i);
@@ -1016,7 +1016,7 @@ nlohmann::json jsonrpc_send_tx(const nlohmann::json &param)
     int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
     txMsg.set_trycountdown(CalcTxTryCountDown(needVerifyPreHashCount));
 
-    // msgdata是为了方便调用接口，没有实际意义
+    // msgdata is for the convenience of calling the interface and has no practical meaning 
     auto msg = make_shared<TxMsg>(txMsg);
 
     std::string tx_hash;
@@ -1095,7 +1095,7 @@ nlohmann::json jsonrpc_send_multi_tx(const nlohmann::json &param)
     CTransaction tx;
     tx.ParseFromString(tx_data_str);
 
-    //签名
+    //signature 
     for (int i = 0; i < tx.vin_size(); i++)
     {
         auto vin = tx.mutable_vin(i);
@@ -1522,7 +1522,7 @@ nlohmann::json jsonrpc_get_block_info_list(const nlohmann::json &param)
             }
             blocks.push_back(cblock);
         }
-        // 单层高度所有块按时间倒序
+        // All blocks of a single height are in reverse chronological order 
         std::sort(blocks.begin(), blocks.end(), [](CBlock &a, CBlock &b) { return a.time() > b.time(); });
 
         nlohmann::json jsonHeight;

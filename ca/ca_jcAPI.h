@@ -1,30 +1,31 @@
 extern "C" {
     /**
-        说明:
-            生成公私钥和钱包地址
-        参数:
-            ver: 版本号
-                传0生成1开头的base58地址
-                传5生成3开头的base58地址
-        返回值:
-            私钥,公钥,base58地址 拼接而成的字符串 以空格衔接
-            私钥,公钥为十六进制字符串
+        Description :
+            Generate public and private keys and wallet addresses 
+        parameter :
+            ver: version number 
+                Pass 0 to generate base58 address starting with 1 
+                Pass 5 to generate base58 address starting with 3 
+        return value :
+            Private key, public key, base58 address concatenated string connected by spaces 
+            Private key, public key is a hexadecimal string 
     */
     char* GenWallet(int ver);
 
     /*
-        说明:
-            生成公私钥和钱包地址
-        参数:
-            out_private_key: 传出参数，传出私钥(字节流形式)，调用方负责开辟内存, 确保大于 33 字节
-            out_private_key_len: 传入传出参数，传入时代表开辟的内存大小，传出时返回私钥的实际长度 
-            out_public_key：传出参数，传出公钥(字节流形式)，调用方负责开辟内存，确保大于 67 字节
-            out_public_key_len：传入传出参数，传入时代表开辟的内存大小，传出时返回公钥的实际长度
-            out_bs58addr：传出参数，传出地址，调用方负责开辟内存，确保大于 35 字节
-            out_bs58addr_len：传入传出参数，传入时代表开辟的内存大小，传出时返回地址的实际长度
-        返回值:
-            0 代表成功
-            -1 代表开辟的内存空间不足
+        Description :
+            Generate public and private keys and wallet addresses 
+        parameter :
+            out_private_key: Outgoing parameters, outgoing private key (in byte stream format), the caller is responsible for opening up the memory, ensuring that it is greater than 33 bytes 
+
+            out_private_key_len: Incoming and outgoing parameters, which represent the size of the memory opened when they are passed in, and return the actual length of the private key when they are passed out  
+            out_public_key：For parameters and public keys (in byte stream format), the caller is responsible for opening up memory to ensure that it is greater than 67 bytes 
+            out_public_key_len：Incoming and outgoing parameters, when they are passed in, they represent the size of the memory opened up, and when they are out, they return the actual length of the public key 
+            out_bs58addr：For outgoing parameters and outgoing addresses, the caller is responsible for opening up the memory to ensure that it is greater than 35 bytes 
+            out_bs58addr_len：Incoming and outgoing parameters, when they are passed in, they represent the size of the memory opened up, and when they are out, the actual length of the return address is 
+        return value :
+            0 means success 
+            -1 means insufficient memory space 
     */
     int GenWallet_(char *out_private_key, int *out_private_key_len,
                   char *out_public_key, int *out_public_key_len, 
@@ -32,31 +33,31 @@ extern "C" {
 
 
     /**
-        说明:
-            生成base64编码之后的签名
-        参数:
-            pri: 十六进制的私钥
-            msg: 待签名信息
-            len: 待签名信息的长度
-        返回值:
-            经过base64编码之后的签名信息
+        Description :
+            Generate signature after base64 encoding 
+        parameter :
+            pri: Hexadecimal private key 
+            msg: Information to be signed 
+            len: The length of the message to be signed 
+        return value :
+            Signature information after base64 encoding 
     */
     char* GenSign(char* pri, char* msg, int len);
 
 
     /*
-    说明:
-        生成base64编码之后的签名信息
-    参数:
-        pri: 私钥(字节流形式)
-        pri_len: 私钥的长度 
-        msg：待签名信息
-        msg_len：待签名信息的长度
-        signature_msg：传出参数，传出base64编码之后的签名信息，调用方负责开辟内存，确保大于 90 字节
-        out_len：传入传出参数，传入时代表开辟的内存大小，传出时返回签名信息的实际长度
-    返回值:
-        0 代表成功
-        -1 代表开辟的内存空间不足
+    Description :
+        Generate signature information after base64 encoding 
+    parameter :
+        pri: Private key (byte stream format) 
+        pri_len: The length of the private key  
+        msg：Information to be signed 
+        msg_len：The length of the message to be signed 
+        signature_msg：Outgoing parameters, outgoing signature information after base64 encoding, the caller is responsible for opening up the memory to ensure that it is greater than 90 bytes 
+        out_len：Incoming and outgoing parameters, when they are passed in, they represent the size of the opened memory, and when they are out, they return the actual length of the signature 
+    return value :
+         0 means success
+        -1 means insufficient memory space 
     */
     int GenSign_(const char* pri, int pri_len,
                 const char* msg, int msg_len,

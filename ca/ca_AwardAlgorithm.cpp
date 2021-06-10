@@ -12,45 +12,45 @@ void AwardAlgorithm::TestPrint(bool lable) {
 
         cout << "\033[1;40;32m";
         br();
-        cout << " 档位奖励池总金额" << endl;
+        cout << " Total amount of stall reward pool " << endl;
         cout << " " << this->award_pool << endl;
 
         br();
-        cout << " 签名地址: " << endl;
+        cout << " Signature address : " << endl;
         for (auto v : vec_addr) {
             cout << " "<<  v << endl;
         }
 
         br();
-        cout << " 在线天数" << endl;
+        cout << " Online days " << endl;
         for (auto v : get<0>(this->t_list)) {
             cout << " " << v << endl;
         }
 
         br();
-        cout << " 总签名数" << endl;
+        cout << " Total number of signatures " << endl;
         for (auto v : get<1>(this->t_list)) {
             cout << " " << v << endl;
         }
 
         br();
-        cout << " 总签名获取的额外奖励金额" << endl;
+        cout << " The amount of extra rewards obtained by the total signature " << endl;
         for (auto v : get<2>(this->t_list)) {
             cout << " " << v << endl;
         }
 
         br();
-        cout << " 比率" << endl;
+        cout << " ratio " << endl;
         for (auto v : get<3>(this->t_list)) {
             cout << " " << v << endl;
         }
 
         br();
-        cout << " 奖励分配池" << endl;
+        cout << " Reward distribution pool " << endl;
 
         for (auto v : this->map_addr_award) {
-            cout << " 金额 " << v.first << endl;
-            cout << " 地址 " << v.second << endl;
+            cout << " Amount  " << v.first << endl;
+            cout << " address  " << v.second << endl;
         }
         br();
 
@@ -59,7 +59,7 @@ void AwardAlgorithm::TestPrint(bool lable) {
 }
 
 //class s+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//额外奖励 奖励额(e.g 1000万)/365/24/12/in_minutes_deal 交易笔数档位(e.g 0-20 21-40 2的N次方)
+//Additional rewards  Award amount (e.g 10 million )/365/24/12/in_minutes_deal  Number of transactions (e.g 0-20 21-40 2 to the Nth power) 
 AwardAlgorithm::AwardAlgorithm() : need_verify_count(0), award_pool(0.0), sign_amount(0) {
 }
 
@@ -86,14 +86,14 @@ int AwardAlgorithm::Build(uint need_verify_count,
         }
     }
 
-    //共识数 签名钱包地址初始化
+    //Consensus number Initialization of signature wallet address 
     this->need_verify_count = need_verify_count;
     this->vec_addr = vec_addr;
     this->vec_online = vec_online;
     this->vec_award_total = vec_award_total;
     this->vec_sign_sum = vec_sign_sum;
 
-    //开始建造 得到每笔交易奖励档位金额
+    //Start construction and get the amount of reward stalls for each transaction 
     // double award_base = AwardBaseByYear();
 
     uint64_t blockNum = 0;
@@ -103,8 +103,8 @@ int AwardAlgorithm::Build(uint need_verify_count,
         return -2;
     }
 
-    // 5分钟内若交易少于unitTimeMinBlockNum，则按unitTimeMinBlockNum计算
-    // unitTimeMinBlockNum 单位时间内最少区块数
+    // If the transaction is less than unitTimeMinBlockNum within 5 minutes, it will be calculated as unitTimeMinBlockNum 
+    // unitTimeMinBlockNum Minimum number of blocks per unit time 
     if (blockNum < unitTimeMinBlockNum)
     {
         blockNum = unitTimeMinBlockNum;
@@ -125,7 +125,7 @@ std::multimap<uint32_t, std::string> &AwardAlgorithm::GetDisAward() {
 
 int AwardAlgorithm::GetBaseAward(uint64_t blockNum)
 {
-    // 70*POWER((1-50%),LOG(blockNum,2))+0.025 计算初始奖励总值的函数
+    // 70*POWER((1-50%),LOG(blockNum,2))+0.025 Function to calculate the total value of the initial reward 
     return ( slopeCurve * pow( (1 - 0.5), log(blockNum)/log(2) ) + 0.025 ) * DECIMAL_NUM;
 }
 
@@ -150,7 +150,7 @@ int AwardAlgorithm::GetAward(const uint64_t blockNum, uint64_t & awardAmount)
         return -1;
     }
 
-    // 获取初始块时间
+    // Get the initial block time 
     uint64_t blockTime = 0;
     if ( 0 != GetTimeFromBlockHash(blockHahs, blockTime) )
     {
@@ -158,7 +158,7 @@ int AwardAlgorithm::GetAward(const uint64_t blockNum, uint64_t & awardAmount)
         return -1;
     }
 
-    // 获得基础区块奖励
+    // Obtain basic block rewards 
     uint64_t baseAmount = GetBaseAward(blockNum);
 
     /// TODO
@@ -172,19 +172,19 @@ int AwardAlgorithm::GetAward(const uint64_t blockNum, uint64_t & awardAmount)
 
     if (award >= awardTotal)
     {
-        // 奖励超过awardTotal奖励总值，则不再奖励
+        // If the reward exceeds the total value of the awardTotal reward, it will no longer be rewarded 
         awardAmount= 0;
     }
     else
     {
-        uint64_t addend = awardTotal / 2;  // 边界值增长幅度
-        uint64_t nexthavleAward = addend;  // 下一次减半边界值
+        uint64_t addend = awardTotal / 2;  // Boundary value increase 
+        uint64_t nexthavleAward = addend;  // Halve the boundary value next time 
 
         while (award > nexthavleAward)
         {
-            baseAmount /= 2;   // 奖励减半
-            addend /= 2;       // 调整边界值增长幅度
-            nexthavleAward = nexthavleAward + addend;  // 调整下次减半边界值
+            baseAmount /= 2;   // Reward halved 
+            addend /= 2;       // Adjust the increase in boundary value 
+            nexthavleAward = nexthavleAward + addend;  // Adjust the next halving boundary value 
         }     
 
         awardAmount = baseAmount;
@@ -247,9 +247,9 @@ int AwardAlgorithm::GetBlockNumInUnitTime(uint64_t & blockSum)
     top = top > 500 ? top - 500 : 0;
 
     uint64_t blockCount = 0;
-    bool bIsBreak = false;  // 判断是否跳出循环
+    bool bIsBreak = false;  // Determine whether to break out of the loop 
 
-    // 计算奖励起始时间
+    // Calculate the reward start time 
     std::vector<std::string> blockHashs;
     if ( 0 != pRocksDb->GetBlockHashsByBlockHeight(txn, top, blockHashs) )
     {
@@ -328,28 +328,28 @@ int AwardAlgorithm::AwardList()
     vector<double> &total_online =  get<0>(t_list);
     vector<uint> &total_sign =  get<1>(t_list);
     vector<double> &total_award =  get<2>(t_list);
-    vector<double> &rate = get<3>(t_list); //所有地址的比率 总奖励额/签名总数/时长(天)
+    vector<double> &rate = get<3>(t_list); //Ratio of all addresses Total reward amount/total number of signatures/duration (days) 
 
     for (uint32_t i = 1; i < sel_vec_addr.size(); i++) 
     {
-        //总在线时长 TODO
+        //Total online time  TODO
         double online = (this->vec_online)[i];
         total_online.push_back(online);
 
-        //获取地址总额外奖励金额
+        //Get the total bonus amount of the address 
         uint64_t addrTotalAward = 0;
         GetAwardAmountByAddr(sel_vec_addr[i], addrTotalAward);
 
         total_award.push_back(addrTotalAward);
 
-        //获取地址总签名数
+        //Get the total number of signatures in the address 
         uint64_t signCount = 0;
         GetSignCountByAddr(sel_vec_addr[i], signCount);
         total_sign.push_back(signCount);
     }
 
-    //计算出所有地址比率
-    double sum_rate {0.0}; //总比率
+    //Calculate all address ratios 
+    double sum_rate {0.0}; //Total ratio 
     for (uint32_t i = 0; i < sel_vec_addr.size() - 1; i++) 
     {
         if (!total_sign[i] || !total_award[i]) 
@@ -362,10 +362,10 @@ int AwardAlgorithm::AwardList()
         rate.push_back(r);
     }
 
-    //测试用
+    //For testing 
     this->t_list = t_list;
 
-    multimap<double, string>map_nzero; //非0比率数组
+    multimap<double, string>map_nzero; //Non-zero ratio array 
     uint64_t each_award = this->award_pool / (sel_vec_addr.size() - 1);
     uint64_t temp_award_pool = this->award_pool;
 
@@ -382,7 +382,7 @@ int AwardAlgorithm::AwardList()
         }
     }
 
-    multimap<uint64_t, string>temp_sort_positive; //先临时存入正序排列
+    multimap<uint64_t, string>temp_sort_positive; //First temporarily deposited in positive order 
     vector<string>temp_swap;
     for (auto v : map_nzero) 
     {
@@ -410,7 +410,7 @@ int AwardAlgorithm::AwardList()
         this->map_addr_award.insert({v.first, v.second});
     }
 
-    //添加第一个
+    //Add the first 
     this->map_addr_award.insert({0, this->vec_addr[0]});
 
     return 0;
@@ -458,7 +458,7 @@ int AwardAlgorithm::GetAwardAmountByAddr(const std::string addr, uint64_t & awar
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-    // 通过地址获取所有交易
+    // Get all transactions by address 
     std::vector<std::string> txHashs;
     if ( 0 != pRocksDb->GetAllTransactionByAddreess(txn, addr, txHashs) )
     {
@@ -474,7 +474,7 @@ int AwardAlgorithm::GetAwardAmountByAddr(const std::string addr, uint64_t & awar
         blockHashs.push_back(blockHash);
     }
 
-    // 获取所有奖励的资产总和
+    // Get the sum of all rewarded assets 
     for (auto blockHash : blockHashs) 
     {
         std::string rawBlock;
@@ -491,7 +491,7 @@ int AwardAlgorithm::GetAwardAmountByAddr(const std::string addr, uint64_t & awar
             CTransaction tx = block.txs(i);
             if (CheckTransactionType(tx) != kTransactionType_Award) 
             {
-                continue; //如果为正常交易则跳出
+                continue; //Jump out if it is a normal transaction
             }
 
             for (int j = 0; j < tx.vout_size(); j++) 

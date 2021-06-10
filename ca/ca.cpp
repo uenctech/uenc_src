@@ -92,7 +92,7 @@ int GetAllAccountSignNum()
 	ofstream file("sign.txt");
 	if( !file.is_open() )
 	{
-		std::cout << "打开文件 sign.txt 失败！" << std::endl;
+		std::cout << "open a file  sign.txt fail！" << std::endl;
 		return -2;
 	}
 
@@ -100,15 +100,15 @@ int GetAllAccountSignNum()
 	auto db_status = pRocksDb->GetBlockTop(txn, blockHeight);
 	if (db_status != 0)
 	{
-		std::cout << "GetBlockTop 失败！" << std::endl;
+		std::cout << "GetBlockTop fail！" << std::endl;
 		bRollback = true;
         return -3;
     }
 
-	// 本地节点高度为0时
+	// When the height of the local node is 0 
 	if(blockHeight <= 0)
 	{
-		std::cout << "高度为0！" << std::endl;
+		std::cout << "Height is 0 ！" << std::endl;
 		return -4;
 	}
 
@@ -118,7 +118,7 @@ int GetAllAccountSignNum()
 		db_status = pRocksDb->GetBlockHashsByBlockHeight(txn, height, hashs);
 		if(db_status != 0) 
 		{
-			std::cout << "GetBlockHashsByBlockHeight 失败！" << std::endl;
+			std::cout << "GetBlockHashsByBlockHeight fail！" << std::endl;
 			bRollback = true; 
 			return -3;
 		}
@@ -129,7 +129,7 @@ int GetAllAccountSignNum()
 			db_status = pRocksDb->GetBlockByBlockHash(txn, blockHash, blockHeaderStr);
 			if(db_status != 0)
 			{
-				std::cout << "GetBlockByBlockHash 失败！" << std::endl;
+				std::cout << "GetBlockByBlockHash fail！" << std::endl;
 				bRollback = true; 
 				return -3;
 			}
@@ -163,7 +163,7 @@ int GetAllAccountSignNum()
 		}
 	}
 
-	file << std::string("账号总数：");
+	file << std::string("Total number of accounts ：");
 	file << std::to_string(addrSignNum.size()) << "\n";
 	for(auto addrSignAmt : addrSignNum)
 	{
@@ -179,19 +179,19 @@ int GetAllAccountSignNum()
 
 bool isInteger(string str) 
 {
-    //判断没有输入的情况
+    //Judging the case where there is no input 
     if(str=="")
     {
         return false;
     }
     else 
     {
-        //有输入的情况况
+        //With input 
         for (size_t i = 0; i < str.size();i++) 
         {
-            if (str.at(i) == '-' && str.size() > 1)  // 有可能出现负数
+            if (str.at(i) == '-' && str.size() > 1)  // There may be negative numbers 
                 continue;
-            // 数值在ascii码（编码）的‘0’-‘9’之间
+            // The value is between ‘0’ and ‘9’ of the ascii code (code) 
             if (str.at(i) > '9' || str.at(i) < '0')
                 return false;
         }
@@ -225,7 +225,7 @@ int InitRocksDb()
     pRocksDb->GetBestChainHash(txn, bestChainHash);
     if (bestChainHash.size() == 0)
     {
-		//  初始化0块, 这里简化处理直接读取关键信息保存到数据库中
+		//  Initialize block 0, here to simplify the processing, directly read the key information and save it in the database 
         std::string  strBlockHeader0;
         if(g_testflag == 1)
         {
@@ -310,14 +310,14 @@ void test_time() {
     tm tmp_time;
 
     string date_s, date_e;
-    cout << "请输入开始日期(格式 2020-01-01): ";
+    cout << "Please enter start date (Format 2020-01-0 1): ";
     cin >> date_s;
     date_s += " 00:00:00";
     strptime(date_s.c_str(), "%Y-%m-%d %H:%M:%S", &tmp_time);
     uint64_t t_s = (uint64_t)mktime(&tmp_time);
     cout << t_s << endl;
 
-    cout << "请输入结束日期(格式 2020-01-07): ";
+    cout << "Please enter the end date (format 2020-01-07) : ";
     cin >> date_e;
     date_e += " 23:59:59";
     strptime(date_e.c_str(), "%Y-%m-%d %H:%M:%S", &tmp_time);
@@ -423,19 +423,19 @@ void InitTxCount()
 
 int ca_startTimerTask()
 {
-    //加块线程
+    //Block thread 
     g_blockpool_timer.AsyncLoop(1000, [](){
 		MagicSingleton<BlockPoll>::GetInstance()->Process();
 	});
 
-	//区块同步线程
+	//Block synchronization thread 
 	int sync_time = Singleton<Config>::get_instance()->GetSyncDataPollTime();
     cout<<"sync_time = "<<sync_time<<endl;
     g_synch_timer.AsyncLoop(sync_time * 1000 , [](){
 		g_synch->Process();
 	});
     
-    //获取矿机在线时长
+    //Get the online duration of the miner 
     g_deviceonline_timer.AsyncLoop(5 * 60 * 1000, GetOnLineTime);
     
     // Public node refresh to config file, 20201110
@@ -466,28 +466,28 @@ int ca_startTimerTask()
 
 bool ca_init()
 {               
-    // 初始化账户
+    // Initialize account 
     InitAccount(&g_AccountInfo, "./cert");
 
-    // 初始化数据库
+    // Initialize the database 
     InitRocksDb();
     
-    //手机端接口注册
+    //Mobile phone interface registration 
     MuiltipleApi();
     
-    // 初始化矿费和打包费设置
+    // Initialize mining fee and packing fee settings 
     InitFee();
     
-    // 向网络层注册接口
+    // Register the interface with the network layer 
     RegisterCallback();
 
-    // 注册http相关接口
+    // Register http related interface 
     ca_register_http_callbacks();
 
-    // 初始化交易统计
+    // Initialize transaction statistics 
     InitTxCount();
 
-    // 启动定时器任务
+    // Start timer task 
     ca_startTimerTask();
     Singleton<Config>::get_instance()->UpdateNewConfig();
     return true;
@@ -565,7 +565,7 @@ void ca_print()
         {
             case 1:
 			{
-                std::cout << "请输入要生成的账户数量：";
+                std::cout << "Please enter the number of accounts to be generated ：";
                 int num = 0;
                 std::cin >> num;
                 if (num <= 0)
@@ -642,24 +642,24 @@ void ca_print()
                 // GetServiceInfoReq getServiceInfoReq;
                 // getServiceInfoReq.set_version(getVersion());
                 // int number;
-                // cout<<"请输入序列号："<<endl;
+                // cout<<"Please enter the serial number ："<<endl;
                 // cin >> number;
                 // getServiceInfoReq.set_sequence_number(number);
                 // // std::string base58addr; 
-                // // cout<<"请输入base58addr"<<endl;
+                // // cout<<"please enter base58addr"<<endl;
                 // // cin >> base58addr;
                 // // getDevPrivateKeyReq.set_bs58addr(base58addr);
                 // // std::string passwd; 
-                // // cout<<"请输入passwd"<<endl;
+                // // cout<<"please enter passwd"<<endl;
                 // // cin >> passwd;
                 // // getDevPrivateKeyReq.set_password(passwd);
                
                 std::string id ;
-                cout<<"请输入id账号"<<endl;
+                cout<<"Please enter id account "<<endl;
                 cin >> id;
                 
                 // std::string pwd;
-                // cout<<"请输入密码"<<endl;
+                // cout<<"Please enter the password "<<endl;
                 // cin >> pwd;
                 // GetTxByHashReq TxByHashReq;
                 // TxByHashReq.add_txhash("f3eb346651f16cfaf6cb1b6fa349315476c25bf293495d7509822483b627a7b6");
@@ -697,7 +697,7 @@ void ca_print()
                 // req.set_version(getVersion());
                 // req.set_sequence_number(1);
                 // std::string id ;
-                // cout<<"请输入id账号"<<endl;
+                // cout<<"Please enter id account "<<endl;
                 // cin >> id;
                 // net_send_message<ServiceInfoReq>(id, req);
                 // GetServiceInfoAck ack;
@@ -726,9 +726,9 @@ void ca_print()
                 std::cout << "amount: " << amount << std::endl;
 
                 size_t input_options {1};
-                std::set<std::string> options {"1. 获取全部交易笔数", "2. 获取交易块详细信息",
-                "3.查看当区块奖励和总区块块奖励","4.查看所有区块里边签名账号的累计金额","5.获取设备密码请求",
-                "6设置设备密码请求","7获取设备私钥请求",};
+                std::set<std::string> options {"1. Get the total number of transactions", "2. Get transaction block details",
+                 "3. View the current block reward and total block reward", "4. View the cumulative amount of signature accounts in all blocks", "5. Request for device password",
+                 "6Set device password request","7Get device private key request ",};
                 for (auto v : options) 
                 {
                     cout << v << endl;
@@ -829,10 +829,10 @@ void ca_print()
                             }        
                         }
                         totalaward += SingleTotal;  
-                        cout<<"第"<<top<<"个区块奖励金额:" <<SingleTotal<<endl;
+                        cout<<"第"<<top<<"Block reward amount :" <<SingleTotal<<endl;
                         top--;
                     }
-                    cout<<"所有区块奖励金额:"<<totalaward<<endl;
+                    cout<<"All block rewards :"<<totalaward<<endl;
                     break;
                 }
                 case 4:
@@ -861,7 +861,7 @@ void ca_print()
                                         if(addrvalue.empty())
                                         {
                                             addrvalue.insert(pair<string,int64_t>(txout.scriptpubkey(),txout.value()));
-                                            cout<<"第一次放入map的第"<<i <<"区块的签名额外奖励"<<txout.scriptpubkey()<< "->"<<txout.value()<<endl;
+                                            cout<<"The first time you put the first "<<i <<" block of the map into the extra reward for signature" <<txout.scriptpubkey()<< "->"<<txout.value()<<endl;
                                             
                                         }
                                         else
@@ -875,13 +875,13 @@ void ca_print()
                                                 newvalue += value;
                                                 addrvalue.erase(iter);
                                                 addrvalue.insert(pair<string,int64_t>(txout.scriptpubkey(),newvalue));
-                                                cout<<"地址相同时第"<<i <<"区块的签名额外奖励"<<txout.scriptpubkey()<< "->"<<newvalue<<endl; 
+                                                cout<<"When the address is the same"<<i <<"block signature bonus" <<txout.scriptpubkey()<< "->"<<newvalue<<endl; 
                                                 
                                             }
                                             else
                                             {
                                                 addrvalue.insert(pair<string,int64_t>(txout.scriptpubkey(),txout.value()));
-                                                cout<<"地址不同时第"<<i <<"区块的签名额外奖励"<<txout.scriptpubkey()<< "->"<<txout.value()<<endl;
+                                                cout<<"When the address is different"<<i <<"block signature bonus" <<txout.scriptpubkey()<< "->"<<txout.value()<<endl;
                                                
                                             }
                                         }
@@ -921,10 +921,10 @@ void ca_print()
                     GetDevPasswordReq getDevPasswordReq;
                     getDevPasswordReq.set_version(getVersion());
                     std::string id;
-                    cout<<"请输入id"<<endl;
+                    cout<<"please enter id"<<endl;
                     cin >> id;
                     std::string paswd ;
-                    cout<<"请输入密码账号"<<endl;
+                    cout<<"Please enter the password account "<<endl;
                     cin >> paswd;
                     getDevPasswordReq.set_password(paswd);
                     net_send_message<GetDevPasswordReq>(id, getDevPasswordReq);
@@ -934,13 +934,13 @@ void ca_print()
                 {
                     SetDevPasswordReq  setDevPasswordReq;
                     std::string id;
-                    cout<<"请输入id"<<endl;
+                    cout<<"please enter id"<<endl;
                     cin >> id;
                     std::string oldpaswd ;
-                    cout<<"请输入旧密码账号"<<endl;
+                    cout<<"Please enter the old password account "<<endl;
                     cin >> oldpaswd;
                     std::string newpaswd ;
-                    cout<<"请输入新密码账号"<<endl;
+                    cout<<"Please enter a new password account "<<endl;
                     cin >> newpaswd;
                     setDevPasswordReq.set_version(getVersion());
                     setDevPasswordReq.set_old_pass(oldpaswd);
@@ -952,13 +952,13 @@ void ca_print()
                 {
                     GetDevPrivateKeyReq  getDevPrivateKeyReq;
                     std::string id;
-                    cout<<"请输入id"<<endl;
+                    cout<<"please enterid"<<endl;
                     cin >> id;
                     std::string paswd ;
-                    cout<<"请输入旧密码账号"<<endl;
+                    cout<<"Please enter the old password account "<<endl;
                     cin >> paswd;
                     std::string bs58addr; 
-                    cout<<"请输入bs58addr"<<endl;
+                    cout<<"Please enter bs58addr "<<endl;
                     cin >> bs58addr;
                     getDevPrivateKeyReq.set_version(getVersion());
                     getDevPrivateKeyReq.set_bs58addr(bs58addr);
@@ -1046,26 +1046,26 @@ void ca_print()
 			{
 				std::string select;
 				std::cout << "1. Generate mnemonic words." << std::endl;
-				std::cout << "2. 模拟质押资产." << std::endl;
-				std::cout << "3. 得到本机设置的燃料费和全网节点最大最小平均值燃料费" << std::endl;
-				std::cout << "4. 根据UTXO查询余额" << std::endl;
-				std::cout << "5. 设置节点签名费" << std::endl;
-                std::cout << "8. 模拟解质押资产" << std::endl;
-                std::cout << "9. 查询账号质押资产额度" << std::endl;
-                std::cout << "10.多账号交易" << std::endl;
-                std::cout << "11.查询交易列表" << std::endl;
-                std::cout << "12.查询交易详情" << std::endl;
-                std::cout << "13.查询区块列表" << std::endl;
-                std::cout << "14.查询区块详情" << std::endl;
-                std::cout << "15.查询所有质押地址" << std::endl;
-                std::cout << "16.获取5分钟内总块数" << std::endl;
-                std::cout << "17.设置节点打包费用" << std::endl;
-                std::cout << "18.获得所有公网节点打包费用" << std::endl;
-                std::cout << "19.自动乱序交易(简化版)" << std::endl;
-                std::cout << "20.测试获取前100块各个账号奖励" << std::endl;
-                std::cout << "21.通过交易hash获取块信息" << std::endl;
-                std::cout << "22.获取失败交易列表信息" << std::endl;
-                std::cout << "23.获取节点高度是否符合高度范围" << std::endl;
+				std::cout << "2. Simulate pledged assets ." << std::endl;
+				std::cout << "3. Get the fuel cost set by the machine and the maximum and minimum average fuel cost of the entire network node " << std::endl;
+				std::cout << "4. Check the balance according to UTXO " << std::endl;
+				std::cout << "5. Set node signature fee " << std::endl;
+                std::cout << "8. Simulate depledged assets " << std::endl;
+                std::cout << "9.Query the amount of pledged assets of an account " << std::endl;
+                std::cout << "10.Multi-account transaction " << std::endl;
+                std::cout << "11.Query transaction list " << std::endl;
+                std::cout << "12.Check transaction details " << std::endl;
+                std::cout << "13.Query block list " << std::endl;
+                std::cout << "14.Query block details " << std::endl;
+                std::cout << "15.Query all pledge addresses " << std::endl;
+                std::cout << "16.Get the total number of blocks in 5 minutes " << std::endl;
+                std::cout << "17.Set node packaging fee " << std::endl;
+                std::cout << "18.Get all public network node packaging fees " << std::endl;
+                std::cout << "19.Automatic out-of-order transaction (simplified version) " << std::endl;
+                std::cout << "20.Test to get the first 100 pieces of rewards for each account " << std::endl;
+                std::cout << "21.Obtain block information through transaction hash " << std::endl;
+                std::cout << "22.Get the list of failed transactions " << std::endl;
+                std::cout << "23.Get whether the height of the node meets the height range " << std::endl;
 
 
 				std::cout << "Please select  ---> ";
@@ -1110,13 +1110,13 @@ void ca_print()
                         auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
                         Transaction* txn = pRocksDb->TransactionInit();
 
-                        std::cout << "查询地址：" ;
+                        std::cout << "look for the address ：" ;
                         std::string addr;
                         std::cin >> addr;
                         std::vector<std::string> utxoHashs;
                         pRocksDb->GetUtxoHashsByAddress(txn, addr, utxoHashs);
                         uint64_t total = 0;
-                        std::cout << "账户:" << addr << std::endl << "utxo:" << std::endl;
+                        std::cout << "Account :" << addr << std::endl << "utxo:" << std::endl;
                         for (auto i : utxoHashs)
                         {
                             std::cout << i << std::endl;
@@ -1135,18 +1135,18 @@ void ca_print()
                             }
                         }
 
-                        std::cout << "UTXO 总值：" << total << std::endl;
+                        std::cout << "UTXO Total value ：" << total << std::endl;
 						break;
 					}
                     case 5 :
                     {
                         uint64_t service_fee = 0, show_service_fee;
-                        cout << "输入矿费: ";
+                        cout << "Enter the mining fee : ";
                         cin >> service_fee;
 
                         if(service_fee < 1000  ||  service_fee > 100000)
                         {
-                            cout<<" 输入矿费不在合理范围！"<<endl;
+                            cout<<" The input mining fee is not in a reasonable range ！"<<endl;
                             break;
                         }
 
@@ -1158,14 +1158,14 @@ void ca_print()
                         }
 
                         rdb_ptr->GetDeviceSignatureFee(show_service_fee);
-                        cout << "矿费---------------------------------------------------------->>" << show_service_fee << endl;
+                        cout << "Mining fee ---------------------------------------------------------->>" << show_service_fee << endl;
                         break;
                     }
                     case 6 :
                     {
                         std::vector<std::string> test_list;
-                        test_list.push_back("1. 获得最高块hash和高度");
-                        test_list.push_back("2. 获得mac");
+                        test_list.push_back("1. Get the highest block hash and height ");
+                        test_list.push_back("2. Get mac ");
 
                         for (auto v : test_list) 
                         {
@@ -1173,11 +1173,11 @@ void ca_print()
                         }
 
                         std::string node_id;
-                        std::cout << "输入id: ";
+                        std::cout << "Enter id : ";
                         std::cin >> node_id;
 
                         uint32_t test_num {0};
-                        std::cout << "输入选项号: ";
+                        std::cout << "Enter option number : ";
                         std::cin >> test_num;
 
                         CaTestInfoReq ca_test_req;
@@ -1247,20 +1247,20 @@ void ca_print()
 					}
                     case 9:
                     {
-                        std::cout << "查询账号质押资产额度：" << std::endl;
-                        { // 查询质押
+                        std::cout << "Query the amount of pledged assets of an account ：" << std::endl;
+                        { // Query pledge 
 
                             std::string addr;
-                            std::cout << "查询账号：";
+                            std::cout << "Query account ：";
                             std::cin >> addr;
 
                             std::string txHash;
-                            std::cout << "输入hash(第一次直接回车)：";
+                            std::cout << "Enter hash (Enter directly for the first time) ：";
                             std::cin.get();
                             std::getline(std::cin, txHash);
 
                             size_t count = 0;
-                            std::cout << "输入count：";
+                            std::cout << "Enter count ：";
                             std::cin >> count;
 
                             std::shared_ptr<GetPledgeListReq> req = std::make_shared<GetPledgeListReq>();
@@ -1313,33 +1313,33 @@ void ca_print()
                         double minerFees = 0;
 
                         int addrCount = 0;
-                        std::cout << "发起方账号个数:";
+                        std::cout << "Number of initiator accounts :";
                         std::cin >> addrCount;
                         for (int i = 0; i < addrCount; ++i)
                         {
                             std::string addr;
-                            std::cout << "发起账号" << i + 1 << ": ";
+                            std::cout << "Initiate an account " << i + 1 << ": ";
                             std::cin >> addr;
                             fromAddr.push_back(addr);
                         }
 
-                        std::cout << "接收方账号个数:";
+                        std::cout << "Number of recipient accounts :";
                         std::cin >> addrCount;
                         for (int i = 0; i < addrCount; ++i)
                         {
                             std::string addr;
                             double amt = 0; 
-                            std::cout << "接收账号" << i + 1 << ": ";
+                            std::cout << "Receiving account " << i + 1 << ": ";
                             std::cin >> addr;
-                            std::cout << "金额: ";
+                            std::cout << "Amount : ";
                             std::cin >> amt;
                             toAddr.insert(make_pair(addr, amt * DECIMAL_NUM));
                         }
 
-                        std::cout << "签名数:";
+                        std::cout << "Number of signatures :";
                         std::cin >> needVerifyPreHashCount;
 
-                        std::cout << "手续费:";
+                        std::cout << "Handling fee :";
                         std::cin >> minerFees;
 
                         TxHelper::DoCreateTx(fromAddr, toAddr, needVerifyPreHashCount, minerFees * DECIMAL_NUM);
@@ -1348,20 +1348,20 @@ void ca_print()
                     case 11:
                     {
 
-                        { // 交易列表
+                        { // Transaction list 
 
                             std::string addr;
-                            std::cout << "查询账号：";
+                            std::cout << "Query account ：";
                             std::cin >> addr;
 
                             //size_t index = 0;
                             std::string txHash;
-                            std::cout << "输入hash(第一次直接回车)：";
+                            std::cout << "Enter hash (Enter directly for the first time) ：";
                             std::cin.get();
                             std::getline(std::cin, txHash);
 
                             size_t count = 0;
-                            std::cout << "输入count：";
+                            std::cout << "Enter count：";
                             std::cin >> count;
 
                             std::shared_ptr<GetTxInfoListReq> req = std::make_shared<GetTxInfoListReq>();
@@ -1399,31 +1399,31 @@ void ca_print()
                                 std::string strType;
                                 if (type == TxInfoType_Originator)
                                 {
-                                    strType = "交易发起方";
+                                    strType = "Transaction initiator ";
                                 }
                                 else if (type == TxInfoType_Receiver)
                                 {
-                                    strType = "交易接收方";
+                                    strType = "Transaction recipient ";
                                 }
                                 else if (type == TxInfoType_Gas)
                                 {
-                                    strType = "手续费奖励";
+                                    strType = "Handling fee reward ";
                                 }
                                 else if (type == TxInfoType_Award)
                                 {
-                                    strType = "区块奖励";
+                                    strType = "Block reward ";
                                 }
                                 else if (type == TxInfoType_Pledge)
                                 {
-                                    strType = "质押";
+                                    strType = "Pledge ";
                                 }
                                 else if (type == TxInfoType_Redeem)
                                 {
-                                    strType = "解除质押";
+                                    strType = "Release pledge ";
                                 }
                                 else if (type == TxInfoType_PledgedAndRedeemed)
                                 {
-                                    strType = "质押但已解除";
+                                    strType = "Pledge but released ";
                                 }
 
                                 std::cout << "type: " << strType << std::endl;
@@ -1435,13 +1435,13 @@ void ca_print()
                     }
                     case 12:
                     {
-                        { // 查询交易
+                        { // Query transaction 
                             std::string txHash;
-                            std::cout << "查询交易哈希：";
+                            std::cout << "Query transaction hash ：";
                             std::cin >> txHash;
 
                             std::string addr;
-                            std::cout << "查询地址: " ;
+                            std::cout << "look for the address : " ;
                             std::cin >> addr;
 
                             std::shared_ptr<GetTxInfoDetailReq> req = std::make_shared<GetTxInfoDetailReq>();
@@ -1486,11 +1486,11 @@ void ca_print()
                     case 13:
                     {
                         size_t index = 0;
-                        std::cout << "查询index：";
+                        std::cout << "Query index ：";
                         std::cin >> index;
 
                         size_t count = 0;
-                        std::cout << "查询count：" ;
+                        std::cout << "Query count：" ;
                         std::cin >> count;
                         
                         GetBlockInfoListReq req;
@@ -1498,7 +1498,7 @@ void ca_print()
                         req.set_index(index);
                         req.set_count(count);
 
-                        std::cout << " -- 附近节点id列表 -- " << std::endl;
+                        std::cout << " --List of nearby node ids  -- " << std::endl;
                         std::vector<Node> idInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
                         std::vector<std::string> ids;
                         for (const auto & idInfo : idInfos)
@@ -1512,7 +1512,7 @@ void ca_print()
                         }
 
                         std::string id;
-                        std::cout << "查询ID：";
+                        std::cout << "Query ID ：";
                         std::cin >> id;
 
                         net_register_callback<GetBlockInfoListAck>([] (const std::shared_ptr<GetBlockInfoListAck> & ack, const MsgData & msgdata){
@@ -1547,7 +1547,7 @@ void ca_print()
                                 std::cout << " ---- block list " << i << " end ---- " << std::endl;
                             }
 
-                            std::cout << "查询结束" << std::endl;
+                            std::cout << "End of query " << std::endl;
                         });
 
                         net_send_message<GetBlockInfoListReq>(id, req, net_com::Priority::kPriority_Middle_1);
@@ -1557,14 +1557,14 @@ void ca_print()
                     case 14:
                     {
                         std::string hash;
-                        std::cout << "查询 block hash：" ;
+                        std::cout << "Inquire  block hash：" ;
                         std::cin >> hash;
 
                         GetBlockInfoDetailReq req;
                         req.set_version(getVersion());
                         req.set_blockhash(hash);
 
-                        std::cout << " -- 附近节点id列表 -- " << std::endl;
+                        std::cout << " -- List of nearby node ids  -- " << std::endl;
                         std::vector<Node> idInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
                         std::vector<std::string> ids;
                         for (const auto & idInfo : idInfos)
@@ -1605,7 +1605,7 @@ void ca_print()
 
                             std::cout << " ---- block info end " << " ---- " << std::endl;
 
-                            std::cout << "查询结束" << std::endl;
+                            std::cout << "End of query " << std::endl;
                         });
 
                         net_send_message<GetBlockInfoDetailReq>(id, req);
@@ -1623,27 +1623,27 @@ void ca_print()
                         std::vector<std::string> addressVec;
                         pRocksDb->GetPledgeAddress(txn, addressVec);
 
-                        std::cout << std::endl << "---- 已质押地址 start ----" << std::endl;
+                        std::cout << std::endl << "---- Pledged address  start ----" << std::endl;
                         for (auto & addr : addressVec)
                         {
                             uint64_t pledgeamount = 0;
                             SearchPledge(addr, pledgeamount);
                             std::cout << addr << " : " << pledgeamount << std::endl;
                         }
-                        std::cout << "---- 已��押地址数量:" << addressVec.size() << " ----" << std::endl << std::endl;
+                        std::cout << "---- Number of staked addresses :" << addressVec.size() << " ----" << std::endl << std::endl;
 
-                        std::cout << "---- 已质押地址 end  ----" << std::endl << std::endl;
+                        std::cout << "---- Pledged address  end  ----" << std::endl << std::endl;
 
                         break;
                     }
                     case 16:
                     {
-                        std::cout << "获取5分钟内总块数" << std::endl;
+                        std::cout << "Get the total number of blocks in 5 minutes " << std::endl;
                         a_award::AwardAlgorithm awardAlgorithm;
 
                         uint64_t blockSum = 0;
                         awardAlgorithm.GetBlockNumInUnitTime(blockSum);
-                        std::cout << "总块数：" << blockSum << std::endl;
+                        std::cout << "Total number of blocks ：" << blockSum << std::endl;
                         break;
                     }
                     case 17:
@@ -1651,8 +1651,8 @@ void ca_print()
                         uint64_t packageFee = 0;
                         get_device_package_fee(packageFee);
 
-                        std::cout << "当前打包费用: " << packageFee << std::endl;
-                        std::cout << "设置打包费用(必须为正整数): ";
+                        std::cout << "Current packaging costs : " << packageFee << std::endl;
+                        std::cout << "Set packaging fee (must be a positive integer) : ";
                         std::string strPackageFee;
                         std::cin >> strPackageFee;
                         int newPackageFee = 0;
@@ -1666,25 +1666,25 @@ void ca_print()
                         }
                         if (newPackageFee < 0 || newPackageFee > 100 * DECIMAL_NUM)
                         {
-                            std::cout << "请输入正确范围内的打包费(0-100000000)" << std::endl;
+                            std::cout << "Please enter the packing fee within the correct range (0-100000000)" << std::endl;
                             break ;
                         }
                         
                         int result = set_device_package_fee(newPackageFee);
                         if (result == 0)
                         {
-                            std::cout << "设置打包费成功 " << newPackageFee << std::endl;
+                            std::cout << "Packing fee is set successfully  " << newPackageFee << std::endl;
                         }
                         else
                         {
-                            std::cout << "设置打包费失败" << std::endl;
+                            std::cout << "Failed to set package fee " << std::endl;
                         }
 
                         break;
                     }
                     case 18:
                     {
-                        std::cout << " -- 附近节点id列表 -- " << std::endl;
+                        std::cout << " -- List of nearby node ids  -- " << std::endl;
                         std::vector<Node> idInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
                         std::vector<std::string> ids;
                         for (const auto & i : idInfos)
@@ -1697,13 +1697,13 @@ void ca_print()
                         }
 
                         std::string id;
-                        std::cout << "查询ID：";
+                        std::cout << "Query ID ：";
                         std::cin >> id;
 
 
                         net_register_callback<GetNodeInfoAck>([] (const std::shared_ptr<GetNodeInfoAck> & ack, const MsgData &msgdata){
 
-                            std::cout << "显示公网节点" << std::endl;
+                            std::cout << "Show public network nodes " << std::endl;
                             for (auto & node : ack->node_list())
                             {
                                 std::cout << " -- local " << node.local() << " -- " << std::endl;
@@ -1727,24 +1727,24 @@ void ca_print()
                     case 19:
                     {
                         // int addrNum = 0;
-                        // std::cout << "账号数量：";
+                        // std::cout << "Number of accounts ：";
                         // std::cin >> addrNum;
 
                         // std::vector<std::string> addrs;
                         // for (int i = 0; i < addrNum; ++i)
                         // {
                         //     std::string tmpAddr;
-                        //     std::cout << "账号" << i << ": ";
+                        //     std::cout << "account number " << i << ": ";
                         //     std::cin >> tmpAddr;
                         //     addrs.push_back(tmpAddr);
                         // }
 
                         // std::string signFee;
-                        // std::cout << "手续费：";
+                        // std::cout << "Handling fee ：";
                         // std::cin >> signFee;
 
                         // int sleepTime = 0;
-                        // std::cout << "间隔时间(秒)：";
+                        // std::cout << "Interval time (seconds) ：";
                         // std::cin >> sleepTime;
 
                         // while(1)
@@ -1757,26 +1757,26 @@ void ca_print()
 
                         //     std::cout << std::endl << std::endl << std::endl << "=======================================================================" << std::endl;
                         //     CreateTx(addrs[0].c_str(), addrs[1].c_str(), amountStr.c_str(), NULL, 6, signFee);
-                        //     std::cout << "=====交易发起方：" << addrs[0] << std::endl;
-                        //     std::cout << "=====交易接收方：" << addrs[1] << std::endl;
-                        //     std::cout << "=====交易金额  ：" << amountStr << std::endl;
+                        //     std::cout << "=====Transaction initiator ：" << addrs[0] << std::endl;
+                        //     std::cout << "=====Transaction recipient ：" << addrs[1] << std::endl;
+                        //     std::cout << "=====Transaction amount   ：" << amountStr << std::endl;
                         //     std::cout << "=======================================================================" << std::endl << std::endl << std::endl << std::endl;
 
                         //     sleep(sleepTime);
 
                         //     std::cout << std::endl << std::endl << std::endl << "=======================================================================" << std::endl;
                         //     CreateTx(addrs[1].c_str(), addrs[0].c_str(), amountStr.c_str(), NULL, 6, signFee);
-                        //     std::cout << "=====交易发起方：" << addrs[1] << std::endl;
-                        //     std::cout << "=====交易接收方：" << addrs[0] << std::endl;
-                        //     std::cout << "=====交易金额  ：" << amountStr << std::endl;
+                        //     std::cout << "=====Transaction initiator ：" << addrs[1] << std::endl;
+                        //     std::cout << "=====Transaction recipient ：" << addrs[0] << std::endl;
+                        //     std::cout << "=====Transaction amount   ：" << amountStr << std::endl;
                         //     std::cout << "=======================================================================" << std::endl << std::endl << std::endl << std::endl;
                         //     sleep(sleepTime);
                         // }
                         if (bIsCreateTx)
                         {
                             int i = 0;
-                            std::cout << "1. 结束交易" << std::endl;
-                            std::cout << "0. 继续交易" << std::endl;
+                            std::cout << "1. End the transaction " << std::endl;
+                            std::cout << "0. Continue trading " << std::endl;
                             std::cout << ">>>" << std::endl;
                             std::cin >> i;
                             if (i == 1)
@@ -1797,27 +1797,27 @@ void ca_print()
                         {
                             bStopTx = false;
                             // int sleepTime = 0;
-                            // std::cout << "间隔时间(秒)：";
+                            // std::cout << "Interval time (seconds) ：";
                             // std::cin >> sleepTime;
                             int addrNum = 0;
-                            std::cout << "账号数量：";
+                            std::cout << "Number of accounts ：";
                             std::cin >> addrNum;
 
                             std::vector<std::string> addrs;
                             for (int i = 0; i < addrNum; ++i)
                             {
                                 std::string tmpAddr;
-                                std::cout << "账号" << i << ": ";
+                                std::cout << "account number " << i << ": ";
                                 std::cin >> tmpAddr;
                                 addrs.push_back(tmpAddr);
                             }
 
                             std::string signFee;
-                            std::cout << "手续费：";
+                            std::cout << "Handling fee ：";
                             std::cin >> signFee;
 
                             int sleepTime = 0;
-                            std::cout << "间隔时间(秒)：";
+                            std::cout << "Interval time (seconds) ：";
                             std::cin >> sleepTime;
 
                             std::thread th(TestCreateTx, addrs, sleepTime, signFee);
@@ -1830,9 +1830,9 @@ void ca_print()
                     {
                         int blockNum = 1000;
 
-                        // 起始时间
+                        // Start time 
                         clock_t start = clock();
-                        // 获取前500块各个账号收益平均值
+                        // Get the average income of each account in the first 500 blocks 
                         auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
                         Transaction* txn = pRocksDb->TransactionInit();
                         if (txn == NULL)
@@ -1852,9 +1852,9 @@ void ca_print()
                             break;
                         }
 
-                        // 存放账号和前500高度总奖励
+                        // Deposit account and top 500 total rewards 
                         std::map<std::string, int64_t> addrAwards;
-                        std::map<std::string, uint64_t> addrSignNum;  // 存放账号和前500高度总签名数
+                        std::map<std::string, uint64_t> addrSignNum;  // Stored account number and total signatures of the top 500 height 
 
                         uint64_t minHeight = (int)top > blockNum ? (int)top - blockNum : 0;  
                         for ( ; top != minHeight; --top)
@@ -1898,7 +1898,7 @@ void ca_print()
                                                 addrAwards[txout.scriptpubkey()] = txout.value();
                                             }
 
-                                            // 总签名次数
+                                            // Total number of signatures 
                                             auto signNumIter = addrSignNum.find(txout.scriptpubkey());
                                             if (addrSignNum.end() != signNumIter)
                                             {
@@ -1917,14 +1917,14 @@ void ca_print()
 
                         for (auto & addrAward : addrAwards)
                         {
-                            std::cout << "账号：" << addrAward.first << "   奖励：" << addrAward.second << std::endl;
+                            std::cout << "account number ：" << addrAward.first << "   reward ：" << addrAward.second << std::endl;
                         }
 
                         std::cout << std::endl;
 
                         for (auto & item : addrSignNum)
                         {
-                            std::cout << "账号：" << item.first << "   次数：" << item.second << std::endl;
+                            std::cout << "account number ：" << item.first << "   reward ：" << item.second << std::endl;
                         }
 
                         if (addrAwards.size() == 0 || addrSignNum.size() == 0)
@@ -1932,8 +1932,8 @@ void ca_print()
                             break;
                         }
 
-                        std::vector<uint64_t> awards;  // 存放所有奖励值
-                        std::vector<uint64_t> vecSignNum;  // 存放所有奖励值
+                        std::vector<uint64_t> awards;  // Store all reward values 
+                        std::vector<uint64_t> vecSignNum;  //Store all reward values 
 
                         for (auto & addrAward : addrAwards)
                         {
@@ -1982,7 +1982,7 @@ void ca_print()
                             {
                                 abnormalCount++;
                                 awardList.push_back(addrAward.first);
-                                std::cout << "********** 奖励总值异常账号：" << addrAward.first << "   总奖励 = " << addrAward.second << std::endl;
+                                std::cout << "********** Account with abnormal reward total value ：" << addrAward.first << "  Total reward  = " << addrAward.second << std::endl;
                             }
                         }
 
@@ -1992,7 +1992,7 @@ void ca_print()
                             {
                                 signNumAbnormalCount++;
                                 signNumList.push_back(addrSign.first);
-                                std::cout << "********** 签名次数异常账号：" << addrSign.first << "   总次数 = " << addrSign.second << std::endl;
+                                std::cout << "********** Account with abnormal number of signatures ：" << addrSign.first << "   Total times  = " << addrSign.second << std::endl;
                             }
                         }
 
@@ -2000,26 +2000,26 @@ void ca_print()
                         set_union(awardList.begin(), awardList.end(), signNumList.begin(), signNumList.end(), std::back_inserter(addrList));
 
 
-                        std::cout << "总耗时：" << ((double)end - start) / CLOCKS_PER_SEC << "秒" <<std::endl;
-                        std::cout << "********** 奖励总值---1/4 = " << quarterValue << std::endl;
-                        std::cout << "********** 奖励总值---3/4 = " << threeQuarterValue << std::endl;
-                        std::cout << "********** 奖励总值---差值 = " << diffValue << std::endl;
-                        std::cout << "********** 奖励总值---上限 = " << upperLimitValue << std::endl;
-                        std::cout << "********** 奖励总值---总帐号个数 = " << addrAwards.size() << std::endl;
-                        std::cout << "********** 奖励总值---异常帐号个数 = " << abnormalCount << std::endl;
-                        std::cout << "********** 奖励总值---异常帐号占比 = " << ( (double)abnormalCount / addrAwards.size() ) * 100 << "%" << std::endl;
+                        std::cout << "Total time ：" << ((double)end - start) / CLOCKS_PER_SEC << "秒" <<std::endl;
+                        std::cout << "********** Total reward value---1/4  = " << quarterValue << std::endl;
+                        std::cout << "********** Total reward value---3/4  = " << threeQuarterValue << std::endl;
+                        std::cout << "********** Total reward value --- difference  = " << diffValue << std::endl;
+                        std::cout << "********** Total reward value---upper limit  = " << upperLimitValue << std::endl;
+                        std::cout << "********** Total reward value --- total number of accounts  = " << addrAwards.size() << std::endl;
+                        std::cout << "********** Total reward value---the number of abnormal accounts  = " << abnormalCount << std::endl;
+                        std::cout << "********** Total reward value---proportion of abnormal accounts  = " << ( (double)abnormalCount / addrAwards.size() ) * 100 << "%" << std::endl;
 
-                        std::cout << "********** 签名次数---1/4 = " << signNumQuarterValue << std::endl;
-                        std::cout << "********** 签名次数---3/4 = " << signNumThreeQuarterValue << std::endl;
-                        std::cout << "********** 签名次数---差值 = " << signNumDiffValue << std::endl;
-                        std::cout << "********** 签名次数---上限 = " << signNumUpperLimitValue << std::endl;
-                        std::cout << "********** 签名次数---总帐号个数 = " << addrAwards.size() << std::endl;
-                        std::cout << "********** 签名次数---异常帐号个数 = " << signNumAbnormalCount << std::endl;
-                        std::cout << "********** 签名次数---异常帐号占比 = " << ( (double)signNumAbnormalCount / addrAwards.size() ) * 100 << "%" << std::endl;
+                        std::cout << "********** Total reward value---1/4 = " << signNumQuarterValue << std::endl;
+                        std::cout << "********** Total reward value---3/4 = " << signNumThreeQuarterValue << std::endl;
+                        std::cout << "********** Total reward value --- difference = " << signNumDiffValue << std::endl;
+                        std::cout << "********** Total reward value---upper limit= " << signNumUpperLimitValue << std::endl;
+                        std::cout << "********** Total reward value --- total number of accounts = " << addrAwards.size() << std::endl;
+                        std::cout << "********** Number of signatures---number of abnormal accounts  = " << signNumAbnormalCount << std::endl;
+                        std::cout << "********** Total reward value---proportion of abnormal accounts  = " << ( (double)signNumAbnormalCount / addrAwards.size() ) * 100 << "%" << std::endl;
 
-                        std::cout << std::endl << "********** 总异常账号个数 = " << addrList.size() << std::endl;
-                        std::cout << "********** 签名次数占比 = " << (double)signNumAbnormalCount / addrList.size() * 100 << "%" << std::endl;
-                        std::cout << "********** 奖励总值占比 = " << (double)abnormalCount / addrList.size() * 100 << "%" << std::endl;
+                        std::cout << std::endl << "********** Total number of abnormal accounts = " << addrList.size() << std::endl;
+                        std::cout << "********** Proportion of signatures  = " << (double)signNumAbnormalCount / addrList.size() * 100 << "%" << std::endl;
+                        std::cout << "**********Proportion of total reward value  = " << (double)abnormalCount / addrList.size() * 100 << "%" << std::endl;
                         break;
                     }
                     case 21:
@@ -2061,19 +2061,19 @@ void ca_print()
                     }
                     case 22:
                     {
-                        std::cout << "查询失败交易列表：" << std::endl;
+                        std::cout << "Query the list of failed transactions ：" << std::endl;
 
                         std::string addr;
-                        std::cout << "查询账号：";
+                        std::cout << "Query account ：";
                         std::cin >> addr;
 
                         std::string txHash;
-                        std::cout << "输入hash(第一次直接回车)：";
+                        std::cout << "Enter hash (Enter directly for the first time) ：";
                         std::cin.get();
                         std::getline(std::cin, txHash);
 
                         size_t count = 0;
-                        std::cout << "输入count：";
+                        std::cout << "Enter count ：";
                         std::cin >> count;
 
                         std::shared_ptr<GetTxFailureListReq> req = std::make_shared<GetTxFailureListReq>();
@@ -2116,7 +2116,7 @@ void ca_print()
                     }
                     case 23:
                     {
-                        std::cout << " -- 附近节点id列表 -- " << std::endl;
+                        std::cout << " -- List of nearby node ids  -- " << std::endl;
                         std::vector<Node> idInfos = Singleton<NodeCache>::get_instance()->get_nodelist();
                         std::vector<std::string> ids;
                         for (const auto & idInfo : idInfos)
@@ -2130,7 +2130,7 @@ void ca_print()
                         }
 
                         std::string id;
-                        std::cout << "查询ID：";
+                        std::cout << "Query ID ：";
                         std::cin >> id;
 
                         CheckNodeHeightReq req;
@@ -2146,7 +2146,7 @@ void ca_print()
                             std::cout << "height: " << ack->height() << std::endl;
                             std::cout << std::endl;
                             
-                            std::cout << "查询结束" << std::endl;
+                            std::cout << "End of query " << std::endl;
                         });
 
                         net_send_message<CheckNodeHeightReq>(id, req, net_com::Priority::kPriority_Middle_1);
@@ -2158,12 +2158,12 @@ void ca_print()
                         std::string fileName("account.txt");
 
                         ca_console redColor(kConsoleColor_Red, kConsoleColor_Black, true); 
-                        std::cout << redColor.color() << "输出文件为：" << fileName << " 请用Courier New字体查看" << redColor.reset() <<  std::endl;
+                        std::cout << redColor.color() << "The output file is ：" << fileName << " Please use Courier New font to view " << redColor.reset() <<  std::endl;
 
                         ofstream file;
                         file.open(fileName);
 
-                        file << "请用Courier New字体查看" << std::endl << std::endl;
+                        file << "Please use Courier New font to view " << std::endl << std::endl;
 
                         for (auto & item : g_AccountInfo.AccountList)
                         {
@@ -2295,7 +2295,7 @@ void ca_print()
                         }
                         if(nodes.size() <= 0)
                         {
-                            std::cout << "未找到节点！" << std::endl;
+                            std::cout << "Node not found ！" << std::endl;
                             break;
                         }
 
@@ -2303,13 +2303,13 @@ void ca_print()
 						fileStream.open("node.txt");
 						if(!fileStream)
 						{
-							std::cout << "打开文件失败！" << std::endl;
+							std::cout << "fail to open the file ！" << std::endl;
 							break;
 						}
 
 						for(auto i : nodes)
 						{
-							// 获取所有节点的块信息
+							// Get block information of all nodes 
 							SendDevInfoReq(i);
 						}
 
@@ -2317,7 +2317,7 @@ void ca_print()
 						{
 							if( g_nodeinfo.size() < nodes.size() )
 							{
-								std::cout << "已获取到 ：" << g_nodeinfo.size() << std::endl;
+								std::cout << "Gotten ：" << g_nodeinfo.size() << std::endl;
 								sleep(1);
 							}
 							else
@@ -2326,9 +2326,9 @@ void ca_print()
 							}
 						}
 
-                        std::cout << "节点总数 ：" << nodes.size() << std::endl;
-						std::cout << "已获取到 ：" << g_nodeinfo.size() << std::endl;
-						std::cout << "开始写文件！" << std::endl;
+                        std::cout << "Total number of nodes  ：" << nodes.size() << std::endl;
+						std::cout << "Gotten  ：" << g_nodeinfo.size() << std::endl;
+						std::cout << "Start writing file ！" << std::endl;
 
                         g_NodeInfoLock.lock_shared();
                         for(auto k : g_nodeinfo)
@@ -2338,10 +2338,10 @@ void ca_print()
                             std::cout << "hash：" << k.hash() << std::endl;
                             std::cout << "addr：" << k.base58addr() << std::endl << std::endl;
 
-							// 所有节点写入node.txt 文件
+							// Write all nodes to the node.txt file 
 							fileStream << "ID：";
 							fileStream << k.id();
-							fileStream << ",高度：";
+							fileStream << ",height ：";
 							fileStream << k.height();
 							fileStream << ",hash：";
 							fileStream << k.hash();
@@ -2351,7 +2351,7 @@ void ca_print()
 						}
                         g_NodeInfoLock.unlock_shared();
 
-                        std::cout << "结束！" << std::endl;
+                        std::cout << "the end ！" << std::endl;
 						g_nodeinfo.clear();
 
 						fileStream.close();
@@ -2472,7 +2472,7 @@ void AutoTranscation()
     inputThread.join();
 }
 
-// 获取某个节点的最高块的高度和hash
+// Get the height and hash of the highest block of a node 
 void SendDevInfoReq(const std::string id)
 {
     GetDevInfoReq getDevInfoReq;
@@ -2488,21 +2488,21 @@ void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgDa
 {
     debug("recv HandleGetDevInfoReq!");
 
-    // 判断版本是否兼容
+    // Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		error("HandleExitNode IsVersionCompatible");
 		return ;
 	}
 
-    // 版本
+    // version 
     GetDevInfoAck getDevInfoAck;
     getDevInfoAck.set_version( getVersion() );
 
     std::string ownID = net_get_self_node_id();
     getDevInfoAck.set_id( ownID );
 
-    // 获取一个事务用于读取数据库
+    // Get a transaction for reading the database 
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
 	Transaction* txn = pRocksDb->TransactionInit();
 	if( txn == NULL )
@@ -2511,12 +2511,12 @@ void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgDa
 		return ;
 	}
 
-    // 退出域销毁事务
+    // Exit domain destruction transaction 
     ON_SCOPE_EXIT{
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-    // 高度
+    // height 
     unsigned int blockHeight = 0;
     auto status = pRocksDb->GetBlockTop(txn, blockHeight);
     if( status != 0)
@@ -2536,7 +2536,7 @@ void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgDa
     }
     getDevInfoAck.set_hash( blockHash );
 
-    // base58地址
+    // base58 address 
     getDevInfoAck.set_base58addr( g_AccountInfo.DefaultKeyBs58Addr );
 
     net_send_message<GetDevInfoAck>(msg->id(), getDevInfoAck);
@@ -2544,7 +2544,7 @@ void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgDa
 
 void HandleGetDevInfoAck( const std::shared_ptr<GetDevInfoAck>& msg, const MsgData& msgdata )
 {
-    // 版本判断
+    // Version judgment 
     if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		error("HandleExitNode IsVersionCompatible");
@@ -2714,17 +2714,17 @@ void handle_transaction()
 void handle_pledge()
 {
     std::string  fromAddrstr;
-    //cout << "请输入要质押的账号："<< endl;
+    //cout << "Please enter the account number to be pledged ："<< endl;
     //std::cin >> fromAddrstr;
     fromAddrstr = g_AccountInfo.DefaultKeyBs58Addr; //lzg
-    cout<<"默认账号： "<< fromAddrstr << endl;  //lzg
+    cout<<"Default account ： "<< fromAddrstr << endl;  //lzg
     
     std::string pledge;
-    cout << "请输入要质押金额："<< endl;
+    cout << "Please enter the pledged amount ："<< endl;
     std::cin >> pledge;
 
     std::string GasFee;
-    cout << "请输入GasFee:" << endl;
+    cout << "Please enter GasFee :" << endl;
     std::cin >> GasFee;
 
     std::string password;
@@ -2741,7 +2741,7 @@ void handle_pledge()
 
 void handle_redeem_pledge()
 {
-    // 获取当前所有块的签名信息
+    // Get the signature information of all current blocks 
     // GetAllAccountSignNum();
     auto pRocksDb = MagicSingleton<Rocksdb>::GetInstance();
     Transaction* txn = pRocksDb->TransactionInit();
@@ -2758,7 +2758,7 @@ void handle_redeem_pledge()
     pRocksDb->GetPledgeAddressUtxo(txn, addr, utxos);
     std::reverse(utxos.begin(), utxos.end());
 
-    std::cout << "-- 目前已有质押 -- " << std::endl;
+    std::cout << "-- Currently pledged  -- " << std::endl;
     for (auto & utxo : utxos)
     {
         std::cout << "utxo: " << utxo << std::endl;
@@ -2790,9 +2790,9 @@ void handle_redeem_pledge()
 }
 
 /**
-A类地址：10.0.0.0 - 10.255.255.255 
-B类地址：172.16.0.0 - 172.31.255.255
-C类地址：192.168.0.0 -192.168.255.255 
+Class A address ：10.0.0.0 - 10.255.255.255 
+Class B address ：172.16.0.0 - 172.31.255.255
+Class C address ：192.168.0.0 -192.168.255.255 
  */
 bool isPublicIp(const string& ip)
 {
@@ -2871,7 +2871,7 @@ int UpdatePublicNodeToConfigFile()
             if (amount < g_TxNeedPledgeAmt)
             {
                 cout << "Less mount of pledge " << IpPort::ipsz(node.public_ip) << endl;
-                // 质押金额不足
+                // Insufficient pledge deposit 
                 continue ;
             }
 
@@ -2970,13 +2970,13 @@ void net_register_chain_height_callback()
 
 
 /**
- * @description: 注册回调函数
- * @param {*} 无
- * @return {*} 无
+ * @description: Register callback function 
+ * @param {*} no 
+ * @return {*} no 
  */
 void RegisterCallback()
 {
-    // 区块同步相关
+    // Block synchronization related 
     net_register_callback<SyncGetnodeInfoReq>(HandleSyncGetnodeInfoReq);
     net_register_callback<SyncGetnodeInfoAck>(HandleSyncGetnodeInfoAck);
     net_register_callback<SyncBlockInfoReq>(HandleSyncBlockInfoReq);
@@ -2991,56 +2991,56 @@ void RegisterCallback()
     net_register_callback<SyncVerifyPledgeNodeAck>(HandleSyncVerifyPledgeNodeAck);
 
 
-    // 交易接口
-    // PC交易交易流转
+    // Transaction interface 
+    // PC transaction transaction flow 
     net_register_callback<TxMsg>(HandleTx);
 
-    // 手机端主网账户一对一交易（老版本）
-    net_register_callback<CreateTxMsgReq>(HandleCreateTxInfoReq); // 第一步
-    net_register_callback<TxMsgReq>(HandlePreTxRaw); // 第二步
+    // One-to-one transaction with mainnet account on mobile terminal (old version) 
+    net_register_callback<CreateTxMsgReq>(HandleCreateTxInfoReq); // Step 1
+    net_register_callback<TxMsgReq>(HandlePreTxRaw); // Step 2 
 
-    // 手机端主网账户发起质押
-    net_register_callback<CreatePledgeTxMsgReq>(HandleCreatePledgeTxMsgReq); // 第一步
-    net_register_callback<PledgeTxMsgReq>(HandlePledgeTxMsgReq);// 第二步
+    // Initiation of pledge on mobile mainnet account 
+    net_register_callback<CreatePledgeTxMsgReq>(HandleCreatePledgeTxMsgReq); // Step 1
+    net_register_callback<PledgeTxMsgReq>(HandlePledgeTxMsgReq);// Step 2 
 
-    // 手机端主网账户发起解除质押
-    net_register_callback<CreateRedeemTxMsgReq>(HandleCreateRedeemTxMsgReq); // 第一步
-    net_register_callback<RedeemTxMsgReq>(HandleRedeemTxMsgReq);// 第二步
+    // The mobile phone mainnet account initiates the release of the pledge 
+    net_register_callback<CreateRedeemTxMsgReq>(HandleCreateRedeemTxMsgReq); // Step 1
+    net_register_callback<RedeemTxMsgReq>(HandleRedeemTxMsgReq);// Step 2 
 
-    // 手机端主网账户发起多重交易
-    net_register_callback<CreateMultiTxMsgReq>(HandleCreateMultiTxReq); // 第一步
-    net_register_callback<MultiTxMsgReq>(HandleMultiTxReq); // 第二步
+    // Initiate multiple transactions on mobile mainnet accounts 
+    net_register_callback<CreateMultiTxMsgReq>(HandleCreateMultiTxReq); // Step 1
+    net_register_callback<MultiTxMsgReq>(HandleMultiTxReq); // Step 2 
 
 
-    // 手机连接矿机一对一交易
+    // Mobile phone connected to miner one-to-one transaction 
     net_register_callback<VerifyDevicePasswordReq>(HandleVerifyDevicePassword);
     net_register_callback<CreateDeviceTxMsgReq>(HandleCreateDeviceTxMsgReq);
 
-    // 手机端连接矿机账户发起多重交易
+    // The mobile terminal connects to the mining machine account to initiate multiple transactions 
     net_register_callback<CreateDeviceMultiTxMsgReq>(HandleCreateDeviceMultiTxMsgReq); 
 
-    // 手机端连接矿机发起质押交易
+    // The mobile terminal connects to the miner to initiate a pledge transaction 
     net_register_callback<CreateDevicePledgeTxMsgReq>(HandleCreateDevicePledgeTxMsgReq); 
     // 手机端连接矿机发起解除质押交易
     net_register_callback<CreateDeviceRedeemTxReq>(HandleCreateDeviceRedeemTxMsgReq); 
     
     
-    // 辅助接口
-    // 测试接口注册
+    // Auxiliary interface 
+    // Test interface registration 
     net_register_callback<GetDevInfoAck>(HandleGetDevInfoAck);
     net_register_callback<GetDevInfoReq>(HandleGetDevInfoReq);
 
-    // 扫描矿机获取矿机信息接口
+    // Scan the mining machine to obtain the mining machine information interface 
     net_register_callback<GetMacReq>(HandleGetMacReq);
 
 
-    // 广播
-    // 建块广播
+    // broadcast 
+    // Block broadcast 
     net_register_callback<BuileBlockBroadcastMsg>(HandleBuileBlockBroadcastMsg);
-    //  交易挂起广播
+    // Transaction pending broadcast 
     net_register_callback<TxPendingBroadcastMsg>(HandleTxPendingBroadcastMsg);
 
-    // 确认交易是否成功 20210309
+    // Confirm whether the transaction is successful  20210309
     net_register_callback<ConfirmTransactionReq>(HandleConfirmTransactionReq);
     net_register_callback<ConfirmTransactionAck>(HandleConfirmTransactionAck);
     
@@ -3048,9 +3048,9 @@ void RegisterCallback()
 }
 
 /**
- * @description: 初始化手续费和打包费
- * @param {*} 无
- * @return {*} 无
+ * @description: Initialization fee and packaging fee 
+ * @param {*} no 
+ * @return {*} no 
  */
 void InitFee()
 { 
@@ -3073,7 +3073,7 @@ void InitFee()
     //mineSignatureFee = 10000;
     net_set_self_fee(minfee); 
 
-    // 向网络层注册主账号地址
+    // Register the master account address with the network layer 
     net_set_self_base58_address(g_AccountInfo.DefaultKeyBs58Addr);
     ca_console RegisterColor(kConsoleColor_Yellow, kConsoleColor_Black, true);
     std::cout << RegisterColor.color().c_str() << "RegisterCallback bs58Addr : " << g_AccountInfo.DefaultKeyBs58Addr << RegisterColor.reset().c_str() << std::endl;
@@ -3098,9 +3098,9 @@ void TestCreateTx(const std::vector<std::string> & addrs, const int & sleepTime,
 
         std::cout << std::endl << std::endl << std::endl << "=======================================================================" << std::endl;
         CreateTx("1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu", "18RM7FNtzDi41QEU5rAnrFdVaGBHvhTTH1", amountStr.c_str(), NULL, 6, "0.01");
-        std::cout << "=====交易发起方：1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu" << std::endl;
-        std::cout << "=====交易接收方：18RM7FNtzDi41QEU5rAnrFdVaGBHvhTTH1" << std::endl;
-        std::cout << "=====交易金额  ：" << amountStr << std::endl;
+        std::cout << "=====Transaction initiator ：1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu" << std::endl;
+        std::cout << "=====Transaction recipient ：18RM7FNtzDi41QEU5rAnrFdVaGBHvhTTH1" << std::endl;
+        std::cout << "=====Transaction amount   ：" << amountStr << std::endl;
         std::cout << "=======================================================================" << std::endl << std::endl << std::endl << std::endl;
 
         sleep(sleepTime);
@@ -3115,7 +3115,7 @@ void TestCreateTx(const std::vector<std::string> & addrs, const int & sleepTime,
     {
         if (bStopTx)
         {
-            std::cout << "结束交易！" << std::endl;
+            std::cout << "End the transaction ！" << std::endl;
             break;
         }
         srand(time(NULL));
@@ -3126,18 +3126,18 @@ void TestCreateTx(const std::vector<std::string> & addrs, const int & sleepTime,
 
         std::cout << std::endl << std::endl << std::endl << "=======================================================================" << std::endl;
         CreateTx(addrs[0].c_str(), addrs[1].c_str(), amountStr.c_str(), NULL, 6, signFee);
-        std::cout << "=====交易发起方：" << addrs[0] << std::endl;
-        std::cout << "=====交易接收方：" << addrs[1] << std::endl;
-        std::cout << "=====交易金额  ：" << amountStr << std::endl;
+        std::cout << "=====Transaction initiator ：" << addrs[0] << std::endl;
+        std::cout << "=====Transaction recipient ：" << addrs[1] << std::endl;
+        std::cout << "=====Transaction amount   ：" << amountStr << std::endl;
         std::cout << "=======================================================================" << std::endl << std::endl << std::endl << std::endl;
 
         sleep(sleepTime);
 
         std::cout << std::endl << std::endl << std::endl << "=======================================================================" << std::endl;
         CreateTx(addrs[1].c_str(), addrs[0].c_str(), amountStr.c_str(), NULL, 6, signFee);
-        std::cout << "=====交易发起方：" << addrs[1] << std::endl;
-        std::cout << "=====交易接收方：" << addrs[0] << std::endl;
-        std::cout << "=====交易金额  ：" << amountStr << std::endl;
+        std::cout << "=====Transaction initiator ：" << addrs[1] << std::endl;
+        std::cout << "=====Transaction recipient ：" << addrs[0] << std::endl;
+        std::cout << "=====Transaction amount   ：" << amountStr << std::endl;
         std::cout << "=======================================================================" << std::endl << std::endl << std::endl << std::endl;
         sleep(sleepTime);
     }

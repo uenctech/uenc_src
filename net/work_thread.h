@@ -16,7 +16,7 @@ public:
 	WorkThreads() = default;
 	~WorkThreads() = default;
 	
-	// 处理网络消息
+	// Process network messages 
 	static int handle_net_read(const MsgData& data);
 	static int handle_network_event(MsgData& data);
 	static bool handle_net_write(const MsgData& data);

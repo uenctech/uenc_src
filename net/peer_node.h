@@ -21,15 +21,15 @@ enum NodeType {NODE_ALL, NODE_PUBLIC};
 
 enum ConnKind
 {
-	NOTYET,		//尚未连接
-	DRTI2I,		//内内直连
-	DRTI2O,		//内外直连
-	DRTO2I,		//外内直连
-	DRTO2O,		//外外直连
-	HOLING,		//内内打洞
-	BYHOLE,		//内内打洞
-	BYSERV,		//服务中转
-	PASSIV		//被动接受连接
+	NOTYET,		//Not connected yet 
+	DRTI2I,		//Direct internal connection 
+	DRTI2O,		//Direct connection inside and outside 
+	DRTO2I,		//Direct connection from outside to inside 
+	DRTO2O,		//Direct connection 
+	HOLING,		//Hole inside 
+	BYHOLE,		//Hole inside 
+	BYSERV,		//Service transfer 
+	PASSIV		//Passively accept connections 
 };
 
 
@@ -70,7 +70,7 @@ public:
 	    return id == obj.id;
 	}
 
-	bool operator > (const Node &obj)//重载>操作符
+	bool operator > (const Node &obj)//Overload> operator 
 	{
 		return (*this).id > obj.id;
 	}
@@ -169,14 +169,14 @@ public:
 	std::string nodeid2str(std::bitset<K_ID_LEN> id);
 
 
-	// 刷新线程
+	// Refresh thread 
 	bool nodelist_refresh_thread_init();
-	// 线程函数
+	// Thread function 
 	void nodelist_refresh_thread_fun();
 
 	void conect_nodelist();
 
-	// 获取 ID
+	// Get ID 
 	const id_type get_self_id();
 	void set_self_id(const id_type & id);
 	void set_self_ip_p(const u32 public_ip);
@@ -196,9 +196,9 @@ public:
 	bool update_fee_by_id(const string &id, uint64_t fee);
 	bool update_package_fee_by_id(const string &id, uint64_t fee);
 
-	// 生成 ID
+	// Generate ID 
 	bool make_rand_id();
-	//判断string类型的id是否合法
+	//Determine whether the string type id is legal 
 	bool is_id_valid(const string &id);
 
 	
@@ -206,7 +206,7 @@ private:
 	std::mutex mutex_for_nodes_;
 	std::map<std::string, Node> node_map_;
 
-	// 公网节点列表
+	// Public network node list 
 	std::mutex mutex_for_public_nodes_;
 	std::map<std::string, Node> pub_node_map_;
 

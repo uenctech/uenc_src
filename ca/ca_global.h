@@ -39,12 +39,12 @@ extern std::atomic_int64_t echo_counter ;
 extern const uint64_t g_minSignFee;
 extern const uint64_t g_maxSignFee;
 
-extern uint64_t g_TxNeedPledgeAmt;   // 账号交易所需质押资产金额
-extern std::string g_InitAccount;    // 初始账号
+extern uint64_t g_TxNeedPledgeAmt;   // The amount of pledged assets required for account transactions 
+extern std::string g_InitAccount;    // Initial account 
 
 extern uint64_t g_MaxAwardTotal;
 
-extern uint64_t g_minPledgeNodeNum;   // 全网最少质押数，达到这个数之后普通节点不再能够签名质押交易
+extern uint64_t g_minPledgeNodeNum;   // The minimum number of pledges in the entire network, after reaching this number, ordinary nodes can no longer sign pledge transactions 
 
 extern std::mutex rollbackLock;
 extern int rollbackCount;
@@ -81,13 +81,13 @@ extern "C" {
 #define BESTINFO "bestinfo"
 #define GETDEVINFO "getdevinfo"
 
-// 交易类型
-#define TXTYPE_TX "tx"           // 正常交易
-#define TXTYPE_PLEDGE "pledge"   // 质押交易
-#define TXTYPE_REDEEM "redeem"   // 解质押交易
+// Transaction Type 
+#define TXTYPE_TX "tx"           // Normal transaction 
+#define TXTYPE_PLEDGE "pledge"   // Pledge transaction 
+#define TXTYPE_REDEEM "redeem"   // Depledge transaction 
 
-// 质押交易类型
-#define PLEDGE_NET_LICENCE "netLicence"       //入网质押
+// Pledge transaction type 
+#define PLEDGE_NET_LICENCE "netLicence"       //Into the network pledge 
 
 
 //#define BLKDB_DATA_FILE "./data/blk.seq"
@@ -102,7 +102,7 @@ extern char BLKDB_DATA_PATH[256];
 #define DECIMAL_NUM 1000000
 #define PRE_BLOCK_VALID_HEIGHT 0
 #define ORGIGINAL_BLOCK_VALID_HEIGHT 6
-#define FIX_DOUBLE_MIN_PRECISION 0.0000005 // 针对小数点后6位修订值
+#define FIX_DOUBLE_MIN_PRECISION 0.0000005 // Revised value for 6 digits after the decimal point 
 
 #define ENCOURAGE_TX 1
 
@@ -117,7 +117,7 @@ extern char BLKDB_DATA_PATH[256];
 #define FEE_SIGN_STR "FEE                                                             "
 #define FEE_SIGN_STR_LEN 64
 
-//额外奖励
+//Additional rewards 
 #define EXTRA_AWARD_SIGN_STR "AWARD                                                           "
 #define EXTRA_AWARD_SIGN_STR_LEN 64
 
@@ -133,7 +133,7 @@ extern char BLKDB_DATA_PATH[256];
 }
 #endif
 
-// 特殊交易虚拟账号
+// Special trading virtual account 
 #define VIRTUAL_ACCOUNT_PLEDGE "0000000000000000000000000000000000"
 
 

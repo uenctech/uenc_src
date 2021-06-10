@@ -33,7 +33,7 @@ std::string Config::GetAbsopath()
 
 bool Config::NewFile(std::string strFile)
 {
-    	// 如果文件存在 创建会覆盖原文件
+    	// If the file exists, creating will overwrite the original file 
    
     ofstream file( strFile.c_str(), fstream::out );
     if( file.fail() )
@@ -41,8 +41,8 @@ bool Config::NewFile(std::string strFile)
         debug(" file_path = %s", strFile.c_str());
 		return false;
     }
-	//json格式化网站：http://www.bejson.com/jsonviewernew/
-    //如果要新添加配置，去上面的网站格式化一下，然后再格式化回来就行 
+	//json format website ：http://www.bejson.com/jsonviewernew/
+    //If you want to add a new configuration, go to the above website to format it, and then format it back. 
     std::string jsonstr;
     if(g_testflag == 1)
     {
@@ -113,7 +113,7 @@ bool Config::GetIsPublicNode()
     return this->m_Json["is_public_node"].get<bool>();
 }
 
-/*如果未定义默认为false*/
+/*If not defined, the default is false */
 bool Config::GetCond(const std::string &cond_name)
 {
     auto ret = this->m_Json["cond"][cond_name.c_str()].get<bool>();
@@ -170,7 +170,7 @@ bool Config::SetKID(std::string strKID)
     return true;
 }
 
-//设置本地Ip
+//Set up local IP 
 bool Config::SetLocalIP(const std::string strIP)
 {
     this->m_Json["var"]["local_ip"] = strIP;
@@ -196,7 +196,7 @@ bool Config::SetDevPassword(const std::string & password)
 }
 
 
-/*动态加载配置文件*/
+/*Dynamically load configuration files */
 void Config::Reload(const std::string &name)
 {
     std::ifstream fconf;
@@ -220,7 +220,7 @@ void Config::Reload(const std::string &name)
     this->m_Json = tmp_CJSon;
 }
 
-/*检查配置文件是否具有必须配置*/
+/*Check whether the configuration file has required configuration */
 bool Config::VerifyConf(nlohmann::json &target)
 {
     for(auto i:target["server"])
@@ -325,7 +325,7 @@ std::string Config::GetLogFilename()
 
 unsigned int Config::GetSyncDataCount()
 {
-    // return 50; /// 临时调整
+    // return 50; /// Temporary adjustment 
 
     auto ret = this->m_Json[kCfgJSonSyncDataCount].get<int>();
     return ret;
@@ -373,23 +373,23 @@ std::vector<node_info> Config::GetNodeInfo_s()
     return vec;
 } 
 
-//更新配置文件
-//参数：1、更新标志 2.目标版本号 3.版本服务器ip 4.当前版本号
+//Update configuration file 
+//Parameters: 1. Update flag 2. Target version number 3. Version server ip 4. Current version number 
 bool Config::UpdateConfig(int flag,const std::string &target_version, const std::string &ip,const std::string &latest_version)
 {
-    if (latest_version != "")   //等于空不更新
+    if (latest_version != "")   //Equal to empty without updating 
     {
         this->m_Json[kCfgJSonKeyVersion] = latest_version;
     }
-    if (ip != "not") //等于not不更新
+    if (ip != "not") //Equal to not not updated 
     {
         this->m_Json[kCfgJSonKeyVersionServer] = ip;
     }
-    if (flag != 2)  //等于2不更新
+    if (flag != 2)  //Equal to 2 don't update 
     {
         this->m_Json[kCfgJSonKeyFlag] = flag;
     }
-    if (target_version != "not")    //等于not不更新
+    if (target_version != "not")    //Equal to not not updated 
     {
         this->m_Json[kCfgJSonKeyTargetVersion] = target_version;
     }
@@ -538,12 +538,12 @@ bool Config::Removefile()
     const char *trace = newname.c_str();
 	if(remove(trace) == 0)
     {  
-        cout<<"删除成功"<<endl;
+        cout<<"successfully deleted "<<endl;
         return true;     
     }
     else 
     {
-        cout<<"删除失败"<<endl;  
+        cout<<"failed to delete "<<endl;  
         return false;
     }
 }

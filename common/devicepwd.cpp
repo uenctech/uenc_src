@@ -32,15 +32,15 @@ std::string DevicePwd::GetAbsopath()
 
 bool DevicePwd::NewDevPWDFile(std::string strFile)
 {
-    // 如果文件存在 创建会覆盖原文件
+    // If the file exists, creating will overwrite the original file 
     ofstream file( strFile.c_str(), fstream::out );
     if( file.fail() )
     {
         debug(" file_path = %s", strFile.c_str());
 		return false;
     }
-	//json格式化网站：http://www.bejson.com/jsonviewernew/
-    //如果要新添加配置，去上面的网站格式化一下，然后再格式化回来就行 
+	//json format website ：http://www.bejson.com/jsonviewernew/
+    //If you want to add a new configuration, go to the above website to format it, and then format it back. 
     std::string jsonstr;
     {
         jsonstr = "{\"DevicePassword\":\"3a943223670994b064f0acad9dfc220a4abc5edc9b697676ca93413884ebbb99\"}";

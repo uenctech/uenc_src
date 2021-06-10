@@ -5,21 +5,21 @@
 #include "../include/clientType.h"
 
 /**
- * @description: 读取clientInfo.json中的数据
- * @return: 返回文件中的数据
- * @mark: 若文件不存在则创建默认文件，并返回初始数据
+ * @description: Read the data in clientInfo.json 
+ * @return: Return the data in the file
+ * @mark: If the file does not exist, create a default file and return to the initial data 
  */
 std::string ca_clientInfo_read();
 
 /**
- * @description: 获得更新数据
- * @param s 升级数据
- * @param eClientType 客户端类型
- * @param language 所选语言
- * @param sVersion 返回的版本信息
- * @param sDesc 返回的描述信息
- * @param sDownload 返回的下载地址
- * @return: 成功返回0 失败返回其他值
+ * @description: Get updated data 
+ * @param s Upgrade data 
+ * @param eClientType Client type 
+ * @param language Selected language 
+ * @param sVersion Version information returned 
+ * @param sDesc Descriptive information returned 
+ * @param sDownload Download URL returned 
+ * @return: Return 0 on success, return other values on failure 
  */
 int ca_getUpdateInfo(const std::string & s, ClientType eClientType, ClientLanguage language, std::string & sVersion, std::string & sDesc, std::string & sDownload);
 

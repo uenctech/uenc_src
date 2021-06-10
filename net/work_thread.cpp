@@ -5,21 +5,21 @@
 #include "peer_node.h"
 #include "../include/net_interface.h"
 #include "global.h"
-#include "../version_update/TcpSocket.h"
+//#include "../version_update/TcpSocket.h"
 #include "net.pb.h"
 #include "dispatcher.h"
 #include "./socket_buf.h"
 #include "./epoll_mode.h"
 
 static std::mutex g_mutex_for_vec_;
-static deque<Node> g_deque_node; //list_node用于存储邻居节点列表为空的节点
+static deque<Node> g_deque_node; //list_nodeUsed to store nodes whose neighbor node list is empty 
 
 static std::mutex g_mutex_for_map_;
 static std::mutex mutex_for_cpu_index;
 static int cpu_index = 0;
 
 
-/// @brief 获取线程tid
+/// @brief Get thread tid 
 int sys_get_tid()
 {
 	int tid = 0;
@@ -27,8 +27,8 @@ int sys_get_tid()
 	return tid;
 }
 
-/// @brief 把线程放到指定CPU中运行
-/// @param [in] cpu_index CPU序号，从0开始，0代表第一个CPU
+/// @brief Put the thread to run in the specified CPU 
+/// @param [in] cpu_index CPU serial number, starting from 0, 0 represents the first CPU 
 void sys_thread_set_cpu(unsigned int cpu_index)
 {
 	cpu_set_t mask;
@@ -41,7 +41,7 @@ void sys_thread_set_cpu(unsigned int cpu_index)
 	}
 	else
 	{
-		printf("线程%d, 绑定到cpu %u号核心.\n", tid, cpu_index);
+		printf("Thread %d, bound to the core of cpu %u.\n ", tid, cpu_index);
 	}
 }
 
@@ -60,7 +60,7 @@ int get_cpu_index()
 
 	return res;
 }
-//绑定cpu
+//Bind cpu 
 void bind_cpu()
 {
 	if (global::cpu_nums >= 4)
@@ -118,7 +118,7 @@ void WorkThreads::work_write(int id)
 		}
 	}
 }
-void WorkThreads::work_read(int id) //读套接字专用线程
+void WorkThreads::work_read(int id) //Read socket dedicated thread
 {
 
 	bind_cpu();
@@ -271,4 +271,3 @@ bool WorkThreads::handle_net_write(const MsgData &data)
 
 	return false;
 }
-

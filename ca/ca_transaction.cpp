@@ -81,7 +81,7 @@ int StringSplit(std::vector<std::string>& dst, const std::string& src, const std
     std::string temp;
     size_t pos = 0, offset = 0;
 
-    // 分割第1~n-1个
+    // Divide the 1st~n-1th 
     while((pos = src.find_first_of(separator, offset)) != std::string::npos)
     {
         temp = src.substr(offset, pos - offset);
@@ -93,7 +93,7 @@ int StringSplit(std::vector<std::string>& dst, const std::string& src, const std
         offset = pos + 1;
     }
 
-    // 分割第n个
+    // Split the nth 
     temp = src.substr(offset, src.length() - offset);
     if (temp.length() > 0)
 	{
@@ -171,7 +171,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 	std::vector<std::string> utxoHashs;
 	std::vector<std::string> pledgeUtxoHashs;
 
-	// 解质押交易
+	// Depledge transaction 
 	if (fromAddr == toAddr)
 	{
 		db_status = pRocksDb->GetPledgeAddressUtxo(txn, fromAddr, pledgeUtxoHashs);
@@ -207,7 +207,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 		return false;
 	}
 	
-	// 去重
+	// De-duplication 
 	std::set<std::string> setTmp(utxoHashs.begin(), utxoHashs.end());
 	utxoHashs.clear();
 	utxoHashs.assign(setTmp.begin(), setTmp.end());
@@ -218,7 +218,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 		std::reverse(pledgeUtxoHashs.begin(), pledgeUtxoHashs.end());
 	}
 
-	// 记录手续费使用的utxo
+	// Utxo used to record the handling fee 
 	std::vector<std::string> vinUtxoHash;
 
 	for (auto &item : utxoHashs)
@@ -252,7 +252,7 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 				vinUtxoHash.push_back(utxoTx.hash());
 			}
 
-			// 解质押会产生一个UTXO 两个vout同时给质押账号的情况，需要都算进去
+			// Unstaking will generate a UTXO and two vouts to the pledge account at the same time, and both need to be included. 
 			if (i < utxoTx.vout_size() - 1)
 			{
 				continue;
@@ -296,19 +296,19 @@ bool FindUtxosFromRocksDb(const std::string & fromAddr, const std::string & toAd
 				bool isAlreadyAdd = false;
 				for (auto &hash : vinUtxoHash)
 				{
-					// 手续费中使用了该utxo
+					// The utxo is used in the handling fee 
 					if (hash == utxoTx.hash())
 					{
 						isAlreadyAdd = true;
 					}
 				}
 
-				// 该utxo中有一个vout是可正常使用的资产，需要计算重新给到账户
+				// There is a vout in the utxo that is a normally usable asset and needs to be calculated and given to the account again 
 				if (txout.scriptpubkey() == fromAddr && !isAlreadyAdd)
 				{
 					for (auto &utxo : utxoHashs)
 					{
-						// 该utxo的可用资产还未使用时需要计算
+						// It needs to be calculated when the available assets of the utxo are not used 
 						if (utxo == utxoTx.hash())
 						{
 							total += txout.value();
@@ -422,7 +422,7 @@ bool checkTransaction(const CTransaction & tx)
 		total += txout.value();
 	}
 
-	// 检查总金额
+	// Check the total amount 
 	if (total < 0 || total > 21000000LL * COIN)
 	{
 		return false;
@@ -448,7 +448,7 @@ bool checkTransaction(const CTransaction & tx)
 			nlohmann::json txInfo = extra["TransactionInfo"].get<nlohmann::json>();
 			redeemUtxo = txInfo["RedeemptionUTXO"];
 
-			// 检查质押时间
+			// Check the pledge time 
 			if ( 0 != IsMoreThan30DaysForRedeem(redeemUtxo) )
 			{
 				error("Redeem time is less than 30 days!");
@@ -460,7 +460,7 @@ bool checkTransaction(const CTransaction & tx)
 
 	if (CheckTransactionType(tx) == kTransactionType_Tx)
 	{
-		// 检查txowner和vin签名者是否一致
+		// Check if the signer of txowner and vin are the same 
 		std::vector<std::string> vinSigners;
 		for (const auto & vin : vTxins)
 		{
@@ -479,7 +479,7 @@ bool checkTransaction(const CTransaction & tx)
 			return false;
 		}
 
-		// utxo是否存在
+		// Does utxo exist 
 		for (const auto & vin : vTxins)
 		{
 			std::string pubKey = vin.scriptsig().pub();
@@ -513,7 +513,7 @@ bool checkTransaction(const CTransaction & tx)
 		}
 	}
 
-	// 检查是否有重复vin
+	// Check for duplicate vin 
 	std::sort(vTxins.begin(), vTxins.end(), [](const CTxin & txin0, const CTxin & txin1){
 		if (txin0.prevout().n() > txin1.prevout().n())
 		{
@@ -585,7 +585,7 @@ bool checkTransaction(const CTransaction & tx)
 
 	if (CheckTransactionType(tx) == kTransactionType_Tx)
 	{
-		// 交易
+		// transaction 
 		for (auto &txin : vTxins)
 		{
 
@@ -597,7 +597,7 @@ bool checkTransaction(const CTransaction & tx)
 	}
 	else
 	{
-		// 奖励
+		// reward 
 		unsigned int height = 0;
 		db_status = pRocksDb->GetBlockTop(txn, height);
         if (db_status != 0) 
@@ -716,7 +716,7 @@ int GetSignString(const std::string & message, std::string & signature, std::str
 	return 0;
 }
 
-/** 手机端端创建交易体 */
+/** Create a transaction body on the mobile terminal  */
 int CreateTransactionFromRocksDb( const std::shared_ptr<CreateTxMsgReq>& msg, std::string &serTx)
 {
 	if ( msg == NULL )
@@ -847,9 +847,9 @@ bool VerifyBlockHeader(const CBlock & cblock)
 		return false;
 	}
 
-	// 区块检查
+	// Block check 
 
-	// 时间戳检查	
+	// Timestamp check 
 	std::string strGenesisBlockHash;
 	db_status = pRocksDb->GetBlockHashByBlockHeight(txn, 0, strGenesisBlockHash);
 	if (db_status != 0)
@@ -902,7 +902,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 		return false;
 	}
 
-	// 获取本块的签名个数
+	// Get the number of signatures in this block 
 	uint64_t blockSignNum = 0;
 	for (auto & txTmp : cblock.txs())
 	{
@@ -913,7 +913,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 	}
 
 	std::map<std::string, uint64_t> addrAwards;
-	// 获取奖励交易中的节点信息,计算各个账号奖励值,用于校验
+	// Obtain the node information in the reward transaction, calculate the reward value of each account, and use it for verification 
 	if (cblock.height() > g_compatMinHeight)
 	{
 		for (auto & txTmp : cblock.txs())
@@ -986,7 +986,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 		}
 	}
 
-	// 交易检查
+	// transaction check 
 	for (int i = 0; i < cblock.txs_size(); i++)
 	{
 		CTransaction tx = cblock.txs(i);
@@ -1073,7 +1073,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 			}
 		}
 
-		// 获取交易类型
+		// Get transaction type 
 		// bool bIsRedeem = false;
 		std::string redempUtxoStr;
 		for (int i = 0; i < cblock.txs_size(); i++)
@@ -1114,14 +1114,14 @@ bool VerifyBlockHeader(const CBlock & cblock)
 		}
 		//}}
 
-		// 验证签名公钥和base58地址是否一致
+		// Verify that the signature public key is consistent with the base58 address 
 		std::vector< std::string > signBase58Addrs;
 		for (int i = 0; i < cblock.txs_size(); i++)
 		{
 			CTransaction transaction = cblock.txs(i);
 			if ( CheckTransactionType(transaction) == kTransactionType_Tx)
 			{
-				// 取出所有签名账号的base58地址
+				// Take out the base58 addresses of all signed accounts 
 				for (int k = 0; k < transaction.signprehash_size(); k++) 
                 {
                     char buf[2048] = {0};
@@ -1160,7 +1160,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 			CTransaction transaction = cblock.txs(i);
 			if ( CheckTransactionType(transaction) == kTransactionType_Fee)
 			{
-				// 签名账号的数量和vout的数量不一致，错误
+				// The number of signed accounts is inconsistent with the number of vout, error 
 				if( signBase58Addrs.size() != (size_t)transaction.vout_size() )
 				{
 					error("signBase58Addrs.size() != (size_t)transaction.vout_size()");
@@ -1168,7 +1168,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 					return false;
 				}
 
-				// base58地址不一致，错误
+				//The base58 address is inconsistent and wrong 
 				for(int l = 0; l < transaction.vout_size(); l++)
 				{
 					CTxout txout = transaction.vout(l);	
@@ -1213,13 +1213,13 @@ bool VerifyBlockHeader(const CBlock & cblock)
 				uint64_t awardAmountTotal = 0;
 				for (auto & txout : transaction.vout())
 				{
-					// 不使用uint64 是为了防止有负值的情况
+					// Uint64 is not used to prevent negative values 
 					int64_t value = txout.value();
 					std::string voutAddr = txout.scriptpubkey();
 
 					if (cblock.height() > g_compatMinHeight)
 					{		
-						// 发起方账号奖励为0
+						// Initiator account reward is 0 
 						if (txOwners.end() != find(txOwners.begin(), txOwners.end(), voutAddr))
 						{
 							if (value != 0)
@@ -1231,7 +1231,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 						}
 						else
 						{
-							// 奖励为负值，或者大于单笔最高奖励值的时候，错误，返回
+							// When the reward is negative or greater than the maximum reward value of a single transaction, an error occurs and return 
 							if (value < 0 || (uint64_t)value > g_MaxAwardTotal)
 							{
 								error("Award error !");
@@ -1315,7 +1315,7 @@ bool VerifyBlockHeader(const CBlock & cblock)
 	}
 
 
-	// 共识数不能小于g_MinNeedVerifyPreHashCount
+	// The consensus number cannot be less than g_MinNeedVerifyPreHashCount 
 	if (cblock.height() > g_compatMinHeight)
 	{
 		for(auto & tx : cblock.txs())
@@ -1328,14 +1328,14 @@ bool VerifyBlockHeader(const CBlock & cblock)
 				{
 					if (txout.value() <= 0 && txownersTmp.end() == find(txownersTmp.begin(), txownersTmp.end(), txout.scriptpubkey()))
 					{
-						// 交易接收方接收金额不能为0
+						// transaction The amount received by the receiver cannot be 0 
 						error("Tx vout error !");
 						bRollback = true;
 						return false;
 					}
 					else if (txout.value() < 0 && txownersTmp.end() != find(txownersTmp.begin(), txownersTmp.end(), txout.scriptpubkey()))
 					{
-						// 交易发起方剩余资产可以为0.但不能小于0
+						// transaction The initiator's remaining assets can be 0, but cannot be less than 0 
 						error("Tx vout error !");
 						bRollback = true;
 						return false;
@@ -1418,7 +1418,7 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 	int NeedVerifyPreHashCount = txExtra["NeedVerifyPreHashCount"].get<int>();
 	std::string txType = txExtra["TransactionType"].get<std::string>();
 
-	// 将签名数通过Json格式放入块扩展信息
+	// Put the number of signatures into the block extension information in Json format 
 	nlohmann::json blockExtra;
 	blockExtra["NeedVerifyPreHashCount"] = NeedVerifyPreHashCount;
 
@@ -1465,12 +1465,12 @@ CBlock CreateBlock(const CTransaction & tx, const std::shared_ptr<TxMsg>& SendTx
 	unsigned int prevBlockHeight = 0;
 	if (0 != pRocksDb->GetBlockHeightByBlockHash(txn, prevBlockHash, prevBlockHeight))
 	{
-		// 父块不存在, 不建块
+		// The parent block does not exist, do not build the block 
 		cblock.clear_hash();
 		return cblock;
 	}
 
-	// 要加的块的高度
+	// The height of the block to be added 
 	unsigned int cblockHeight = ++prevBlockHeight;
 
 	unsigned int myTop = 0;
@@ -1582,7 +1582,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 		return false;
 	}
 
-	//更新top和BestChain
+	//Update top and BestChain 
 	bool is_mainblock = false;
 	if (block.height() > top)  
 	{
@@ -1676,7 +1676,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
         return false;
     }
 
-	// 判断交易是否是特殊交易
+	// Determine whether the transaction is a special transaction 
 	bool isPledge = false;
 	bool isRedeem = false;
 	std::string redempUtxoStr;
@@ -1694,7 +1694,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 		redempUtxoStr = txInfo["RedeemptionUTXO"].get<std::string>();
 	}
 	
-	// 计算支出的总燃油费
+	// Calculate the total fuel cost spent 
 	uint64_t totalGasFee = 0;
 	for (int txCount = 0; txCount < cblock.txs_size(); txCount++)
 	{
@@ -1784,7 +1784,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 			}			
 		}
 
-		// 判断交易的vin中是否有质押产生的正常utxo部分
+		// Determine whether there is a normal utxo part generated by pledge in the vin of transaction 
 		nlohmann::json extra = nlohmann::json::parse(tx.extra());
 		std::string txType = extra["TransactionType"];
 		std::string redempUtxoStr;
@@ -1851,7 +1851,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 				uint64_t redeemAmount = TxHelper::GetUtxoAmount(redempUtxoStr,VIRTUAL_ACCOUNT_PLEDGE);
 				if (voutAmountTotal == vinAmountTotal + usable + redeemAmount)
 				{
-					// 本交易使用了质押utxo的正常部分
+					// This transaction uses the normal part of pledge utxo 
 					bIsUsed = true;
 				}
 				else if (voutAmountTotal == vinAmountTotal + redeemAmount + packageFee)
@@ -1874,13 +1874,13 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 		std::vector<std::string> fromAddrs;
 		if (CheckTransactionType(tx) == kTransactionType_Tx)
 		{
-			// 解质押交易有重复的UTXO,去重
+			// Depledge transaction has duplicate UTXO, De-duplication 
 			std::set<std::pair<std::string, std::string>> utxoAddrSet; 
 			for (auto & txin : tx.vin())
 			{
 				std::string addr = GetBase58Addr(txin.scriptsig().pub());
 
-				// 交易记录
+				// transaction recording 
 				if ( 0 != pRocksDb->SetAllTransactionByAddress(txn, addr, tx.hash()))
 				{
 					bRollback = true;
@@ -1896,10 +1896,10 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 					return false;
 				}
 
-				// 在所有utxo中查找vin使用的utxo是否存在
+				// Find out whether the utxo used by vin exists in all utxos 
 				if (utxoHashs.end() == find(utxoHashs.begin(), utxoHashs.end(), txin.prevout().hash() ) )
 				{
-					// 在可使用的utxo找不到，则判断是否为解质押的utxo
+					// If it is not found in the available utxo, it is judged whether it is a pledged utxo 
 					if (txin.prevout().hash() != redempUtxoStr)
 					{
 						bRollback = true;
@@ -1945,7 +1945,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 					return false;
 				}
 
-				// vin减utxo
+				// vin minus utxo 
 				uint64_t amount = TxHelper::GetUtxoAmount(utxo, addr);
 				// std::cout << "Addr : " << addr << "      utxo : " << utxo << "    amt : " << amount << std::endl;
 				int64_t balance = 0;
@@ -2007,7 +2007,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 		{	
 			for (int j = 0; j < tx.vout_size(); j++)
 			{
-				//vout加余额
+				//voutAdd balance 
 				CTxout txout = tx.vout(j);
 				std::string vout_address = txout.scriptpubkey();
 				int64_t balance = 0;
@@ -2039,7 +2039,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 				}
 				else
 				{
-					// 交易发起方已经记录
+					// transaction The initiator has recorded 
 					if (fromAddrs.end() != find( fromAddrs.begin(), fromAddrs.end(), txout.scriptpubkey()))
 					{
 						continue;
@@ -2077,7 +2077,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 			}
 		}
 
-		// 累加额外奖励
+		// Accumulate additional rewards 
 		if ( CheckTransactionType(tx) == kTransactionType_Award)
 		{
 			for (int j = 0; j < tx.vout_size(); j++)
@@ -2096,7 +2096,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 
 				if (txout.value() >= 0)
 				{
-					// 累加账号的额外奖励总值
+					// Accumulate the total value of additional rewards for the account 
 					uint64_t addrAwardTotal = 0;
 					if (0 != pRocksDb->GetAwardTotalByAddress(txn, txout.scriptpubkey(), addrAwardTotal))
 					{
@@ -2113,7 +2113,7 @@ bool AddBlock(const CBlock & cblock, bool isSync)
 					}
 				}
 
-				// 累加账号的签名次数
+				// Accumulate the number of signatures of the account 
 				uint64_t signSum = 0;
 				if (0 != pRocksDb->GetSignNumByAddress(txn, txout.scriptpubkey(), signSum))
 				{
@@ -2308,10 +2308,10 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 
 		if(0 != txHashStr.compare(txHash))
 		{
-			std::cout << "接收到的txhash值 != 计算出的txhash值 ! " << std::endl;
+			std::cout << "Received txhash value != calculated txhash value  ! " << std::endl;
 			return false;
 		}
-		//验证转账者签名
+		//Verify the transferor's signature 
 		for (int i = 0; i != tx.vin_size(); ++i)
 		{
 			CTxin txin = tx.vin(i);
@@ -2361,7 +2361,7 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 		std::sort(v_union.begin(), v_union.end());
 		//v_union.erase(unique(v_union.begin(), v_union.end()), v_union.end());
 
-		// 解质押交易UTXO有重复,去重
+		// Depledge transaction UTXO repeat,De-duplication 
 		std::set<std::string> tmpSet(v_union.begin(), v_union.end());
 		v_union.assign(tmpSet.begin(), tmpSet.end());
 
@@ -2374,7 +2374,7 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 			return false;
 		}
 
-		// 判断手机或RPC交易时，交易签名者是否是交易发起人
+		// When judging the mobile phone or RPCtransaction, whether the transaction signer is the transaction initiator 
 		std::set<std::string> txVinVec;
 		for(auto & vin : tx.vin())
 		{
@@ -2436,7 +2436,7 @@ bool VerifyTransactionSign(const CTransaction & tx, int & verifyPreHashCount, st
 			txBlockHash = COIN_BASE_TX_SIGN_HASH;
 		}
 	}
-	//验证矿工签名
+	//Verify miner's signature 
 	for (int i = 0; i < tx.signprehash_size(); i++)
 	{
 		CSignPreHash signPreHash = tx.signprehash(i);
@@ -2506,13 +2506,13 @@ bool IsNeedPackage(const std::vector<std::string> & fromAddr)
 
 int new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_ptr<TxMsg>& msg) 
 {
-    //获取共识数
+    //Get consensus number 
 	nlohmann::json extra = nlohmann::json::parse(tx.extra());
 	int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
 	int gasFee = extra["SignFee"].get<int>();
 	int packageFee = extra["PackageFee"].get<int>();
 
-    //额外奖励
+    //Additional rewards 
     std::vector<int> award_list;
     int award = 2000000;
     getNodeAwardList(needVerifyPreHashCount, award_list, award);
@@ -2574,7 +2574,7 @@ int new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_p
         } 
 		else 
 		{
-			bool bIsLocal = false;    // 本节点发起的交易
+			bool bIsLocal = false;    // Transaction initiated by this node 
 			std::vector<std::string> txOwners = TxHelper::GetTxOwner(tx);
 			if (txOwners.size() == 0) 
 			{
@@ -2594,7 +2594,7 @@ int new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_p
 			}
 
 			uint64_t num = 0;
-			// 默认第一个签名为发起方的时候 
+			// When the first signature is the initiator by default 
             if (i == 0)
             {
 				if (bIsLocal)
@@ -2642,7 +2642,7 @@ int new_add_ouput_by_signer(CTransaction &tx, bool bIsAward, const std::shared_p
         }
         // ex_award.TestPrint(true);
         
-		// 将签名节点的在线时长写入块中,用于校验奖励值
+		// Write the online duration of the signing node into the block to verify the reward value 
 		nlohmann::json signNodeInfos;
 		uint64_t count = 0;
 		for (auto & nodeInfo : msg->signnodemsg())
@@ -2782,7 +2782,7 @@ CTransaction CreateWorkTx(const CTransaction & tx, bool bIsAward, const std::sha
 
 void InitAccount(accountinfo *acc, const char *path)
 {
-	// 默认账户
+	// Default account 
 	if (g_testflag)
 	{
 		g_InitAccount = "1vkS46QffeM4sDMBBjuJBiVkMQKY7Z8Tu";
@@ -2874,28 +2874,28 @@ std::string GetDefault58Addr()
 }
 
 /**
-    vector最后一列为奖励总额
-    amount总额为(共识数减一)乘(基数)
+    The last column of the vector is the total reward 
+    The total amount is (consensus number minus one) multiplied by (base) 
 */
 int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount, float coe) 
 {
     using namespace std;
 
-    //*奖励分配
+    //*Reward distribution 
     amount = amount*coe; //TODO
     consensus -= 1;
     consensus = consensus == 0 ? 1 : consensus;
     //auto award = consensus * base;
-    int base {amount/consensus}; //平分资产 会有余
-    int surplus = amount - base*consensus; //余
+    int base {amount/consensus}; //Evenly divide the assets, there will be surplus 
+    int surplus = amount - base*consensus; //More than 
     award_list.push_back(amount);
     for (auto i = 1; i <= consensus; ++i) 
-	{ //初始化 从1开始 除去总额
+	{ //Initialization starts from 1 and removes the total 
         award_list.push_back(base);
     }
     award_list[consensus] += surplus;
 
-    //利率分配
+    //Interest rate distribution 
     auto list_end_award {0};
     for (auto i = 1; i < consensus; ++i) 
 	{
@@ -2904,7 +2904,7 @@ int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount, fl
     }
 
     auto temp_consensus = consensus;
-    auto diff_value = 10; //最后值差度(值越大相差越大)
+    auto diff_value = 10; //Final value difference (the larger the value, the greater the difference) 
     while (list_end_award > diff_value) 
 	{
         if (list_end_award > diff_value && list_end_award < consensus) 
@@ -2929,9 +2929,9 @@ int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount, fl
     award_list[temp_consensus] += list_end_award;
     sort(award_list.begin(), award_list.end());
 
-    //去除负数情况
+    //Remove negative numbers 
     while (award_list[0] <= 0) 
-	{ //对称填负值
+	{ //Symmetrical Negative Value 
         for (auto i = 0; i < temp_consensus - 1; ++i) 
 		{
             if (award_list[i] <= 0) 
@@ -2956,7 +2956,7 @@ int getNodeAwardList(int consensus, std::vector<int> &award_list, int amount, fl
         sort(award_list.begin(), award_list.end());
     }
 
-    //最后一笔奖励不能等于上一笔 XXX
+    //The last reward cannot be equal to the previous one  XXX
     while (award_list[temp_consensus-1] == award_list[temp_consensus-2]) 
 	{
         award_list[temp_consensus-1] += 1;
@@ -2989,7 +2989,7 @@ bool ExitGuardian()
 
 void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>& msg, const MsgData& msgdata )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		error("HandleBuileBlockBroadcastMsg IsVersionCompatible");
@@ -3006,7 +3006,7 @@ void HandleBuileBlockBroadcastMsg( const std::shared_ptr<BuileBlockBroadcastMsg>
 // Create: receive pending transaction from network and add to cache,  20210114   Liu
 void HandleTxPendingBroadcastMsg(const std::shared_ptr<TxPendingBroadcastMsg>& msg, const MsgData& msgdata)
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if (Util::IsVersionCompatible(msg->version()) != 0)
 	{
 		error("HandleTxPendingBroadcastMsg IsVersionCompatible");
@@ -3023,7 +3023,7 @@ void HandleTxPendingBroadcastMsg(const std::shared_ptr<TxPendingBroadcastMsg>& m
 
 int VerifyBuildBlock(const CBlock & cblock)
 {
-	// 检查签名节点是否有异常账号
+	// Check whether the signature node has an abnormal account 
 	std::vector<std::string> addrList;
 	if ( 0 != GetAbnormalAwardAddrList(addrList) )
 	{
@@ -3082,7 +3082,7 @@ int BuildBlock(std::string &recvTxString, const std::shared_ptr<TxMsg>& SendTxMs
 		error("VerifyBuildBlock failed ! ");
 		return -2;
 	}
-	//验证合法性
+	//Verify legitimacy 
 	bool ret = VerifyBlockHeader(cblock);
 
 	if(!ret)
@@ -3219,7 +3219,7 @@ int GetLocalDeviceOnlineTime(double_t & onlinetime)
 
 int SendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg, uint32_t number)
 {
-	// 所有签过名的节点的id
+	// The id of all signed nodes 
 	std::vector<std::string> signedIds;  
 	for (auto & item : msg->signnodemsg())
 	{
@@ -3252,7 +3252,7 @@ int RetrySendTxMsg(const CTransaction & tx, const std::shared_ptr<TxMsg>& msg)
 	}
 	else
 	{
-		// 继续尝试转发
+		// Keep trying to forward 
 		SendTxMsg(tx, msg, 1);
 	}
 
@@ -3272,7 +3272,7 @@ int AddSignNodeMsg(const std::shared_ptr<TxMsg>& msg)
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	// 是否有足够质押节点
+	// Whether there are enough staking nodes 
 	bool isEnoughPledgeNode = false;
 	uint32_t pledegeNodeCount = 0;
 	std::vector<std::string> addressVec;
@@ -3347,21 +3347,21 @@ int CheckTxMsg( const std::shared_ptr<TxMsg>& msg )
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	// 取交易体
+	//Take transaction body 
 	CTransaction tx;
 	tx.ParseFromString(msg->tx());
 
-	// 取交易发起方
+	// Take the transaction initiator 
 	std::vector<std::string> vTxOwners = TxHelper::GetTxOwner(tx);
 
-	// 取流转交易体中签名者
+	// Get the signer in the transaction body 
 	std::vector<std::string> vMsgSigners;
 	for (const auto & signer : msg->signnodemsg())
 	{
 		vMsgSigners.push_back(signer.signpubkey());
 	}
 
-	// 取交易体中签名者
+	// Take the signer in the transaction body 
 	std::vector<std::string> vTxSigners;
 	for (const auto & signInfo : tx.signprehash())
 	{
@@ -3372,13 +3372,13 @@ int CheckTxMsg( const std::shared_ptr<TxMsg>& msg )
 	std::sort(vMsgSigners.begin(), vMsgSigners.end());
 	std::sort(vTxSigners.begin(), vTxSigners.end());
 
-	// 比对差异
+	// Comparison difference 
 	if (vMsgSigners != vTxSigners)
 	{
 		return -2;
 	}
 
-	// 取交易类型
+	// Take the transaction type 
 	bool bIsPledgeTx = false;
 	auto extra = nlohmann::json::parse(tx.extra());
 	std::string txType = extra["TransactionType"].get<std::string>();
@@ -3387,27 +3387,27 @@ int CheckTxMsg( const std::shared_ptr<TxMsg>& msg )
 		bIsPledgeTx = true;
 	}
 
-	// 取全网质押账号
+	// Get the entire network pledge account 
 	std::vector<string> pledgeAddrs;
 	pRocksDb->GetPledgeAddress(txn, pledgeAddrs);
 
-	// 判断是否为初始账号交易
+	// Determine whether it is the initial account transaction 
 	bool bIsInitAccount = false;
 	if (vTxOwners.end() != find(vTxOwners.begin(), vTxOwners.end(), g_InitAccount))
 	{
 		bIsInitAccount = true;
 	}
 
-	// 判断签名节点是否需要质押
+	// Determine whether the signature node needs to be pledged 
 	if ( (bIsPledgeTx || bIsInitAccount) && pledgeAddrs.size() < g_minPledgeNodeNum )
 	{
 		return 0;
 	}
 
-	// 判断签名节点质押金额
+	// Determine the pledge amount of the signature node 
 	for (auto & addr : vTxSigners)
 	{
-		// 发起方不进行质押判断
+		// The initiator does not make a pledge judgment 
 		if (vTxOwners.end() != std::find(vTxOwners.begin(), vTxOwners.end(), addr))
 		{
 			continue;
@@ -3431,19 +3431,19 @@ void HandleTx( const std::shared_ptr<TxMsg>& msg, const MsgData& msgdata)
 
 int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 {
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		return -1;
 	}
 	
-	// 判断高度是否符合
+	// Determine whether the height meets 
 	if(!checkTop(msg->top()))
 	{
 		return -2;
 	}
 
-	// 检查本节点是否存在该交易的父块
+	// Check whether the parent block of the transaction exists on this node 
 	if (IsBlockExist(msg->prevblkhash()))
 	{
 		return -3;
@@ -3451,11 +3451,11 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 
 	std::cout << "Recv TX ..." << std::endl;
 
-	//TX的头部带有签名过的网络节点的id，格式为 num [nodeid,nodeid,...] tx // 可删除
+	//The header of TX carries the id of the signed network node, in the format  num [nodeid,nodeid,...] tx // Can be deleted 
 	CTransaction tx;
 	tx.ParseFromString(msg->tx());
 
-	// 此次交易的共识数
+	// Consensus number of this transaction 
 	auto extra = nlohmann::json::parse(tx.extra());
     int needVerifyPreHashCount = extra["NeedVerifyPreHashCount"].get<int>();
 	if (needVerifyPreHashCount < g_MinNeedVerifyPreHashCount)
@@ -3481,7 +3481,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	// 所有签过名的节点的id
+	// The id of all signed nodes 
 	std::vector<std::string> signedIds;
 	for (auto & item : msg->signnodemsg())
 	{
@@ -3497,7 +3497,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		return -8;
 	}
 
-	//验证别人的签名
+	//Verify someone else's signature 
 	int verifyPreHashCount = 0;
 	std::string txBlockHash;
 	std::string blockPrevHash;
@@ -3521,7 +3521,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		return (0 != RetrySendTxMsg(tx, msg) ? -10 : 0);
 	}
 
-	// 判断是否为质押交易
+	// Determine whether it is a pledge transaction 
 	bool isPledgeTx = false;
 	std::string txType = extra["TransactionType"].get<std::string>();
 	if (txType == TXTYPE_PLEDGE)
@@ -3529,7 +3529,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		isPledgeTx = true;
 	}
 
-	// 判断是否为初始账号发起的交易
+	// Determine whether it is a transaction initiated by the initial account 
 	bool isInitAccountTx = false;
 	for (int i = 0; i < tx.vout_size(); ++i)
 	{
@@ -3540,8 +3540,8 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		}
 	}
 
-	// 账号未质押不允许签名转账交易, 但允许签名质押交易
-	// verifyPreHashCount == 0 时为自己发起交易允许签名，verifyPreHashCount == needVerifyPreHashCount 时签名已经足够 开始建块
+	//Signed transfer transactions are not allowed if the account is not pledged, but signed pledged transactions are allowed  
+	// verifyPreHashCount == 0 时为自己发起transaction 允许签名，verifyPreHashCount == needVerifyPreHashCount 时签名已经足够 开始建块
 	if (!isPledgeTx && !isInitAccountTx && (verifyPreHashCount != 0 && verifyPreHashCount != needVerifyPreHashCount) )
 	{
 		std::string defauleAddr = GetDefault58Addr();
@@ -3554,7 +3554,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		}
 	}
 
-	// 交易接收方禁止签名
+	// transaction Recipient prohibits signing 
 	std::string default58Addr = GetDefault58Addr();
 	for(int i = 0; i < tx.vout_size(); i++)
 	{
@@ -3565,11 +3565,11 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		}
 	}
 
-	// 自身开始签名
+	// Self-signed 
 	if ( verifyPreHashCount < needVerifyPreHashCount)
 	{
 		tx_hash = tx.hash();
-		//自己来签名
+		//Sign your own 
 		std::string strSignature;
 		std::string strPub;
 		GetSignString(txBlockHash, strSignature, strPub);
@@ -3588,12 +3588,12 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 	{
 		if (tx.signprehash_size() == 1)
 		{
-			// 发起方必须设置矿费
+			// The initiator must set a mining fee 
 			return -13;
 		}
 		else
 		{
-			// 交易流转节点可重试发送
+			// transaction The transfer node can retry sending 
 			return (0 != RetrySendTxMsg(tx, msg) ? -13 : 0);
 		}
 	}
@@ -3602,7 +3602,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 	int txOwnerPayGasFee = extra["SignFee"].get<int>();
 	if (ownID != tx.ip())
 	{
-		// 交易发起方所支付的手续费低于本节点设定的签名费时不予签名
+		// transaction If the commission paid by the initiator is lower than the signature fee set by this node, no signature will be given 
 		if(verifyPreHashCount != 0 && ((uint64_t)txOwnerPayGasFee) < mineSignatureFee )
 		{
 			return (0 != RetrySendTxMsg(tx, msg) ? -14 : 0);
@@ -3619,9 +3619,9 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 
 	if (verifyPreHashCount < needVerifyPreHashCount)
 	{
-		// 签名数不足时
+		// When the number of signatures is insufficient 
 
-		// 添加交易流转的签名信息		
+		// Add signature information for transaction circulation 		
 		if (0 != AddSignNodeMsg(msg))
 		{
 			return -16;
@@ -3633,7 +3633,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 			return -22;
 		}
 		
-		//只有一个签名,签名是自己,ip相等,添加到Cache中, 20201214
+		//There is only one signature, the signature is itself, the ip is equal, and it is added to the Cache , 20201214
 		if (ownID == tx.ip() && tx.signprehash_size() == 1)
 		{
 			char buf[2048] = {0};
@@ -3653,7 +3653,7 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		int nodeSize = needVerifyPreHashCount * 1;
 		if(verifyPreHashCount > 1)   
 		{
-			// 除自己本身签名外，其他节点签名的时候转发节点数为1
+			// In addition to its own signature, the number of forwarding nodes is 1 when other nodes sign 
 			nodeSize = 1;
 		}
 
@@ -3666,14 +3666,14 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 	}
 	else
 	{
-		// 签名数达到共识数
+		// The number of signatures reaches the consensus number 
 		std::string ip = net_get_self_node_id();
 
 		if (ip != tx.ip())
 		{
-			// 如果是全网节点质押数
+			// If it is the number of nodes pledged in the whole network 
 			
-			// 添加交易流转的签名信息		
+			// Add signature information for transaction circulation 	
 			if (0 != AddSignNodeMsg(msg))
 			{
 				return -18;
@@ -3686,13 +3686,13 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 		}
 		else
 		{
-			// 返回到发起节点
+			// Return to the originating node 
 			std::string blockHash;
 			pRocksDb->GetBlockHashByTransactionHash(txn, tx.hash(), blockHash);
 			
 			if(blockHash.length())
 			{
-				// 查询到说明已加块
+				// Inquired that the description has been added 
 				return -19;
 			}
 
@@ -3713,10 +3713,10 @@ int DoHandleTx( const std::shared_ptr<TxMsg>& msg, std::string & tx_hash )
 
 std::map<int32_t, std::string> GetPreTxRawCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"),
-												make_pair(-2, "数据库打开错误"),
-												make_pair(-2, "获取主链信息失败"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "),
+												make_pair(-2, "Database open error "),
+												make_pair(-2, "Failed to obtain main chain information "),
 												};
 	return errInfo;
 }
@@ -3727,14 +3727,14 @@ void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdat
 
 	auto errInfo = GetPreTxRawCode();
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
 		return ;
 	}
 
-	// 将交易信息体，公钥，签名信息反base64
+	// Reverse base64 of transaction information body, public key, and signature information 
 	unsigned char serTxCstr[msg->sertx().size()] = {0};
 	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
 	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
@@ -3806,39 +3806,39 @@ void HandlePreTxRaw( const std::shared_ptr<TxMsgReq>& msg, const MsgData& msgdat
 }
 
 /* ====================================================================================  
- # 手机端交易流程：
- # 1，手机端发送CreateTxMsgReq请求到PC端，PC端调用HandleCreateTxInfoReq接口处理手机端请求；
- # 2，PC端在HandleCreateTxInfoReq中通过手机端发送的交易关键信息，打包成交易信息体，并将交易信息体进行base64之后，
- #    通过CreateTxMsgAck协议回传给手机端，CreateTxMsgAck协议中的txHash字段，是由交易体base64之后，再进
- #    行sha256，得到的hash值
- # 3，手机端接收到CreateTxMsgAck后，将自己计算的hash与PC传过来的txHash进行比较，不一致说明数据有误；一致，则调
- #    调用interface_NetMessageReqTxRaw对hash值进行签名。
- # 4，手机端回传TxMsgReq到PC端，PC端通过HandlePreTxRaw接口处理接收到的手机端的交易
+ # Mobile terminal transaction process: 
+  #1. The mobile phone sends a CreateTxMsgReq request to the PC, and the PC calls the HandleCreateTxInfoReq interface to process the mobile phone request;
+  #2. After the key transaction information sent by the PC through the mobile phone in HandleCreateTxInfoReq is packaged into a transaction information body, and the transaction information body is base64,
+  # Pass the CreateTxMsgAck protocol back to the mobile phone. The txHash field in the CreateTxMsgAck protocol is entered after the base64 of the transaction body.
+  # Line sha256, the obtained hash value
+  #3. After receiving CreateTxMsgAck on the mobile phone, it compares the hash calculated by itself with the txHash transmitted from the PC. Inconsistencies indicate that the data is incorrect; if they are consistent, adjust
+  # Call interface_NetMessageReqTxRaw to sign the hash value.
+  # 4, the mobile phone sends back TxMsgReq to the PC, and the PC processes the received transaction from the mobile phone through the HandlePreTxRaw interface 
  ==================================================================================== */
 
  std::map<int32_t, std::string> GetCreateTxInfoReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"),
-												make_pair(-2, "参数错误"),
-												make_pair(-3, "未找到相关utxo"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "),
+												make_pair(-2, "Parameter error "),
+												make_pair(-3, "No related utxo found "),
 												};
 	return errInfo;
 }
-// 手机端交易处理
+// Mobile transaction processing 
 void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const MsgData& msgdata )
 {
 	CreateTxMsgAck createTxMsgAck;
 	auto errInfo = GetCreateTxInfoReqCode();
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		ReturnAckCode<CreateTxMsgAck>(msgdata, errInfo, createTxMsgAck, -1);		
 		return ;
 	}
 
-	// 通过手机端发送的数据创建交易体
+	// Create the transaction body from the data sent by the mobile phone 
 	std::string txData;
 	int ret = CreateTransactionFromRocksDb(msg, txData);
 	if( 0 != ret )
@@ -3859,7 +3859,7 @@ void HandleCreateTxInfoReq( const std::shared_ptr<CreateTxMsgReq>& msg, const Ms
 		return ;
 	}
 
-	// 将交易体base64，方便传输，txHash用于手机端验证传输的数据是否正确
+	// The transaction body is base64 to facilitate transmission, and txHash is used on the mobile phone to verify whether the transmitted data is correct 
 	size_t encodeLen = txData.size() * 2 + 1;
 	unsigned char encode[encodeLen] = {0};
 	memset(encode, 0, encodeLen);
@@ -4014,9 +4014,9 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-	const uint64_t heightRange = 1000;  // 检查异常的高度范围
-	std::map<std::string, uint64_t> addrAwards;  // 存放账号和前500高度总奖励
-	std::map<std::string, uint64_t> addrSignNum;  // 存放账号和前500高度总签名数
+	const uint64_t heightRange = 1000;  // Check the abnormal height range 
+	std::map<std::string, uint64_t> addrAwards;  // Deposit account and top 500 total rewards 
+	std::map<std::string, uint64_t> addrSignNum;  // The total number of signatures stored in the account and the top 500 heights 
 
 	unsigned int top = 0;
 	if ( 0 != pRocksDb->GetBlockTop(txn, top) )
@@ -4025,7 +4025,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 		return -2;
 	}
 
-	uint64_t minHeight = top > heightRange ? (int)top - heightRange : 0;  // 检查异常的最低高度
+	uint64_t minHeight = top > heightRange ? (int)top - heightRange : 0;  // Minimum height of abnormality 
 
 	for ( ; top != minHeight; --top)
 	{
@@ -4059,7 +4059,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 							continue;
 						}
 
-						// 总奖励
+						// Total reward 
 						auto iter = addrAwards.find(txout.scriptpubkey());
 						if (addrAwards.end() != iter)
 						{
@@ -4070,7 +4070,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 							addrAwards[txout.scriptpubkey()] = txout.value();
 						}
 
-						// 总签名次数
+						// Total number of signatures 
 						auto signNumIter = addrSignNum.find(txout.scriptpubkey());
 						if (addrSignNum.end() != signNumIter)
 						{
@@ -4092,8 +4092,8 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 		return 0;
 	}
 
-	std::vector<uint64_t> awards;  // 存放所有奖励值
-	std::vector<uint64_t> vecSignNum;  // 存放所有奖励值
+	std::vector<uint64_t> awards;  // Store all reward values 
+	std::vector<uint64_t> vecSignNum;  // Store all reward values 
 	for (auto & addrAward : addrAwards)
 	{
 		awards.push_back(addrAward.second);
@@ -4155,7 +4155,7 @@ int GetAbnormalAwardAddrList(std::vector<std::string> & addrList)
 
 int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vector<std::string> & signedNodes, std::vector<std::string> & nextNodes)
 {
-	// 参数判断
+	// Parameter judgment 
 	if(nodeNumber <= 0)
 	{
 		return -1;
@@ -4200,19 +4200,19 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		nodelist = Singleton<NodeCache>::get_instance()->get_nodelist();
 	}
 	
-	// 当前数据块高度为0时，GetPledgeAddress会返回错误，故不做返回判断
-	std::vector<string> addresses; // 已质押地址
-	std::vector<string> pledgeAddrs; // 待选的已质押地址
+	// When the height of the current data block is 0, GetPledgeAddress will return an error, so no return judgment is made 
+	std::vector<string> addresses; // Pledged address 
+	std::vector<string> pledgeAddrs; // Pledged address to be selected 
 	// pRocksDb->GetPledgeAddress(txn, addresses);
 	pRocksDb->GetPledgeAddress(txn, pledgeAddrs);
 
-	// 去除base58重复的节点
-	std::map<std::string, std::string> tmpBase58Ids; // 临时去重
-	std::vector<std::string> vRepeatedIds; // 重复的地址
+	// Remove duplicate nodes in base58 
+	std::map<std::string, std::string> tmpBase58Ids; // Temporary De-duplication 
+	std::vector<std::string> vRepeatedIds; // Duplicate address 
 	
 	for (auto & node : nodelist)
 	{
-		// 查询列表中已质押地址
+		// Query the pledged address in the list 
 		// std::string addr = node.base58address;
 		// auto iter = find(addresses.begin(), addresses.end(), addr);
 		// if (iter != addresses.end())
@@ -4220,7 +4220,7 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		// 	pledgeAddrs.push_back(addr);
 		// }
 
-		// 查询重复base58地址
+		// Query duplicate base58 addresses 
 		auto ret = tmpBase58Ids.insert(make_pair(node.base58address, node.id));
 		if (!ret.second)
 		{
@@ -4239,9 +4239,9 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		}
 	}
 
-	std::string ownerID = net_get_self_node_id(); // 自己的节点
+	std::string ownerID = net_get_self_node_id(); // Own node 
 
-	// 取出交易双方
+	// Take out both sides of the transaction 
 	std::vector<std::string> txAddrs;
 	for(int i = 0; i < tx.vout_size(); ++i)
 	{
@@ -4249,7 +4249,7 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		txAddrs.push_back(txout.scriptpubkey());
 	}
 
-	// 获取异常账户的节点
+	// Get the node of the abnormal account 
 	std::vector<std::string> abnormalAddrList;
 	if ( 0 != GetAbnormalAwardAddrList(abnormalAddrList) )
 	{
@@ -4259,21 +4259,21 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 	
 	for (auto iter = nodelist.begin(); iter != nodelist.end(); )
 	{
-		// 删除自身节点
+		// Delete own node 
 		if (iter->id == ownerID)
 		{
 			iter = nodelist.erase(iter);
 			continue;
 		}
 
-		// 删除交易双方节点
+		// Delete both nodes of transaction 
 		if (txAddrs.end() != find(txAddrs.begin(), txAddrs.end(), iter->base58address))
 		{
 			iter = nodelist.erase(iter);
 			continue;
 		}
 
-		// 去除奖励值异常账号
+		// Remove accounts with abnormal reward values 
 		
 		if (abnormalAddrList.end() != find(abnormalAddrList.begin(), abnormalAddrList.end(), iter->base58address))
 		{
@@ -4297,7 +4297,7 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		vecIdsInfos.push_back(std::make_pair(node.id, node.fee));
 	}
 
-	// 随机取节点
+	// Randomly pick nodes 
 	random_device rd;
 	while (nextNodes.size() != (uint64_t)nodeNumber && vecIdsInfos.size() != 0)
 	{
@@ -4339,7 +4339,7 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		vecIdsInfos.erase(vecIdsInfos.begin() + randNum);
 	}
 
-	// 过滤已签名的
+	// Filter signed 
 	for(auto signedId : signedNodes)
 	{
 		auto iter = std::find(nextNodes.begin(), nextNodes.end(), signedId);
@@ -4349,7 +4349,7 @@ int FindSignNode(const CTransaction & tx, const int nodeNumber, const std::vecto
 		}
 	}
 
-	// 筛选随机节点
+	// Screen random nodes 
 	std::vector<std::string> sendid;
 	if (nextNodes.size() <= (uint32_t)nodeNumber)
 	{
@@ -4418,7 +4418,7 @@ void GetOnLineTime()
 		}
 	}
 
-	// 从有交易开始记录在线时长
+	// Record online time since transaction 
 	std::vector<std::string> vTxHashs;
 	std::string addr = g_AccountInfo.DefaultKeyBs58Addr;
 	int db_get_status = pRocksDb->GetAllTransactionByAddreess(txn, addr, vTxHashs); 	
@@ -4509,19 +4509,19 @@ int PrintOnLineTime()
 
 int TestSetOnLineTime()
 {
-	cout<<"先查看在线时长然后设置设备在线时长"<<endl;
+	cout<<"Check the online duration first and then set the device online duration "<<endl;
 	PrintOnLineTime();
-	std::cout <<"请输入设备的在线时长"<<std::endl;
+	std::cout <<"Please enter the online duration of the device "<<std::endl;
 	
 	static double day  = 0.0,hour = 0.0,minute = 0.0,second = 0.0,totalsecond = 0.0,accumlateday=0.0;
 	double inday  = 0.0,inhour = 0.0,inminute = 0.0,insecond = 0.0,intotalsecond = 0.0,inaccumlateday=0.0;
-	cout<<"请输入设备在线天数"<<endl;
+	cout<<"Please enter the number of days the device has been online "<<endl;
 	std::cin >> inday;
-	cout<<"请输入设备在线小时数"<<endl;
+	cout<<"Please enter the number of hours the device is online "<<endl;
 	std::cin >> inhour;
-	cout<<"请输入设备在线分钟数"<<endl;
+	cout<<"Please enter the number of minutes the device is online "<<endl;
 	std::cin >> inminute;
-	cout<<"请输入设备在线秒数"<<endl;
+	cout<<"Please enter the number of seconds that the device is online "<<endl;
 	std::cin >> insecond;
 	
 	intotalsecond = inday *86400 + inhour *3600 + inminute*60 +insecond;
@@ -4555,13 +4555,13 @@ int TestSetOnLineTime()
 }
 
 
-/** 手机端连接矿机发起交易前验证矿机密码(测试连接是否成功) */
+/** Verify the password of the miner before connecting to the miner on the mobile phone to initiate a transaction (test whether the connection is successful)  */
 void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>& msg, const MsgData& msgdata )
 {	
 	VerifyDevicePasswordAck verifyDevicePasswordAck;
 	verifyDevicePasswordAck.set_version(getVersion());
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		verifyDevicePasswordAck.set_code(-1);
@@ -4586,36 +4586,36 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
         verifyDevicePasswordAck.set_code(-31);
         verifyDevicePasswordAck.set_message(minutescountStr);
 		
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors,"<<minutescount<<" seconds before you can enter "<<endl; 
 		net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
         return;
     }
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"密码输入错误"<<endl;
+            cout<<"Incorrect password "<<endl;
             verifyDevicePasswordAck.set_code(-2);
-            verifyDevicePasswordAck.set_message("密码输入错误");
+            verifyDevicePasswordAck.set_message("Incorrect password ");
 			net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
             return;
        } 
 	   else
 	   {
 			verifyDevicePasswordAck.set_code(-30);
-			verifyDevicePasswordAck.set_message("第三次输入密码错误");
+			verifyDevicePasswordAck.set_message("Incorrect password for the third time ");
 			net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
 			return;
 	   }  
     }
     else 
     {
-        cout<<"HandleVerifyDevicePassword密码输入正确重置为0"<<endl;
+        cout<<"HandleVerifyDevicePasswordPassword input is correct and reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
 		verifyDevicePasswordAck.set_code(0);
-        verifyDevicePasswordAck.set_message("密码输入正确");
+        verifyDevicePasswordAck.set_message("Password input is correct ");
 		net_send_message<VerifyDevicePasswordAck>(msgdata, verifyDevicePasswordAck);
     }
 
@@ -4630,15 +4630,15 @@ void HandleVerifyDevicePassword( const std::shared_ptr<VerifyDevicePasswordReq>&
 	return ;
 }
 
-/** 手机端连接矿机发起交易 */
+/** Mobile phone connection to the miner initiated transaction  */
 void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& msg, const MsgData& msgdata )
 {
 	cout<<"HandleCreateDeviceTxMsgReq"<<endl;
-	// 手机端回执消息
+	// Mobile receipt message 
 	TxMsgAck txMsgAck;
 	txMsgAck.set_version(getVersion());
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		txMsgAck.set_code(-1);
@@ -4648,7 +4648,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 		return ;
 	}
 
-	// 判断矿机密码是否正确
+	// Determine whether the miner password is correct 
     std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
@@ -4662,35 +4662,35 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
         txMsgAck.set_code(-31);
         txMsgAck.set_message(minutescountStr);
 		net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
-        cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+        cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds "<<endl;
         return ;
     }
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"密码输入错误"<<endl;
+            cout<<"Incorrect password "<<endl;
             txMsgAck.set_code(-5);
-            txMsgAck.set_message("密码输入错误");
+            txMsgAck.set_message("Incorrect password ");
 			net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
             return ;
        }
 	   else
 	   {
 			txMsgAck.set_code(-30);
-			txMsgAck.set_message("第三次密码输入错误");
+			txMsgAck.set_message("The third password input error ");
 			net_send_message<TxMsgAck>(msgdata, txMsgAck, net_com::Priority::kPriority_Middle_1);
 			return ;
 	   }
     }
     else 
     {
-        cout<<"HandleCreateDeviceTxMsgReq密码输入正确重置为0"<<endl;
+        cout<<"HandleCreateDeviceTxMsgReq Password input is correct and reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
 		// txMsgAck.set_code(0);
-        // txMsgAck.set_message("密码输入正确");
+        // txMsgAck.set_message("Password input is correct ");
 		// net_send_message<TxMsgAck>(msgdata, txMsgAck);
     }
 
@@ -4703,7 +4703,7 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
         return;
     }
 
-	// 判断各个字段是否合法
+	// Determine whether each field is legal 
 	if(msg->from().size() <= 0 || msg->to().size() <= 0 || msg->amt().size() <= 0 ||
 		msg->minerfees().size() <= 0 || msg->needverifyprehashcount().size() <= 0)
 	{
@@ -4762,27 +4762,27 @@ void HandleCreateDeviceTxMsgReq( const std::shared_ptr<CreateDeviceTxMsgReq>& ms
 
 std::map<int32_t, std::string> GetCreateDeviceMultiTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"),
-												make_pair(-2, "三次密码输入错误"),
-												make_pair(-3, "密码输入错误"),
-												make_pair(-4, "第三次密码输入错误"),
-												make_pair(-5, "密码不正确"),
-												make_pair(-6, "发起地址参数错误"),
-												make_pair(-7, "接收地址参数错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "),
+												make_pair(-2, "Three times the password was entered incorrectly "),
+												make_pair(-3, "Incorrect password "),
+												make_pair(-4, "The third password input error "),
+												make_pair(-5, "Incorrect password "),
+												make_pair(-6, "Initiation address parameter error "),
+												make_pair(-7, "Receive address parameter error "),
 
-												make_pair(-8, "创建交易时参数错误"),
-												make_pair(-9, "创建交易时交易地址错误"),
-												make_pair(-10, "创建交易时有之前交易挂起"),
-												make_pair(-11, "创建交易时打开数据库错误"),
-												make_pair(-12, "创建交易时获得打包费失败"),
-												make_pair(-13, "创建交易时获得交易信息失败"),
-												make_pair(-14, "创建交易时余额不足"),
-												make_pair(-15, "创建交易时其他错误"),
+												make_pair(-8, "Parameter error when creating transaction "),
+												make_pair(-9, "Wrong transaction address when creating transaction "),
+												make_pair(-10, "When the transaction was created, the previous transaction was suspended "),
+												make_pair(-11, "Error opening database when creating transaction "),
+												make_pair(-12, "Failed to get packaging fee when creating transaction "),
+												make_pair(-13, "Failed to obtain transaction information when creating transaction "),
+												make_pair(-14, "Insufficient balance when creating transaction "),
+												make_pair(-15, "Other errors when creating transaction "),
 
-												make_pair(-16, "打开数据库错误"),
-												make_pair(-17, "获得打包费错误"),
-												make_pair(-18, "获得主链错误"),
+												make_pair(-16, "Open database error "),
+												make_pair(-17, "Get packing fee error "),
+												make_pair(-18, "Get the main chain error "),
 												};
 
 	return errInfo;												
@@ -4799,7 +4799,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 		return ;
 	}
 
-    // 判断矿机密码是否正确
+    // Determine whether the miner password is correct 
     std::string password = msg->password();
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
@@ -4809,7 +4809,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     bool retval = pCPwdAttackChecker->IsOk(minutescount);
     if(retval == false)
     {
-		cout<<"有连续3次错误，"<<minutescount<<"秒之后才可以输入"<<endl;
+		cout<<"There are 3 consecutive errors ，"<<minutescount<<"You can enter after seconds "<<endl;
         std::string minutescountStr = std::to_string(minutescount);
         ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2, minutescountStr);
         return;
@@ -4817,36 +4817,36 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
-            cout<<"密码输入错误"<<endl;
+            cout<<"Incorrect password "<<endl;
             ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
             return;
        } 
        else
        {
-			// 第三次密码输入错误
+			// The third password input error 
     		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -4);
             return;
        }
     }
     else 
     {
-        cout<<"密码输入正确重置为0"<<endl;
+        cout<<"Password input is correct and reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
     }
    
     if (hashOriPass != targetPassword) 
     {
-		// 密码不正确
+		// Incorrect password 
         ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -5);
         return;
     }
 
     if (0 != CheckAddrs<CreateDeviceMultiTxMsgReq>(msg))
     {
-		// 发起方参数错误
+		// Initiator parameter error 
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -6);
 		return ;
     }
@@ -4869,7 +4869,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 
     if(toAddr.size() != (size_t)msg->to_size())
     {
-        // 接收方参数错误
+        // Receiver parameter error 
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -7);
         return;
     }
@@ -4910,7 +4910,7 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
     txExtra["TransactionType"] = TXTYPE_TX;	
     txExtra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
 	txExtra["SignFee"] = gasFee;
-    txExtra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+    txExtra["PackageFee"] = packageFee;   // This node is required to send a transaction on behalf of the package fee 
 
     outTx.set_extra(txExtra.dump());
 
@@ -4933,11 +4933,11 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-    //签名
+    //signature 
 	for (int i = 0; i < outTx.vin_size(); i++)
 	{
 		std::string addr = addrs[i];
-		// std::cout << "DoCreateTx:签名:" << addr << std::endl;
+		// std::cout << "DoCreateTx:signature :" << addr << std::endl;
 		std::string signature;
 		std::string strPub;
 		g_AccountInfo.Sign(addr.c_str(), encodeStrHash, signature);
@@ -4985,22 +4985,22 @@ void HandleCreateDeviceMultiTxMsgReq(const std::shared_ptr<CreateDeviceMultiTxMs
 
 std::map<int32_t, std::string> GetCreateMultiTxReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "参数不合法"), 
-												make_pair(-3, "交易双方地址错误"), 
-												make_pair(-4, "获得交易双方地址错误"), 
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Invalid parameter "), 
+												make_pair(-3, "transaction Both parties address wrong "), 
+												make_pair(-4, "The address of both parties to obtain the transaction is wrong "), 
 
-												make_pair(-1001, "创建交易时参数错误"),
-												make_pair(-1002, "创建交易时交易地址错误"),
-												make_pair(-1003, "创建交易时有之前交易挂起"),
-												make_pair(-1004, "创建交易时打开数据库错误"),
-												make_pair(-1005, "创建交易时获得打包费失败"),
-												make_pair(-1006, "创建交易时获得交易信息失败"),
-												make_pair(-1007, "创建交易时余额不足"),
+												make_pair(-1001, "Parameter error when creating transaction "),
+												make_pair(-1002, "Wrong transaction address when creating transaction "),
+												make_pair(-1003, "When the transaction was created, the previous transaction was suspended "),
+												make_pair(-1004, "Error opening database when creating transaction "),
+												make_pair(-1005, "Failed to get packaging fee when creating transaction "),
+												make_pair(-1006, "Failed to obtain transaction information when creating transaction "),
+												make_pair(-1007, "Insufficient balance when creating transaction "),
 
-												make_pair(-5, "打开数据库错误"),
-												make_pair(-6, "获得打包费错误"),
+												make_pair(-5, "Open database error "),
+												make_pair(-6, "Get packing fee error "),
 												
 												};
 
@@ -5008,11 +5008,11 @@ std::map<int32_t, std::string> GetCreateMultiTxReqCode()
 }
 void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, const MsgData& msgdata )
 {
-    // 手机端回执消息体
+    // Message body of mobile phone receipt 
     CreateMultiTxMsgAck createMultiTxMsgAck;
 	auto errInfo = GetCreateMultiTxReqCode();
 
-    // 判断版本是否兼容
+    // Determine whether the version is compatible 
     if( 0 != Util::IsVersionCompatible( msg->version() ) )
 	{
 		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -1);
@@ -5021,7 +5021,7 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
 
     if (msg->from_size() > 1 && msg->to_size() > 1)
     {
-        // 参数不合法
+        // Invalid parameter 
 		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -2);
 		return ;
     }
@@ -5039,7 +5039,7 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
     int ret = GetAddrsFromMsg(msg, fromAddr, toAddr);
     if (0 != ret)
     {
-		// 交易地址有错误
+		// transaction The address is wrong 
 		ReturnAckCode<CreateMultiTxMsgAck>(msgdata, errInfo, createMultiTxMsgAck, -4);
         return ;
     }
@@ -5085,7 +5085,7 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
     extra["TransactionType"] = TXTYPE_TX;
 	extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
 	extra["SignFee"] = minerFees;
-    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+    extra["PackageFee"] = packageFee;   // This node is required to send a transaction on behalf of the package fee 
 	outTx.set_extra(extra.dump());
 
     std::string serTx = outTx.SerializeAsString();
@@ -5106,11 +5106,11 @@ void HandleCreateMultiTxReq( const std::shared_ptr<CreateMultiTxMsgReq>& msg, co
 
 std::map<int32_t, std::string> GetMultiTxReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"),
-												make_pair(-2, "签名不正确"),
-												make_pair(-3, "打开数据库错误"),
-												make_pair(-4, "获得主链错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "),
+												make_pair(-2, "Incorrect signature "),
+												make_pair(-3, "Open database error "),
+												make_pair(-4, "Get the main chain error "),
 												};
 
 	return errInfo;												
@@ -5146,7 +5146,7 @@ void HandleMultiTxReq( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgData&
         ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -2);
     }
 
-    // 一对多交易只有一个发起方，取第0个
+    // One-to-many transaction has only one initiator, take the 0th one 
     SignInfo signInfo = msg->signinfo(0);
     unsigned char strsignatureCstr[signInfo.signstr().size()] = {0};
 	unsigned long strsignatureCstrLen = base64_decode((unsigned char *)signInfo.signstr().data(), signInfo.signstr().size(), strsignatureCstr);
@@ -5214,18 +5214,18 @@ void HandleMultiTxReq( const std::shared_ptr<MultiTxMsgReq>& msg, const MsgData&
 
 std::map<int32_t, std::string> GetCreatePledgeTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "参数错误"), 
-												make_pair(-3, "打开数据库错误"), 
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Parameter error "), 
+												make_pair(-3, "Open database error "), 
 
-												make_pair(-1001, "创建交易时参数错误"),
-												make_pair(-1002, "创建交易时交易地址错误"),
-												make_pair(-1003, "创建交易时有之前交易挂起"),
-												make_pair(-1004, "创建交易时打开数据库错误"),
-												make_pair(-1005, "创建交易时获得打包费失败"),
-												make_pair(-1006, "创建交易时获得交易信息失败"),
-												make_pair(-1007, "创建交易时余额不足"),
+												make_pair(-1001, "Parameter error when creating transaction "),
+												make_pair(-1002, "Wrong transaction address when creating transaction"),
+												make_pair(-1003, "When the transaction was created, the previous transaction was suspended "),
+												make_pair(-1004, "Error opening database when creating transaction "),
+												make_pair(-1005, "Failed to get packaging fee when creating transaction "),
+												make_pair(-1006, "Failed to obtain transaction information when creating transaction "),
+												make_pair(-1007, "Insufficient balance when creating transaction "),
 												};
 
 	return errInfo;												
@@ -5312,12 +5312,12 @@ void HandleCreatePledgeTxMsgReq(const std::shared_ptr<CreatePledgeTxMsgReq>& msg
 
 std::map<int32_t, std::string> GetPledgeTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "参数错误"), 
-												make_pair(-3, "打开数据库错误"), 
-												make_pair(-4, "获得主链错误"),
-												make_pair(-5, "获得最高高度错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Parameter error "), 
+												make_pair(-3, "Open database error "), 
+												make_pair(-4, "Get the main chain error "),
+												make_pair(-5, "Get the highest height error "),
 
 												};
 
@@ -5329,7 +5329,7 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
 
 	auto errInfo = GetPledgeTxMsgReqCode();
    
-	//判断版本是否兼容
+	//Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible(msg->version() ) )
 	{
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
@@ -5344,7 +5344,7 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
 		return ;
     }
 
-	// 将交易信息体，公钥，签名信息反base64
+	// Reverse base64 of transaction information body, public key, and signature information 
 	unsigned char serTxCstr[msg->sertx().size()] = {0};
 	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
 	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
@@ -5424,20 +5424,20 @@ void HandlePledgeTxMsgReq(const std::shared_ptr<PledgeTxMsgReq>& msg, const MsgD
 
 std::map<int32_t, std::string> GetCreateRedeemTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "参数错误"), 
-												make_pair(-3, "交易被挂起"), 
-												make_pair(-4, "打开数据库错误"), 
-												make_pair(-5, "获得质押信息错误"),
-												make_pair(-6, "账户未质押"),
-												make_pair(-7, "查不到质押信息"),
-												make_pair(-8, "质押信息错误"),
-												make_pair(-9, "质押未超过30天期限"),
-												make_pair(-10, "查询本地该账户质押信息失败"),
-												make_pair(-11, "查询本地该账户无该质押信息"),
-												make_pair(-12, "查询本地该账户无足够的utxo"),
-												make_pair(-13, "获取打包费失败"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Parameter error "), 
+												make_pair(-3, "transaction is suspended "), 
+												make_pair(-4, "Open database error "), 
+												make_pair(-5, "Error in obtaining pledge information "),
+												make_pair(-6, "Account is not pledged "),
+												make_pair(-7, "No pledge information can be found "),
+												make_pair(-8, "The pledge information is wrong "),
+												make_pair(-9, "The pledge does not exceed the 30-day period "),
+												make_pair(-10, "Failed to query local pledge information of this account "),
+												make_pair(-11, "Query the local account that there is no such pledge information "),
+												make_pair(-12, "Check that the account does not have enough utxo locally "),
+												make_pair(-13, "Failed to get package fee "),
 												};
 
 	return errInfo;												
@@ -5448,7 +5448,7 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
 
 	auto errInfo = GetCreateRedeemTxMsgReqCode();
 
-    // 判断版本是否兼容
+    // Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible( getVersion() ) )
 	{
         ReturnAckCode<CreateRedeemTxMsgAck>(msgdata, errInfo, createRedeemTxMsgAck, -1);
@@ -5487,7 +5487,7 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
     {
 		pRocksDb->TransactionDelete(txn, false);
 	};
-    // 查询账号是否已经质押资产
+    // Check whether the account has pledged assets 
     std::vector<string> addresses;
     int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
     if(db_status != 0)
@@ -5608,7 +5608,7 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
     extra["fromaddr"] = fromAddr;
 	extra["NeedVerifyPreHashCount"] = needverifyprehashcount;
 	extra["SignFee"] = gasFee;
-    extra["PackageFee"] = packageFee;   // 本节点代发交易需要打包费
+    extra["PackageFee"] = packageFee;   // This node is required to send a transaction on behalf of the package fee 
 	extra["TransactionType"] = TXTYPE_REDEEM;
     extra["TransactionInfo"] = txInfo;
 
@@ -5631,11 +5631,11 @@ void HandleCreateRedeemTxMsgReq(const std::shared_ptr<CreateRedeemTxMsgReq>& msg
 
 std::map<int32_t, std::string> GetRedeemTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "打开数据库错误"), 
-												make_pair(-3, "获得最高高度错误"),
-												make_pair(-4, "获得主链错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Open database error "), 
+												make_pair(-3, "Get the highest height error "),
+												make_pair(-4, "Get the main chain error "),
 												};
 
 	return errInfo;												
@@ -5645,13 +5645,13 @@ void HandleRedeemTxMsgReq(const std::shared_ptr<RedeemTxMsgReq>& msg, const MsgD
     TxMsgAck txMsgAck; 
 	auto errInfo = GetRedeemTxMsgReqCode();
 
-    // 判断版本是否兼容
+    // Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible(getVersion() ) )
 	{
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
 		return ;
 	}
-	// 将交易信息体，公钥，签名信息反base64
+	// Reverse base64 of transaction information body, public key, and signature information 
 	unsigned char serTxCstr[msg->sertx().size()] = {0};
 	unsigned long serTxCstrLen = base64_decode((unsigned char *)msg->sertx().data(), msg->sertx().size(), serTxCstr);
 	std::string serTxStr((char *)serTxCstr, serTxCstrLen);
@@ -5737,7 +5737,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
         return -1;
     }
 
-    // // 判断矿机密码是否正确
+    // // Determine whether the miner password is correct 
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     
@@ -5778,7 +5778,7 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
     extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
+    extra["PackageFee"] = 0;   // No packaging fee for this node's own initiation
     extra["TransactionType"] = TXTYPE_PLEDGE;
     extra["TransactionInfo"] = txInfo;
 
@@ -5854,11 +5854,11 @@ int CreatePledgeTransaction(const std::string & fromAddr,  const std::string & a
 
 std::map<int32_t, std::string> GetCreateDevicePledgeTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "密码错误倒计时未结束"), 
-												make_pair(-3, "密码错误"),
-												make_pair(-4, "密码第三次输入错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Incorrect password countdown is not over "), 
+												make_pair(-3, "wrong password "),
+												make_pair(-4, "The password is entered incorrectly for the third time "),
 
 												};
 
@@ -5869,7 +5869,7 @@ void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTx
     TxMsgAck txMsgAck;
 	auto errInfo = GetCreateDevicePledgeTxMsgReqCode();
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible(getVersion() ) )
 	{
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
@@ -5890,7 +5890,7 @@ void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTx
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
             ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
@@ -5904,7 +5904,7 @@ void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTx
     }
     else 
     {
-        cout<<"输入密码成功重置为0"<<endl;
+        cout<<"Enter the password successfully reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
     }
 
@@ -5924,14 +5924,14 @@ void HandleCreateDevicePledgeTxMsgReq(const std::shared_ptr<CreateDevicePledgeTx
 
 int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPreHashCount, std::string gasFeeStr, std::string utxo, std::string password, std::string & txHash)
 {
-    // 参数判断
+    // Parameter judgment 
     uint64_t GasFee = std::stod(gasFeeStr.c_str()) * DECIMAL_NUM;
     if(fromAddr.size() <= 0 || needVerifyPreHashCount < (uint32_t)g_MinNeedVerifyPreHashCount || GasFee <= 0 || utxo.empty())
     {
         return -1;
     }
 
-    // 判断矿机密码是否正确
+    // Determine whether the miner password is correct 
     std::string hashOriPass = generateDeviceHashPassword(password);
     std::string targetPassword = Singleton<DevicePwd>::get_instance()->GetDevPassword();
     if (hashOriPass != targetPassword) 
@@ -5957,7 +5957,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 		pRocksDb->TransactionDelete(txn, true);
 	};
 
-    // 查询账号是否已经质押资产
+    // Check whether the account has pledged assets 
     std::vector<string> addresses;
     int db_status = pRocksDb->GetPledgeAddress(txn, addresses);
     if(db_status != 0)
@@ -6004,7 +6004,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
     nlohmann::json extra;
     extra["NeedVerifyPreHashCount"] = needVerifyPreHashCount;
     extra["SignFee"] = GasFee;
-    extra["PackageFee"] = 0;   // 本节点自身发起无需打包费
+    extra["PackageFee"] = 0;   // No packaging fee for this node's own initiation 
     extra["TransactionType"] = TXTYPE_REDEEM;
     extra["TransactionInfo"] = txInfo;
 
@@ -6020,7 +6020,7 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 
 	std::string encodeStrHash = getsha256hash(encodeStr);
 
-    // 设置默认账号为发起账号
+    // Set the default account as the originating account 
     if (!g_AccountInfo.SetKeyByBs58Addr(g_privateKey, g_publicKey, fromAddr.c_str())) 
     {
         return -11;
@@ -6077,23 +6077,23 @@ int CreateRedeemTransaction(const std::string & fromAddr, uint32_t needVerifyPre
 
 std::map<int32_t, std::string> GetCreateDeviceRedeemTxMsgReqCode()
 {
-	std::map<int32_t, std::string> errInfo = {make_pair(0, "成功"), 
-												make_pair(-1, "版本不兼容"), 
-												make_pair(-2, "密码错误倒计时未结束"), 
-												make_pair(-3, "密码错误"),
-												make_pair(-4, "密码第三次输入错误"),
+	std::map<int32_t, std::string> errInfo = {make_pair(0, "success "), 
+												make_pair(-1, "Incompatible version "), 
+												make_pair(-2, "Incorrect password countdown is not over "), 
+												make_pair(-3, "wrong password "),
+												make_pair(-4, "The password is entered incorrectly for the third time "),
 												};
 
 	return errInfo;												
 }
 
-// 手机连接矿机发起解质押交易
+// Mobile phone connects to miner to initiate Depledge transaction 
 void HandleCreateDeviceRedeemTxMsgReq(const std::shared_ptr<CreateDeviceRedeemTxReq> &msg, const MsgData &msgdata )
 {
 	TxMsgAck txMsgAck;
 	auto errInfo = GetCreateDeviceRedeemTxMsgReqCode();
 
-	// 判断版本是否兼容
+	// Determine whether the version is compatible 
 	if( 0 != Util::IsVersionCompatible(getVersion() ) )
 	{
 		ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -1);
@@ -6114,7 +6114,7 @@ void HandleCreateDeviceRedeemTxMsgReq(const std::shared_ptr<CreateDeviceRedeemTx
 
     if(hashOriPass.compare(targetPassword))
     {
-        cout<<"输入密码错误开始记录次数"<<endl;
+        cout<<"Enter the wrong password to start recording times "<<endl;
        if(pCPwdAttackChecker->Wrong())
        {
             ReturnAckCode<TxMsgAck>(msgdata, errInfo, txMsgAck, -3);
@@ -6128,7 +6128,7 @@ void HandleCreateDeviceRedeemTxMsgReq(const std::shared_ptr<CreateDeviceRedeemTx
     }
     else 
     {
-        cout<<"输入密码成功重置为0"<<endl;
+        cout<<"Enter the password successfully reset to 0 "<<endl;
         pCPwdAttackChecker->Right();
     }
 
@@ -6159,7 +6159,7 @@ void ReturnAckCode(const MsgData& msgdata, std::map<int32_t, std::string> errInf
 		ack.set_message(errInfo[code]);
 	}
 
-	net_send_message<Ack>(msgdata, ack, net_com::Priority::kPriority_High_1); // ReturnAckCode大部分处理交易，默认优先级为high1
+	net_send_message<Ack>(msgdata, ack, net_com::Priority::kPriority_High_1); // ReturnAckCode mostly handles transactions, the default priority is high1 
 }
 
 template<typename TxReq> 

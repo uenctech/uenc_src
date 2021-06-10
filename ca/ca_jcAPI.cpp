@@ -22,10 +22,10 @@ extern "C" {
     //     unsigned long i, j;
     //     for (i = 0, j = 0; i+3 <= text_len; i+=3)
     //     {
-    //         encode[j++] = alphabet_map[text[i]>>2];                             //取出第一个字符的前6位并找出对应的结果字符
-    //         encode[j++] = alphabet_map[((text[i]<<4)&0x30)|(text[i+1]>>4)];     //将第一个字符的后2位与第二个字符的前4位进行组合并找到对应的结果字符
-    //         encode[j++] = alphabet_map[((text[i+1]<<2)&0x3c)|(text[i+2]>>6)];   //将第二个字符的后4位与第三个字符的前2位组合并找出对应的结果字符
-    //         encode[j++] = alphabet_map[text[i+2]&0x3f];                         //取出第三个字符的后6位并找出结果字符
+    //         encode[j++] = alphabet_map[text[i]>>2];                             //Take the first 6 bits of the first character and find the corresponding result character 
+    //         encode[j++] = alphabet_map[((text[i]<<4)&0x30)|(text[i+1]>>4)];     //Combine the last 2 digits of the first character with the first 4 digits of the second character and find the corresponding result character 
+    //         encode[j++] = alphabet_map[((text[i+1]<<2)&0x3c)|(text[i+2]>>6)];   //Combine the last 4 digits of the second character with the first 2 digits of the third character and find the corresponding result character 
+    //         encode[j++] = alphabet_map[text[i+2]&0x3f];                         //Take out the last 6 digits of the third character and find the resulting character 
     //     }
 
     //     if (i < text_len)
@@ -51,7 +51,7 @@ extern "C" {
 
     // unsigned long base64_decode(const unsigned char *code, unsigned long code_len, unsigned char *plain)
     // {
-    //     assert((code_len&0x03) == 0);  //如果它的条件返回错误，则终止程序执行。4的倍数。
+    //     assert((code_len&0x03) == 0);  //If its condition returns an error, the program execution is terminated. A multiple of 4. 
 
     //     unsigned long i, j = 0;
     //     unsigned char quad[4];
@@ -59,24 +59,25 @@ extern "C" {
     //     {
     //         for (unsigned long k = 0; k < 4; k++)
     //         {
-    //             quad[k] = reverse_map[code[i+k]];//分组，每组四个分别依次转换为base64表内的十进制数
+    //             quad[k] = reverse_map[code[i+k]];//Group, each group of four are converted to decimal numbers in base64 table in turn
     //         }
 
     //         assert(quad[0]<64 && quad[1]<64);
 
-    //         plain[j++] = (quad[0]<<2)|(quad[1]>>4); //取出第一个字符对应base64表的十进制数的前6位与第二个字符对应base64表的十进制数的前2位进行组合
+    //         plain[j++] = (quad[0]<<2)|(quad[1]>>4); //Take out the first 6 digits of the decimal number corresponding to the base64 table of the first character and combine the first 2 digits of the decimal number of the base64 table corresponding to the second character 
+
 
     //         if (quad[2] >= 64)
     //             break;
     //         else if (quad[3] >= 64)
     //         {
-    //             plain[j++] = (quad[1]<<4)|(quad[2]>>2); //取出第二个字符对应base64表的十进制数的后4位与第三个字符对应base64表的十进制数的前4位进行组合
+    //             plain[j++] = (quad[1]<<4)|(quad[2]>>2); //Take the second character corresponding to the last 4 digits of the decimal number of the base64 table and combine the first 4 digits of the third character corresponding to the decimal number of the base64 table 
     //             break;
     //         }
     //         else
     //         {
     //             plain[j++] = (quad[1]<<4)|(quad[2]>>2);
-    //             plain[j++] = (quad[2]<<6)|quad[3];//取出第三个字符对应base64表的十进制数的后2位与第4个字符进行组合
+    //             plain[j++] = (quad[2]<<6)|quad[3];//Take the third character corresponding to the last 2 digits of the decimal number of the base64 table and combine it with the 4th character 
     //         }
     //     }
     //     return j;
@@ -104,20 +105,20 @@ extern "C" {
         *hexstr = 0;
     }
 
-    //生成钱包
-    //公私钥为16进制
-    //私钥+公钥+bs58地址 以空格拼接
+    //Generate wallet 
+    //Public and private keys are in hexadecimal 
+    //Private key + public key + bs58 address spliced with spaces 
     char* GenWallet(int ver) {
         string out_pri_key;
         string out_pub_key;
         const uint BUFF_SIZE = 128;
         ca_phoneAPI::CPPgenPairKey(out_pri_key, out_pub_key);
 
-        //私钥
+        //Private key 
         char* pri_hex = new char[BUFF_SIZE]{0};
         encode_hex_local(pri_hex, out_pri_key.c_str(), out_pri_key.size());
 
-        //公钥
+        //Public key 
         char* pub_hex = new char[BUFF_SIZE*2]{0};
         encode_hex_local(pub_hex, out_pub_key.c_str(), out_pub_key.size());
 
@@ -128,7 +129,7 @@ extern "C" {
         int *bs58_len = new int;
         ca_phoneAPI::genBs58Addr(pub_key, pub_len, bs58_addr, bs58_len, ver);
 
-        //拼接
+        //Splicing 
         string wallet(pri_hex);
         wallet += " ";
         wallet += pub_hex;
@@ -163,8 +164,8 @@ extern "C" {
         return 0;
     }
 
-    //生成签名
-    //返回bs64之后的签名
+    //Generate signature 
+    //Return the signature after bs64 
     char* GenSign(char* pri, char* msg, int len) {
         string pri_str(pri);
         ECDSA<ECP, SHA1>::PrivateKey pri_key;
@@ -182,8 +183,8 @@ extern "C" {
         return (char*)encode;
     }
 
-    //生成签名
-    //返回bs64之后的签名
+    //Generate signature 
+    //Return the signature after bs64 
     int GenSign_(const char* pri, int pri_len,
                  const char* msg, int msg_len,
                  char *signature_msg, int *out_len) 
@@ -210,4 +211,3 @@ extern "C" {
     }
 
 }
-

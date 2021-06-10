@@ -8,62 +8,62 @@
 #include "../net/msg_queue.h"
 
 /**
-* @description: ca 初始化
-* @param 无
-* @return: 成功返回ture，失败返回false
+* @description: ca initialization 
+* @param no 
+* @return: Return true on success, false on failure 
 */
 bool ca_init();
 
 
 /**
- * @description: ca 清理函数
- * @param 无
- * @return: 无
+ * @description: ca cleanup function 
+ * @param no 
+ * @return: no 
  */
 void ca_cleanup();
 
 /**
- * @description: ca 菜单
- * @param 无
- * @return: 无
+ * @description: ca menu 
+ * @param no 
+ * @return: no 
  */
 void ca_print();
 
 
 /**
- * @description: ca 版本
- * @param 无
- * @return: 返回字符串格式版本号
+ * @description: ca version 
+ * @param no 
+ * @return: Returns the version number in string format 
  */
 const char * ca_version();
 
 
 /**
- * @description: 获取某个节点的最高块的高度和hash
- * @param id 要获取的节点的id
- * @return: 无
+ * @description: Get the height and hash of the highest block of a node 
+ * @param id The id of the node to get 
+ * @return: no 
  */
 void SendDevInfoReq(const std::string id);
 
 
 /* ====================================================================================  
- # @description:  处理接收到的节点信息
- # @param msg  : 接收的协议数据
- # @param msgdata : 网络传输所需的数据
+ # @description:  Process the received node information 
+ # @param msg  : Protocol data received 
+ # @param msgdata : Data required for network transmission 
  ==================================================================================== */
 void HandleGetDevInfoAck( const std::shared_ptr<GetDevInfoAck>& msg, const MsgData& msgdata );
 
 
 /* ====================================================================================  
- # @description: 处理接收到的获取节点信息请求
- # @param msg  : 接收的协议数据
- # @param msgdata : 网络传输所需的数据
+ # @description: Process the received node information 
+ # @param msg  : Protocol data received 
+ # @param msgdata : Data required for network transmission 
  ==================================================================================== */
 void HandleGetDevInfoReq( const std::shared_ptr<GetDevInfoReq>& msg, const MsgData& msgdata );
 
 
 /**
- * @description: 主菜单使用的相关实现函数
+ * @description: Related implementation functions used in the main menu 
  * @create: 20201104   LiuMingLiang
  */
 void ca_print_basic_info();

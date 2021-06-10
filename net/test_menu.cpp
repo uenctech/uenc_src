@@ -15,7 +15,7 @@ void TestMenu::main_menu()
 		cout << endl;
 		cout << "1.Send Mess To User" << endl;
 		cout << "2.Show My K Bucket" << endl;
-		cout << "3.踢节点" << endl;
+		cout << "3.Kick node " << endl;
 		cout << "4.test echo" << endl;
 		cout << "5.Broadcast Sending Messages" << endl;
 		cout << "7.Print bufferes" << endl;
@@ -58,7 +58,7 @@ void TestMenu::main_menu()
 			string id;
 			cin >> id;
 			Singleton<PeerNode>::get_instance()->delete_node(id);
-			cout << "踢节点成功！" << endl;
+			cout << "Kick the node successfully ！" << endl;
 			break;
 		}
 

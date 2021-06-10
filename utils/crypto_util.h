@@ -13,7 +13,7 @@ class CryptoUtil
 public:
     CryptoUtil() = default;
     ~CryptoUtil() = default;
-    static std::string aesIV;//128 bits  16位
+    static std::string aesIV;//128 bits 16 bits 
 	static std::string encryptAes(std::string sKey, std::string sIV, const char *plainText);
     static std::string decryptAes(std::string sKey, std::string sIV, const char *cipherText);
     static std::string getAesKey();

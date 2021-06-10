@@ -43,7 +43,7 @@ bool Pack::InitCommonMsg(CommonMsg& msg, T& submsg, int32_t encrypt, int32_t com
 	if (compress) 
 	{
 		Compress cpr(tmp);
-		// 尝试压缩，若压缩比不佳则不使用压缩
+		// Try to compress, if the compression ratio is not good, do not use compression 
 		if (cpr.m_compress_data.size() > tmp.size())
 		{
 			msg.set_compress(0);

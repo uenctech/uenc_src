@@ -25,7 +25,7 @@ ECDSA<ECP, SHA1>::PublicKey g_publicKey;
 accountinfo g_AccountInfo;
 char g_ip[NETWORKID_LEN];
 
-const int g_MinNeedVerifyPreHashCount = 6;  //最小共识数
+const int g_MinNeedVerifyPreHashCount = 6;  //Minimum consensus number 
 int g_SyncDataCount = 500;
 Sync* g_synch = new Sync();
 std::vector<GetDevInfoAck> g_nodeinfo;
