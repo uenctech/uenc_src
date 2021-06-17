@@ -20,11 +20,11 @@ BOOST_DIR = ./boost
 CC = gcc
 CPP = g++ -std=c++17
 INCLUDES += -I./ -I../include -I$(ROCKSDB_DIR)/include/ -I$(PROTOBUF_DIR)/src -I ./proto
-LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) /usr/lib64/libpthread.so 
+LIBS = $(CRYPTOPP_LIB)  $(ROCKSDB_LIB) $(PROTOBUF_LIB) -lpthread 
 
 G = -g
 CFLAGS :=-Wall  -Wno-unknown-pragmas $(G) 
-LINKFLAGS = -ldl -lz
+LINKFLAGS = -lz -ldl
 
 
 SRCDIR =. ./include ./utils ./ca ./net ./common  ./main ./ca/proto  ./proto
@@ -81,7 +81,7 @@ test:
 	@echo "CC_OBJS: $(CC_OBJS)"
 
 compile:$(C_OBJS) $(CC_OBJS) $(CPP_OBJS)
-	$(CPP)  $^ -o $(TARGET)  $(LINKFLAGS) $(LIBS)
+	$(CPP)  $^ -o $(TARGET) $(LIBS) $(LINKFLAGS)
 
 clean:
 	rm -rf $(OBJ_PATH)
