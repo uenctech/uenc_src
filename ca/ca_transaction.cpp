@@ -2808,7 +2808,7 @@ void InitAccount(accountinfo *acc, const char *path)
 
 	if(access(g_AccountInfo.path.c_str(), F_OK))
     {
-        if(mkdir(g_AccountInfo.path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH))
+        if(mkdir(g_AccountInfo.path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH | S_IXUSR | S_IXGRP | S_IXOTH ))
         {
             assert(false);
             return;

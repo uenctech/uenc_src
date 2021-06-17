@@ -275,7 +275,7 @@ int GeneratePairKey(const char *path)
 
     if(access(path, F_OK))
     {
-        if(mkdir(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH))
+        if(mkdir(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH | S_IXUSR | S_IXGRP | S_IXOTH))
         {
             return -2;
         }
